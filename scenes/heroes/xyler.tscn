@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/heroes/xyler.gd" id="1_script"]
+
+[node name="Xyler" type="Node2D"]
+script = ExtResource("1_script")
+max_health = 90.0
+move_speed_mult = 1.1
+shoot_cooldown = 0.35
+ability1_cooldown = 4.0
+ability2_cooldown = 8.0
+reload_time = 1.4
+mag_size = 18
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.28, 0.28)
+
+
+
+
+

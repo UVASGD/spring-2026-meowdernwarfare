@@ -1,0 +1,228 @@
+[gd_scene load_steps=4 format=3 uid="uid://dfxxrh3fefwru"]
+
+[sub_resource type="GDScript" id="GDScript_banner"]
+script/source = "extends Node2D
+
+signal option_changed(option: String)
+
+@export var options: Array[String] = [\"\", \"★ host ★ host ★ host ★ host \", \"★ join ★ join ★ join ★ join \", \"★ train ★ train ★ train ★ train \"]
+@export var transition_duration: float = 0.3
+
+var current_index: int = 0
+var target_y: float = 0.0
+var current_tween: Tween = null
+
+@onready var options_container: Node2D = $OptionsContainer
+
+func _ready() -> void:
+	_setup_options()
+	set_option(0)
+
+func _setup_options() -> void:
+	for i in range(options_container.get_child_count()):
+		var row = options_container.get_child(i)
+		for label in row.get_children():
+			label.text = options[i % options.size()]
+
+func set_option(index: int) -> void:
+	if index < 0 or index >= options.size():
+		return
+	current_index = index
+	target_y = -index * 250.0
+	_animate_to_target()
+	option_changed.emit(options[index])
+
+func set_option_by_name(option_name: String) -> void:
+	for i in range(options.size()):
+		if options[i].to_lower().contains(option_name.to_lower()):
+			set_option(i)
+			return
+
+func next_option() -> void:
+	set_option((current_index + 1) % options.size())
+
+func prev_option() -> void:
+	set_option((current_index - 1 + options.size()) % options.size())
+
+func _animate_to_target() -> void:
+	if current_tween and current_tween.is_valid():
+		current_tween.kill()
+	current_tween = create_tween()
+	current_tween.tween_property(options_container, \"position:y\", target_y, transition_duration)
+	current_tween.set_ease(Tween.EASE_OUT)
+	current_tween.set_trans(Tween.TRANS_CUBIC)
+"
+
+[sub_resource type="GDScript" id="GDScript_scroll"]
+script/source = "extends Control
+
+@export var scroll_speed: float = 150.0
+@export var segment_width: float = 1400.0
+
+func _process(delta: float) -> void:
+	var count = get_child_count()
+	for label in get_children():
+		label.position.x -= scroll_speed * delta
+		if label.position.x <= -segment_width:
+			label.position.x += segment_width * count
+"
+
+[sub_resource type="LabelSettings" id="LabelSettings_text"]
+font_size = 128
+font_color = Color(0.129412, 0, 0.211765, 1)
+outline_size = 32
+outline_color = Color(0.811765, 0.905882, 1, 1)
+
+[node name="OptionBanner" type="Node2D"]
+script = SubResource("GDScript_banner")
+options = Array[String](["", "★ join ★ join ★ join ★ join ", "★ host ★ host ★ host ★ host ", "★ train ★ train ★ train ★ train "])
+
+[node name="OptionsContainer" type="Node2D" parent="."]
+
+[node name="invisrow" type="Control" parent="OptionsContainer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 250.0
+mouse_filter = 2
+script = SubResource("GDScript_scroll")
+scroll_speed = 200.0
+segment_width = 1780.0
+
+[node name="Label1" type="Label" parent="OptionsContainer/invisrow"]
+layout_mode = 0
+offset_right = 1780.0
+offset_bottom = 250.0
+label_settings = SubResource("LabelSettings_text")
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="OptionsContainer/invisrow"]
+layout_mode = 0
+offset_left = 1779.0
+offset_right = 3559.0
+offset_bottom = 250.0
+text = "
+"
+label_settings = SubResource("LabelSettings_text")
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="OptionsContainer/invisrow"]
+layout_mode = 0
+offset_left = 3566.0
+offset_right = 5346.0
+offset_bottom = 250.0
+text = "
+"
+label_settings = SubResource("LabelSettings_text")
+vertical_alignment = 1
+
+[node name="Row0" type="Control" parent="OptionsContainer"]
+layout_mode = 3
+anchors_preset = 0
+offset_top = 248.0
+offset_right = 1920.0
+offset_bottom = 498.0
+mouse_filter = 2
+script = SubResource("GDScript_scroll")
+scroll_speed = 200.0
+segment_width = 1728.0
+
+[node name="Label1" type="Label" parent="OptionsContainer/Row0"]
+layout_mode = 0
+offset_right = 1728.0
+offset_bottom = 250.0
+text = "★ join ★ join ★ join ★ join "
+label_settings = SubResource("LabelSettings_text")
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="OptionsContainer/Row0"]
+layout_mode = 0
+offset_left = 1617.0
+offset_right = 3345.0
+offset_bottom = 250.0
+text = "★ join ★ join ★ join ★ join "
+label_settings = SubResource("LabelSettings_text")
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="OptionsContainer/Row0"]
+layout_mode = 0
+offset_left = 3228.0
+offset_right = 4956.0
+offset_bottom = 250.0
+text = "★ join ★ join ★ join ★ join "
+label_settings = SubResource("LabelSettings_text")
+vertical_alignment = 1
+
+[node name="Row1" type="Control" parent="OptionsContainer"]
+layout_mode = 3
+anchors_preset = 0
+offset_top = 501.0
+offset_right = 1920.0
+offset_bottom = 751.0
+mouse_filter = 2
+script = SubResource("GDScript_scroll")
+scroll_speed = 200.0
+segment_width = 1780.0
+
+[node name="Label1" type="Label" parent="OptionsContainer/Row1"]
+layout_mode = 0
+offset_right = 1780.0
+offset_bottom = 250.0
+text = "★ host ★ host ★ host ★ host "
+label_settings = SubResource("LabelSettings_text")
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="OptionsContainer/Row1"]
+layout_mode = 0
+offset_left = 1779.0
+offset_right = 3559.0
+offset_bottom = 250.0
+text = "★ host ★ host ★ host ★ host "
+label_settings = SubResource("LabelSettings_text")
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="OptionsContainer/Row1"]
+layout_mode = 0
+offset_left = 3566.0
+offset_right = 5346.0
+offset_bottom = 250.0
+text = "★ host ★ host ★ host ★ host "
+label_settings = SubResource("LabelSettings_text")
+vertical_alignment = 1
+
+[node name="Row2" type="Control" parent="OptionsContainer"]
+layout_mode = 3
+anchors_preset = 0
+offset_top = 753.0
+offset_right = 1920.0
+offset_bottom = 1003.0
+mouse_filter = 2
+script = SubResource("GDScript_scroll")
+scroll_speed = 200.0
+segment_width = 1880.0
+
+[node name="Label1" type="Label" parent="OptionsContainer/Row2"]
+layout_mode = 0
+offset_right = 1880.0
+offset_bottom = 250.0
+text = "★ train ★ train ★ train ★ train "
+label_settings = SubResource("LabelSettings_text")
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="OptionsContainer/Row2"]
+layout_mode = 0
+offset_left = 1870.0
+offset_right = 3750.0
+offset_bottom = 250.0
+text = "★ train ★ train ★ train ★ train "
+label_settings = SubResource("LabelSettings_text")
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="OptionsContainer/Row2"]
+layout_mode = 0
+offset_left = 3742.0
+offset_right = 5622.0
+offset_bottom = 250.0
+text = "★ train ★ train ★ train ★ train "
+label_settings = SubResource("LabelSettings_text")
+vertical_alignment = 1

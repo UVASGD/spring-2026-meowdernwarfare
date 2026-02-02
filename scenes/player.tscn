@@ -1,0 +1,140 @@
+[gd_scene load_steps=3 format=3 uid="uid://bmq5l1vihuc5d"]
+
+[ext_resource type="Script" uid="uid://ffhwp6btwq2k" path="res://scripts/player.gd" id="1_onrkg"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hqtel"]
+radius = 15.0
+height = 40.0
+
+[node name="Player" type="CharacterBody2D"]
+collision_mask = 2
+script = ExtResource("1_onrkg")
+rotation_offset = -1.571
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_hqtel")
+
+[node name="HealthBar" type="Control" parent="."]
+z_index = 10
+layout_mode = 3
+anchors_preset = 0
+offset_left = -25.0
+offset_top = -60.0
+offset_right = 25.0
+offset_bottom = -50.0
+
+[node name="Background" type="ColorRect" parent="HealthBar"]
+layout_mode = 0
+offset_right = 50.0
+offset_bottom = 10.0
+color = Color(0.2, 0.2, 0.2, 0.8)
+
+[node name="Fill" type="ColorRect" parent="HealthBar"]
+layout_mode = 0
+offset_right = 50.0
+offset_bottom = 10.0
+color = Color(0.2, 0.8, 0.2, 1)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="CooldownUI" type="CanvasLayer" parent="."]
+layer = 10
+
+[node name="Container" type="HBoxContainer" parent="CooldownUI"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 320.0
+offset_bottom = 70.0
+theme_override_constants/separation = 15
+
+[node name="ShootCD" type="VBoxContainer" parent="CooldownUI/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CooldownUI/Container/ShootCD"]
+layout_mode = 2
+text = "SHOOT"
+horizontal_alignment = 1
+
+[node name="Bar" type="ProgressBar" parent="CooldownUI/Container/ShootCD"]
+custom_minimum_size = Vector2(60, 12)
+layout_mode = 2
+max_value = 1.0
+value = 1.0
+show_percentage = false
+
+[node name="Ability1CD" type="VBoxContainer" parent="CooldownUI/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CooldownUI/Container/Ability1CD"]
+layout_mode = 2
+text = "ABILITY 1"
+horizontal_alignment = 1
+
+[node name="Bar" type="ProgressBar" parent="CooldownUI/Container/Ability1CD"]
+custom_minimum_size = Vector2(60, 12)
+layout_mode = 2
+max_value = 1.0
+value = 1.0
+show_percentage = false
+
+[node name="UltCD" type="VBoxContainer" parent="CooldownUI/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CooldownUI/Container/UltCD"]
+layout_mode = 2
+text = "ULT"
+horizontal_alignment = 1
+
+[node name="Bar" type="ProgressBar" parent="CooldownUI/Container/UltCD"]
+custom_minimum_size = Vector2(60, 12)
+layout_mode = 2
+max_value = 1.0
+show_percentage = false
+
+[node name="Count" type="Label" parent="CooldownUI/Container/UltCD"]
+layout_mode = 2
+text = "0/50"
+horizontal_alignment = 1
+
+[node name="ReloadCD" type="VBoxContainer" parent="CooldownUI/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CooldownUI/Container/ReloadCD"]
+layout_mode = 2
+text = "RELOAD"
+horizontal_alignment = 1
+
+[node name="Bar" type="ProgressBar" parent="CooldownUI/Container/ReloadCD"]
+custom_minimum_size = Vector2(60, 12)
+layout_mode = 2
+max_value = 1.0
+value = 1.0
+show_percentage = false
+
+[node name="DashCD" type="VBoxContainer" parent="CooldownUI/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CooldownUI/Container/DashCD"]
+layout_mode = 2
+text = "DASH"
+horizontal_alignment = 1
+
+[node name="Bar" type="ProgressBar" parent="CooldownUI/Container/DashCD"]
+custom_minimum_size = Vector2(60, 12)
+layout_mode = 2
+max_value = 1.0
+value = 1.0
+show_percentage = false
+
+[node name="Ammo" type="VBoxContainer" parent="CooldownUI/Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CooldownUI/Container/Ammo"]
+layout_mode = 2
+text = "AMMO"
+horizontal_alignment = 1
+
+[node name="Count" type="Label" parent="CooldownUI/Container/Ammo"]
+layout_mode = 2
+text = "15/15"
+horizontal_alignment = 1

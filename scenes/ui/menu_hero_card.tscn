@@ -1,0 +1,136 @@
+[gd_scene load_steps=11 format=3 uid="uid://bw2et0odpc4ii"]
+
+[ext_resource type="Script" uid="uid://bc0paoq0ssopo" path="res://scripts/ui/menu_hero_card.gd" id="1_70yk1"]
+[ext_resource type="Shader" uid="uid://dtxj6rav7fw2q" path="res://scenes/ui/squiggle.gdshader" id="4_s0w7w"]
+
+[sub_resource type="Gradient" id="Gradient_s0w7w"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_b3h67"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_4b0ex"]
+color_ramp = SubResource("Gradient_s0w7w")
+noise = SubResource("FastNoiseLite_b3h67")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b3h67"]
+shader = ExtResource("4_s0w7w")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.3
+shader_parameter/fps = 6.0
+shader_parameter/noise = SubResource("NoiseTexture2D_4b0ex")
+
+[sub_resource type="Animation" id="Animation_4b0ex"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("char:material:shader_parameter/scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_b3h67"]
+resource_name = "hover"
+length = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.241667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.4, 1.4)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("char:material:shader_parameter/scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.266667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.2, 1.2)]
+}
+
+[sub_resource type="Animation" id="Animation_3cka7"]
+resource_name = "unhover"
+length = 0.25
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.25),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1.4, 1.4), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("char:material:shader_parameter/scale")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.233333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(1.2, 1.2), Vector2(1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_nags8"]
+_data = {
+&"RESET": SubResource("Animation_4b0ex"),
+&"hover": SubResource("Animation_b3h67"),
+&"unhover": SubResource("Animation_3cka7")
+}
+
+[node name="menuHeroCard" type="Node2D"]
+script = ExtResource("1_70yk1")
+
+[node name="bg" type="Sprite2D" parent="."]
+
+[node name="char" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_b3h67")
+
+[node name="char2" type="Sprite2D" parent="."]
+visible = false
+material = SubResource("ShaderMaterial_b3h67")
+
+[node name="HoverArea" type="Area2D" parent="."]
+top_level = true
+monitorable = false
+
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="HoverArea"]
+polygon = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_nags8")
+}
+
+[connection signal="mouse_entered" from="HoverArea" to="." method="_on_hover_enter"]
+[connection signal="mouse_exited" from="HoverArea" to="." method="_on_hover_exit"]

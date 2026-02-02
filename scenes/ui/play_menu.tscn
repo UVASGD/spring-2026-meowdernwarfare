@@ -1,0 +1,89 @@
+[gd_scene load_steps=3 format=3 uid="uid://ch2tbwdohtwg7"]
+
+[ext_resource type="Script" uid="uid://cwuuble32rsmh" path="res://scripts/ui/play_menu.gd" id="1_menu"]
+[ext_resource type="Texture2D" uid="uid://bdn0fyc5hfsif" path="res://assets/sprites/mikebubu_jump.png" id="2_lhfua"]
+
+[node name="playMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_menu")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+modulate = Color(0.603922, 0.603922, 0.603922, 0.345098)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_lhfua")
+stretch_mode = 1
+
+[node name="VBox" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -120.0
+offset_right = 150.0
+offset_bottom = 120.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="VBox"]
+layout_mode = 2
+text = "THE CATPITALIST TOO"
+horizontal_alignment = 1
+
+[node name="Spacer1" type="Control" parent="VBox"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="UsernameLabel" type="Label" parent="VBox"]
+layout_mode = 2
+text = "Username:"
+
+[node name="UsernameInput" type="LineEdit" parent="VBox"]
+layout_mode = 2
+placeholder_text = "Enter username..."
+max_length = 15
+
+[node name="Spacer2" type="Control" parent="VBox"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="HostBtn" type="Button" parent="VBox"]
+layout_mode = 2
+text = "HOST GAME"
+
+[node name="Spacer3" type="Control" parent="VBox"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="CodeLabel" type="Label" parent="VBox"]
+layout_mode = 2
+text = "Room Code:"
+
+[node name="CodeInput" type="LineEdit" parent="VBox"]
+layout_mode = 2
+placeholder_text = "ABC123"
+max_length = 6
+
+[node name="JoinBtn" type="Button" parent="VBox"]
+layout_mode = 2
+text = "JOIN GAME"
+
+[node name="Spacer4" type="Control" parent="VBox"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="StatusLabel" type="Label" parent="VBox"]
+layout_mode = 2
+horizontal_alignment = 1

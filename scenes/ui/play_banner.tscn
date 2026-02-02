@@ -1,0 +1,85 @@
+[gd_scene load_steps=3 format=3 uid="uid://bxsesw7l3jrv0"]
+
+[sub_resource type="GDScript" id="GDScript_scroll"]
+script/source = "extends Control
+
+@export var speed: float = 150.0
+@export var segment_width: float = 600.0
+
+func _process(delta: float) -> void:
+	var count = get_child_count()
+	for label in get_children():
+		label.position.x -= speed * delta
+		if label.position.x <= -segment_width:
+			label.position.x += segment_width * count
+"
+
+[sub_resource type="LabelSettings" id="LabelSettings_0nou0"]
+font_size = 128
+font_color = Color(0.129412, 0, 0.211765, 1)
+
+[node name="PlayBanner" type="SubViewportContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="."]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(1920, 1080)
+render_target_update_mode = 4
+
+[node name="Labels" type="Control" parent="SubViewport"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = SubResource("GDScript_scroll")
+speed = 200.0
+segment_width = 700.0
+
+[node name="Label1" type="Label" parent="SubViewport/Labels"]
+layout_mode = 0
+offset_right = 1728.0
+offset_bottom = 180.0
+theme_override_font_sizes/font_size = 100
+text = "★ play ★ play ★ play ★ play "
+label_settings = SubResource("LabelSettings_0nou0")
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="SubViewport/Labels"]
+layout_mode = 0
+offset_left = 1333.0
+offset_right = 3061.0
+offset_bottom = 180.0
+theme_override_font_sizes/font_size = 100
+text = "★ play ★ play ★ play ★ play "
+label_settings = SubResource("LabelSettings_0nou0")
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="SubViewport/Labels"]
+layout_mode = 0
+offset_left = 1400.0
+offset_right = 3128.0
+offset_bottom = 180.0
+theme_override_font_sizes/font_size = 100
+text = "★ play ★ play ★ play ★ play "
+label_settings = SubResource("LabelSettings_0nou0")
+vertical_alignment = 1
+
+[node name="Label4" type="Label" parent="SubViewport/Labels"]
+layout_mode = 0
+offset_left = 2100.0
+offset_right = 3828.0
+offset_bottom = 180.0
+theme_override_font_sizes/font_size = 100
+text = "★ play ★ play ★ play ★ play "
+label_settings = SubResource("LabelSettings_0nou0")
+vertical_alignment = 1

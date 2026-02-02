@@ -1,0 +1,34 @@
+[gd_scene load_steps=6 format=3 uid="uid://b124opn04jqsu"]
+
+[ext_resource type="Script" uid="uid://c34ngn7knuwkm" path="res://scenes/heroes/dealer/bullet.gd" id="1_2tpwu"]
+[ext_resource type="Texture2D" uid="uid://dobr1csr7xdpo" path="res://assets/sprites/dealer/bullet.png" id="1_waykb"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2tpwu"]
+radius = 5.0
+
+[sub_resource type="Gradient" id="Gradient_2tpwu"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_d534h"]
+gradient = SubResource("Gradient_2tpwu")
+fill = 1
+fill_from = Vector2(0.523148, 0.518519)
+
+[node name="Bullet" type="Area2D"]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_2tpwu")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.05, 0.05)
+texture = ExtResource("1_waykb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource("CircleShape2D_2tpwu")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+energy = 8.39
+texture = SubResource("GradientTexture2D_d534h")
+texture_scale = 0.52
+height = 110.0
