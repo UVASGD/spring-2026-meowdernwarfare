@@ -178,6 +178,8 @@ func _update_timers(delta: float) -> void:
 			_end_drug_effect()
 
 func _handle_movement(delta: float) -> void:
+	if is_dead():
+		return 
 	if is_dashing:
 		velocity = dash_dir * dash_speed
 		return
@@ -195,6 +197,8 @@ func _handle_movement(delta: float) -> void:
 		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
 
 func _handle_rotation(delta: float) -> void:
+	if is_dead():
+		return
 	if input.aim_input.length() > 0.1:
 		var aim = input.aim_input.normalized()
 		if is_drugged:

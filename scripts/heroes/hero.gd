@@ -74,7 +74,7 @@ func _update_cooldowns(delta: float) -> void:
 func _update_animation(delta: float) -> void:
 	if sprite == null or player == null:
 		return
-	
+	 
 	var new_anim = _get_animation_state()
 	if new_anim != current_anim:
 		current_anim = new_anim
@@ -135,21 +135,27 @@ func heal(amount: float) -> void:
 
 func _die() -> void:
 	is_dead = true
-	died.emit()
+	spectate_mode()
 
+func spectate_mode() -> void:
+	return 
+	
+func navigate_main_menu() -> void:
+	GameData.change_scene("res://scenes/ui/main_menu.tscn")
+	
 func get_health_percent() -> float:
 	return health / max_health
 
 # ABILITIES
 
 func can_shoot() -> bool:
-	return shoot_cd <= 0 and reload_cd <= 0 and ammo > 0
+	return shoot_cd <= 0 and reload_cd <= 0 and ammo > 0 and !is_dead
 
 func can_ability1() -> bool:
-	return ability1_cd <= 0
+	return ability1_cd <= 0 and !is_dead
 
 func can_ability2() -> bool:
-	return ult_points >= max_ult_points
+	return ult_points >= max_ult_points and !is_dead
 
 func shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	if not can_shoot():
