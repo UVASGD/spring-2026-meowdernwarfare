@@ -44,6 +44,13 @@ var player: Node2D = null
 var sprite: AnimatedSprite2D = null
 var hitbox: CollisionShape2D = null
 
+# Default UI
+const DEFAULT_HERO_UI_COLOR = Color.WHITE;
+const ABILITY_ICON_TEMP_2 = preload("res://assets/ui/player/ability_icon_temp2.png")
+const ABILITY_ICON_TEMP_1 = preload("res://assets/ui/player/ability_icon_temp1.png")
+const PROFILE_ANGRY_PLACEHOLDER = preload("res://assets/ui/player/profile_angry_placeholder.png")
+const PROFILE_PLACEHOLDER = preload("res://assets/ui/player/profile_placeholder.png")
+
 func _ready() -> void:
 	health = max_health
 	ammo = mag_size
@@ -140,6 +147,9 @@ func _die() -> void:
 func get_health_percent() -> float:
 	return health / max_health
 
+func get_health() -> float:
+	return health;
+
 # ABILITIES
 
 func can_shoot() -> bool:
@@ -206,3 +216,21 @@ func get_ult_percent() -> float:
 
 func get_hero_name() -> String:
 	return "Hero"
+
+
+# UI
+
+func get_hero_default_profile() -> Texture2D:
+	return PROFILE_PLACEHOLDER;
+
+func get_hero_ult_profile() -> Texture2D:
+	return PROFILE_ANGRY_PLACEHOLDER;
+
+func get_hero_ability1_icon() -> Texture2D:
+	return ABILITY_ICON_TEMP_1;
+
+func get_hero_ability2_icon() -> Texture2D:
+	return ABILITY_ICON_TEMP_2;
+
+func get_hero_ui_color() -> Color:
+	return DEFAULT_HERO_UI_COLOR;

@@ -36,6 +36,25 @@ var ammo_label: Label = null
 var ult_bar: ProgressBar = null
 var ult_label: Label = null
 
+@onready var local_health_bar = $CooldownUI/HealthBar
+var target_health_bar_value : float;
+var target_health_bar_color : Color = Color.WHITE;;
+@onready var local_health_bar_label = $CooldownUI/HealthBar/Label
+
+@onready var ability_1_bar = $CooldownUI/Ability1
+@onready var ability_1_icon = $CooldownUI/Ability1/TextureRect
+@onready var ability_2_bar = $CooldownUI/Ability2
+@onready var ability_2_icon = $CooldownUI/Ability2/TextureRect
+
+
+@onready var character_profile = $CooldownUI/Profile
+@onready var ult_percent_label = $CooldownUI/Profile/Label
+
+
+
+
+
+
 # State
 var aim_dir: Vector2 = Vector2.RIGHT
 var is_dashing: bool = false
@@ -139,6 +158,18 @@ func _setup_local_ui() -> void:
 	
 	if cooldown_ui:
 		cooldown_ui.visible = show_ui
+	
+	var health_amount : int = int(hero.get_health());
+	target_health_bar_value = hero.get_health();
+	target_health_bar_color = Color.WHITE;
+	local_health_bar_label.text = str(health_amount);
+	
+	character_profile.texture = hero.get_hero_default_profile();
+	
+	ability_1_icon.texture = hero.get_hero_ability1_icon();
+	ability_2_icon.texture = hero.get_hero_ability2_icon();
+	ability_1_bar.modulate = hero.get_hero_ui_color();
+	ability_2_bar.modulate = hero.get_hero_ui_color();
 
 func _physics_process(delta: float) -> void:
 	if input == null:
@@ -159,6 +190,10 @@ func _physics_process(delta: float) -> void:
 	
 	# Update cooldown UI
 	_update_cooldown_ui()
+	
+	# Update local health bar
+	local_health_bar.value = lerpf(local_health_bar.value, target_health_bar_value, delta * 10);
+	local_health_bar.modulate = lerp(local_health_bar.modulate, target_health_bar_color, delta * 10);
 	
 	if input is LocalInput:
 		input.end_frame()
@@ -290,10 +325,18 @@ func _update_health_bar() -> void:
 	
 	if pct > 0.5:
 		health_bar_fill.color = Color(0.2, 0.8, 0.2)
+		target_health_bar_color = Color.WHITE;
 	elif pct > 0.25:
 		health_bar_fill.color = Color(0.8, 0.8, 0.2)
+		target_health_bar_color = Color.CORAL;
 	else:
 		health_bar_fill.color = Color(0.8, 0.2, 0.2)
+		target_health_bar_color = Color.RED;
+	
+	var health_amount : int = int(hero.get_health());
+	local_health_bar_label.text = str(health_amount);
+	target_health_bar_value = hero.get_health_percent() * 100;
+	
 
 func _update_cooldown_ui() -> void:
 	if hero == null or cooldown_ui == null or not cooldown_ui.visible:
@@ -306,6 +349,10 @@ func _update_cooldown_ui() -> void:
 	if ability1_cd_bar:
 		var a1_pct = 1.0 - (hero.ability1_cd / hero.ability1_cooldown) if hero.ability1_cooldown > 0 else 1.0
 		ability1_cd_bar.value = clamp(a1_pct, 0.0, 1.0)
+		ability_1_bar.value = clamp(a1_pct, 0.0, 1.0)
+		if(a1_pct < 1.0): ability_1_bar.modulate.a = 0.5;
+		else: ability_1_bar.modulate.a = 1;
+	
 	
 	
 	if reload_cd_bar:
@@ -319,8 +366,16 @@ func _update_cooldown_ui() -> void:
 	if ammo_label:
 		ammo_label.text = "%d/%d" % [hero.ammo, hero.mag_size]
 	
+	ult_percent_label.text = str(int(hero.get_ult_percent() * 100));
+	if(hero.get_ult_percent() >= 1):
+		ult_percent_label.text = "f";
+		character_profile.texture = hero.get_hero_ult_profile();
+	else:
+		character_profile.texture = hero.get_hero_default_profile();
+	
 	if ult_bar:
 		ult_bar.value = hero.get_ult_percent()
+		
 	if ult_label:
 		ult_label.text = "%d/%d" % [hero.ult_points, hero.max_ult_points]
 

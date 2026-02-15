@@ -1,14 +1,58 @@
-[gd_scene load_steps=3 format=3 uid="uid://bmq5l1vihuc5d"]
+[gd_scene load_steps=11 format=3 uid="uid://bmq5l1vihuc5d"]
 
 [ext_resource type="Script" uid="uid://ffhwp6btwq2k" path="res://scripts/player.gd" id="1_onrkg"]
+[ext_resource type="Texture2D" uid="uid://d4dfsjrtf3ya7" path="res://assets/ui/player/profile_placeholder.png" id="2_g2els"]
+[ext_resource type="FontFile" uid="uid://dt2nbaox60w53" path="res://assets/ui/fonts/BATTLESANSSERIF.OTF" id="3_qhqgy"]
+[ext_resource type="Texture2D" uid="uid://d0kdrsiknvaaw" path="res://assets/ui/player/ability_icon_temp1.png" id="4_dqkch"]
+[ext_resource type="Texture2D" uid="uid://cyhotyp75ff0t" path="res://assets/ui/player/ability_icon_temp2.png" id="5_qlg0r"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hqtel"]
 radius = 15.0
 height = 40.0
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g2els"]
+bg_color = Color(0, 0, 0, 0.45098)
+corner_radius_top_left = 700
+corner_radius_top_right = 650
+corner_radius_bottom_right = 280
+corner_radius_bottom_left = 1365
+corner_detail = 1
+expand_margin_left = 50.0
+expand_margin_top = 4.0
+expand_margin_right = 50.0
+expand_margin_bottom = 20.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qhqgy"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 25
+corner_radius_top_right = 30
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 25
+corner_detail = 1
+expand_margin_left = 22.0
+expand_margin_top = 6.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dqkch"]
+bg_color = Color(0, 0, 0, 0.45098)
+corner_radius_top_right = 20
+corner_radius_bottom_left = 25
+corner_detail = 1
+expand_margin_left = 31.0
+expand_margin_bottom = 14.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qlg0r"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_right = 40
+corner_radius_bottom_left = 15
+corner_detail = 1
+expand_margin_left = 22.0
+expand_margin_top = 6.0
+
 [node name="Player" type="CharacterBody2D"]
 collision_mask = 2
 script = ExtResource("1_onrkg")
+max_speed = 400.0
+friction = 100000.0
 rotation_offset = -1.571
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -138,3 +182,102 @@ horizontal_alignment = 1
 layout_mode = 2
 text = "15/15"
 horizontal_alignment = 1
+
+[node name="Profile" type="TextureRect" parent="CooldownUI"]
+offset_left = -103.0
+offset_top = 717.0
+offset_right = 338.0
+offset_bottom = 1111.0
+texture = ExtResource("2_g2els")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="CooldownUI/Profile"]
+layout_mode = 0
+offset_left = 99.0
+offset_top = 244.0
+offset_right = 327.0
+offset_bottom = 351.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.635294)
+theme_override_constants/outline_size = 15
+theme_override_constants/shadow_outline_size = 30
+theme_override_fonts/font = ExtResource("3_qhqgy")
+theme_override_font_sizes/font_size = 96
+text = "15"
+horizontal_alignment = 1
+
+[node name="Label2" type="Label" parent="CooldownUI/Profile"]
+layout_mode = 0
+offset_left = -152.0
+offset_top = 319.0
+offset_right = 586.0
+offset_bottom = 411.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.635294)
+theme_override_constants/outline_size = 10
+theme_override_constants/shadow_outline_size = 20
+theme_override_fonts/font = ExtResource("3_qhqgy")
+theme_override_font_sizes/font_size = 21
+text = "ult"
+horizontal_alignment = 1
+
+[node name="HealthBar" type="ProgressBar" parent="CooldownUI"]
+offset_left = 506.0
+offset_top = 1011.0
+offset_right = 1469.0
+offset_bottom = 1038.0
+theme_override_styles/background = SubResource("StyleBoxFlat_g2els")
+theme_override_styles/fill = SubResource("StyleBoxFlat_qhqgy")
+value = 100.0
+show_percentage = false
+
+[node name="Label" type="Label" parent="CooldownUI/HealthBar"]
+layout_mode = 0
+offset_left = -10.0
+offset_top = -40.0
+offset_right = 218.0
+offset_bottom = 67.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.635294)
+theme_override_constants/outline_size = 0
+theme_override_constants/shadow_outline_size = 20
+theme_override_fonts/font = ExtResource("3_qhqgy")
+theme_override_font_sizes/font_size = 46
+text = "500"
+
+[node name="Ability1" type="ProgressBar" parent="CooldownUI"]
+offset_left = 383.0
+offset_top = 964.0
+offset_right = 446.0
+offset_bottom = 1046.0
+theme_override_styles/background = SubResource("StyleBoxFlat_dqkch")
+theme_override_styles/fill = SubResource("StyleBoxFlat_qlg0r")
+max_value = 1.0
+value = 1.0
+fill_mode = 3
+show_percentage = false
+
+[node name="TextureRect" type="TextureRect" parent="CooldownUI/Ability1"]
+layout_mode = 0
+offset_left = -29.0
+offset_top = -10.0
+offset_right = 71.0
+offset_bottom = 90.0
+texture = ExtResource("4_dqkch")
+
+[node name="Ability2" type="ProgressBar" parent="CooldownUI"]
+offset_left = 269.0
+offset_top = 964.0
+offset_right = 332.0
+offset_bottom = 1046.0
+theme_override_styles/background = SubResource("StyleBoxFlat_dqkch")
+theme_override_styles/fill = SubResource("StyleBoxFlat_qlg0r")
+max_value = 1.0
+value = 1.0
+fill_mode = 3
+show_percentage = false
+
+[node name="TextureRect" type="TextureRect" parent="CooldownUI/Ability2"]
+layout_mode = 0
+offset_left = -30.0
+offset_top = -3.0
+offset_right = 70.0
+offset_bottom = 97.0
+texture = ExtResource("5_qlg0r")
