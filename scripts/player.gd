@@ -43,13 +43,23 @@ var target_health_bar_color : Color = Color.WHITE;;
 
 @onready var ability_1_bar = $CooldownUI/Ability1
 @onready var ability_1_icon = $CooldownUI/Ability1/TextureRect
+@onready var ability_1_animation = $CooldownUI/Ability1/AnimationPlayer
+
 @onready var ability_2_bar = $CooldownUI/Ability2
 @onready var ability_2_icon = $CooldownUI/Ability2/TextureRect
-
 
 @onready var character_profile = $CooldownUI/Profile
 @onready var ult_percent_label = $CooldownUI/Profile/Label
 
+@onready var reload_bar = $HealthBar/ReloadBar
+@onready var reload_bar_animation = $HealthBar/ReloadBar/AnimationPlayer
+@onready var reload_bar_finish_animation = $HealthBar/ReloadBar/Finish
+
+@onready var reload_prompt = $HealthBar/ReloadPrompt
+@onready var reload_prompt_animation = $HealthBar/ReloadPrompt/AnimationPlayer
+
+@onready var ammo_left = $HealthBar/AmmoLeft
+@onready var ammo_left_animation = $HealthBar/AmmoLeft/AnimationPlayer
 
 
 
@@ -152,6 +162,13 @@ func _setup_local_ui() -> void:
 	elif input is NetworkInput:
 		# In online mode, the local player gets camera
 		show_ui = input.is_local
+		ammo_left.visible = false;
+		reload_bar.visible = false;
+		reload_prompt.visible = false;
+	else:
+		ammo_left.visible = false;
+		reload_bar.visible = false;
+		reload_prompt.visible = false;
 	
 	if camera:
 		camera.enabled = show_ui
@@ -170,6 +187,15 @@ func _setup_local_ui() -> void:
 	ability_2_icon.texture = hero.get_hero_ability2_icon();
 	ability_1_bar.modulate = hero.get_hero_ui_color();
 	ability_2_bar.modulate = hero.get_hero_ui_color();
+	
+	hero.used_ability_1.connect(ability_1_use_animation);
+	hero.ability_1_refreshed.connect(ability_1_refresh_animation);
+	
+	hero.ran_out_of_ammo.connect(prompt_reload);
+	hero.started_reload.connect(show_reload_bar);
+	hero.finished_reload.connect(hide_reload_bar);
+	hero.finished_reload.connect(update_ammo_left);
+	hero.shot.connect(update_ammo_left);
 
 func _physics_process(delta: float) -> void:
 	if input == null:
@@ -350,7 +376,7 @@ func _update_cooldown_ui() -> void:
 		var a1_pct = 1.0 - (hero.ability1_cd / hero.ability1_cooldown) if hero.ability1_cooldown > 0 else 1.0
 		ability1_cd_bar.value = clamp(a1_pct, 0.0, 1.0)
 		ability_1_bar.value = clamp(a1_pct, 0.0, 1.0)
-		if(a1_pct < 1.0): ability_1_bar.modulate.a = 0.5;
+		if(a1_pct < 1.0): ability_1_bar.modulate.a = 0.35;
 		else: ability_1_bar.modulate.a = 1;
 	
 	
@@ -358,6 +384,7 @@ func _update_cooldown_ui() -> void:
 	if reload_cd_bar:
 		var reload_pct = 1.0 - (hero.reload_cd / hero.reload_time) if hero.reload_time > 0 else 1.0
 		reload_cd_bar.value = clamp(reload_pct, 0.0, 1.0)
+		reload_bar.value = clamp(reload_pct, 0.15, 1.0);
 		
 	if dash_cd_bar:
 		var dash_pct = 1.0 - (dash_cd_timer / dash_cooldown) if dash_cooldown > 0 else 1.0
@@ -378,6 +405,28 @@ func _update_cooldown_ui() -> void:
 		
 	if ult_label:
 		ult_label.text = "%d/%d" % [hero.ult_points, hero.max_ult_points]
+
+func prompt_reload() -> void:
+	reload_prompt_animation.play("appear");
+
+func show_reload_bar() -> void:
+	if(hero.ammo == 0): reload_prompt_animation.play("disappear");
+	reload_bar_animation.play("appear");
+
+func hide_reload_bar() -> void:
+	reload_bar_animation.play("finish");
+	reload_bar_finish_animation.play("finish");
+
+func update_ammo_left() -> void:
+	ammo_left.text = str(hero.ammo);
+	ammo_left_animation.stop();
+	ammo_left_animation.play("shoot");
+
+func ability_1_use_animation() -> void:
+	ability_1_animation.play("use");
+
+func ability_1_refresh_animation() -> void:
+	ability_1_animation.play("refreshed");
 
 # --- DRUG EFFECT ---
 

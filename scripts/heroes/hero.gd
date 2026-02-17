@@ -5,6 +5,15 @@ signal health_changed(current: float, max_hp: float)
 signal ult_changed(current: int, max_points: int)
 signal died
 
+signal shot
+
+signal ran_out_of_ammo
+signal started_reload
+signal finished_reload
+
+signal used_ability_1
+signal ability_1_refreshed
+
 # Stats 
 @export var max_health: float = 100.0
 @export var move_speed_mult: float = 1.0
@@ -68,12 +77,17 @@ func _process(delta: float) -> void:
 
 func _update_cooldowns(delta: float) -> void:
 	shoot_cd = max(0, shoot_cd - delta)
+	
+	var ability1_was_on_cooldown = ability1_cd > 0;
 	ability1_cd = max(0, ability1_cd - delta)
+	if ability1_was_on_cooldown and ability1_cd <= 0:
+		ability_1_refreshed.emit();
 	
 	var was_reloading = reload_cd > 0
 	reload_cd = max(0, reload_cd - delta)
 	if was_reloading and reload_cd <= 0:
 		ammo = mag_size
+		finished_reload.emit();
 	
 	ability1_anim_timer = max(0, ability1_anim_timer - delta)
 	ability2_anim_timer = max(0, ability2_anim_timer - delta)
@@ -166,12 +180,19 @@ func shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 		return
 	shoot_cd = shoot_cooldown
 	ammo -= 1
+	
+	#Emit signal so UI can prompt the player to reload
+	if(ammo == 0): ran_out_of_ammo.emit();
+	#Emit signal so UI can update number of ammo left
+	shot.emit();
+	
 	_do_shoot(aim_dir, aim_pos)
 
 func reload() -> void:
-	if reload_cd > 0:
+	if reload_cd > 0 or ammo == mag_size:
 		return
 	reload_cd = reload_time
+	started_reload.emit();
 	_do_reload()
 
 func ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
@@ -179,6 +200,7 @@ func ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
 		return
 	ability1_cd = ability1_cooldown
 	ability1_anim_timer = ability1_anim_duration
+	used_ability_1.emit();
 	_do_ability1(aim_dir, aim_pos)
 
 func ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
