@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dk8bsac8gssr7" path="res://scripts/game.gd" id="1_lnu2h"]
 [ext_resource type="Script" uid="uid://bk8me530q761v" path="res://scripts/globals/game_manager.gd" id="2_lbhrr"]
 [ext_resource type="PackedScene" uid="uid://bmq5l1vihuc5d" path="res://scenes/player.tscn" id="3_iywne"]
-[ext_resource type="PackedScene" uid="uid://djdghnxpw7rm3" path="res://scenes/maze_map.tscn" id="4_lbhrr"]
+[ext_resource type="PackedScene" uid="uid://djdghnxpw7rm3" path="res://scenes/maps/maze_map.tscn" id="4_lbhrr"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_lnu2h")
