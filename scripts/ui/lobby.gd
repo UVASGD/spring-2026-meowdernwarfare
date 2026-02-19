@@ -2,7 +2,7 @@ extends Control
 
 const SERVER_URL = "wss://server-still-cherry-1856.fly.dev"
 const HEROES = ["Dealer", "Burple", "Alien", "Xyler", "Fergus", "LoanShark"]
-const MAPS = ["testArena"]
+const MAPS = ["testArena", "Moon"]
 
 @onready var code_label: Label = $VBox/CodeLabel
 @onready var player_list: VBoxContainer = $VBox/PlayerList

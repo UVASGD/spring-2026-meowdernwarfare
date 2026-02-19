@@ -5,27 +5,41 @@ extends Node2D
 # F5: Sandbox (no enemies)
 # ESC: Back to menu
 
+const MAP_SCENES := {
+	"testArena": "res://scenes/maps/maze_map.tscn",
+	"Moon": "res://scenes/maps/moon.tscn",
+}
+const DEFAULT_MAP := "testArena"
+
 @onready var gm: GameManager = $GameManager
+var map_node: Node = null
 
 func _ready() -> void:
-	# Collect spawn points from the map
+	var map_name = GameData.pending_settings.get("map", DEFAULT_MAP)
+	_load_map(map_name)
 	_setup_spawn_points()
 	
-	# Check if we're coming from the lobby
 	if GameData.is_online_game:
 		_start_from_lobby()
 	else:
 		start_solo_vs_ai()
 
+func _load_map(map_name: String) -> void:
+	var path = MAP_SCENES.get(map_name, MAP_SCENES[DEFAULT_MAP])
+	var scene = load(path)
+	if scene:
+		map_node = scene.instantiate()
+		map_node.name = "map"
+		add_child(map_node)
+		move_child(map_node, 0)
+	else:
+		push_error("Game: Failed to load map scene: ", path)
+
 func _setup_spawn_points() -> void:
 	gm.spawn_points.clear()
 	
-	# Find SpawnPoints node in the map
-	var map = get_node_or_null("testMap")
-	if map == null:
-		map = self
-	
-	var spawns = map.get_node_or_null("SpawnPoints")
+	var target = map_node if map_node else self
+	var spawns = target.get_node_or_null("SpawnPoints")
 	if spawns == null:
 		push_warning("Game: No SpawnPoints node found in map")
 		return
