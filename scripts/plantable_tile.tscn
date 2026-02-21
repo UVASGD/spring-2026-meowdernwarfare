@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://ctvx5w3xujxlg"]
+
+[ext_resource type="Script" uid="uid://dwxextf0d33rq" path="res://plantable_tile.gd" id="1_binte"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_us0l0"]
+size = Vector2(160, 160)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_blex0"]
+size = Vector2(152, 151)
+
+[node name="PlantableTile" type="Sprite2D"]
+z_index = -1
+scale = Vector2(0.2, 0.2)
+texture = SubResource("PlaceholderTexture2D_us0l0")
+script = ExtResource("1_binte")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(1, 1.5)
+shape = SubResource("RectangleShape2D_blex0")

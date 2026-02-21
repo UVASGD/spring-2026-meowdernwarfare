@@ -13,6 +13,7 @@ enum Mode { LOCAL, ONLINE_HOST, ONLINE_CLIENT }
 @export var spawn_points: Array[Marker2D] = []
 
 var players: Array[Player] = []
+var entity_parent: Node = null
 
 static var instance: GameManager = null
 
@@ -61,6 +62,8 @@ func get_initial_spawn(_player_id: int) -> Vector2:
 	# Pick random from available using seeded RNG
 	var idx = available[spawn_rng.randi() % available.size()]
 	used_spawns.append(idx)
+	var sp = spawn_points[idx]
+	print("Player ", _player_id, " → spawn[", idx, "] pos=", sp.position, " global=", sp.global_position)
 	return spawn_points[idx].global_position
 
 func get_fair_respawn(player: Player) -> Vector2:
@@ -130,9 +133,10 @@ func spawn_local_player(id: int) -> Player:
 	local_input.set_player_node(player)
 	player.input = local_input
 	
-	player.global_position = get_initial_spawn(id)
-	
-	add_child(player)
+	var spawn_pos = get_initial_spawn(id)
+	_add_entity(player)
+	player.global_position = spawn_pos
+	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
 	players.append(player)
 	
 	return player
@@ -150,9 +154,10 @@ func spawn_ai_player(id: int, target: Node2D = null) -> Player:
 		ai_input.set_target(target)
 	player.input = ai_input
 	
-	player.global_position = get_initial_spawn(id)
-	
-	add_child(player)
+	var spawn_pos = get_initial_spawn(id)
+	_add_entity(player)
+	player.global_position = spawn_pos
+	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
 	players.append(player)
 	
 	return player
@@ -426,9 +431,10 @@ func _spawn_net_player(id: int, local: bool) -> Player:
 	player.input = net_input
 	net_inputs[id] = net_input
 	
-	player.global_position = get_initial_spawn(id)
-	
-	add_child(player)
+	var spawn_pos = get_initial_spawn(id)
+	_add_entity(player)
+	player.global_position = spawn_pos
+	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
 	players.append(player)
 	
 	var hero_name = get_player_hero(id)
@@ -457,6 +463,10 @@ func get_player_hero(player_id: int) -> String:
 	return ""
 
 # --- UTIL ---
+
+func _add_entity(node: Node) -> void:
+	var parent = entity_parent if entity_parent else self
+	parent.add_child(node)
 
 func is_local() -> bool:
 	return mode == Mode.LOCAL

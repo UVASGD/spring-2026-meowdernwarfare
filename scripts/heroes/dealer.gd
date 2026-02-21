@@ -17,8 +17,8 @@ func _ready() -> void:
 	invis_material = ShaderMaterial.new()
 	invis_material.shader = InvisShader
 	invis_material.set_shader_parameter("u_roundness", 0.0)
-	invis_material.set_shader_parameter("u_distortion_intensity", 2)
-	invis_material.set_shader_parameter("u_blur_intensity", 2.0)
+	invis_material.set_shader_parameter("u_distortion_intensity", 0)
+	invis_material.set_shader_parameter("u_blur_intensity", 0.0)
 	
 	if sprite:
 		normal_material = sprite.material

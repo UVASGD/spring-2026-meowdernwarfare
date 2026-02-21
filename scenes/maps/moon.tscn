@@ -1,5 +1,6 @@
-[gd_scene load_steps=37 format=4 uid="uid://dea1hxmkkrroo"]
+[gd_scene load_steps=27 format=4 uid="uid://dea1hxmkkrroo"]
 
+[ext_resource type="PackedScene" uid="uid://jrafw8skg73p" path="res://scenes/crop_spawner.tscn" id="1_3ol52"]
 [ext_resource type="Texture2D" uid="uid://b806fl6i3ymrk" path="res://assets/maps/moon/moon texture.png" id="1_wodu6"]
 [ext_resource type="Texture2D" uid="uid://1i1v210nrrxs" path="res://assets/maps/moon/sky/spacebg.png" id="2_30vaj"]
 [ext_resource type="Texture2D" uid="uid://uiwk4r7myxx7" path="res://assets/maps/moon/moon texture_normal.png" id="2_hyg50"]
@@ -11,9 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://cua3oasp2hwem" path="res://assets/maps/moon/objs/evil trees.png" id="7_qpo6k"]
 [ext_resource type="Texture2D" uid="uid://ni0dog6rvg0e" path="res://assets/maps/moon/objs/Radiohut.png" id="8_xq83h"]
 [ext_resource type="Texture2D" uid="uid://bomlsfawffdla" path="res://assets/maps/moon/objs/Squid house.png" id="9_1fm0i"]
-[ext_resource type="Texture2D" uid="uid://cuo3gcs0vyaud" path="res://assets/maps/moon/objs/stop signs.png" id="10_30vaj"]
-[ext_resource type="Texture2D" uid="uid://7mbk24jvkpw1" path="res://assets/maps/moon/objs/fence verticle.png" id="11_uuv10"]
-[ext_resource type="Texture2D" uid="uid://1xj1ukhqjfhb" path="res://assets/maps/moon/objs/Fence-horizontal.png" id="12_64t7d"]
+[ext_resource type="PackedScene" uid="uid://cq266dyabpgab" path="res://scenes/farm.tscn" id="14_1wagi"]
 [ext_resource type="Texture2D" uid="uid://cv6mqks33jfhe" path="res://assets/maps/moon/objs/moon crater.png" id="15_64t7d"]
 [ext_resource type="Script" uid="uid://pdt7g4isc4pi" path="res://scripts/teleporter.gd" id="16_3ol52"]
 [ext_resource type="Texture2D" uid="uid://8jsfcccmc784" path="res://assets/maps/moon/objs/moon crater_normal.png" id="17_1wagi"]
@@ -34,34 +33,8 @@ texture_region_size = Vector2i(2000, 1366)
 tile_size = Vector2i(2000, 1366)
 sources/0 = SubResource("TileSetAtlasSource_1wagi")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_qpo6k"]
-size = Vector2(398.367, 398.448)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_evwe5"]
-size = Vector2(532.577, 431.964)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_xq83h"]
-size = Vector2(357.644, 367.265)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_1fm0i"]
-size = Vector2(318.769, 388.986)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_3ol52"]
-size = Vector2(245, 1284.38)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_8fg61"]
-size = Vector2(1445, 265)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_6kqtc"]
-size = Vector2(540.351, 439.778)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_5lgu8"]
-size = Vector2(138, 99)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_t2jim"]
-size = Vector2(141, 79)
-
 [sub_resource type="CircleShape2D" id="CircleShape2D_6kqtc"]
+radius = 89.0225
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_an7kh"]
 diffuse_texture = ExtResource("15_64t7d")
@@ -84,13 +57,29 @@ fill_to = Vector2(0.853211, 0.149083)
 
 [node name="testMap" type="Node2D"]
 
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="Marker2D" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-990, -1006)
+
+[node name="Marker2D2" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(873, -1015)
+
+[node name="Marker2D4" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(862, 940)
+
+[node name="Marker2D3" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-955, 926)
+
 [node name="map" type="Node2D" parent="."]
+y_sort_enabled = true
 
 [node name="spacebg" type="TextureRect" parent="map"]
-offset_left = -1604.0
-offset_top = -1548.0
-offset_right = 1633.0
-offset_bottom = 1435.0
+z_index = -10
+offset_left = -1612.0
+offset_top = -1574.0
+offset_right = 1625.0
+offset_bottom = 1409.0
 scale = Vector2(3, 3)
 pivot_offset = Vector2(1608, 1537.67)
 texture = ExtResource("2_30vaj")
@@ -180,947 +169,77 @@ texture = ExtResource("4_64t7d")
 stretch_mode = 1
 
 [node name="TileMapLayer" type="TileMapLayer" parent="map"]
+z_index = -9
 scale = Vector2(0.2, 0.2)
-tile_map_data = PackedByteArray("AAABAAEAAAAAAAAAAAABAAAAAAAAAAAAAAABAP//AAAAAAAAAAABAP7/AAAAAAAAAAABAP3/AAAAAAAAAAABAPz/AAAAAAAAAAABAPv/AAAAAAAAAAABAPr/AAAAAAAAAAABAPn/AAAAAAAAAAD8/wMAAAAAAAAAAAD8/wIAAAAAAAAAAAD8/wEAAAAAAAAAAAD8/wAAAAAAAAAAAAD8////AAAAAAAAAAD8//7/AAAAAAAAAAD8//3/AAAAAAAAAAD8//z/AAAAAAAAAAD8//v/AAAAAAAAAAD8//r/AAAAAAAAAAD8//n/AAAAAAAAAAD9//n/AAAAAAAAAAD9//r/AAAAAAAAAAD9//v/AAAAAAAAAAD9//z/AAAAAAAAAAD9//3/AAAAAAAAAAD9//7/AAAAAAAAAAD9////AAAAAAAAAAD9/wAAAAAAAAAAAAD9/wEAAAAAAAAAAAD9/wIAAAAAAAAAAAD9/wMAAAAAAAAAAAD+/wMAAAAAAAAAAAD+/wIAAAAAAAAAAAD+/wEAAAAAAAAAAAD+/wAAAAAAAAAAAAD+////AAAAAAAAAAD+//7/AAAAAAAAAAD+//3/AAAAAAAAAAD+//z/AAAAAAAAAAD+//v/AAAAAAAAAAD+//r/AAAAAAAAAAD+//n/AAAAAAAAAAD///n/AAAAAAAAAAD///r/AAAAAAAAAAD///v/AAAAAAAAAAD///z/AAAAAAAAAAD///3/AAAAAAAAAAD///7/AAAAAAAAAAD/////AAAAAAAAAAD//wAAAAAAAAAAAAD//wEAAAAAAAAAAAD//wIAAAAAAAAAAAD//wMAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//AAAAAAAAAAAAAP7/AAAAAAAAAAAAAP3/AAAAAAAAAAAAAPz/AAAAAAAAAAAAAPv/AAAAAAAAAAAAAPr/AAAAAAAAAAAAAPn/AAAAAAAAAAABAAIAAAAAAAAAAAABAAMAAAAAAAAAAAACAAMAAAAAAAAAAAACAAIAAAAAAAAAAAACAAEAAAAAAAAAAAACAAAAAAAAAAAAAAACAP//AAAAAAAAAAACAP7/AAAAAAAAAAACAP3/AAAAAAAAAAACAPz/AAAAAAAAAAACAPv/AAAAAAAAAAACAPr/AAAAAAAAAAACAPn/AAAAAAAAAAADAPn/AAAAAAAAAAADAPr/AAAAAAAAAAADAPv/AAAAAAAAAAADAPz/AAAAAAAAAAADAP3/AAAAAAAAAAADAP7/AAAAAAAAAAADAP//AAAAAAAAAAADAAAAAAAAAAAAAAADAAEAAAAAAAAAAAADAAIAAAAAAAAAAAADAAMAAAAAAAAAAAAEAAMAAAAAAAAAAAAEAAIAAAAAAAAAAAAEAAEAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAP//AAAAAAAAAAAEAP7/AAAAAAAAAAAEAP3/AAAAAAAAAAAEAPz/AAAAAAAAAAAEAPv/AAAAAAAAAAAEAPr/AAAAAAAAAAAEAPn/AAAAAAAAAAA=")
+tile_map_data = PackedByteArray("AAABAAEAAAAAAAAAAAABAAAAAAAAAAAAAAABAP//AAAAAAAAAAABAP7/AAAAAAAAAAABAP3/AAAAAAAAAAABAPz/AAAAAAAAAAABAPv/AAAAAAAAAAABAPr/AAAAAAAAAAD8/wMAAAAAAAAAAAD8/wIAAAAAAAAAAAD8/wEAAAAAAAAAAAD8/wAAAAAAAAAAAAD8////AAAAAAAAAAD8//7/AAAAAAAAAAD8//3/AAAAAAAAAAD8//z/AAAAAAAAAAD8//v/AAAAAAAAAAD8//r/AAAAAAAAAAD9//r/AAAAAAAAAAD9//v/AAAAAAAAAAD9//z/AAAAAAAAAAD9//3/AAAAAAAAAAD9//7/AAAAAAAAAAD9////AAAAAAAAAAD9/wAAAAAAAAAAAAD9/wEAAAAAAAAAAAD9/wIAAAAAAAAAAAD9/wMAAAAAAAAAAAD+/wMAAAAAAAAAAAD+/wIAAAAAAAAAAAD+/wEAAAAAAAAAAAD+/wAAAAAAAAAAAAD+////AAAAAAAAAAD+//7/AAAAAAAAAAD+//3/AAAAAAAAAAD+//z/AAAAAAAAAAD+//v/AAAAAAAAAAD+//r/AAAAAAAAAAD///r/AAAAAAAAAAD///v/AAAAAAAAAAD///z/AAAAAAAAAAD///3/AAAAAAAAAAD///7/AAAAAAAAAAD/////AAAAAAAAAAD//wAAAAAAAAAAAAD//wEAAAAAAAAAAAD//wIAAAAAAAAAAAD//wMAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//AAAAAAAAAAAAAP7/AAAAAAAAAAAAAP3/AAAAAAAAAAAAAPz/AAAAAAAAAAAAAPv/AAAAAAAAAAAAAPr/AAAAAAAAAAABAAIAAAAAAAAAAAABAAMAAAAAAAAAAAACAAMAAAAAAAAAAAACAAIAAAAAAAAAAAACAAEAAAAAAAAAAAACAAAAAAAAAAAAAAACAP//AAAAAAAAAAACAP7/AAAAAAAAAAACAP3/AAAAAAAAAAACAPz/AAAAAAAAAAACAPv/AAAAAAAAAAACAPr/AAAAAAAAAAADAPr/AAAAAAAAAAADAPv/AAAAAAAAAAADAPz/AAAAAAAAAAADAP3/AAAAAAAAAAADAP7/AAAAAAAAAAADAP//AAAAAAAAAAADAAAAAAAAAAAAAAADAAEAAAAAAAAAAAADAAIAAAAAAAAAAAADAAMAAAAAAAAAAAAEAAMAAAAAAAAAAAAEAAIAAAAAAAAAAAAEAAEAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAP//AAAAAAAAAAAEAP7/AAAAAAAAAAAEAP3/AAAAAAAAAAAEAPz/AAAAAAAAAAAEAPv/AAAAAAAAAAAEAPr/AAAAAAAAAAD7//r/AAAAAAAAAAD7//v/AAAAAAAAAAD7//z/AAAAAAAAAAD7//3/AAAAAAAAAAD7//7/AAAAAAAAAAD7////AAAAAAAAAAD7/wAAAAAAAAAAAAD7/wEAAAAAAAAAAAD7/wIAAAAAAAAAAAD7/wMAAAAAAAAAAAD7/wQAAAAAAAAAAAD8/wQAAAAAAAAAAAD9/wQAAAAAAAAAAAD+/wQAAAAAAAAAAAD//wQAAAAAAAAAAAAAAAQAAAAAAAAAAAABAAQAAAAAAAAAAAACAAQAAAAAAAAAAAADAAQAAAAAAAAAAAAEAAQAAAAAAAAAAAAEAAUAAAAAAAAAAAADAAUAAAAAAAAAAAACAAUAAAAAAAAAAAABAAUAAAAAAAAAAAAAAAUAAAAAAAAAAAD//wUAAAAAAAAAAAD+/wUAAAAAAAAAAAD9/wUAAAAAAAAAAAD8/wUAAAAAAAAAAAD7/wUAAAAAAAAAAAA=")
 tile_set = SubResource("TileSet_poxww")
 
-[node name="SpawnPoints" type="Node2D" parent="map"]
-
-[node name="Marker2D" type="Marker2D" parent="map/SpawnPoints"]
-position = Vector2(-778, 555)
-
-[node name="Marker2D2" type="Marker2D" parent="map/SpawnPoints"]
-position = Vector2(-785, -812)
-
-[node name="Marker2D4" type="Marker2D" parent="map/SpawnPoints"]
-position = Vector2(1124, 553)
-
-[node name="Marker2D3" type="Marker2D" parent="map/SpawnPoints"]
-position = Vector2(1113, -836)
-
 [node name="objs" type="Node2D" parent="map"]
+y_sort_enabled = true
 
 [node name="farms" type="Node2D" parent="map/objs"]
 y_sort_enabled = true
 
-[node name="evileye" type="Node2D" parent="map/objs/farms"]
-y_sort_enabled = true
-position = Vector2(48, -619)
+[node name="evileye2" parent="map/objs/farms" instance=ExtResource("14_1wagi")]
+position = Vector2(-951, -981)
 
-[node name="signs" type="Sprite2D" parent="map/objs/farms/evileye"]
-position = Vector2(-783, -1148)
-scale = Vector2(0.185759, 0.148074)
-texture = ExtResource("10_30vaj")
+[node name="spriteYsortOffset" parent="map/objs/farms/evileye2" index="3"]
+position = Vector2(-3, 434)
 
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/signs"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/signs/StaticBody2D"]
-position = Vector2(-26.9165, 64.1558)
-shape = SubResource("RectangleShape2D_qpo6k")
-
-[node name="evilEye" type="Sprite2D" parent="map/objs/farms/evileye"]
-position = Vector2(-783, -457)
-scale = Vector2(0.25724, 0.255946)
+[node name="entranceSprite" parent="map/objs/farms/evileye2/spriteYsortOffset" index="0"]
+position = Vector2(-5, -68)
 texture = ExtResource("5_8d86g")
 
-[node name="entrance" type="Area2D" parent="map/objs/farms/evileye/evilEye"]
-scale = Vector2(1, 1)
+[node name="radioHut2" parent="map/objs/farms" instance=ExtResource("14_1wagi")]
+position = Vector2(910, -979)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/evilEye/entrance"]
-position = Vector2(33.0435, 205.982)
-scale = Vector2(1, 1)
-shape = SubResource("RectangleShape2D_evwe5")
+[node name="spriteYsortOffset" parent="map/objs/farms/radioHut2" index="3"]
+position = Vector2(-1, 448)
 
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/evilEye"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/evilEye/StaticBody2D"]
-position = Vector2(-415.953, 171.911)
-shape = SubResource("RectangleShape2D_xq83h")
-
-[node name="StaticBody2D2" type="StaticBody2D" parent="map/objs/farms/evileye/evilEye"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/evilEye/StaticBody2D2"]
-position = Vector2(466.492, 184.493)
-shape = SubResource("RectangleShape2D_1fm0i")
-
-[node name="fences" type="Node2D" parent="map/objs/farms/evileye"]
-
-[node name="vertical" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-128, -533)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/vertical"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/vertical/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical4" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-1428, -533)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/vertical4"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/vertical4/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical5" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-1428, -785)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/vertical5"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/vertical5/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical6" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-1428, -1034)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/vertical6"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/vertical6/StaticBody2D"]
-position = Vector2(17.5, 51.2495)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical2" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-128, -783)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/vertical2"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/vertical2/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical3" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-128, -1027)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/vertical3"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/vertical3/StaticBody2D"]
-position = Vector2(17.4999, 99.9995)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="horizontal" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-245, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/horizontal"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/horizontal/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal2" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-489, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/horizontal2"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/horizontal2/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal3" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-1058, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/horizontal3"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/horizontal3/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal4" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-1303, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/horizontal4"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/horizontal4/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal5" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-245, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/horizontal5"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/horizontal5/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal6" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-489, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/horizontal6"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/horizontal6/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal7" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-1058, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/horizontal7"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/horizontal7/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal9" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-613, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/horizontal9"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/horizontal9/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal10" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-945, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/horizontal10"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/horizontal10/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal8" type="Sprite2D" parent="map/objs/farms/evileye/fences"]
-position = Vector2(-1303, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/evileye/fences/horizontal8"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/evileye/fences/horizontal8/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="radioHut" type="Node2D" parent="map/objs/farms"]
-y_sort_enabled = true
-position = Vector2(1899, -619)
-
-[node name="signs" type="Sprite2D" parent="map/objs/farms/radioHut"]
-position = Vector2(-783, -1148)
-scale = Vector2(0.185759, 0.148074)
-texture = ExtResource("10_30vaj")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/signs"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/signs/StaticBody2D"]
-position = Vector2(-26.9165, 64.1558)
-shape = SubResource("RectangleShape2D_qpo6k")
-
-[node name="radioHut" type="Sprite2D" parent="map/objs/farms/radioHut"]
-position = Vector2(-774, -457)
-scale = Vector2(0.25724, 0.255946)
+[node name="entranceSprite" parent="map/objs/farms/radioHut2/spriteYsortOffset" index="0"]
+position = Vector2(-5, -115)
 texture = ExtResource("8_xq83h")
 
-[node name="entrance" type="Area2D" parent="map/objs/farms/radioHut/radioHut"]
-scale = Vector2(1, 1)
+[node name="squihouse" parent="map/objs/farms" instance=ExtResource("14_1wagi")]
+position = Vector2(915, 925)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/radioHut/entrance"]
-position = Vector2(33.043, 209.889)
-scale = Vector2(1, 1)
-shape = SubResource("RectangleShape2D_6kqtc")
+[node name="TileMapLayer" parent="map/objs/farms/squihouse" index="0"]
+tile_map_data = PackedByteArray("AAD+/wIAAAACAAAAAAACAAIAAAACAAAAAAADAAIAAAACAAAAAAD9/wIAAAACAAAAAAD8/wIAAAACAAAAAAAEAAIAAAACAAIAAAD7/wIAAAABAAIAAAD7/wEAAAABAAEAAAD7/wAAAAABAAEAAAD7////AAABAAEAAAD7//7/AAABAAEAAAD7//3/AAABAAAAAAD8//3/AAACAAAAAAD9//3/AAACAAAAAAD+//3/AAACAAAAAAABAP3/AAACAAAAAAACAP3/AAACAAAAAAADAP3/AAACAAAAAAAEAP3/AAACAAEAAAAEAP7/AAABAAEAAAAEAP//AAABAAEAAAAEAAAAAAABAAEAAAAEAAEAAAABAAEAAAABAAIAAAACAAAAAAD9/wAAAQAAAAAAAQD9////AQAAAAAAAQD+////AQAAAAAAAQD/////AQAAAAAAAQD+/wAAAQAAAAAAAQD//wAAAQAAAAAAAQAAAP//AQAAAAAAAQABAP//AQAAAAAAAQACAP//AQAAAAAAAQACAAAAAQAAAAAAAQABAAAAAQAAAAAAAQAAAAAAAQAAAAAAAQAAAAIAAAACAAAAAAD//wIAAAACAAAAAAA=")
 
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/radioHut"]
+[node name="entrance" parent="map/objs/farms/squihouse" index="1"]
+position = Vector2(0, -391)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/radioHut/StaticBody2D"]
-position = Vector2(-415.953, 171.911)
-shape = SubResource("RectangleShape2D_xq83h")
+[node name="spriteYsortOffset" parent="map/objs/farms/squihouse" index="3"]
+position = Vector2(430, -75)
 
-[node name="StaticBody2D2" type="StaticBody2D" parent="map/objs/farms/radioHut/radioHut"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/radioHut/StaticBody2D2"]
-position = Vector2(466.492, 184.493)
-shape = SubResource("RectangleShape2D_1fm0i")
-
-[node name="fences" type="Node2D" parent="map/objs/farms/radioHut"]
-
-[node name="vertical" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-128, -533)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/vertical"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/vertical/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical4" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-1428, -533)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/vertical4"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/vertical4/StaticBody2D"]
-position = Vector2(17.4998, -22.1875)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical5" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-1428, -785)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/vertical5"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/vertical5/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical6" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-1428, -1034)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/vertical6"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/vertical6/StaticBody2D"]
-position = Vector2(17.4998, 6.875)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical2" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-128, -783)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/vertical2"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/vertical2/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical3" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-128, -1027)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/vertical3"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/vertical3/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="horizontal" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-245, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/horizontal"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/horizontal/StaticBody2D"]
-position = Vector2(-12.5, 87.5)
-scale = Vector2(1, 1)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal2" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-489, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/horizontal2"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/horizontal2/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal3" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-1058, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/horizontal3"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/horizontal3/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal4" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-1303, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/horizontal4"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/horizontal4/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal5" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-245, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/horizontal5"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/horizontal5/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal6" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-489, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/horizontal6"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/horizontal6/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal7" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-1058, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/horizontal7"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/horizontal7/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal9" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-613, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/horizontal9"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/horizontal9/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal10" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-945, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/horizontal10"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/horizontal10/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal8" type="Sprite2D" parent="map/objs/farms/radioHut/fences"]
-position = Vector2(-1303, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/radioHut/fences/horizontal8"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/radioHut/fences/horizontal8/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="squidhouse" type="Node2D" parent="map/objs/farms"]
-y_sort_enabled = true
-position = Vector2(1899, 1304)
-
-[node name="signs" type="Sprite2D" parent="map/objs/farms/squidhouse"]
-position = Vector2(-875, -1144)
-scale = Vector2(0.185759, 0.148074)
-texture = ExtResource("10_30vaj")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/signs"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/signs/StaticBody2D"]
-position = Vector2(-26.9165, 64.1558)
-shape = SubResource("RectangleShape2D_qpo6k")
-
-[node name="signs2" type="Sprite2D" parent="map/objs/farms/squidhouse"]
-position = Vector2(-668, -1146)
-scale = Vector2(0.185759, 0.148074)
-texture = ExtResource("10_30vaj")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/signs2"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/signs2/StaticBody2D"]
-position = Vector2(-26.9165, 64.1558)
-shape = SubResource("RectangleShape2D_qpo6k")
-
-[node name="signs3" type="Sprite2D" parent="map/objs/farms/squidhouse"]
-position = Vector2(-781, -385)
-scale = Vector2(0.185759, 0.148074)
-texture = ExtResource("10_30vaj")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/signs3"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/signs3/StaticBody2D"]
-position = Vector2(-26.9165, 64.1558)
-shape = SubResource("RectangleShape2D_qpo6k")
-
-[node name="squidhouse" type="Sprite2D" parent="map/objs/farms/squidhouse"]
-position = Vector2(-397, -586)
-scale = Vector2(0.3, 0.3)
+[node name="entranceSprite" parent="map/objs/farms/squihouse/spriteYsortOffset" index="0"]
+position = Vector2(14, 244)
 texture = ExtResource("9_1fm0i")
 
-[node name="fences" type="Node2D" parent="map/objs/farms/squidhouse"]
+[node name="eviltrees2" parent="map/objs/farms" instance=ExtResource("14_1wagi")]
+position = Vector2(-948, 925)
 
-[node name="vertical" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-128, -533)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
+[node name="TileMapLayer" parent="map/objs/farms/eviltrees2" index="0"]
+tile_map_data = PackedByteArray("AAD+/wIAAAACAAAAAAACAAIAAAACAAAAAAADAAIAAAACAAAAAAD9/wIAAAACAAAAAAD8/wIAAAACAAAAAAAEAAIAAAACAAIAAAD7/wIAAAABAAIAAAD7/wEAAAABAAEAAAD7/wAAAAABAAEAAAD7////AAABAAEAAAD7//7/AAABAAEAAAD7//3/AAABAAAAAAD8//3/AAACAAAAAAD9//3/AAACAAAAAAD+//3/AAACAAAAAAABAP3/AAACAAAAAAACAP3/AAACAAAAAAADAP3/AAACAAAAAAAEAP3/AAACAAEAAAAEAP7/AAABAAEAAAAEAP//AAABAAEAAAAEAAAAAAABAAEAAAAEAAEAAAABAAEAAAABAAIAAAACAAAAAAD9/wAAAQAAAAAAAQD9////AQAAAAAAAQD+////AQAAAAAAAQD/////AQAAAAAAAQD+/wAAAQAAAAAAAQD//wAAAQAAAAAAAQAAAP//AQAAAAAAAQABAP//AQAAAAAAAQACAP//AQAAAAAAAQACAAAAAQAAAAAAAQABAAAAAQAAAAAAAQAAAAAAAQAAAAAAAQAAAAIAAAACAAAAAAD//wIAAAACAAAAAAA=")
 
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/vertical"]
+[node name="entrance" parent="map/objs/farms/eviltrees2" index="1"]
+position = Vector2(0, -389)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/vertical/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
+[node name="spriteYsortOffset" parent="map/objs/farms/eviltrees2" index="3"]
+position = Vector2(11, -5)
 
-[node name="vertical4" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-1428, -533)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/vertical4"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/vertical4/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical5" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-1428, -785)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/vertical5"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/vertical5/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical6" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-1428, -1034)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/vertical6"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/vertical6/StaticBody2D"]
-position = Vector2(17.4998, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical2" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-128, -783)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/vertical2"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/vertical2/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical3" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-128, -1027)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/vertical3"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/vertical3/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="horizontal" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-245, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/horizontal"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/horizontal/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal2" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-489, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/horizontal2"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/horizontal2/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal3" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-1058, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/horizontal3"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/horizontal3/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal4" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-1303, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/horizontal4"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/horizontal4/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal5" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-245, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/horizontal5"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/horizontal5/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal6" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-489, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/horizontal6"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/horizontal6/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal7" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-1058, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/horizontal7"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/horizontal7/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal9" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-613, -401)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/horizontal9"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/horizontal9/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal10" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-945, -400)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/horizontal10"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/horizontal10/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal8" type="Sprite2D" parent="map/objs/farms/squidhouse/fences"]
-position = Vector2(-1303, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/squidhouse/fences/horizontal8"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/fences/horizontal8/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="entrance" type="Area2D" parent="map/objs/farms/squidhouse"]
-position = Vector2(1, 19)
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/squidhouse/entrance"]
-position = Vector2(-775, -1159.5)
-shape = SubResource("RectangleShape2D_5lgu8")
-
-[node name="eviltrees" type="Node2D" parent="map/objs/farms"]
-y_sort_enabled = true
-position = Vector2(51, 1306)
-
-[node name="signs" type="Sprite2D" parent="map/objs/farms/eviltrees"]
-position = Vector2(-874, -1144)
-scale = Vector2(0.185759, 0.148074)
-texture = ExtResource("10_30vaj")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/signs"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/signs/StaticBody2D"]
-position = Vector2(-26.9165, 64.1558)
-shape = SubResource("RectangleShape2D_qpo6k")
-
-[node name="signs2" type="Sprite2D" parent="map/objs/farms/eviltrees"]
-position = Vector2(-668, -1143)
-scale = Vector2(0.185759, 0.148074)
-texture = ExtResource("10_30vaj")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/signs2"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/signs2/StaticBody2D"]
-position = Vector2(-26.9165, 64.1558)
-shape = SubResource("RectangleShape2D_qpo6k")
-
-[node name="signs3" type="Sprite2D" parent="map/objs/farms/eviltrees"]
-position = Vector2(-781, -385)
-scale = Vector2(0.185759, 0.148074)
-texture = ExtResource("10_30vaj")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/signs3"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/signs3/StaticBody2D"]
-position = Vector2(-26.9165, 64.1558)
-shape = SubResource("RectangleShape2D_qpo6k")
-
-[node name="eviltrees" type="Sprite2D" parent="map/objs/farms/eviltrees"]
-position = Vector2(-1233, -618)
-scale = Vector2(0.3, 0.3)
+[node name="entranceSprite" parent="map/objs/farms/eviltrees2/spriteYsortOffset" index="0"]
+position = Vector2(-512, 180)
 texture = ExtResource("7_qpo6k")
 
-[node name="fences" type="Node2D" parent="map/objs/farms/eviltrees"]
-
-[node name="vertical" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-128, -533)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/vertical"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/vertical/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical4" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-1428, -533)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/vertical4"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/vertical4/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical5" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-1428, -785)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/vertical5"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/vertical5/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical6" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-1428, -1034)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/vertical6"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/vertical6/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical2" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-128, -783)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/vertical2"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/vertical2/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="vertical3" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-128, -1027)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("11_uuv10")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/vertical3"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/vertical3/StaticBody2D"]
-position = Vector2(17.4999, -42.5)
-scale = Vector2(0.999999, 0.999999)
-shape = SubResource("RectangleShape2D_3ol52")
-
-[node name="horizontal" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-245, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/horizontal"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/horizontal/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal2" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-489, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/horizontal2"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/horizontal2/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal3" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-1058, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/horizontal3"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/horizontal3/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal4" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-1303, -404)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/horizontal4"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/horizontal4/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal5" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-245, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/horizontal5"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/horizontal5/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal6" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-489, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/horizontal6"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/horizontal6/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal7" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-1058, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/horizontal7"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/horizontal7/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal9" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-613, -401)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/horizontal9"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/horizontal9/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal10" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-945, -400)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/horizontal10"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/horizontal10/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="horizontal8" type="Sprite2D" parent="map/objs/farms/eviltrees/fences"]
-position = Vector2(-1303, -1152.2)
-scale = Vector2(0.2, 0.2)
-texture = ExtResource("12_64t7d")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/farms/eviltrees/fences/horizontal8"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/fences/horizontal8/StaticBody2D"]
-position = Vector2(-12.4999, 100)
-shape = SubResource("RectangleShape2D_8fg61")
-
-[node name="entrance" type="Area2D" parent="map/objs/farms/eviltrees"]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/farms/eviltrees/entrance"]
-position = Vector2(-776.5, -1141.5)
-shape = SubResource("RectangleShape2D_t2jim")
-
 [node name="teleporters" type="Node2D" parent="map/objs"]
+z_index = -1
+y_sort_enabled = true
 
-[node name="crater1_2" type="Area2D" parent="map/objs/teleporters"]
-position = Vector2(480, 214)
+[node name="crater1_2" type="Area2D" parent="map/objs/teleporters" groups=["teleporters"]]
+position = Vector2(-1484, 3)
+collision_layer = 2
+collision_mask = 3
 script = ExtResource("16_3ol52")
 id = 1
 target_id = 2
@@ -1129,12 +248,32 @@ target_id = 2
 shape = SubResource("CircleShape2D_6kqtc")
 
 [node name="craterSprite" type="Sprite2D" parent="map/objs/teleporters/crater1_2"]
-position = Vector2(-1491, -513)
 scale = Vector2(0.2, 0.204978)
 texture = SubResource("CanvasTexture_an7kh")
 
 [node name="light" type="PointLight2D" parent="map/objs/teleporters/crater1_2"]
-position = Vector2(-1489, -511)
+scale = Vector2(0.2, 0.2)
+color = Color(0.879152, 0.097766, 0.782534, 1)
+energy = 4.26
+texture = ExtResource("19_evwe5")
+height = 192.0
+
+[node name="crater2_1" type="Area2D" parent="map/objs/teleporters" groups=["teleporters"]]
+position = Vector2(1431, -3)
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("16_3ol52")
+id = 2
+target_id = 1
+
+[node name="craterSprite" type="Sprite2D" parent="map/objs/teleporters/crater2_1"]
+scale = Vector2(0.2, 0.204978)
+texture = SubResource("CanvasTexture_an7kh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/teleporters/crater2_1"]
+shape = SubResource("CircleShape2D_6kqtc")
+
+[node name="light" type="PointLight2D" parent="map/objs/teleporters/crater2_1"]
 scale = Vector2(0.2, 0.2)
 color = Color(0.879152, 0.097766, 0.782534, 1)
 energy = 4.26
@@ -1146,27 +285,32 @@ height = 192.0
 [node name="worldbounds" type="Node2D" parent="map"]
 
 [node name="up" type="StaticBody2D" parent="map/worldbounds"]
-position = Vector2(66, -1269)
+position = Vector2(155, -1636)
+rotation = 3.14159
+collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/worldbounds/up"]
 shape = SubResource("WorldBoundaryShape2D_qpo6k")
 
 [node name="down" type="StaticBody2D" parent="map/worldbounds"]
-position = Vector2(66, 1073)
+position = Vector2(61, 1646)
+collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/worldbounds/down"]
 shape = SubResource("WorldBoundaryShape2D_qpo6k")
 
 [node name="left" type="StaticBody2D" parent="map/worldbounds"]
-position = Vector2(-1603, 1073)
+position = Vector2(-1997, 1073)
 rotation = 1.5708
+collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/worldbounds/left"]
 shape = SubResource("WorldBoundaryShape2D_qpo6k")
 
 [node name="right" type="StaticBody2D" parent="map/worldbounds"]
-position = Vector2(1918, 1073)
-rotation = 1.5708
+position = Vector2(1996, 1057)
+rotation = 4.71239
+collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/worldbounds/right"]
 shape = SubResource("WorldBoundaryShape2D_qpo6k")
@@ -1185,3 +329,13 @@ shadow_color = Color(0, 0, 0, 1)
 texture = SubResource("GradientTexture2D_r8xxi")
 texture_scale = 2.0
 height = 9.0
+
+[node name="cropSpawner" parent="map" instance=ExtResource("1_3ol52")]
+
+[connection signal="body_entered" from="map/objs/teleporters/crater1_2" to="map/objs/teleporters/crater1_2" method="_on_body_entered"]
+[connection signal="body_entered" from="map/objs/teleporters/crater2_1" to="map/objs/teleporters/crater2_1" method="_on_body_entered"]
+
+[editable path="map/objs/farms/evileye2"]
+[editable path="map/objs/farms/radioHut2"]
+[editable path="map/objs/farms/squihouse"]
+[editable path="map/objs/farms/eviltrees2"]

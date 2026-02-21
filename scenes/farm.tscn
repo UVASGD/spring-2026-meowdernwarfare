@@ -1,0 +1,62 @@
+[gd_scene load_steps=8 format=4 uid="uid://cq266dyabpgab"]
+
+[ext_resource type="Script" uid="uid://dln4qov3tndy1" path="res://scenes/farm.gd" id="1_jjgid"]
+[ext_resource type="Texture2D" uid="uid://y5sgpaatsa01" path="res://assets/tilesets/spr_fencePost.png" id="1_o03py"]
+[ext_resource type="PackedScene" uid="uid://ctvx5w3xujxlg" path="res://scripts/plantable_tile.tscn" id="2_kjpqf"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kjpqf"]
+texture = ExtResource("1_o03py")
+texture_region_size = Vector2i(32, 32)
+2:2/0 = 0
+2:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-5.69553, -8.41185, -5.16978, -16, 6.57176, -16, 6.39651, -6.13364, 6.39651, 16, -6.04602, 16)
+2:2/0/physics_layer_0/polygon_1/points = PackedVector2Array(-7.27275, -2.80395, -16, -3.68019, -16, 11.0406, -5.52028, 11.0406)
+1:2/0 = 0
+1:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(-5.69553, -8.41185, -5.16978, -16, 6.57176, -16, 6.39651, -6.13364, 6.39651, 16, -6.04602, 16)
+1:2/0/physics_layer_0/polygon_1/points = PackedVector2Array(16, -1.92772, 6.92225, -3.68019, 6.39651, 11.9168, 16, 12.092)
+1:1/0 = 0
+1:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-6.04602, -16, 6.74701, -16, 6.39651, 16, -6.04602, 16)
+2:1/0 = 0
+2:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-5.69553, -8.41185, 6.39651, -7.88611, 6.39651, 16, -6.04602, 16)
+2:1/0/physics_layer_0/polygon_1/points = PackedVector2Array(-7.27275, -2.80395, -16, -3.68019, -16, 11.0406, -5.52028, 11.0406)
+2:0/0 = 0
+2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-5.69553, -8.41185, 6.39651, -7.88611, 6.39651, 16, -6.04602, 16)
+2:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(16, -3.50494, 16, 10.1643, 7.27275, 10.3396, 6.04602, -4.03068)
+2:0/0/physics_layer_0/polygon_2/points = PackedVector2Array(-7.27275, -2.80395, -16, -3.68019, -16, 11.0406, -5.52028, 11.0406)
+1:0/0 = 0
+1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-5.69553, -8.41185, 6.39651, -7.88611, 6.39651, 16, -6.04602, 16)
+1:0/0/physics_layer_0/polygon_1/points = PackedVector2Array(16, -3.50494, 16, 10.1643, 7.27275, 10.3396, 6.04602, -4.03068)
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_jjgid"]
+scenes/1/scene = ExtResource("2_kjpqf")
+
+[sub_resource type="TileSet" id="TileSet_jjgid"]
+tile_size = Vector2i(32, 32)
+physics_layer_0/collision_layer = 2
+sources/0 = SubResource("TileSetAtlasSource_kjpqf")
+sources/1 = SubResource("TileSetScenesCollectionSource_jjgid")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kjpqf"]
+size = Vector2(327, 117)
+
+[node name="farm" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_jjgid")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+scale = Vector2(5, 5)
+tile_map_data = PackedByteArray("AAD+/wIAAAACAAAAAAACAAIAAAACAAAAAAADAAIAAAACAAAAAAD9/wIAAAACAAAAAAD8/wIAAAACAAAAAAAEAAIAAAACAAIAAAD7/wIAAAABAAIAAAD7/wEAAAABAAEAAAD7/wAAAAABAAEAAAD7////AAABAAEAAAD7//7/AAABAAEAAAD7//3/AAABAAAAAAD8//3/AAACAAAAAAD9//3/AAACAAAAAAD+//3/AAACAAAAAAD///3/AAACAAAAAAAAAP3/AAACAAAAAAABAP3/AAACAAAAAAACAP3/AAACAAAAAAADAP3/AAACAAAAAAAEAP3/AAACAAEAAAAEAP7/AAABAAEAAAAEAP//AAABAAEAAAAEAAAAAAABAAEAAAAEAAEAAAABAAEAAAABAAIAAAACAAAAAAD9/wAAAQAAAAAAAQD9////AQAAAAAAAQD+////AQAAAAAAAQD/////AQAAAAAAAQD+/wAAAQAAAAAAAQD//wAAAQAAAAAAAQAAAP//AQAAAAAAAQABAP//AQAAAAAAAQACAP//AQAAAAAAAQACAAAAAQAAAAAAAQABAAAAAQAAAAAAAQAAAAAAAQAAAAAAAQA=")
+tile_set = SubResource("TileSet_jjgid")
+
+[node name="entrance" type="Area2D" parent="."]
+position = Vector2(0, 417)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="entrance"]
+shape = SubResource("RectangleShape2D_kjpqf")
+
+[node name="Spawnpoint" type="Marker2D" parent="."]
+
+[node name="spriteYsortOffset" type="Node2D" parent="."]
+
+[node name="entranceSprite" type="Sprite2D" parent="spriteYsortOffset"]
+position = Vector2(0, 415)
+scale = Vector2(0.3, 0.3)

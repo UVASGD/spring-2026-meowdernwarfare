@@ -19,6 +19,8 @@ func _ready() -> void:
 			layers.append(child)
 	_cycle()
 
+func _process(delta: float) -> void:
+	self.rotation_degrees += 1 * delta
 func _cycle() -> void:
 	while true:
 		if active.size() < max_visible and layers.size() > active.size():

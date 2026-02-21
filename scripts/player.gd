@@ -52,6 +52,10 @@ var drug_effect_rect: ColorRect = null
 signal took_damage(amount: float)
 signal died
 
+#debug 
+
+var reasonable_timer = 0.0
+var reasonable_timer_max = 1.0
 # Hero name -> Hero scene mapping
 const HERO_SCENES = {
 	"Dealer": preload("res://scenes/heroes/dealer/dealer.tscn"),
@@ -141,6 +145,12 @@ func _setup_local_ui() -> void:
 		cooldown_ui.visible = show_ui
 
 func _physics_process(delta: float) -> void:
+	reasonable_timer += delta
+	if reasonable_timer > reasonable_timer_max: #for print debug statements that dont spam console
+		if input is LocalInput:
+			print(self.global_position)
+		reasonable_timer = 0.0
+
 	if input == null:
 		return
 	
@@ -162,6 +172,8 @@ func _physics_process(delta: float) -> void:
 	
 	if input is LocalInput:
 		input.end_frame()
+		
+
 
 func _update_timers(delta: float) -> void:
 	if dash_timer > 0:
