@@ -237,6 +237,7 @@ func _start_dash() -> void:
 
 func _on_hero_died() -> void:
 	died.emit()
+	enter_spectate_mode()
 
 func _on_hero_health_changed(current: float, max_hp: float) -> void:
 	_update_health_bar()
@@ -404,4 +405,5 @@ func enter_spectate_mode() -> void:
 func disable_player_collision_area() -> void:
 	var playerCollision : CollisionShape2D = get_node_or_null("CollisionShape2D")
 	if playerCollision:
-		playerCollision.disabled = true
+		playerCollision.set_deferred("disabled",true); # per godot documentation idk why
+		
