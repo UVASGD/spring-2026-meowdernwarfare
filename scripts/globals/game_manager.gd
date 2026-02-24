@@ -150,6 +150,7 @@ func spawn_ai_player(id: int, target: Node2D = null) -> Player:
 	
 	var player = player_scene.instantiate() as Player
 	player.player_id = id
+	player.is_ai_player = true
 	
 	var ai_input = DummyInput.new(player)
 	if target:

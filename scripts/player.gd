@@ -57,7 +57,11 @@ var held_crop: Crop = null
 var drop_cd: float = 0.0
 const DROP_CD_TIME := 0.5
 var held_sprite: Sprite2D = null
-var farm = null  # assigned Farm node
+var farm = null
+
+# Meta states
+var in_spectate_mode: bool = false
+var is_ai_player: bool = false
 
 signal took_damage(amount: float)
 signal died
@@ -157,17 +161,17 @@ func _setup_local_ui() -> void:
 		_create_tooltip()
 
 func _physics_process(delta: float) -> void:
-	#reasonable_timer += delta
-	#if reasonable_timer > reasonable_timer_max: #for print debug statements that dont spam console
-		#if input is LocalInput:
-			##print(self.global_position)
-			#print()
-		#reasonable_timer = 0.0
-
 	if input == null:
 		return
 	
 	input.update(delta)
+	
+	if in_spectate_mode:
+		_handle_spectate_movement(delta)
+		move_and_slide()
+		if input is LocalInput:
+			input.end_frame()
+		return
 	
 	_update_timers(delta)
 	_handle_movement(delta)
@@ -177,11 +181,9 @@ func _physics_process(delta: float) -> void:
 	
 	move_and_slide()
 	
-	# Keep health bar above player
 	if health_bar:
 		health_bar.global_position = global_position + Vector2(-25, -60)
 	
-	# Update cooldown UI
 	_update_cooldown_ui()
 	_update_tooltip()
 	
@@ -237,7 +239,7 @@ func _handle_rotation(delta: float) -> void:
 
 func _handle_actions() -> void:
 	# Dash
-	if input.dash_just and dash_cd_timer <= 0 and not is_dashing:
+	if input.dash_just and dash_cd_timer <= 0 and not is_dashing and not is_dead():
 		_start_dash()
 	
 	if hero == null:
@@ -262,6 +264,7 @@ func _start_dash() -> void:
 
 func _on_hero_died() -> void:
 	died.emit()
+	enter_spectate_mode()
 
 func _on_hero_health_changed(current: float, max_hp: float) -> void:
 	_update_health_bar()
@@ -280,7 +283,7 @@ func is_moving() -> bool:
 	return input != null and input.move_input.length() > 0.1
 
 func take_damage(amount: float, attacker: Player = null) -> void:
-	# Invulnerable during dash
+	if is_dead() or in_spectate_mode: return
 	if is_dashing:
 		on_bullet_dodged()
 		return
@@ -433,7 +436,7 @@ func _setup_crop_area() -> void:
 	#print("[PLAYER] _setup_crop_area: player_", player_id, " crop pickup area ready (radius=40, mask=0, layer=0)")
 
 func _on_crop_area_entered(area: Area2D) -> void:
-	#print("[PLAYER] _on_crop_area_entered: player_", player_id, " area=", area, " is_Crop=", area is Crop, " held=", held_crop, " drop_cd=", drop_cd, " is_planted=", area.is_planted if area is Crop else "N/A")
+	if in_spectate_mode: return
 	if area is Crop and held_crop == null and drop_cd <= 0 and not area.is_planted:
 		pickup_world_crop(area)
 
@@ -600,3 +603,151 @@ func _end_drug_effect() -> void:
 		drug_effect_layer.queue_free()
 		drug_effect_layer = null
 		drug_effect_rect = null
+		
+
+# ---------- Spectate Mode ----------
+
+const SPECTATE_SPEED := 500.0
+var _elim_ui: CanvasLayer = null
+
+func _handle_spectate_movement(delta: float) -> void:
+	var move = input.move_input
+	if move.length() > 0.1:
+		velocity = move * SPECTATE_SPEED
+	else:
+		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+
+func enter_spectate_mode() -> void:
+	if is_ai_player or in_spectate_mode:
+		return
+	in_spectate_mode = true
+	
+	if cooldown_ui:
+		cooldown_ui.visible = false
+	if health_bar:
+		health_bar.visible = false
+	if tooltip_layer:
+		tooltip_layer.visible = false
+	
+	# Drop any held crop back into the world
+	if held_crop:
+		drop_held_crop()
+	
+	# Disable crop pickup area
+	if _crop_area:
+		_crop_area.monitoring = false
+	
+	_disable_collision()
+	
+	if hero:
+		hero.enter_spectate_mode()
+	
+	if _is_local_player():
+		_show_elimination_ui()
+
+func _disable_collision() -> void:
+	var col: CollisionShape2D = get_node_or_null("CollisionShape2D")
+	if col:
+		col.set_deferred("disabled", true)
+
+func _is_local_player() -> bool:
+	if input is LocalInput:
+		return player_id == 0
+	elif input is NetworkInput:
+		return input.is_local
+	return false
+
+# --- Elimination UI ---
+
+func _show_elimination_ui() -> void:
+	_elim_ui = CanvasLayer.new()
+	_elim_ui.layer = 90
+	add_child(_elim_ui)
+	
+	var bg = ColorRect.new()
+	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+	bg.color = Color(0, 0, 0, 0.6)
+	bg.mouse_filter = Control.MOUSE_FILTER_STOP
+	_elim_ui.add_child(bg)
+	
+	var center = VBoxContainer.new()
+	center.set_anchors_preset(Control.PRESET_CENTER)
+	center.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	center.grow_vertical = Control.GROW_DIRECTION_BOTH
+	center.alignment = BoxContainer.ALIGNMENT_CENTER
+	center.custom_minimum_size = Vector2(360, 0)
+	center.add_theme_constant_override("separation", 16)
+	bg.add_child(center)
+	
+	# Title
+	var title = Label.new()
+	title.text = "ELIMINATED"
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.add_theme_font_size_override("font_size", 40)
+	title.add_theme_color_override("font_color", Color(1, 0.3, 0.3))
+	center.add_child(title)
+	
+	# Leaderboard
+	var lb_panel = PanelContainer.new()
+	center.add_child(lb_panel)
+	var lb_box = VBoxContainer.new()
+	lb_box.add_theme_constant_override("separation", 6)
+	lb_panel.add_child(lb_box)
+	
+	var lb_title = Label.new()
+	lb_title.text = "Leaderboard"
+	lb_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lb_title.add_theme_font_size_override("font_size", 22)
+	lb_box.add_child(lb_title)
+	
+	var standings = _get_standings()
+	for i in standings.size():
+		var entry = Label.new()
+		entry.text = "%d. %s  -  %d crops" % [i + 1, standings[i]["name"], standings[i]["crops"]]
+		entry.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lb_box.add_child(entry)
+	
+	# Buttons
+	var btn_row = HBoxContainer.new()
+	btn_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	btn_row.add_theme_constant_override("separation", 24)
+	center.add_child(btn_row)
+	
+	var spectate_btn = Button.new()
+	spectate_btn.text = "Spectate"
+	spectate_btn.custom_minimum_size = Vector2(140, 44)
+	spectate_btn.pressed.connect(_on_spectate_pressed)
+	btn_row.add_child(spectate_btn)
+	
+	var quit_btn = Button.new()
+	quit_btn.text = "Quit"
+	quit_btn.custom_minimum_size = Vector2(140, 44)
+	quit_btn.pressed.connect(_on_quit_pressed)
+	btn_row.add_child(quit_btn)
+
+func _get_standings() -> Array:
+	var gm = GameManager.instance
+	if gm == null:
+		return []
+	var list: Array = []
+	for p in gm.players:
+		if not is_instance_valid(p):
+			continue
+		var pname = "Player %d" % p.player_id
+		if gm.player_data.has(p.player_id):
+			pname = gm.player_data[p.player_id].get("username", pname)
+		list.append({"name": pname, "crops": p.crop_count, "alive": not p.in_spectate_mode})
+	list.sort_custom(func(a, b):
+		if a["alive"] != b["alive"]:
+			return a["alive"]
+		return a["crops"] > b["crops"]
+	)
+	return list
+
+func _on_spectate_pressed() -> void:
+	if _elim_ui:
+		_elim_ui.queue_free()
+		_elim_ui = null
+
+func _on_quit_pressed() -> void:
+	GameData.change_scene("res://scenes/ui/main_menu.tscn")
