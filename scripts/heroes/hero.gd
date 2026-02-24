@@ -143,7 +143,7 @@ func get_health_percent() -> float:
 # ABILITIES
 
 func can_shoot() -> bool:
-	return shoot_cd <= 0 and reload_cd <= 0 and ammo > 0
+	return shoot_cd <= 0 and reload_cd <= 0 and ammo > 0 and not is_dead
 
 func can_ability1() -> bool:
 	return ability1_cd <= 0
@@ -165,14 +165,14 @@ func reload() -> void:
 	_do_reload()
 
 func ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
-	if not can_ability1():
+	if not can_ability1() or is_dead:
 		return
 	ability1_cd = ability1_cooldown
 	ability1_anim_timer = ability1_anim_duration
 	_do_ability1(aim_dir, aim_pos)
 
 func ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
-	if not can_ability2():
+	if not can_ability2() or (is_dead):
 		return
 	ult_points = 0
 	ult_changed.emit(ult_points, max_ult_points)
@@ -206,3 +206,16 @@ func get_ult_percent() -> float:
 
 func get_hero_name() -> String:
 	return "Hero"
+
+# Called from player class. Removes ability to interact with world. 
+# The following is disabled when a character enters the spectate state
+# From Hero:		Sprite visibility
+# added not is_dead to can_shoot() requirement. Player is_dead should be set externally
+func enter_spectate_mode() -> void:
+	disable_sprite()
+
+
+func disable_sprite() -> void:
+	var hero_sprite = get_node_or_null("Sprite")
+	if hero_sprite and hero_sprite is AnimatedSprite2D:
+		hero_sprite.visible = false 

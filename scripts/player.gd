@@ -49,6 +49,11 @@ var drug_timer: float = 0.0
 var drug_effect_layer: CanvasLayer = null
 var drug_effect_rect: ColorRect = null
 
+# Meta States
+var in_spectate_mode : bool = false 
+var is_ai_player : bool = false # Set by game_manager on spawn to denote an ai_player
+
+
 signal took_damage(amount: float)
 signal died
 
@@ -98,6 +103,7 @@ func _ready() -> void:
 	
 	# Enable camera/UI only for local human players
 	_setup_local_ui()
+	
 
 func set_hero(hero_name: String) -> void:
 	if hero:
@@ -207,7 +213,7 @@ func _handle_rotation(delta: float) -> void:
 
 func _handle_actions() -> void:
 	# Dash
-	if input.dash_just and dash_cd_timer <= 0 and not is_dashing:
+	if input.dash_just and dash_cd_timer <= 0 and not is_dashing and not is_dead():
 		_start_dash()
 	
 	if hero == null:
@@ -231,6 +237,7 @@ func _start_dash() -> void:
 
 func _on_hero_died() -> void:
 	died.emit()
+	enter_spectate_mode()
 
 func _on_hero_health_changed(current: float, max_hp: float) -> void:
 	_update_health_bar()
@@ -249,6 +256,7 @@ func is_moving() -> bool:
 	return input != null and input.move_input.length() > 0.1
 
 func take_damage(amount: float, attacker: Player = null) -> void:
+	if is_dead(): return
 	# Invulnerable during dash
 	if is_dashing:
 		on_bullet_dodged()
@@ -368,3 +376,34 @@ func _end_drug_effect() -> void:
 		drug_effect_layer.queue_free()
 		drug_effect_layer = null
 		drug_effect_rect = null
+		
+		
+# ---------- Spectate Mode ----------
+# The following is done while in spectate mode
+# disbled visability for cooldown_ui, health_bar, health_bar_fill
+# player collision is disabled as to not get hit by bullets
+# tells the hero subclass to enter spectate mode
+func enter_spectate_mode() -> void:
+	# ensure player is not already in spectate mode
+	# for now check for ai_player in spectate
+	if is_ai_player: return
+	if in_spectate_mode: return
+	#if not is_dead
+	in_spectate_mode = true
+	
+	# disable all the ui for player
+	cooldown_ui.visible = false
+	health_bar.visible = false
+	health_bar_fill.visible = false
+	disable_player_collision_area()
+	if hero:
+		# hero.is_dead = true
+		hero.enter_spectate_mode()
+
+# diable the collision shape for player
+# double chekc to make sure can walk through walls?
+func disable_player_collision_area() -> void:
+	var playerCollision : CollisionShape2D = get_node_or_null("CollisionShape2D")
+	if playerCollision:
+		playerCollision.set_deferred("disabled",true); # per godot documentation idk why
+		
