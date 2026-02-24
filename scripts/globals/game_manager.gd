@@ -13,6 +13,7 @@ enum Mode { LOCAL, ONLINE_HOST, ONLINE_CLIENT }
 @export var spawn_points: Array[Marker2D] = []
 
 var players: Array[Player] = []
+var eliminated: Array[Player] = []
 var entity_parent: Node = null
 
 static var instance: GameManager = null
@@ -138,6 +139,7 @@ func spawn_local_player(id: int) -> Player:
 	player.global_position = spawn_pos
 	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
 	players.append(player)
+	player.died.connect(func(): _on_player_died(player))
 	
 	return player
 
@@ -159,8 +161,11 @@ func spawn_ai_player(id: int, target: Node2D = null) -> Player:
 	player.global_position = spawn_pos
 	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
 	players.append(player)
+	player.died.connect(func(): _on_player_died(player))
 	
 	return player
+
+const RESPAWN_DELAY := 3.0
 
 func respawn_player(player: Player) -> void:
 	if player == null or not is_instance_valid(player):
@@ -172,11 +177,21 @@ func respawn_player(player: Player) -> void:
 		player.hero.is_dead = false
 		player.hero.health_changed.emit(player.hero.health, player.hero.max_health)
 
+func _on_player_died(player: Player) -> void:
+	if player.crop_count > 0:
+		get_tree().create_timer(RESPAWN_DELAY).timeout.connect(
+			func(): respawn_player(player)
+		)
+	else:
+		eliminated.append(player)
+		print("Player ", player.player_id, " eliminated (0 crops)")
+
 func clear_players() -> void:
 	for p in players:
 		if is_instance_valid(p):
 			p.queue_free()
 	players.clear()
+	eliminated.clear()
 	used_spawns.clear()
 
 func get_player(id: int) -> Player:
@@ -436,6 +451,7 @@ func _spawn_net_player(id: int, local: bool) -> Player:
 	player.global_position = spawn_pos
 	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
 	players.append(player)
+	player.died.connect(func(): _on_player_died(player))
 	
 	var hero_name = get_player_hero(id)
 	if hero_name:

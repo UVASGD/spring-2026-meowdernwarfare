@@ -9,21 +9,31 @@ const MAP_SCENES := {
 	"testArena": "res://scenes/maps/maze_map.tscn",
 	"Moon": "res://scenes/maps/moon.tscn",
 }
-@export var DEFAULT_MAP:String = "testArena"
+const CROP_SCENES := {
+	"SpeedSprout": preload("res://scenes/crops/speed_sprout.tscn"),
+	"IronRoot": preload("res://scenes/crops/iron_root.tscn"),
+	"BlastBerry": preload("res://scenes/crops/blast_berry.tscn"),
+}
+@export var DEFAULT_MAP: String = "testArena"
 
 @onready var gm: GameManager = $GameManager
 var map_node: Node = null
+var farms: Array = []
 
 func _ready() -> void:
 	var map_name = GameData.pending_settings.get("map", DEFAULT_MAP)
 	_load_map(map_name)
 	_setup_spawn_points()
 	_setup_entity_layer()
+	_collect_farms()
 	
 	if GameData.is_online_game:
 		_start_from_lobby()
 	else:
 		start_solo_vs_ai()
+	
+	_assign_farms()
+	_plant_starter_crops()
 
 func _load_map(map_name: String) -> void:
 	var path = MAP_SCENES.get(map_name, MAP_SCENES[DEFAULT_MAP])
@@ -73,6 +83,44 @@ func _find_ysort_container(node: Node) -> Node2D:
 			var deeper = _find_ysort_container(child)
 			return deeper if deeper else child
 	return null
+
+func _collect_farms() -> void:
+	farms = get_tree().get_nodes_in_group("farms")
+
+func _assign_farms() -> void:
+	for i in range(mini(gm.players.size(), farms.size())):
+		farms[i].assign_owner(gm.players[i])
+	print("Assigned ", mini(gm.players.size(), farms.size()), " farms")
+
+func _plant_starter_crops() -> void:
+	var starters = GameData.get_active_starters()
+	if starters.is_empty():
+		return
+	
+	for player in gm.players:
+		if player.farm == null:
+			continue
+		var tiles = _get_empty_tiles(player.farm)
+		for j in range(mini(starters.size(), tiles.size())):
+			var scene = CROP_SCENES.get(starters[j])
+			if scene == null:
+				continue
+			var crop = scene.instantiate() as Crop
+			crop.stage = 2
+			crop._setup()
+			player.farm.plant_crop(crop, tiles[j])
+			player.crop_count += 1
+	print("Planted starter crops: ", starters)
+
+func _get_empty_tiles(f) -> Array:
+	var tiles: Array = []
+	var tilemap = f.get_node_or_null("TileMapLayer")
+	if tilemap == null:
+		return tiles
+	for child in tilemap.get_children():
+		if child.has_method("plant") and child.planted_crop == null:
+			tiles.append(child)
+	return tiles
 
 func _start_from_lobby() -> void:
 	gm.start_online_game(GameData.pending_players, GameData.pending_settings)

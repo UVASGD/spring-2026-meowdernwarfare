@@ -3,6 +3,8 @@ extends Control
 const SERVER_URL = "wss://server-still-cherry-1856.fly.dev"
 const HEROES = ["Dealer", "Burple", "Alien", "Xyler", "Fergus", "LoanShark"]
 const MAPS = ["testArena", "Moon"]
+const CROPS = ["SpeedSprout", "IronRoot", "BlastBerry"]
+const MAX_STARTERS := 3
 
 @onready var code_label: Label = $VBox/CodeLabel
 @onready var player_list: VBoxContainer = $VBox/PlayerList
@@ -19,6 +21,8 @@ const MAPS = ["testArena", "Moon"]
 
 var player_rows: Dictionary = {}
 var _username: String = ""
+var crop_buttons: Dictionary = {}
+var selected_crops: Array[String] = []
 
 func _ready() -> void:
 	_load_username()
@@ -34,6 +38,9 @@ func _ready() -> void:
 	for map in MAPS:
 		map_selector.add_item(map)
 	map_selector.item_selected.connect(_on_map_selected)
+	
+	# Setup crop selector
+	_setup_crop_selector()
 	
 	# Buttons
 	start_btn.pressed.connect(_on_start)
@@ -252,6 +259,8 @@ func _on_kicked() -> void:
 
 func _on_game_started(players: Array, settings: Dictionary) -> void:
 	GameData.set_online_game(players, settings)
+	if not selected_crops.is_empty():
+		GameData.pending_starter_crops = selected_crops.duplicate()
 	GameData.change_scene("res://scenes/game.tscn")
 
 func _on_disconnected() -> void:
@@ -265,3 +274,50 @@ func _on_join_btn_pressed() -> void:
 
 func _on_back_btn_pressed() -> void:
 	GameData.change_scene("res://scenes/ui/main_menu.tscn")
+
+# --- CROP SELECTOR ---
+
+func _setup_crop_selector() -> void:
+	selected_crops = GameData.starter_crops.duplicate()
+	
+	var vbox = $VBox
+	var container = VBoxContainer.new()
+	container.name = "CropSelector"
+	
+	var title = Label.new()
+	title.text = "Starter Crops (%d/%d)" % [selected_crops.size(), MAX_STARTERS]
+	title.name = "CropTitle"
+	container.add_child(title)
+	
+	var grid = HBoxContainer.new()
+	grid.name = "CropGrid"
+	for crop_name in CROPS:
+		var btn = Button.new()
+		btn.text = crop_name
+		btn.toggle_mode = true
+		btn.button_pressed = crop_name in selected_crops
+		btn.toggled.connect(func(pressed): _on_crop_toggled(crop_name, pressed))
+		grid.add_child(btn)
+		crop_buttons[crop_name] = btn
+	container.add_child(grid)
+	
+	# Insert before ButtonRow
+	var btn_row = $VBox/ButtonRow
+	vbox.add_child(container)
+	vbox.move_child(container, btn_row.get_index())
+
+func _on_crop_toggled(crop_name: String, pressed: bool) -> void:
+	if pressed:
+		if selected_crops.size() >= MAX_STARTERS:
+			crop_buttons[crop_name].button_pressed = false
+			return
+		if crop_name not in selected_crops:
+			selected_crops.append(crop_name)
+	else:
+		selected_crops.erase(crop_name)
+	
+	var title = $VBox/CropSelector/CropTitle
+	if title:
+		title.text = "Starter Crops (%d/%d)" % [selected_crops.size(), MAX_STARTERS]
+	
+	GameData.pending_starter_crops = selected_crops.duplicate()
