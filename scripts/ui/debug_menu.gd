@@ -65,6 +65,7 @@ func _build_ui() -> void:
 	_add_button("Clear Farm", _on_clear_farm)
 	_add_button("Charge Ult", _on_charge_ult)
 	_add_button("Reset Cooldowns", _on_reset_cooldowns)
+	_add_button("clear All Farms", _on_clear_all_farms)
 
 	_add_separator()
 	var crop_label = Label.new()
@@ -119,6 +120,18 @@ func _on_clear_farm() -> void:
 		farm.remove_crop(crop)
 		crop.queue_free()
 	p.crop_count = 0
+
+func _on_clear_all_farms() -> void:
+	for p in GameManager.instance.players:
+		
+		if p == null or p.farm == null:
+			continue
+		var farm = p.farm
+		for crop in farm.crops.duplicate():
+			farm.remove_crop(crop)
+			crop.queue_free()
+		p.crop_count = 0
+
 
 func _on_charge_ult() -> void:
 	var p = _get_local_player()

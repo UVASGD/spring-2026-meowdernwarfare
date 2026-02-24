@@ -723,7 +723,7 @@ func _handle_spectate_movement(delta: float) -> void:
 		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
 
 func enter_spectate_mode() -> void:
-	if is_ai_player or in_spectate_mode:
+	if in_spectate_mode:
 		return
 	in_spectate_mode = true
 	
