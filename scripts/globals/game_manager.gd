@@ -166,17 +166,20 @@ func spawn_ai_player(id: int, target: Node2D = null) -> Player:
 	
 	return player
 
-const RESPAWN_DELAY := 3.0
+const RESPAWN_DELAY := 10.0
 
 func respawn_player(player: Player) -> void:
 	if player == null or not is_instance_valid(player):
 		return
 	
-	player.global_position = get_fair_respawn(player)
-	if player.hero:
-		player.hero.health = player.hero.max_health
-		player.hero.is_dead = false
-		player.hero.health_changed.emit(player.hero.health, player.hero.max_health)
+	var pos: Vector2
+	if player.farm:
+		var sp = player.farm.get_node_or_null("Spawnpoint")
+		pos = sp.global_position if sp else player.farm.global_position
+	else:
+		pos = get_fair_respawn(player)
+	
+	player.respawn_at(pos)
 
 func _on_player_died(player: Player) -> void:
 	if player.crop_count > 0:

@@ -62,6 +62,12 @@ var farm = null
 # Meta states
 var in_spectate_mode: bool = false
 var is_ai_player: bool = false
+var is_awaiting_respawn: bool = false
+var respawn_countdown: float = 0.0
+var _death_ui: CanvasLayer = null
+var _death_timer_label: Label = null
+var is_invulnerable: bool = false
+const FARM_RADIUS := 600.0
 
 signal took_damage(amount: float)
 signal died
@@ -173,6 +179,12 @@ func _physics_process(delta: float) -> void:
 			input.end_frame()
 		return
 	
+	if is_awaiting_respawn:
+		_update_death_countdown(delta)
+		if input is LocalInput:
+			input.end_frame()
+		return
+	
 	_update_timers(delta)
 	_handle_movement(delta)
 	_handle_rotation(delta)
@@ -186,6 +198,9 @@ func _physics_process(delta: float) -> void:
 	
 	_update_cooldown_ui()
 	_update_tooltip()
+	
+	if is_invulnerable:
+		_check_farm_invulnerability()
 	
 	if input is LocalInput:
 		input.end_frame()
@@ -264,7 +279,10 @@ func _start_dash() -> void:
 
 func _on_hero_died() -> void:
 	died.emit()
-	enter_spectate_mode()
+	if crop_count <= 0:
+		enter_spectate_mode()
+	else:
+		_enter_death_state()
 
 func _on_hero_health_changed(current: float, max_hp: float) -> void:
 	_update_health_bar()
@@ -283,7 +301,7 @@ func is_moving() -> bool:
 	return input != null and input.move_input.length() > 0.1
 
 func take_damage(amount: float, attacker: Player = null) -> void:
-	if is_dead() or in_spectate_mode: return
+	if is_dead() or in_spectate_mode or is_awaiting_respawn or is_invulnerable: return
 	if is_dashing:
 		on_bullet_dodged()
 		return
@@ -604,6 +622,93 @@ func _end_drug_effect() -> void:
 		drug_effect_layer = null
 		drug_effect_rect = null
 		
+
+# ---------- Death / Respawn ----------
+
+func _enter_death_state() -> void:
+	is_awaiting_respawn = true
+	respawn_countdown = 10.0
+	
+	if cooldown_ui:
+		cooldown_ui.visible = false
+	if health_bar:
+		health_bar.visible = false
+	if tooltip_layer:
+		tooltip_layer.visible = false
+	if held_crop:
+		drop_held_crop()
+	if _crop_area:
+		_crop_area.monitoring = false
+	_disable_collision()
+	if hero:
+		hero.enter_spectate_mode()
+	
+	if _is_local_player():
+		_show_death_timer_ui()
+
+func _update_death_countdown(delta: float) -> void:
+	respawn_countdown -= delta
+	if _death_timer_label:
+		var secs = ceili(max(respawn_countdown, 0.0))
+		_death_timer_label.text = "Respawning in %ds" % secs
+
+func _show_death_timer_ui() -> void:
+	_death_ui = CanvasLayer.new()
+	_death_ui.layer = 90
+	add_child(_death_ui)
+	
+	_death_timer_label = Label.new()
+	_death_timer_label.text = "Respawning in 10s"
+	_death_timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_death_timer_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_death_timer_label.set_anchors_preset(Control.PRESET_CENTER)
+	_death_timer_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	_death_timer_label.grow_vertical = Control.GROW_DIRECTION_BOTH
+	_death_timer_label.add_theme_font_size_override("font_size", 36)
+	_death_timer_label.add_theme_color_override("font_color", Color(1, 0.4, 0.4))
+	_death_ui.add_child(_death_timer_label)
+
+func respawn_at(pos: Vector2) -> void:
+	is_awaiting_respawn = false
+	respawn_countdown = 0.0
+	
+	if _death_ui:
+		_death_ui.queue_free()
+		_death_ui = null
+		_death_timer_label = null
+	
+	global_position = pos
+	
+	if hero:
+		hero.health = hero.max_health
+		hero.is_dead = false
+		hero.health_changed.emit(hero.health, hero.max_health)
+		var hero_sprite = hero.get_node_or_null("Sprite")
+		if hero_sprite:
+			hero_sprite.visible = true
+	
+	var col: CollisionShape2D = get_node_or_null("CollisionShape2D")
+	if col:
+		col.set_deferred("disabled", false)
+	
+	if _crop_area:
+		_crop_area.monitoring = true
+	
+	if _is_local_player():
+		if cooldown_ui:
+			cooldown_ui.visible = true
+	if health_bar:
+		health_bar.visible = true
+	
+	is_invulnerable = true
+	_update_health_bar()
+
+func _check_farm_invulnerability() -> void:
+	if farm == null:
+		is_invulnerable = false
+		return
+	if global_position.distance_to(farm.global_position) > FARM_RADIUS:
+		is_invulnerable = false
 
 # ---------- Spectate Mode ----------
 

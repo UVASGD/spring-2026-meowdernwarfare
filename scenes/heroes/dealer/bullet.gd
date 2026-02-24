@@ -18,18 +18,21 @@ func _physics_process(delta: float) -> void:
 	var space = get_world_2d().direct_space_state
 	var query = PhysicsRayQueryParameters2D.create(
 		global_position,
-		global_position + move_amount * 2,  # Check a bit ahead
-		2  # Collision mask for walls (layer 2)
+		global_position + move_amount * 2,
+		2
 	)
 	query.exclude = [self]
 	
 	var result = space.intersect_ray(query)
 	if result:
-		# Hit a wall
 		queue_free()
 		return
 	
 	position += move_amount
+	
+	if owner_player and owner_player.is_invulnerable and owner_player.farm:
+		if global_position.distance_to(owner_player.farm.global_position) > Player.FARM_RADIUS:
+			queue_free()
 
 func _on_body_entered(body: Node) -> void:
 	if body == owner_player:
