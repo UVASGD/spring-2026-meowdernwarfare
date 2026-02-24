@@ -16,12 +16,18 @@ const CROP_SCENES := {
 }
 @export var DEFAULT_MAP: String = "testArena"
 
+const DebugMenu = preload("res://scripts/ui/debug_menu.gd")
+
 @onready var gm: GameManager = $GameManager
 var map_node: Node = null
 var farms: Array = []
 
 func _ready() -> void:
+	var dbg = DebugMenu.new()
+	add_child(dbg)
+	
 	var map_name = GameData.pending_settings.get("map", DEFAULT_MAP)
+	var starters = GameData.get_active_starters()
 	_load_map(map_name)
 	_setup_spawn_points()
 	_setup_entity_layer()
@@ -33,7 +39,11 @@ func _ready() -> void:
 		start_solo_vs_ai()
 	
 	_assign_farms()
-	_plant_starter_crops()
+	# Scene tiles in TileMapLayer aren't instantiated until the first frame update
+	await get_tree().process_frame
+	await get_tree().process_frame
+	_collect_farms_tiles()
+	_plant_starter_crops(starters)
 
 func _load_map(map_name: String) -> void:
 	var path = MAP_SCENES.get(map_name, MAP_SCENES[DEFAULT_MAP])
@@ -87,13 +97,38 @@ func _find_ysort_container(node: Node) -> Node2D:
 func _collect_farms() -> void:
 	farms = get_tree().get_nodes_in_group("farms")
 
-func _assign_farms() -> void:
-	for i in range(mini(gm.players.size(), farms.size())):
-		farms[i].assign_owner(gm.players[i])
-	print("Assigned ", mini(gm.players.size(), farms.size()), " farms")
+func _collect_farms_tiles() -> void:
+	#print("[CROP] _collect_farms_tiles (post-frame): re-checking tile counts")
+	#for i in farms.size():
+	#	var f = farms[i]
+	#	var tilemap = f.get_node_or_null("TileMapLayer")
+	#	if tilemap:
+	#		var tile_count = 0
+	#		for child in tilemap.get_children():
+	#			if child.has_method("plant"):
+	#				tile_count += 1
+	#		print("[CROP]   farm[", i, "] '", f.name, "': ", tilemap.get_child_count(), " children, ", tile_count, " plantable tiles")
+	#	else:
+	#		print("[CROP]   farm[", i, "] '", f.name, "': no TileMapLayer")
+	pass
 
-func _plant_starter_crops() -> void:
-	var starters = GameData.get_active_starters()
+func _assign_farms() -> void:
+	var available = farms.duplicate()
+	for player in gm.players:
+		var best_farm = null
+		var best_dist := INF
+		for f in available:
+			var dist = f.global_position.distance_to(player.global_position)
+			if dist < best_dist:
+				best_dist = dist
+				best_farm = f
+		if best_farm:
+			best_farm.assign_owner(player)
+			available.erase(best_farm)
+
+func _plant_starter_crops(starters: Array[String] = []) -> void:
+	if starters.is_empty():
+		starters = GameData.get_active_starters()
 	if starters.is_empty():
 		return
 	
@@ -110,7 +145,6 @@ func _plant_starter_crops() -> void:
 			crop._setup()
 			player.farm.plant_crop(crop, tiles[j])
 			player.crop_count += 1
-	print("Planted starter crops: ", starters)
 
 func _get_empty_tiles(f) -> Array:
 	var tiles: Array = []

@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=4 format=3 uid="uid://midwqrc2tccp"]
 
-[ext_resource type="Script" path="res://scripts/crops/speed_sprout.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://cj1mv4etarwd7" path="res://scripts/crops/speed_sprout.gd" id="1_script"]
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_1"]
 size = Vector2(32, 32)

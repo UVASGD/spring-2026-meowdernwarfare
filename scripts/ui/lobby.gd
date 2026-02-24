@@ -261,6 +261,8 @@ func _on_game_started(players: Array, settings: Dictionary) -> void:
 	GameData.set_online_game(players, settings)
 	if not selected_crops.is_empty():
 		GameData.pending_starter_crops = selected_crops.duplicate()
+		GameData.starter_crops = selected_crops.duplicate()
+		GameData.save_starter_crops()
 	GameData.change_scene("res://scenes/game.tscn")
 
 func _on_disconnected() -> void:

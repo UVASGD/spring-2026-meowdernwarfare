@@ -157,11 +157,12 @@ func _setup_local_ui() -> void:
 		_create_tooltip()
 
 func _physics_process(delta: float) -> void:
-	reasonable_timer += delta
-	if reasonable_timer > reasonable_timer_max: #for print debug statements that dont spam console
-		if input is LocalInput:
-			print(self.global_position)
-		reasonable_timer = 0.0
+	#reasonable_timer += delta
+	#if reasonable_timer > reasonable_timer_max: #for print debug statements that dont spam console
+		#if input is LocalInput:
+			##print(self.global_position)
+			#print()
+		#reasonable_timer = 0.0
 
 	if input == null:
 		return
@@ -419,7 +420,7 @@ var _crop_area: Area2D = null
 func _setup_crop_area() -> void:
 	_crop_area = Area2D.new()
 	_crop_area.collision_layer = 0
-	_crop_area.collision_mask = 0
+	_crop_area.collision_mask = 16
 	_crop_area.monitoring = true
 	_crop_area.monitorable = false
 	var shape = CollisionShape2D.new()
@@ -429,8 +430,10 @@ func _setup_crop_area() -> void:
 	_crop_area.add_child(shape)
 	add_child(_crop_area)
 	_crop_area.area_entered.connect(_on_crop_area_entered)
+	#print("[PLAYER] _setup_crop_area: player_", player_id, " crop pickup area ready (radius=40, mask=0, layer=0)")
 
 func _on_crop_area_entered(area: Area2D) -> void:
+	#print("[PLAYER] _on_crop_area_entered: player_", player_id, " area=", area, " is_Crop=", area is Crop, " held=", held_crop, " drop_cd=", drop_cd, " is_planted=", area.is_planted if area is Crop else "N/A")
 	if area is Crop and held_crop == null and drop_cd <= 0 and not area.is_planted:
 		pickup_world_crop(area)
 
@@ -452,25 +455,28 @@ func _handle_crops(_delta: float) -> void:
 	if input.shoot_just and held_crop == null:
 		_try_uproot()
 	
-	# Keep held sprite following
 	if held_sprite and held_crop:
-		held_sprite.global_position = global_position + Vector2(0, -50)
+		var behind = -aim_dir.normalized() * 40.0
+		held_sprite.global_position = global_position + behind
 
 func pickup_world_crop(crop: Crop) -> void:
+	#print("[PLAYER] pickup_world_crop: player_", player_id, " picking up '", crop.crop_name, "' stage=", crop.stage)
 	held_crop = crop
 	crop.picked_up.emit()
-	crop.get_parent().remove_child(crop)
+	if crop.get_parent():
+		crop.get_parent().remove_child(crop)
 	
 	held_sprite = Sprite2D.new()
 	held_sprite.texture = crop.icon if crop.icon else _make_placeholder_tex(crop)
 	held_sprite.scale = Vector2(0.5, 0.5)
 	held_sprite.z_index = 10
 	get_parent().add_child(held_sprite)
-	held_sprite.global_position = global_position + Vector2(0, -50)
+	held_sprite.global_position = global_position + (-aim_dir.normalized() * 40.0)
 
 func drop_held_crop() -> void:
 	if held_crop == null:
 		return
+	#print("[PLAYER] drop_held_crop: player_", player_id, " dropping '", held_crop.crop_name, "'")
 	held_crop.global_position = global_position
 	get_parent().add_child(held_crop)
 	held_crop = null
@@ -479,26 +485,37 @@ func drop_held_crop() -> void:
 		held_sprite.queue_free()
 		held_sprite = null
 
+const INTERACT_RANGE := 400.0
+const TILE_HALF := 80.0
+
+func _tile_at_cursor(tiles: Array) -> Node:
+	var aim_pos = get_aim_position()
+	for tile in tiles:
+		if tile.global_position.distance_to(aim_pos) <= TILE_HALF:
+			return tile
+	return null
+
 func _try_plant() -> void:
 	if farm == null or held_crop == null:
 		return
 	if not farm.has_space():
 		return
 	
-	# Find nearest empty plantable tile in own farm
 	var tiles = _get_plantable_tiles(farm)
-	var best: Node = null
-	var best_dist := INF
 	var aim_pos = get_aim_position()
-	for tile in tiles:
-		if tile.planted_crop != null:
-			continue
-		var dist = tile.global_position.distance_to(aim_pos)
-		if dist < best_dist and dist < 200.0:
-			best_dist = dist
-			best = tile
-	
-	if best == null:
+	var closest_d := INF
+	var closest_t: Node = null
+	for t in tiles:
+		var d = t.global_position.distance_to(aim_pos)
+		if d < closest_d:
+			closest_d = d
+			closest_t = t
+	print("[PLANT] aim=", aim_pos, " closest_tile=", closest_t.global_position if closest_t else "NONE", " dist=", snapped(closest_d, 0.1), " TILE_HALF=", TILE_HALF)
+	var tile = _tile_at_cursor(tiles)
+	if tile == null or tile.planted_crop != null:
+		return
+	if tile.global_position.distance_to(global_position) > INTERACT_RANGE:
+		print("[PLANT] tile out of INTERACT_RANGE: ", tile.global_position.distance_to(global_position))
 		return
 	
 	var crop = held_crop
@@ -507,23 +524,22 @@ func _try_plant() -> void:
 		held_sprite.queue_free()
 		held_sprite = null
 	
-	farm.plant_crop(crop, best)
+	farm.plant_crop(crop, tile)
 	crop_count += 1
 
 func _try_uproot() -> void:
-	var aim_pos = get_aim_position()
-	# Check all farms for planted crops near aim
-	var farms = get_tree().get_nodes_in_group("farms")
-	for f in farms:
-		for tile in _get_plantable_tiles(f):
-			if tile.planted_crop == null:
-				continue
-			if tile.global_position.distance_to(aim_pos) < 60.0:
-				var crop = f.remove_crop(tile.planted_crop)
-				if crop:
-					f._owner.crop_count -= 1 if f._owner else 0
-					pickup_world_crop(crop)
-				return
+	var farms_list = get_tree().get_nodes_in_group("farms")
+	for f in farms_list:
+		var tile = _tile_at_cursor(_get_plantable_tiles(f))
+		if tile == null or tile.planted_crop == null:
+			continue
+		if tile.global_position.distance_to(global_position) > INTERACT_RANGE:
+			continue
+		var crop = f.remove_crop(tile.planted_crop)
+		if crop:
+			f._owner.crop_count -= 1 if f._owner else 0
+			pickup_world_crop(crop)
+		return
 
 func _get_plantable_tiles(f) -> Array:
 	var tiles: Array = []

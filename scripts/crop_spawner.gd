@@ -26,19 +26,16 @@ func spawn_crop() -> void:
 	current_crop = crop
 	
 	crop.picked_up.connect(func(): current_crop = null)
-	print("Spawned crop at stage ", stage)
 
 func _on_spawn_timer_timeout() -> void:
 	spawn_crop()
 
 func _on_stage_timer_timeout() -> void:
 	stage = mini(stage + 1, max_stage)
-	print("Crop spawner stage: ", stage)
 
 func _on_start_timer_timeout() -> void:
 	spawn_timer.start()
 	stage_timer.start()
-	print("Crop spawner started")
 
 func _on_end_timer_timeout() -> void:
-	print("Game over")
+	pass

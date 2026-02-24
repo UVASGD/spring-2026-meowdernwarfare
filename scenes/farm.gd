@@ -31,7 +31,6 @@ func remove_crop(crop: Crop) -> Crop:
 	crop.remove_buff(_owner)
 	crop.is_planted = false
 	crop.owner_farm = null
-	# Detach from tile
 	if crop.get_parent() and crop.get_parent().has_method("uproot"):
 		crop.get_parent().uproot()
 	elif crop.get_parent():

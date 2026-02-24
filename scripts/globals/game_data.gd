@@ -86,10 +86,14 @@ func save_starter_crops() -> void:
 	config.set_value("crops", "starters", Array(starter_crops))
 	config.save("user://settings.cfg")
 
+const DEFAULT_STARTERS: Array[String] = ["SpeedSprout", "IronRoot", "BlastBerry"]
+
 func get_active_starters() -> Array[String]:
 	if not pending_starter_crops.is_empty():
 		return pending_starter_crops
-	return starter_crops
+	if not starter_crops.is_empty():
+		return starter_crops
+	return DEFAULT_STARTERS
 
 func change_scene(path: String, duration: float = -1.0) -> void:
 	if duration < 0:

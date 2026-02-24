@@ -26,7 +26,7 @@ var owner_farm = null  # Farm ref when planted
 signal picked_up
 
 func _ready() -> void:
-	collision_layer = 0
+	collision_layer = 16
 	collision_mask = 0
 	monitoring = false
 	monitorable = true
