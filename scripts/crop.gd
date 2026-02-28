@@ -77,5 +77,17 @@ func get_tooltip_bbcode() -> String:
 	var c = get_stage_color()
 	var hex = c.to_html(false)
 	var text = "[b]%s[/b] [color=#%s](Stage %d)[/color]\n" % [crop_name, hex, stage]
-	text += desc
+	text += _color_numbers(desc, hex)
 	return text
+
+func _color_numbers(s: String, hex: String) -> String:
+	var re = RegEx.new()
+	re.compile("\\d+\\.?\\d*")
+	var result = ""
+	var last = 0
+	for m in re.search_all(s):
+		result += s.substr(last, m.get_start() - last)
+		result += "[color=#%s]%s[/color]" % [hex, m.get_string()]
+		last = m.get_end()
+	result += s.substr(last)
+	return result

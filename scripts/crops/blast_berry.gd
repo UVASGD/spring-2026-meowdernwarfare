@@ -5,7 +5,7 @@ const RADIUS := { 1: 80.0, 2: 110.0, 3: 140.0 }
 
 func _setup() -> void:
 	crop_name = "Blast Berry"
-	desc = "Causes an explosion when you dash."
+	desc = "Explodes on dash for %d damage in a %d radius." % [DMG.get(stage, 15.0), RADIUS.get(stage, 80.0)]
 	buff_type = "signal"
 	buff_signal = "dashed"
 

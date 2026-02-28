@@ -23,6 +23,7 @@ func spawn_crop() -> void:
 	crop._setup()
 	spawn_point.add_child(crop)
 	crop.position = Vector2.ZERO
+	crop.z_index = 1
 	current_crop = crop
 	
 	crop.picked_up.connect(func(): current_crop = null)

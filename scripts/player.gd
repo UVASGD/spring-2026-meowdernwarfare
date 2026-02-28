@@ -390,13 +390,12 @@ func _create_tooltip() -> void:
 	tooltip_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	tooltip_label.custom_minimum_size = Vector2(200, 0)
 	tooltip_label.size = Vector2(200, 60)
-	tooltip_label.visible = false
 	
 	var panel = PanelContainer.new()
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.visible = false
 	panel.add_child(tooltip_label)
 	tooltip_layer.add_child(panel)
-	tooltip_label.get_parent().visible = false
 
 func _update_tooltip() -> void:
 	if tooltip_label == null:
