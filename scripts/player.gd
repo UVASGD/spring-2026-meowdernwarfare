@@ -540,23 +540,15 @@ func _try_plant() -> void:
 		return
 	
 	var tiles = _get_plantable_tiles(farm)
-	var aim_pos = get_aim_position()
-	var closest_d := INF
-	var closest_t: Node = null
-	for t in tiles:
-		var d = t.global_position.distance_to(aim_pos)
-		if d < closest_d:
-			closest_d = d
-			closest_t = t
-	#print("[PLANT] aim=", aim_pos, " closest_tile=", closest_t.global_position if closest_t else "NONE", " dist=", snapped(closest_d, 0.1), " TILE_HALF=", TILE_HALF)
 	var tile = _tile_at_cursor(tiles)
 	if tile == null or tile.planted_crop != null:
 		return
 	if tile.global_position.distance_to(global_position) > INTERACT_RANGE:
-		#print("[PLANT] tile out of INTERACT_RANGE: ", tile.global_position.distance_to(global_position))
 		return
 	
 	var crop = held_crop
+	var crop_type = crop.get_type_id()
+	var stg = crop.stage
 	held_crop = null
 	if held_sprite:
 		held_sprite.queue_free()
@@ -564,6 +556,11 @@ func _try_plant() -> void:
 	
 	farm.plant_crop(crop, tile)
 	crop_count += 1
+	
+	var gm = GameManager.instance
+	if gm and not gm.is_local():
+		var tile_idx = tiles.find(tile)
+		gm.send_crop_planted(player_id, tile_idx, crop_type, stg)
 
 func _try_uproot() -> void:
 	var farms_list = get_tree().get_nodes_in_group("farms")

@@ -363,6 +363,9 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 	elif msg_type == "client_state":
 		_receive_client_state(from_id, data)
 	
+	elif msg_type == "crop_planted":
+		_handle_crop_planted(from_id, data)
+
 	elif msg_type == "crop_uproot":
 		_handle_crop_uproot(from_id, data)
 	
@@ -452,6 +455,9 @@ func _receive_client_state(from_id: int, data: Dictionary) -> void:
 	player.rotation = data.get("r", player.rotation)
 	player.velocity = Vector2(data.get("vx", 0), data.get("vy", 0))
 	player.is_dashing = data.get("dash", false)
+	
+	if player.hero and data.has("hp"):
+		player.hero.health = data["hp"]
 	
 	var hc = data.get("hc", "")
 	if hc != "":
@@ -650,6 +656,48 @@ func _get_plantable_tiles(farm_node: Node2D) -> Array:
 		if child.has_method("plant"):
 			tiles.append(child)
 	return tiles
+
+func send_crop_planted(planter_id: int, tile_idx: int, crop_type: String, stg: int) -> void:
+	var msg = {
+		"type": "crop_planted",
+		"pid": planter_id,
+		"ti": tile_idx,
+		"ct": crop_type,
+		"cs": stg
+	}
+	if mode == Mode.ONLINE_HOST:
+		_host_held_crops.erase(planter_id)
+		Network.broadcast(msg)
+	else:
+		Network.send_to_host(msg)
+
+func _handle_crop_planted(from_id: int, data: Dictionary) -> void:
+	var planter_id = int(data.get("pid", from_id))
+	if mode == Mode.ONLINE_HOST:
+		_host_held_crops.erase(planter_id)
+		Network.broadcast(data)
+	if planter_id == local_player_id:
+		return
+	var planter = get_player(planter_id)
+	if planter == null or not is_instance_valid(planter) or planter.farm == null:
+		return
+	var tile_idx = int(data.get("ti", -1))
+	var tiles = _get_plantable_tiles(planter.farm)
+	if tile_idx < 0 or tile_idx >= tiles.size():
+		return
+	var tile = tiles[tile_idx]
+	if tile.planted_crop != null:
+		return
+	var crop_type = str(data.get("ct", ""))
+	var scene = CROP_SCENES.get(crop_type)
+	if scene == null:
+		return
+	var crop = scene.instantiate() as Crop
+	crop.stage = int(data.get("cs", 1))
+	crop._setup()
+	planter.farm.plant_crop(crop, tile)
+	planter.crop_count += 1
+	planter.clear_remote_held_crop()
 
 func send_crop_uproot(victim_id: int, tile_idx: int, crop_type: String, stg: int) -> void:
 	var victim = get_player(victim_id)

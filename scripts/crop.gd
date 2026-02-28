@@ -60,6 +60,9 @@ func _apply_stat(player, value: float) -> void:
 				player.hero.max_health += value
 				if value > 0:
 					player.hero.heal(value)
+				else:
+					player.hero.health = min(player.hero.health, player.hero.max_health)
+					player.hero.health_changed.emit(player.hero.health, player.hero.max_health)
 		"dash_speed":
 			player.dash_speed += value
 		"shoot_cooldown":
