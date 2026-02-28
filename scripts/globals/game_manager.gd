@@ -259,6 +259,9 @@ const POSITION_LERP_SPEED: float = 15.0  # Smooth correction speed
 var sync_timer: float = 0.0
 var pending_corrections: Dictionary = {}  # player_id -> {pos, rot, health, etc}
 
+const POS_REPORT_INTERVAL: float = 2.0
+var pos_report_timer: float = 0.0
+
 func _process(delta: float) -> void:
 	if mode == Mode.LOCAL:
 		return
@@ -268,15 +271,17 @@ func _process(delta: float) -> void:
 		sync_timer = 0.0
 		
 		if mode == Mode.ONLINE_HOST:
-			# Host broadcasts authoritative state to all clients
 			_broadcast_state()
 		else:
-			# Client sends own state to host for accurate sync
 			_send_local_state()
 	
-	# Clients apply smooth corrections for remote players
 	if mode == Mode.ONLINE_CLIENT:
 		_apply_corrections(delta)
+	
+	pos_report_timer += delta
+	if pos_report_timer >= POS_REPORT_INTERVAL:
+		pos_report_timer = 0.0
+		_send_pos_report()
 
 func _send_local_state() -> void:
 	var player = get_local_player()
@@ -853,6 +858,30 @@ func _handle_crop_dropped(from_id: int, data: Dictionary) -> void:
 	crop.global_position = pos
 	var parent = entity_parent if entity_parent else self
 	parent.add_child(crop)
+
+# --- DESYNC TELEMETRY ---
+
+func _send_pos_report() -> void:
+	if not Network.is_online() or game_over:
+		return
+	var report = {}
+	for p in players:
+		if not is_instance_valid(p):
+			continue
+		report[str(p.player_id)] = {
+			"x": snapped(p.global_position.x, 0.1),
+			"y": snapped(p.global_position.y, 0.1),
+			"hp": snapped(p.hero.health, 0.1) if p.hero else 0,
+			"mhp": snapped(p.hero.max_health, 0.1) if p.hero else 0,
+			"dead": p.is_dead(),
+			"spec": p.in_spectate_mode,
+		}
+	Network._send({
+		"type": "pos_report",
+		"from": local_player_id,
+		"t": snapped(Time.get_ticks_msec() / 1000.0, 0.01),
+		"p": report
+	})
 
 # --- UTIL ---
 

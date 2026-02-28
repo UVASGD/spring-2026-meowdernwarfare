@@ -8,6 +8,8 @@ import json
 import os
 import random
 import string
+import time
+import sys
 from dataclasses import dataclass, field
 import websockets
 
@@ -62,6 +64,61 @@ class Room:
 rooms: dict[str, Room] = {}
 clients: dict[websockets.ServerConnection, Client] = {}
 
+# --- Desync telemetry ---
+POS_DESYNC_THRESHOLD = 50.0   # pixels
+HP_DESYNC_THRESHOLD  = 5.0
+REPORT_WINDOW        = 3.0    # seconds to collect reports before comparing
+
+@dataclass
+class DesyncTracker:
+    pending: dict = field(default_factory=dict)  # reporter_id -> {t, p}
+    last_check: float = 0.0
+
+desync_trackers: dict[str, DesyncTracker] = {}  # room_code -> tracker
+
+def _check_desync(room_code: str):
+    tracker = desync_trackers.get(room_code)
+    if not tracker or len(tracker.pending) < 2:
+        return
+    reporters = list(tracker.pending.keys())
+    checked = set()
+    for i, r1 in enumerate(reporters):
+        for r2 in reporters[i+1:]:
+            d1, d2 = tracker.pending[r1], tracker.pending[r2]
+            all_pids = set(d1["p"].keys()) | set(d2["p"].keys())
+            for pid in all_pids:
+                if pid not in d1["p"] or pid not in d2["p"]:
+                    continue
+                p1, p2 = d1["p"][pid], d2["p"][pid]
+                dx = abs(p1.get("x", 0) - p2.get("x", 0))
+                dy = abs(p1.get("y", 0) - p2.get("y", 0))
+                dist = (dx*dx + dy*dy) ** 0.5
+                dhp = abs(p1.get("hp", 0) - p2.get("hp", 0))
+                dmhp = abs(p1.get("mhp", 0) - p2.get("mhp", 0))
+                dead_mismatch = p1.get("dead") != p2.get("dead")
+                spec_mismatch = p1.get("spec") != p2.get("spec")
+                if dist > POS_DESYNC_THRESHOLD or dhp > HP_DESYNC_THRESHOLD or dmhp > HP_DESYNC_THRESHOLD or dead_mismatch or spec_mismatch:
+                    print(f"[DESYNC] room={room_code} player={pid} "
+                          f"reporter_{r1}=(x={p1.get('x')},y={p1.get('y')},hp={p1.get('hp')}/{p1.get('mhp')},dead={p1.get('dead')},spec={p1.get('spec')}) "
+                          f"reporter_{r2}=(x={p2.get('x')},y={p2.get('y')},hp={p2.get('hp')}/{p2.get('mhp')},dead={p2.get('dead')},spec={p2.get('spec')}) "
+                          f"delta_pos={dist:.1f} delta_hp={dhp:.1f} delta_mhp={dmhp:.1f}",
+                          flush=True)
+    tracker.pending.clear()
+
+def handle_pos_report(client: Client, msg: dict):
+    room_code = client.room
+    if not room_code:
+        return
+    if room_code not in desync_trackers:
+        desync_trackers[room_code] = DesyncTracker()
+    tracker = desync_trackers[room_code]
+    reporter = str(msg.get("from", client.player_id))
+    tracker.pending[reporter] = {"t": msg.get("t", 0), "p": msg.get("p", {})}
+    now = time.monotonic()
+    if now - tracker.last_check >= REPORT_WINDOW:
+        tracker.last_check = now
+        _check_desync(room_code)
+
 async def handle(ws: websockets.ServerConnection):
     client = Client(ws=ws)
     clients[ws] = client
@@ -84,7 +141,9 @@ async def handle(ws: websockets.ServerConnection):
 async def process(client: Client, msg: dict):
     t = msg.get("type", "")
     
-    if t == "host":
+    if t == "pos_report":
+        handle_pos_report(client, msg)
+    elif t == "host":
         await host_room(client, msg.get("username", "Host"))
     elif t == "join":
         await join_room(client, msg.get("room", "").upper(), msg.get("username", "Player"))
@@ -191,6 +250,7 @@ async def leave_room(client: Client):
         await broadcast_lobby_state(room)
     else:
         del rooms[room_name]
+        desync_trackers.pop(room_name, None)
         print(f"Room '{room_name}' closed")
     
     client.room = None
