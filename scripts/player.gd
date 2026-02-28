@@ -49,6 +49,10 @@ var drug_timer: float = 0.0
 var drug_effect_layer: CanvasLayer = null
 var drug_effect_rect: ColorRect = null
 
+# Loan Shark Mark 
+var is_marked: bool = false
+var marked_timer: float = 0.0
+
 signal took_damage(amount: float)
 signal died
 

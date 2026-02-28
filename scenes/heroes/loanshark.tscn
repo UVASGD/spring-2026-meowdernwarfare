@@ -161,4 +161,5 @@ mag_size = 14
 scale = Vector2(0.3, 0.3)
 sprite_frames = SubResource("SpriteFrames_713vh")
 animation = &"walk animation"
-frame_progress = 0.853283
+frame = 3
+frame_progress = 0.845234
