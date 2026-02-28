@@ -15,6 +15,11 @@ enum Mode { LOCAL, ONLINE_HOST, ONLINE_CLIENT }
 var players: Array[Player] = []
 var eliminated: Array[Player] = []
 var entity_parent: Node = null
+var sudden_death: bool = false
+var game_over: bool = false
+var stats: Dictionary = {}
+
+signal player_eliminated(player: Player)
 
 static var instance: GameManager = null
 
@@ -140,6 +145,7 @@ func spawn_local_player(id: int) -> Player:
 	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
 	players.append(player)
 	player.died.connect(func(): _on_player_died(player))
+	stats[id] = {"kills": 0, "deaths": 0}
 	
 	return player
 
@@ -163,6 +169,7 @@ func spawn_ai_player(id: int, target: Node2D = null) -> Player:
 	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
 	players.append(player)
 	player.died.connect(func(): _on_player_died(player))
+	stats[id] = {"kills": 0, "deaths": 0}
 	
 	return player
 
@@ -182,13 +189,34 @@ func respawn_player(player: Player) -> void:
 	player.respawn_at(pos)
 
 func _on_player_died(player: Player) -> void:
-	if player.crop_count > 0:
+	_track_death(player)
+	
+	var should_elim = sudden_death or player.crop_count <= 0
+	if should_elim:
+		eliminated.append(player)
+		print("Player ", player.player_id, " eliminated", " (sudden death)" if sudden_death else " (0 crops)")
+		player_eliminated.emit(player)
+	else:
 		get_tree().create_timer(RESPAWN_DELAY).timeout.connect(
 			func(): respawn_player(player)
 		)
-	else:
-		eliminated.append(player)
-		print("Player ", player.player_id, " eliminated (0 crops)")
+
+func _track_death(player: Player) -> void:
+	var pid = player.player_id
+	if not stats.has(pid):
+		stats[pid] = {"kills": 0, "deaths": 0}
+	stats[pid]["deaths"] += 1
+	
+	if player.last_attacker and is_instance_valid(player.last_attacker):
+		var aid = player.last_attacker.player_id
+		if not stats.has(aid):
+			stats[aid] = {"kills": 0, "deaths": 0}
+		stats[aid]["kills"] += 1
+	
+	player.last_attacker = null
+
+func get_stats(pid: int) -> Dictionary:
+	return stats.get(pid, {"kills": 0, "deaths": 0})
 
 func clear_players() -> void:
 	for p in players:
@@ -197,12 +225,22 @@ func clear_players() -> void:
 	players.clear()
 	eliminated.clear()
 	used_spawns.clear()
+	stats.clear()
+	sudden_death = false
+	game_over = false
 
 func get_player(id: int) -> Player:
 	for p in players:
 		if p.player_id == id:
 			return p
 	return null
+
+func get_alive_players() -> Array[Player]:
+	var alive: Array[Player] = []
+	for p in players:
+		if is_instance_valid(p) and not p.in_spectate_mode:
+			alive.append(p)
+	return alive
 
 # --- ONLINE MODE ---
 var local_player_id: int = -1
@@ -456,6 +494,7 @@ func _spawn_net_player(id: int, local: bool) -> Player:
 	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
 	players.append(player)
 	player.died.connect(func(): _on_player_died(player))
+	stats[id] = {"kills": 0, "deaths": 0}
 	
 	var hero_name = get_player_hero(id)
 	if hero_name:

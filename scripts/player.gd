@@ -68,6 +68,7 @@ var _death_ui: CanvasLayer = null
 var _death_timer_label: Label = null
 var is_invulnerable: bool = false
 const FARM_RADIUS := 600.0
+var last_attacker: Player = null
 
 signal took_damage(amount: float)
 signal died
@@ -307,9 +308,10 @@ func take_damage(amount: float, attacker: Player = null) -> void:
 		return
 	
 	if hero:
+		if attacker:
+			last_attacker = attacker
 		hero.take_damage(amount)
 		took_damage.emit(amount)
-		# Award ult points to attacker for hitting
 		if attacker and attacker.hero:
 			attacker.hero.add_ult_points(attacker.hero.ult_points_on_hit)
 
