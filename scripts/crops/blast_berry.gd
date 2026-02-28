@@ -3,6 +3,8 @@ extends Crop
 const DMG := { 1: 15.0, 2: 25.0, 3: 40.0 }
 const RADIUS := { 1: 80.0, 2: 110.0, 3: 140.0 }
 
+func get_type_id() -> String: return "BlastBerry"
+
 func _setup() -> void:
 	crop_name = "Blast Berry"
 	desc = "Explodes on dash for %d damage in a %d radius." % [DMG.get(stage, 15.0), RADIUS.get(stage, 80.0)]

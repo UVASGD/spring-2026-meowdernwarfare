@@ -20,6 +20,7 @@ var game_over: bool = false
 var stats: Dictionary = {}
 
 signal player_eliminated(player: Player)
+signal game_over_received(winner_id: int)
 
 static var instance: GameManager = null
 
@@ -192,11 +193,13 @@ func _on_player_died(player: Player) -> void:
 	_track_death(player)
 	
 	var should_elim = sudden_death or player.crop_count <= 0
+	print("[GAME] _on_player_died: pid=", player.player_id, " crop_count=", player.crop_count, " sudden_death=", sudden_death, " should_elim=", should_elim, " mode=", mode)
 	if should_elim:
 		eliminated.append(player)
-		print("Player ", player.player_id, " eliminated", " (sudden death)" if sudden_death else " (0 crops)")
+		print("[GAME] Player ", player.player_id, " eliminated (", "sudden death" if sudden_death else "0 crops", ")")
 		player_eliminated.emit(player)
 	else:
+		print("[GAME] Player ", player.player_id, " will respawn in ", RESPAWN_DELAY, "s")
 		get_tree().create_timer(RESPAWN_DELAY).timeout.connect(
 			func(): respawn_player(player)
 		)
@@ -296,6 +299,11 @@ func _send_local_state() -> void:
 		state["ult"] = player.hero.ult_points
 		state["ammo"] = player.hero.ammo
 	
+	state["cc"] = player.crop_count
+	if player.held_crop:
+		state["hc"] = player.held_crop.get_type_id()
+		state["hs"] = player.held_crop.stage
+	
 	Network.send_to_host(state)
 
 func _setup_network_signals() -> void:
@@ -354,6 +362,24 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 	
 	elif msg_type == "client_state":
 		_receive_client_state(from_id, data)
+	
+	elif msg_type == "crop_uproot":
+		_handle_crop_uproot(from_id, data)
+	
+	elif msg_type == "crop_removed":
+		_handle_crop_removed(data)
+	
+	elif msg_type == "crop_dropped":
+		_handle_crop_dropped(from_id, data)
+	
+	elif msg_type == "crop_pickup":
+		_handle_crop_pickup(from_id, data)
+	
+	elif msg_type == "game_over":
+		_handle_game_over(data)
+	
+	elif msg_type == "tp_used":
+		_handle_teleporter_used(from_id, data)
 
 func _broadcast_state() -> void:
 	if not Network.is_online():
@@ -379,9 +405,19 @@ func _broadcast_state() -> void:
 			state["hp"] = p.hero.health
 			state["ult"] = p.hero.ult_points
 			state["ammo"] = p.hero.ammo
-			# Sync invisibility for Dealer
 			if p.hero.has_method("is_invisible"):
 				state["invis"] = p.hero.is_invisible()
+		
+		state["cc"] = p.crop_count
+		state["spec"] = p.in_spectate_mode
+		state["dead"] = p.is_dead()
+		state["await_resp"] = p.is_awaiting_respawn
+		if p.held_crop:
+			state["hc"] = p.held_crop.get_type_id()
+			state["hs"] = p.held_crop.stage
+		elif _host_held_crops.has(p.player_id):
+			state["hc"] = _host_held_crops[p.player_id].get("t", "")
+			state["hs"] = _host_held_crops[p.player_id].get("s", 0)
 		
 		states.append(state)
 	
@@ -411,16 +447,17 @@ func _receive_client_state(from_id: int, data: Dictionary) -> void:
 	if player == null or not is_instance_valid(player):
 		return
 	
-	# Update the player's position based on client's authoritative state
 	var client_pos = Vector2(data.get("x", 0), data.get("y", 0))
-	var dist = player.global_position.distance_to(client_pos)
+	player.global_position = client_pos
+	player.rotation = data.get("r", player.rotation)
+	player.velocity = Vector2(data.get("vx", 0), data.get("vy", 0))
+	player.is_dashing = data.get("dash", false)
 	
-	# Only accept if reasonably close (prevents cheating)
-	if dist < 500:  # Allow up to 500 units difference
-		player.global_position = client_pos
-		player.rotation = data.get("r", player.rotation)
-		player.velocity = Vector2(data.get("vx", 0), data.get("vy", 0))
-		player.is_dashing = data.get("dash", false)
+	var hc = data.get("hc", "")
+	if hc != "":
+		_host_held_crops[pid] = {"t": hc, "s": int(data.get("hs", 1))}
+	else:
+		_host_held_crops.erase(pid)
 
 func _apply_corrections(delta: float) -> void:
 	for pid in pending_corrections:
@@ -460,17 +497,16 @@ func _apply_corrections(delta: float) -> void:
 			elif not state.get("drug", false) and player.is_drugged:
 				player._end_drug_effect()
 		
-		# Always sync health and resources for all players
 		if player.hero:
-			var hp = state.get("hp", player.hero.health)
-			if abs(player.hero.health - hp) > 1:
-				player.hero.health = hp
-				player.hero.health_changed.emit(hp, player.hero.max_health)
+			if not is_local_player:
+				var hp = state.get("hp", player.hero.health)
+				if abs(player.hero.health - hp) > 1:
+					player.hero.health = hp
+					player.hero.health_changed.emit(hp, player.hero.max_health)
 			
 			player.hero.ult_points = int(state.get("ult", player.hero.ult_points))
 			player.hero.ammo = int(state.get("ammo", player.hero.ammo))
 			
-			# Sync invisibility for Dealer
 			if player.hero.has_method("is_invisible"):
 				var should_be_invis = state.get("invis", false)
 				var is_invis = player.hero.is_invisible()
@@ -478,6 +514,25 @@ func _apply_corrections(delta: float) -> void:
 					player.hero._start_invis()
 				elif not should_be_invis and is_invis:
 					player.hero._end_invis()
+		
+		player.crop_count = int(state.get("cc", player.crop_count))
+		
+		if not is_local_player:
+			var hc = state.get("hc", "")
+			if hc != "" and hc is String:
+				player.set_remote_held_crop(hc, int(state.get("hs", 1)))
+			else:
+				player.clear_remote_held_crop()
+			
+			if state.get("spec", false) and not player.in_spectate_mode:
+				player.enter_spectate_mode()
+			elif state.get("dead", false) and player.hero and not player.hero.is_dead:
+				player.hero.is_dead = true
+				player.hero.died.emit()
+		else:
+			if state.get("dead", false) and player.hero and not player.hero.is_dead:
+				print("[SYNC] Local player death catch-up: host says dead, forcing local death. hp=", player.hero.health)
+				player.hero.take_damage(player.hero.health + 1)
 	
 	pending_corrections.clear()
 
@@ -525,6 +580,231 @@ func get_player_hero(player_id: int) -> String:
 	if player_data.has(player_id):
 		return player_data[player_id].get("hero", "")
 	return ""
+
+func broadcast_game_over(winner_id: int) -> void:
+	if mode != Mode.ONLINE_HOST or not Network.is_online():
+		return
+	print("[NET] Host broadcasting game_over, winner_id=", winner_id)
+	Network.broadcast({
+		"type": "game_over",
+		"winner": winner_id
+	})
+
+func _handle_game_over(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	var winner_id = int(data.get("winner", -1))
+	print("[NET] Received game_over from host, winner_id=", winner_id, " game_over_already=", game_over)
+	game_over_received.emit(winner_id)
+
+# --- TELEPORTER SYNC ---
+
+func send_teleporter_used(tp_id: int, target_tp_id: int) -> void:
+	var msg = {"type": "tp_used", "a": tp_id, "b": target_tp_id}
+	if mode == Mode.ONLINE_HOST:
+		Network.broadcast(msg)
+	else:
+		Network.send_to_host(msg)
+
+func _handle_teleporter_used(from_id: int, data: Dictionary) -> void:
+	if mode == Mode.ONLINE_HOST:
+		Network.broadcast(data)
+	var tp_a = int(data.get("a", -1))
+	var tp_b = int(data.get("b", -1))
+	for tp in get_tree().get_nodes_in_group("teleporters"):
+		if tp.id == tp_a or tp.id == tp_b:
+			if tp.active:
+				tp._set_disabled(tp.cooldown)
+
+# --- CROP SYNC ---
+
+const CROP_SCENES := {
+	"SpeedSprout": preload("res://scenes/crops/speed_sprout.tscn"),
+	"IronRoot": preload("res://scenes/crops/iron_root.tscn"),
+	"BlastBerry": preload("res://scenes/crops/blast_berry.tscn"),
+}
+
+var _host_held_crops: Dictionary = {}
+
+func make_crop_icon(type_id: String, stg: int) -> Texture2D:
+	var scene = CROP_SCENES.get(type_id)
+	if scene == null:
+		return null
+	var tmp = scene.instantiate() as Crop
+	tmp.stage = stg
+	tmp._setup()
+	var tex = tmp.icon
+	if tex == null:
+		var img = Image.create(32, 32, false, Image.FORMAT_RGBA8)
+		img.fill(tmp.get_stage_color())
+		tex = ImageTexture.create_from_image(img)
+	tmp.free()
+	return tex
+
+func _get_plantable_tiles(farm_node: Node2D) -> Array:
+	var tiles: Array = []
+	var tilemap = farm_node.get_node_or_null("TileMapLayer")
+	if tilemap == null:
+		return tiles
+	for child in tilemap.get_children():
+		if child.has_method("plant"):
+			tiles.append(child)
+	return tiles
+
+func send_crop_uproot(victim_id: int, tile_idx: int, crop_type: String, stg: int) -> void:
+	var victim = get_player(victim_id)
+	var cc = victim.crop_count if victim else 0
+	if mode == Mode.ONLINE_HOST:
+		_host_held_crops[local_player_id] = {"t": crop_type, "s": stg}
+		Network.broadcast({
+			"type": "crop_removed",
+			"vid": victim_id,
+			"ti": tile_idx,
+			"cc": cc,
+			"thief": local_player_id,
+			"ct": crop_type,
+			"cs": stg
+		})
+	else:
+		Network.send_to_host({
+			"type": "crop_uproot",
+			"vid": victim_id,
+			"ti": tile_idx,
+			"ct": crop_type,
+			"cs": stg
+		})
+
+func send_crop_pickup(picker_id: int, pos: Vector2, crop_type: String, stg: int) -> void:
+	var msg = {
+		"type": "crop_pickup",
+		"pid": picker_id,
+		"x": pos.x,
+		"y": pos.y,
+		"ct": crop_type,
+		"cs": stg
+	}
+	if mode == Mode.ONLINE_HOST:
+		_host_held_crops[picker_id] = {"t": crop_type, "s": stg}
+		Network.broadcast(msg)
+	else:
+		Network.send_to_host(msg)
+
+func send_crop_dropped(dropper_id: int, pos: Vector2, crop_type: String, stg: int) -> void:
+	var msg = {
+		"type": "crop_dropped",
+		"pid": dropper_id,
+		"x": pos.x,
+		"y": pos.y,
+		"ct": crop_type,
+		"cs": stg
+	}
+	if mode == Mode.ONLINE_HOST:
+		_host_held_crops.erase(dropper_id)
+		Network.broadcast(msg)
+	else:
+		Network.send_to_host(msg)
+
+func _handle_crop_uproot(from_id: int, data: Dictionary) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	var victim_id = int(data.get("vid", -1))
+	var tile_idx = int(data.get("ti", -1))
+	var victim = get_player(victim_id)
+	if victim == null or not is_instance_valid(victim) or victim.farm == null:
+		return
+	var tiles = _get_plantable_tiles(victim.farm)
+	if tile_idx < 0 or tile_idx >= tiles.size():
+		return
+	var tile = tiles[tile_idx]
+	if tile.planted_crop == null:
+		return
+	var crop = victim.farm.remove_crop(tile.planted_crop)
+	if crop:
+		victim.crop_count -= 1
+		var ct = data.get("ct", "")
+		var cs = data.get("cs", 1)
+		crop.queue_free()
+		_host_held_crops[from_id] = {"t": ct, "s": int(cs)}
+		Network.broadcast({
+			"type": "crop_removed",
+			"vid": victim_id,
+			"ti": tile_idx,
+			"cc": victim.crop_count,
+			"thief": from_id,
+			"ct": ct,
+			"cs": cs
+		})
+
+func _handle_crop_removed(data: Dictionary) -> void:
+	var victim_id = int(data.get("vid", -1))
+	var tile_idx = int(data.get("ti", -1))
+	var new_count = int(data.get("cc", 0))
+	var victim = get_player(victim_id)
+	if victim == null or not is_instance_valid(victim) or victim.farm == null:
+		return
+	var tiles = _get_plantable_tiles(victim.farm)
+	if tile_idx < 0 or tile_idx >= tiles.size():
+		victim.crop_count = new_count
+		return
+	var tile = tiles[tile_idx]
+	if tile.planted_crop != null:
+		var crop = victim.farm.remove_crop(tile.planted_crop)
+		if crop:
+			crop.queue_free()
+	victim.crop_count = new_count
+	
+	var thief_id = int(data.get("thief", -1))
+	if thief_id >= 0 and thief_id != local_player_id:
+		var thief = get_player(thief_id)
+		if thief and is_instance_valid(thief):
+			var ct = str(data.get("ct", ""))
+			var cs = int(data.get("cs", 1))
+			if ct != "":
+				thief.set_remote_held_crop(ct, cs)
+
+func _handle_crop_pickup(from_id: int, data: Dictionary) -> void:
+	var picker_id = int(data.get("pid", from_id))
+	if mode == Mode.ONLINE_HOST:
+		_host_held_crops[picker_id] = {"t": data.get("ct", ""), "s": int(data.get("cs", 1))}
+		Network.broadcast(data)
+	if picker_id == local_player_id:
+		return
+	var pos = Vector2(data.get("x", 0), data.get("y", 0))
+	var parent = entity_parent if entity_parent else self
+	for child in parent.get_children():
+		if child is Crop and not child.is_planted and child.global_position.distance_to(pos) < 80.0:
+			child.queue_free()
+			break
+	var picker = get_player(picker_id)
+	if picker and is_instance_valid(picker):
+		var ct = str(data.get("ct", ""))
+		var cs = int(data.get("cs", 1))
+		if ct != "":
+			picker.set_remote_held_crop(ct, cs)
+
+func _handle_crop_dropped(from_id: int, data: Dictionary) -> void:
+	var dropper_id = int(data.get("pid", from_id))
+	if mode == Mode.ONLINE_HOST:
+		_host_held_crops.erase(dropper_id)
+		Network.broadcast(data)
+	if dropper_id != local_player_id:
+		var dropper = get_player(dropper_id)
+		if dropper and is_instance_valid(dropper):
+			dropper.clear_remote_held_crop()
+	if dropper_id == local_player_id:
+		return
+	var pos = Vector2(data.get("x", 0), data.get("y", 0))
+	var type_id = str(data.get("ct", ""))
+	var stg = int(data.get("cs", 1))
+	var scene = CROP_SCENES.get(type_id)
+	if scene == null:
+		return
+	var crop = scene.instantiate() as Crop
+	crop.stage = stg
+	crop._setup()
+	crop.global_position = pos
+	var parent = entity_parent if entity_parent else self
+	parent.add_child(crop)
 
 # --- UTIL ---
 

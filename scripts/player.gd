@@ -57,6 +57,8 @@ var held_crop: Crop = null
 var drop_cd: float = 0.0
 const DROP_CD_TIME := 0.5
 var held_sprite: Sprite2D = null
+var _remote_held_sprite: Sprite2D = null
+var _remote_held_type: String = ""
 var farm = null
 
 # Meta states
@@ -149,7 +151,7 @@ func set_hero(hero_name: String) -> void:
 	if hitbox:
 		hitbox.shape = hero.get_hitbox_shape()
 	
-	print("Player ", player_id, " set hero to ", hero.get_hero_name())
+	#print("Player ", player_id, " set hero to ", hero.get_hero_name())
 
 func _setup_local_ui() -> void:
 	var show_ui = false
@@ -279,6 +281,7 @@ func _start_dash() -> void:
 	dashed.emit()
 
 func _on_hero_died() -> void:
+	print("[PLAYER] _on_hero_died: pid=", player_id, " crop_count=", crop_count, " is_local=", _is_local_player())
 	died.emit()
 	if crop_count <= 0:
 		enter_spectate_mode()
@@ -456,6 +459,7 @@ func _setup_crop_area() -> void:
 
 func _on_crop_area_entered(area: Area2D) -> void:
 	if in_spectate_mode: return
+	if input is NetworkInput and not input.is_local: return
 	if area is Crop and held_crop == null and drop_cd <= 0 and not area.is_planted:
 		pickup_world_crop(area)
 
@@ -480,9 +484,13 @@ func _handle_crops(_delta: float) -> void:
 	if held_sprite and held_crop:
 		var behind = -aim_dir.normalized() * 40.0
 		held_sprite.global_position = global_position + behind
+	if _remote_held_sprite and _remote_held_sprite.visible:
+		_remote_held_sprite.position = Vector2(0, 40).rotated(-rotation_offset)
 
 func pickup_world_crop(crop: Crop) -> void:
-	#print("[PLAYER] pickup_world_crop: player_", player_id, " picking up '", crop.crop_name, "' stage=", crop.stage)
+	var crop_pos = crop.global_position
+	var type_id = crop.get_type_id()
+	var stg = crop.stage
 	held_crop = crop
 	crop.picked_up.emit()
 	if crop.get_parent():
@@ -494,11 +502,16 @@ func pickup_world_crop(crop: Crop) -> void:
 	held_sprite.z_index = 10
 	get_parent().add_child(held_sprite)
 	held_sprite.global_position = global_position + (-aim_dir.normalized() * 40.0)
+	
+	var gm = GameManager.instance
+	if gm and not gm.is_local():
+		gm.send_crop_pickup(player_id, crop_pos, type_id, stg)
 
 func drop_held_crop() -> void:
 	if held_crop == null:
 		return
-	#print("[PLAYER] drop_held_crop: player_", player_id, " dropping '", held_crop.crop_name, "'")
+	var type_id = held_crop.get_type_id()
+	var stg = held_crop.stage
 	held_crop.global_position = global_position
 	get_parent().add_child(held_crop)
 	held_crop = null
@@ -506,6 +519,9 @@ func drop_held_crop() -> void:
 	if held_sprite:
 		held_sprite.queue_free()
 		held_sprite = null
+	var gm = GameManager.instance
+	if gm and not gm.is_local():
+		gm.send_crop_dropped(player_id, global_position, type_id, stg)
 
 const INTERACT_RANGE := 400.0
 const TILE_HALF := 80.0
@@ -532,12 +548,12 @@ func _try_plant() -> void:
 		if d < closest_d:
 			closest_d = d
 			closest_t = t
-	print("[PLANT] aim=", aim_pos, " closest_tile=", closest_t.global_position if closest_t else "NONE", " dist=", snapped(closest_d, 0.1), " TILE_HALF=", TILE_HALF)
+	#print("[PLANT] aim=", aim_pos, " closest_tile=", closest_t.global_position if closest_t else "NONE", " dist=", snapped(closest_d, 0.1), " TILE_HALF=", TILE_HALF)
 	var tile = _tile_at_cursor(tiles)
 	if tile == null or tile.planted_crop != null:
 		return
 	if tile.global_position.distance_to(global_position) > INTERACT_RANGE:
-		print("[PLANT] tile out of INTERACT_RANGE: ", tile.global_position.distance_to(global_position))
+		#print("[PLANT] tile out of INTERACT_RANGE: ", tile.global_position.distance_to(global_position))
 		return
 	
 	var crop = held_crop
@@ -552,15 +568,22 @@ func _try_plant() -> void:
 func _try_uproot() -> void:
 	var farms_list = get_tree().get_nodes_in_group("farms")
 	for f in farms_list:
-		var tile = _tile_at_cursor(_get_plantable_tiles(f))
+		var tiles = _get_plantable_tiles(f)
+		var tile = _tile_at_cursor(tiles)
 		if tile == null or tile.planted_crop == null:
 			continue
 		if tile.global_position.distance_to(global_position) > INTERACT_RANGE:
 			continue
+		var tile_idx = tiles.find(tile)
 		var crop = f.remove_crop(tile.planted_crop)
 		if crop:
-			f._owner.crop_count -= 1 if f._owner else 0
+			var victim = f._owner
+			if victim:
+				victim.crop_count -= 1
 			pickup_world_crop(crop)
+			var gm = GameManager.instance
+			if gm and not gm.is_local() and victim:
+				gm.send_crop_uproot(victim.player_id, tile_idx, crop.get_type_id(), crop.stage)
 		return
 
 func _get_plantable_tiles(f) -> Array:
@@ -577,6 +600,26 @@ func _make_placeholder_tex(crop: Crop) -> Texture2D:
 	var img = Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	img.fill(crop.get_stage_color())
 	return ImageTexture.create_from_image(img)
+
+func set_remote_held_crop(type_id: String, stg: int) -> void:
+	if type_id == _remote_held_type and _remote_held_sprite != null:
+		return
+	_remote_held_type = type_id
+	if _remote_held_sprite == null:
+		_remote_held_sprite = Sprite2D.new()
+		_remote_held_sprite.scale = Vector2(0.5, 0.5)
+		_remote_held_sprite.z_index = 10
+		_remote_held_sprite.position = Vector2(0, 40)
+		add_child(_remote_held_sprite)
+	var gm = GameManager.instance
+	if gm:
+		_remote_held_sprite.texture = gm.make_crop_icon(type_id, stg)
+	_remote_held_sprite.visible = true
+
+func clear_remote_held_crop() -> void:
+	_remote_held_type = ""
+	if _remote_held_sprite:
+		_remote_held_sprite.visible = false
 
 # --- DRUG EFFECT ---
 
@@ -724,6 +767,7 @@ func _handle_spectate_movement(delta: float) -> void:
 		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
 
 func enter_spectate_mode() -> void:
+	print("[PLAYER] enter_spectate_mode: pid=", player_id, " already=", in_spectate_mode, " is_local=", _is_local_player(), " game_over=", GameManager.instance.game_over if GameManager.instance else "no_gm")
 	if in_spectate_mode:
 		return
 	in_spectate_mode = true
@@ -748,7 +792,8 @@ func enter_spectate_mode() -> void:
 	if hero:
 		hero.enter_spectate_mode()
 	
-	if _is_local_player():
+	var gm = GameManager.instance
+	if _is_local_player() and (gm == null or not gm.game_over):
 		_show_elimination_ui()
 
 func _disable_collision() -> void:
@@ -798,7 +843,10 @@ func _show_elimination_ui() -> void:
 	spectate_btn.pressed.connect(_on_spectate_pressed)
 	center.add_child(spectate_btn)
 
-func _on_spectate_pressed() -> void:
+func clear_elimination_ui() -> void:
 	if _elim_ui:
 		_elim_ui.queue_free()
 		_elim_ui = null
+
+func _on_spectate_pressed() -> void:
+	clear_elimination_ui()

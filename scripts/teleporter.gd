@@ -26,15 +26,20 @@ func _process(delta: float) -> void:
 func _on_body_entered(body: Node2D) -> void:
 	if not active or body is not Player:
 		return
+	if body.input is NetworkInput and not body.input.is_local:
+		return
 
 	var target = _find_target()
 	if target == null:
 		return
-	print("teleporting to:" + str(target_id) + "at " + str(target.global_position))
 	body.global_position = target.global_position
-	print("final pos: " + str(body.global_position))
 	_set_disabled(cooldown)
 	target._set_disabled(cooldown)
+	
+	if Network.is_online():
+		var gm = GameManager.instance
+		if gm:
+			gm.send_teleporter_used(id, target_id)
 
 func _find_target() -> Area2D:
 	for tp in get_tree().get_nodes_in_group("teleporters"):

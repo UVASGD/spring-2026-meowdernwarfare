@@ -70,6 +70,9 @@ func _apply_stat(player, value: float) -> void:
 func _make_buff_callable(_player) -> Callable:
 	return Callable()
 
+func get_type_id() -> String:
+	return "Crop"
+
 func get_stage_color() -> Color:
 	return STAGE_COLORS.get(stage, Color.WHITE)
 

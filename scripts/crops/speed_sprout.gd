@@ -2,6 +2,8 @@ extends Crop
 
 const VALUES := { 1: 40.0, 2: 60.0, 3: 80.0 }
 
+func get_type_id() -> String: return "SpeedSprout"
+
 func _setup() -> void:
 	crop_name = "Speed Sprout"
 	buff_type = "stat"

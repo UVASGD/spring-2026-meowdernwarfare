@@ -56,6 +56,8 @@ func _copy_from(src: InputProvider) -> void:
 	ability1_just = src.ability1_just
 	ability2_just = src.ability2_just
 	interact_just = src.interact_just
+	drop = src.drop
+	drop_just = src.drop_just
 
 func _send_to_network() -> void:
 	if not Network.is_online():
@@ -72,7 +74,8 @@ func _send_to_network() -> void:
 		"shj": shoot_just,
 		"r": reload_just,
 		"a1": ability1_just,
-		"a2": ability2_just
+		"a2": ability2_just,
+		"dr": drop_just
 	})
 
 func receive_input(data: Dictionary) -> void:
@@ -98,3 +101,4 @@ func _apply_buffered_input() -> void:
 	reload_just = data.get("r", false)
 	ability1_just = data.get("a1", false)
 	ability2_just = data.get("a2", false)
+	drop_just = data.get("dr", false)

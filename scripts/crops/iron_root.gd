@@ -2,6 +2,8 @@ extends Crop
 
 const VALUES := { 1: 20.0, 2: 35.0, 3: 50.0 }
 
+func get_type_id() -> String: return "IronRoot"
+
 func _setup() -> void:
 	crop_name = "Iron Root"
 	buff_type = "stat"
