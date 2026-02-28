@@ -173,11 +173,14 @@ func _physics_process(delta: float) -> void:
 	if input == null:
 		return
 	
+	var is_local = _is_local_player()
+	
 	input.update(delta)
 	
 	if in_spectate_mode:
-		_handle_spectate_movement(delta)
-		move_and_slide()
+		if is_local:
+			_handle_spectate_movement(delta)
+			move_and_slide()
 		if input is LocalInput:
 			input.end_frame()
 		return
@@ -189,12 +192,14 @@ func _physics_process(delta: float) -> void:
 		return
 	
 	_update_timers(delta)
-	_handle_movement(delta)
+	
+	if is_local:
+		_handle_movement(delta)
+		move_and_slide()
+	
 	_handle_rotation(delta)
 	_handle_actions()
 	_handle_crops(delta)
-	
-	move_and_slide()
 	
 	if health_bar:
 		health_bar.global_position = global_position + Vector2(-25, -60)

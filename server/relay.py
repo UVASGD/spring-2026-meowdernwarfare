@@ -65,7 +65,7 @@ rooms: dict[str, Room] = {}
 clients: dict[websockets.ServerConnection, Client] = {}
 
 # --- Desync telemetry ---
-POS_DESYNC_THRESHOLD = 50.0   # pixels
+POS_DESYNC_THRESHOLD = 500.0  # pixels
 HP_DESYNC_THRESHOLD  = 5.0
 REPORT_WINDOW        = 3.0    # seconds to collect reports before comparing
 

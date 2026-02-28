@@ -388,6 +388,12 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 	
 	elif msg_type == "tp_used":
 		_handle_teleporter_used(from_id, data)
+	
+	elif msg_type == "crop_spawned":
+		_handle_crop_spawned(data)
+	
+	elif msg_type == "spawner_stage":
+		_handle_spawner_stage(data)
 
 func _broadcast_state() -> void:
 	if not Network.is_online():
@@ -540,6 +546,11 @@ func _apply_corrections(delta: float) -> void:
 			elif state.get("dead", false) and player.hero and not player.hero.is_dead:
 				player.hero.is_dead = true
 				player.hero.died.emit()
+			elif not state.get("dead", false) and not state.get("spec", false):
+				if player.hero and player.hero.is_dead:
+					player.respawn_at(target_pos)
+				elif player.is_awaiting_respawn:
+					player.respawn_at(target_pos)
 		else:
 			if state.get("dead", false) and player.hero and not player.hero.is_dead:
 				print("[SYNC] Local player death catch-up: host says dead, forcing local death. hp=", player.hero.health)
@@ -823,11 +834,21 @@ func _handle_crop_pickup(from_id: int, data: Dictionary) -> void:
 	if picker_id == local_player_id:
 		return
 	var pos = Vector2(data.get("x", 0), data.get("y", 0))
-	var parent = entity_parent if entity_parent else self
-	for child in parent.get_children():
-		if child is Crop and not child.is_planted and child.global_position.distance_to(pos) < 80.0:
-			child.queue_free()
-			break
+	var found := false
+	for sid in _spawners:
+		var spawner = _spawners[sid]
+		if spawner and is_instance_valid(spawner) and spawner.current_crop and is_instance_valid(spawner.current_crop):
+			if spawner.current_crop.global_position.distance_to(pos) < 80.0:
+				spawner.current_crop.queue_free()
+				spawner.current_crop = null
+				found = true
+				break
+	if not found:
+		var parent = entity_parent if entity_parent else self
+		for child in parent.get_children():
+			if child is Crop and not child.is_planted and child.global_position.distance_to(pos) < 80.0:
+				child.queue_free()
+				break
 	var picker = get_player(picker_id)
 	if picker and is_instance_valid(picker):
 		var ct = str(data.get("ct", ""))
@@ -858,6 +879,37 @@ func _handle_crop_dropped(from_id: int, data: Dictionary) -> void:
 	crop.global_position = pos
 	var parent = entity_parent if entity_parent else self
 	parent.add_child(crop)
+
+# --- CROP SPAWNER SYNC ---
+
+var _spawners: Dictionary = {}  # spawner_id -> CropSpawner node
+
+func register_spawner(spawner: Node) -> void:
+	var id = _spawners.size()
+	spawner.spawner_id = id
+	_spawners[id] = spawner
+
+func send_crop_spawned(sid: int, crop_idx: int, stg: int) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	Network.broadcast({"type": "crop_spawned", "sid": sid, "ci": crop_idx, "cs": stg})
+
+func send_spawner_stage(sid: int, stg: int) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	Network.broadcast({"type": "spawner_stage", "sid": sid, "cs": stg})
+
+func _handle_crop_spawned(data: Dictionary) -> void:
+	var sid = int(data.get("sid", -1))
+	var spawner = _spawners.get(sid)
+	if spawner and is_instance_valid(spawner):
+		spawner.spawn_crop_remote(int(data.get("ci", 0)), int(data.get("cs", 1)))
+
+func _handle_spawner_stage(data: Dictionary) -> void:
+	var sid = int(data.get("sid", -1))
+	var spawner = _spawners.get(sid)
+	if spawner and is_instance_valid(spawner):
+		spawner.stage = int(data.get("cs", 1))
 
 # --- DESYNC TELEMETRY ---
 
