@@ -60,14 +60,17 @@ func _ready() -> void:
 	status_label.text = ""
 	hero_selector.select(0)
 	
-	# Handle game mode
-	match GameData.game_mode:
-		GameData.GameMode.HOST:
-			_start_hosting()
-		GameData.GameMode.JOIN:
-			_show_join_ui()
-		_:
-			_show_join_ui()
+	# If returning from a game with an active connection, skip host/join flow
+	if Network.is_online() and Network.room_code != "":
+		_resume_lobby()
+	else:
+		match GameData.game_mode:
+			GameData.GameMode.HOST:
+				_start_hosting()
+			GameData.GameMode.JOIN:
+				_show_join_ui()
+			_:
+				_show_join_ui()
 
 func _load_username() -> void:
 	var config = ConfigFile.new()
@@ -85,6 +88,16 @@ func _get_username() -> String:
 	if _username.is_empty():
 		return "Player" + str(randi() % 1000)
 	return _username
+
+func _resume_lobby() -> void:
+	join_panel.visible = false
+	host_panel.visible = false
+	$VBox.visible = true
+	code_label.text = "Room: " + Network.room_code
+	status_label.visible = false
+	_update_host_controls()
+	if not Network.lobby_state.is_empty():
+		_on_lobby_state(Network.lobby_state)
 
 func _start_hosting() -> void:
 	join_panel.visible = false

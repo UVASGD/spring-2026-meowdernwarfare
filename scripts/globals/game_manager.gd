@@ -303,7 +303,12 @@ func _setup_network_signals() -> void:
 		return
 	Network.player_left.connect(_on_player_left)
 	Network.message_received.connect(_on_message)
+	Network.became_host.connect(_on_became_host)
 	_signals_connected = true
+
+func _on_became_host() -> void:
+	mode = Mode.ONLINE_HOST
+	print("GameManager: became host via migration")
 
 func start_online_game(players_info: Array, settings: Dictionary) -> void:
 	_setup_network_signals()

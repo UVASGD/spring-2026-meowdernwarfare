@@ -782,10 +782,9 @@ func _show_elimination_ui() -> void:
 	center.grow_vertical = Control.GROW_DIRECTION_BOTH
 	center.alignment = BoxContainer.ALIGNMENT_CENTER
 	center.custom_minimum_size = Vector2(360, 0)
-	center.add_theme_constant_override("separation", 16)
+	center.add_theme_constant_override("separation", 24)
 	bg.add_child(center)
 	
-	# Title
 	var title = Label.new()
 	title.text = "ELIMINATED"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -793,67 +792,13 @@ func _show_elimination_ui() -> void:
 	title.add_theme_color_override("font_color", Color(1, 0.3, 0.3))
 	center.add_child(title)
 	
-	# Leaderboard
-	var lb_panel = PanelContainer.new()
-	center.add_child(lb_panel)
-	var lb_box = VBoxContainer.new()
-	lb_box.add_theme_constant_override("separation", 6)
-	lb_panel.add_child(lb_box)
-	
-	var lb_title = Label.new()
-	lb_title.text = "Leaderboard"
-	lb_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	lb_title.add_theme_font_size_override("font_size", 22)
-	lb_box.add_child(lb_title)
-	
-	var standings = _get_standings()
-	for i in standings.size():
-		var entry = Label.new()
-		entry.text = "%d. %s  -  %d crops" % [i + 1, standings[i]["name"], standings[i]["crops"]]
-		entry.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		lb_box.add_child(entry)
-	
-	# Buttons
-	var btn_row = HBoxContainer.new()
-	btn_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	btn_row.add_theme_constant_override("separation", 24)
-	center.add_child(btn_row)
-	
 	var spectate_btn = Button.new()
 	spectate_btn.text = "Spectate"
-	spectate_btn.custom_minimum_size = Vector2(140, 44)
+	spectate_btn.custom_minimum_size = Vector2(160, 48)
 	spectate_btn.pressed.connect(_on_spectate_pressed)
-	btn_row.add_child(spectate_btn)
-	
-	var quit_btn = Button.new()
-	quit_btn.text = "Quit"
-	quit_btn.custom_minimum_size = Vector2(140, 44)
-	quit_btn.pressed.connect(_on_quit_pressed)
-	btn_row.add_child(quit_btn)
-
-func _get_standings() -> Array:
-	var gm = GameManager.instance
-	if gm == null:
-		return []
-	var list: Array = []
-	for p in gm.players:
-		if not is_instance_valid(p):
-			continue
-		var pname = "Player %d" % p.player_id
-		if gm.player_data.has(p.player_id):
-			pname = gm.player_data[p.player_id].get("username", pname)
-		list.append({"name": pname, "crops": p.crop_count, "alive": not p.in_spectate_mode})
-	list.sort_custom(func(a, b):
-		if a["alive"] != b["alive"]:
-			return a["alive"]
-		return a["crops"] > b["crops"]
-	)
-	return list
+	center.add_child(spectate_btn)
 
 func _on_spectate_pressed() -> void:
 	if _elim_ui:
 		_elim_ui.queue_free()
 		_elim_ui = null
-
-func _on_quit_pressed() -> void:
-	GameData.change_scene("res://scenes/ui/main_menu.tscn")
