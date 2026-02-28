@@ -14,7 +14,7 @@ const CROP_SCENES := {
 	"IronRoot": preload("res://scenes/crops/iron_root.tscn"),
 	"BlastBerry": preload("res://scenes/crops/blast_berry.tscn"),
 }
-@export var DEFAULT_MAP: String = "testArena"
+@export var DEFAULT_MAP: String = "Moon"
 
 const DebugMenu = preload("res://scripts/ui/debug_menu.gd")
 

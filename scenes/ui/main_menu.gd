@@ -59,6 +59,8 @@ func _process(delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):
 		_skip_intro()
+	if event is InputEventKey and event.pressed and event.keycode == KEY_K:
+		_quick_test()
 
 func _on_card_hovered(action: CardAction) -> void:
 	if not option_banner:
@@ -93,3 +95,82 @@ func _on_unhover_timeout() -> void:
 func _on_intro_finish():
 	$introgroup1/AnimationPlayer.play("idle2")
 	skippable = false
+
+# --- Quick Test (K key) ---
+
+const _QUICK_TEST_FILE := "user://quick_test_room.txt"
+
+func _quick_test() -> void:
+	var code = _read_room_code()
+	if code.is_empty():
+		_quick_host()
+	else:
+		_quick_join(code)
+
+func _read_room_code() -> String:
+	if not FileAccess.file_exists(_QUICK_TEST_FILE):
+		return ""
+	var f = FileAccess.open(_QUICK_TEST_FILE, FileAccess.READ)
+	if f == null:
+		return ""
+	var code = f.get_as_text().strip_edges()
+	f.close()
+	if code.length() != 6:
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(_QUICK_TEST_FILE))
+		return ""
+	return code
+
+func _write_room_code(code: String) -> void:
+	var f = FileAccess.open(_QUICK_TEST_FILE, FileAccess.WRITE)
+	if f:
+		f.store_string(code)
+		f.close()
+
+func _clear_room_code() -> void:
+	if FileAccess.file_exists(_QUICK_TEST_FILE):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(_QUICK_TEST_FILE))
+
+func _quick_host() -> void:
+	print("[QuickTest] Hosting...")
+	GameData.set_mode(GameData.GameMode.HOST)
+
+	Network.hosted.connect(_on_quick_hosted, CONNECT_ONE_SHOT)
+	Network.game_started.connect(_on_quick_game_started, CONNECT_ONE_SHOT)
+	Network.player_joined.connect(_on_quick_player_joined)
+
+	Network.connected.connect(func():
+		Network.host_room(TestConfig.DEFAULT_USERNAME + "1")
+	, CONNECT_ONE_SHOT)
+	Network.connect_to_server(TestConfig.SERVER_URL)
+
+func _on_quick_hosted(room_code: String, _pid: int) -> void:
+	print("[QuickTest] Hosted room: ", room_code)
+	_write_room_code(room_code)
+	Network.set_hero(TestConfig.DEFAULT_HERO)
+	Network.set_settings({"map": TestConfig.DEFAULT_MAP})
+
+func _on_quick_player_joined(_pid: int, _username: String) -> void:
+	print("[QuickTest] Player joined, starting game...")
+	Network.start_game()
+
+func _quick_join(code: String) -> void:
+	print("[QuickTest] Joining room: ", code)
+	_clear_room_code()
+	GameData.set_mode(GameData.GameMode.JOIN)
+
+	Network.game_started.connect(_on_quick_game_started, CONNECT_ONE_SHOT)
+
+	Network.connected.connect(func():
+		Network.join_room(code, TestConfig.DEFAULT_USERNAME + "2")
+	, CONNECT_ONE_SHOT)
+	Network.joined_room.connect(func(_pid: int, _is_host: bool):
+		Network.set_hero(TestConfig.DEFAULT_HERO)
+	, CONNECT_ONE_SHOT)
+	Network.connect_to_server(TestConfig.SERVER_URL)
+
+func _on_quick_game_started(players: Array, settings: Dictionary) -> void:
+	_clear_room_code()
+	if Network.player_joined.is_connected(_on_quick_player_joined):
+		Network.player_joined.disconnect(_on_quick_player_joined)
+	GameData.set_online_game(players, settings)
+	GameData.change_scene("res://scenes/game.tscn")

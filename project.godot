@@ -19,6 +19,7 @@ config/icon="res://assets/sprites/icon.svg"
 
 Network="*res://scripts/globals/network.gd"
 GameData="*res://scripts/globals/game_data.gd"
+TestConfig="*res://scripts/globals/test_config.gd"
 
 [debug]
 
