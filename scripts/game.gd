@@ -58,6 +58,7 @@ func _ready() -> void:
 	
 	gm.player_eliminated.connect(_on_player_eliminated)
 	gm.game_over_received.connect(_on_game_over_received)
+	gm.sudden_death_received.connect(_activate_sudden_death)
 	_create_timer_hud()
 	game_timer = 0.0
 	game_active = true
@@ -238,7 +239,13 @@ func _process(delta: float) -> void:
 	_update_timer_hud()
 	
 	if not gm.sudden_death and game_timer >= GAME_DURATION:
-		_activate_sudden_death()
+		_trigger_sudden_death()
+
+func _trigger_sudden_death() -> void:
+	if gm.sudden_death:
+		return
+	gm.broadcast_sudden_death()
+	_activate_sudden_death()
 
 func _activate_sudden_death() -> void:
 	gm.sudden_death = true

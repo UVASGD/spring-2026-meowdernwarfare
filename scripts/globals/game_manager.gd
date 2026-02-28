@@ -21,6 +21,7 @@ var stats: Dictionary = {}
 
 signal player_eliminated(player: Player)
 signal game_over_received(winner_id: int)
+signal sudden_death_received
 
 static var instance: GameManager = null
 
@@ -386,6 +387,9 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 	elif msg_type == "game_over":
 		_handle_game_over(data)
 	
+	elif msg_type == "sudden_death":
+		_handle_sudden_death()
+	
 	elif msg_type == "tp_used":
 		_handle_teleporter_used(from_id, data)
 	
@@ -618,6 +622,17 @@ func _handle_game_over(data: Dictionary) -> void:
 	var winner_id = int(data.get("winner", -1))
 	print("[NET] Received game_over from host, winner_id=", winner_id, " game_over_already=", game_over)
 	game_over_received.emit(winner_id)
+
+func broadcast_sudden_death() -> void:
+	sudden_death = true
+	if mode == Mode.ONLINE_HOST and Network.is_online():
+		Network.broadcast({"type": "sudden_death"})
+
+func _handle_sudden_death() -> void:
+	if sudden_death:
+		return
+	sudden_death = true
+	sudden_death_received.emit()
 
 # --- TELEPORTER SYNC ---
 

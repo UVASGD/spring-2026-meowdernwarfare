@@ -66,6 +66,7 @@ func _build_ui() -> void:
 	_add_button("Charge Ult", _on_charge_ult)
 	_add_button("Reset Cooldowns", _on_reset_cooldowns)
 	_add_button("clear All Farms", _on_clear_all_farms)
+	_add_button("Trigger Sudden Death", _on_sudden_death)
 
 	_add_separator()
 	var crop_label = Label.new()
@@ -146,6 +147,15 @@ func _on_reset_cooldowns() -> void:
 		p.hero.reload_cd = 0.0
 	if p:
 		p.dash_cd_timer = 0.0
+
+func _on_sudden_death() -> void:
+	var gm = GameManager.instance
+	if gm == null or gm.sudden_death:
+		return
+	gm.broadcast_sudden_death()
+	var game = get_tree().current_scene
+	if game and game.has_method("_activate_sudden_death"):
+		game._activate_sudden_death()
 
 func _on_spawn_crop() -> void:
 	var p = _get_local_player()
