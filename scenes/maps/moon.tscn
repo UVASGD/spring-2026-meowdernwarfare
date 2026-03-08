@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=4 uid="uid://dea1hxmkkrroo"]
+[gd_scene load_steps=28 format=4 uid="uid://dea1hxmkkrroo"]
 
 [ext_resource type="PackedScene" uid="uid://jrafw8skg73p" path="res://scenes/crop_spawner.tscn" id="1_3ol52"]
 [ext_resource type="Texture2D" uid="uid://b806fl6i3ymrk" path="res://assets/maps/moon/moon texture.png" id="1_wodu6"]
@@ -17,6 +17,7 @@
 [ext_resource type="Script" uid="uid://pdt7g4isc4pi" path="res://scripts/teleporter.gd" id="16_3ol52"]
 [ext_resource type="Texture2D" uid="uid://8jsfcccmc784" path="res://assets/maps/moon/objs/moon crater_normal.png" id="17_1wagi"]
 [ext_resource type="Texture2D" uid="uid://7sx3ccys0khy" path="res://assets/maps/moon/objs/moon crater_specular.png" id="18_poxww"]
+[ext_resource type="PackedScene" uid="uid://cih7402ccv0gh" path="res://scenes/sd_lights.tscn" id="19_8fg61"]
 [ext_resource type="Texture2D" uid="uid://wjb35hpxxleh" path="res://assets/maps/moon/objs/moon crater glow.png" id="19_evwe5"]
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_8fg61"]
@@ -331,6 +332,8 @@ texture_scale = 2.0
 height = 9.0
 
 [node name="cropSpawner" parent="map" instance=ExtResource("1_3ol52")]
+
+[node name="SDLights" parent="map" instance=ExtResource("19_8fg61")]
 
 [connection signal="body_entered" from="map/objs/teleporters/crater1_2" to="map/objs/teleporters/crater1_2" method="_on_body_entered"]
 [connection signal="body_entered" from="map/objs/teleporters/crater2_1" to="map/objs/teleporters/crater2_1" method="_on_body_entered"]

@@ -1,0 +1,53 @@
+[gd_scene load_steps=5 format=3 uid="uid://cih7402ccv0gh"]
+
+[ext_resource type="Script" uid="uid://cl647o2xjl7ue" path="res://scripts/sd_lights.gd" id="1_o81lw"]
+
+[sub_resource type="Animation" id="Animation_o81lw"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_gctq3"]
+resource_name = "pulse"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 1.93333),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 0.38, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_kdg2x"]
+_data = {
+&"RESET": SubResource("Animation_o81lw"),
+&"pulse": SubResource("Animation_gctq3")
+}
+
+[node name="SDLights" type="DirectionalLight2D"]
+color = Color(0.996945, 6.23293e-06, 1.54018e-06, 1)
+energy = 0.0
+blend_mode = 2
+height = 0.27
+script = ExtResource("1_o81lw")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_kdg2x")
+}

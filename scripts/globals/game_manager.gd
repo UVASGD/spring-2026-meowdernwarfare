@@ -625,6 +625,7 @@ func _handle_game_over(data: Dictionary) -> void:
 
 func broadcast_sudden_death() -> void:
 	sudden_death = true
+	sudden_death_received.emit()
 	if mode == Mode.ONLINE_HOST and Network.is_online():
 		Network.broadcast({"type": "sudden_death"})
 
