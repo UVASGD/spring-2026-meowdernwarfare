@@ -37,6 +37,7 @@ var ult_bar: ProgressBar = null
 var ult_label: Label = null
 var tooltip_layer: CanvasLayer = null
 var tooltip_label: RichTextLabel = null
+var nametag: Label = null
 
 # State
 var aim_dir: Vector2 = Vector2.RIGHT
@@ -127,6 +128,7 @@ func _ready() -> void:
 	# Enable camera/UI only for local human players
 	_setup_local_ui()
 	_setup_crop_area()
+	_setup_nametag()
 
 func set_hero(hero_name: String) -> void:
 	if hero:
@@ -168,6 +170,18 @@ func _setup_local_ui() -> void:
 	
 	if show_ui:
 		_create_tooltip()
+
+func _setup_nametag() -> void:
+	nametag = health_bar.get_node_or_null("Nametag") if health_bar else null
+	if nametag == null:
+		return
+	var gm = GameManager.instance
+	if gm and gm.player_data.has(player_id):
+		nametag.text = gm.get_player_username(player_id)
+	elif is_ai_player:
+		nametag.text = "Bot %d" % player_id
+	else:
+		nametag.text = "Player %d" % player_id
 
 func _physics_process(delta: float) -> void:
 	if input == null:
