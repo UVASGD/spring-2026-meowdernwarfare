@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="HeroInfo" load_steps=3 format=3 uid="uid://crxrsvx2k7ir2"]
+
+[ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://c4gwwno17mwg5" path="res://assets/ui/titlescreen/new/catnip_dealer_main_menu_portrait.png" id="2_portrait"]
+
+[resource]
+script = ExtResource("1_script")
+id = "Dealer"
+desc = "def"
+portrait = ExtResource("2_portrait")
+shoot_name = "Catnip Shot"
+shoot_desc = "Fire a bullet in the aim direction. Cooldown: 0.3s, Magazine: 15"
+ability1_name = "Invisibility"
+ability1_desc = "Turn invisible for 3 seconds. Cooldown: 5s"
+ult_name = "Drug Trip"
+ult_desc = "drug effect on all enemies for 10s, inverting their movement and aim."

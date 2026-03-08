@@ -4,7 +4,7 @@ const TransitionSettings = preload("res://scripts/globals/transition_settings.gd
 
 # Autoload for passing data between lobby and game scenes
 
-enum GameMode { NONE, HOST, JOIN, PRACTICE }
+enum GameMode { NONE, HOST, JOIN, PRACTICE, SOLO, TUTORIAL }
 
 var game_mode: GameMode = GameMode.NONE
 var pending_players: Array = []

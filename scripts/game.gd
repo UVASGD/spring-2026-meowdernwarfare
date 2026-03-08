@@ -47,6 +47,8 @@ func _ready() -> void:
 	
 	if GameData.is_online_game:
 		_start_from_lobby()
+	elif GameData.game_mode == GameData.GameMode.SOLO:
+		start_solo_practice()
 	else:
 		start_solo_vs_ai()
 	
@@ -228,6 +230,16 @@ func start_sandbox() -> void:
 	gm.clear_players()
 	gm.spawn_local_player(0)
 	print("SANDBOX MODE")
+
+func start_solo_practice() -> void:
+	gm.disconnect_online()
+	gm.clear_players()
+	gm.spawn_local_player(0)
+	var npc = gm.spawn_ai_player(1)
+	npc.is_invulnerable = true
+	npc.modulate = Color(0.7, 0.7, 1.0)
+	npc.input.owner_node = null
+	print("SOLO PRACTICE - invincible NPC, debug menu available (TAB)")
 
 # ---------- Game Timer / Sudden Death / Win Condition ----------
 
