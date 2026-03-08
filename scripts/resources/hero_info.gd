@@ -15,6 +15,11 @@ extends Resource
 @export_multiline var ability1_desc: String = ""
 @export var ability1_video: VideoStream = null
 
+@export_group("Ability 2")
+@export var ability2_name: String = ""
+@export_multiline var ability2_desc: String = ""
+@export var ability2_video: VideoStream = null
+
 @export_group("Ultimate")
 @export var ult_name: String = "Ultimate"
 @export_multiline var ult_desc: String = ""

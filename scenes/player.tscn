@@ -88,6 +88,22 @@ max_value = 1.0
 value = 1.0
 show_percentage = false
 
+[node name="Ability2CD" type="VBoxContainer" parent="CooldownUI/Container"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CooldownUI/Container/Ability2CD"]
+layout_mode = 2
+text = "ABILITY 2"
+horizontal_alignment = 1
+
+[node name="Bar" type="ProgressBar" parent="CooldownUI/Container/Ability2CD"]
+custom_minimum_size = Vector2(60, 12)
+layout_mode = 2
+max_value = 1.0
+value = 1.0
+show_percentage = false
+
 [node name="UltCD" type="VBoxContainer" parent="CooldownUI/Container"]
 layout_mode = 2
 

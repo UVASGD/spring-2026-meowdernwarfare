@@ -6,6 +6,7 @@ const _DEFAULT_HEROES: Array[HeroInfo] = [
 	preload("res://assets/resources/heroes/alien.tres"),
 	preload("res://assets/resources/heroes/xylerfergus.tres"),
 	preload("res://assets/resources/heroes/loanshark.tres"),
+	preload("res://assets/resources/heroes/gooblin.tres"),
 ]
 
 @export var heroes: Array[HeroInfo] = []
@@ -21,6 +22,7 @@ const _DEFAULT_HEROES: Array[HeroInfo] = [
 @onready var hero_desc: RichTextLabel = $Margin/VBox/Content/SidePanel/Scroll/PanelContent/HeroDesc
 @onready var shoot_section: VBoxContainer = $Margin/VBox/Content/SidePanel/Scroll/PanelContent/ShootSection
 @onready var ability1_section: VBoxContainer = $Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability1Section
+@onready var ability2_section: VBoxContainer = $Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability2Section
 @onready var ult_section: VBoxContainer = $Margin/VBox/Content/SidePanel/Scroll/PanelContent/UltSection
 
 var selected_hero: String = ""
@@ -67,6 +69,10 @@ func _on_hero_selected(info: HeroInfo) -> void:
 
 	_update_skill_section(shoot_section, info.shoot_name, info.shoot_desc)
 	_update_skill_section(ability1_section, info.ability1_name, info.ability1_desc)
+	if info.ability2_name != "":
+		_update_skill_section(ability2_section, info.ability2_name, info.ability2_desc)
+	else:
+		ability2_section.visible = false
 	_update_skill_section(ult_section, info.ult_name, info.ult_desc)
 
 func _update_skill_section(section: VBoxContainer, skill_name: String, skill_desc: String) -> void:

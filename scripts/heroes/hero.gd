@@ -11,8 +11,9 @@ signal died
 
 @export var shoot_cooldown: float = 0.3
 @export var ability1_cooldown: float = 5.0
+@export var ability2_cooldown: float = 0.0
 
-# Ult (ability2) charge
+# Ult charge
 @export var max_ult_points: int = 50
 @export var ult_points_on_hit: int = 2
 @export var ult_points_on_dodge: int = 1
@@ -23,12 +24,14 @@ signal died
 # Animation durations
 @export var ability1_anim_duration: float = 0.5
 @export var ability2_anim_duration: float = 0.5
+@export var ult_anim_duration: float = 0.5
 @export var dash_anim_duration: float = 0.2
 
 # State
 var health: float = 100.0
 var shoot_cd: float = 0.0
 var ability1_cd: float = 0.0
+var ability2_cd: float = 0.0
 var reload_cd: float = 0.0
 var is_dead: bool = false
 var ammo: int = 15
@@ -37,6 +40,7 @@ var ult_points: int = 0
 # Animation state
 var ability1_anim_timer: float = 0.0
 var ability2_anim_timer: float = 0.0
+var ult_anim_timer: float = 0.0
 var current_anim: String = "idle"
 
 # Set by Player
@@ -62,6 +66,7 @@ func _process(delta: float) -> void:
 func _update_cooldowns(delta: float) -> void:
 	shoot_cd = max(0, shoot_cd - delta)
 	ability1_cd = max(0, ability1_cd - delta)
+	ability2_cd = max(0, ability2_cd - delta)
 	
 	var was_reloading = reload_cd > 0
 	reload_cd = max(0, reload_cd - delta)
@@ -70,6 +75,7 @@ func _update_cooldowns(delta: float) -> void:
 	
 	ability1_anim_timer = max(0, ability1_anim_timer - delta)
 	ability2_anim_timer = max(0, ability2_anim_timer - delta)
+	ult_anim_timer = max(0, ult_anim_timer - delta)
 
 func _update_animation(delta: float) -> void:
 	if sprite == null or player == null:
@@ -86,9 +92,12 @@ func _get_animation_state() -> String:
 	var is_dashing = player.is_dashing if "is_dashing" in player else false
 	var is_reloading = reload_cd > 0
 	
-	# Priority: dash > ability2 > ability1 > reload > run/idle
+	# Priority: dash > ult > ability2 > ability1 > reload > run/idle
 	if is_dashing:
 		return "dash"
+	
+	if ult_anim_timer > 0:
+		return "ult"
 	
 	if ability2_anim_timer > 0:
 		return "ability2"
@@ -149,6 +158,9 @@ func can_ability1() -> bool:
 	return ability1_cd <= 0
 
 func can_ability2() -> bool:
+	return ability2_cd <= 0 and ability2_cooldown > 0
+
+func can_ult() -> bool:
 	return ult_points >= max_ult_points
 
 func shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
@@ -172,12 +184,19 @@ func ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	_do_ability1(aim_dir, aim_pos)
 
 func ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
-	if not can_ability2() or (is_dead):
+	if not can_ability2() or is_dead:
+		return
+	ability2_cd = ability2_cooldown
+	ability2_anim_timer = ability2_anim_duration
+	_do_ability2(aim_dir, aim_pos)
+
+func ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
+	if not can_ult() or is_dead:
 		return
 	ult_points = 0
 	ult_changed.emit(ult_points, max_ult_points)
-	ability2_anim_timer = ability2_anim_duration
-	_do_ability2(aim_dir, aim_pos)
+	ult_anim_timer = ult_anim_duration
+	_do_ult(aim_dir, aim_pos)
 
 func _do_shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	pass
@@ -186,6 +205,9 @@ func _do_ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	pass
 
 func _do_ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
+	pass
+
+func _do_ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	pass
 
 func _do_reload() -> void:

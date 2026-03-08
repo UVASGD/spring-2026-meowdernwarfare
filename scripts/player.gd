@@ -30,6 +30,7 @@ var camera: Camera2D = null
 var cooldown_ui: CanvasLayer = null
 var shoot_cd_bar: ProgressBar = null
 var ability1_cd_bar: ProgressBar = null
+var ability2_cd_bar: ProgressBar = null
 var reload_cd_bar: ProgressBar = null
 var dash_cd_bar: ProgressBar = null
 var ammo_label: Label = null
@@ -51,6 +52,12 @@ var is_drugged: bool = false
 var drug_timer: float = 0.0
 var drug_effect_layer: CanvasLayer = null
 var drug_effect_rect: ColorRect = null
+
+# Blind effect state
+var is_blinded: bool = false
+var blind_timer: float = 0.0
+var blind_effect_layer: CanvasLayer = null
+var blind_effect_rect: ColorRect = null
 
 # Crop state
 var crop_count: int = 0
@@ -89,6 +96,7 @@ const HERO_SCENES = {
 	"Xyler": preload("res://scenes/heroes/xyler.tscn"),
 	"Fergus": preload("res://scenes/heroes/fergus.tscn"),
 	"LoanShark": preload("res://scenes/heroes/loanshark.tscn"),
+	"Gooblin": preload("res://scenes/heroes/gooblin.tscn"),
 }
 
 func _ready() -> void:
@@ -115,6 +123,7 @@ func _ready() -> void:
 		if container:
 			shoot_cd_bar = container.get_node_or_null("ShootCD/Bar")
 			ability1_cd_bar = container.get_node_or_null("Ability1CD/Bar")
+			ability2_cd_bar = container.get_node_or_null("Ability2CD/Bar")
 			reload_cd_bar = container.get_node_or_null("ReloadCD/Bar")
 			dash_cd_bar = container.get_node_or_null("DashCD/Bar")
 			ammo_label = container.get_node_or_null("Ammo/Count")
@@ -123,7 +132,7 @@ func _ready() -> void:
 	
 	# Default hero for testing
 	if hero == null:
-		set_hero("Dealer")
+		set_hero("Gooblin")
 	
 	# Enable camera/UI only for local human players
 	_setup_local_ui()
@@ -246,6 +255,12 @@ func _update_timers(delta: float) -> void:
 		if drug_timer <= 0:
 			_end_drug_effect()
 
+	# Blind effect timer
+	if blind_timer > 0:
+		blind_timer -= delta
+		if blind_timer <= 0:
+			_end_blind_effect()
+
 func _handle_movement(delta: float) -> void:
 	if is_dashing:
 		velocity = dash_dir * dash_speed
@@ -289,6 +304,8 @@ func _handle_actions() -> void:
 		hero.ability1(aim_dir, get_aim_position())
 	if input.ability2_just:
 		hero.ability2(aim_dir, get_aim_position())
+	if input.ult_just:
+		hero.ult(aim_dir, get_aim_position())
 	if input.reload_just:
 		hero.reload()
 
@@ -383,6 +400,13 @@ func _update_cooldown_ui() -> void:
 		var a1_pct = 1.0 - (hero.ability1_cd / hero.ability1_cooldown) if hero.ability1_cooldown > 0 else 1.0
 		ability1_cd_bar.value = clamp(a1_pct, 0.0, 1.0)
 	
+	if ability2_cd_bar:
+		if hero.ability2_cooldown > 0:
+			var a2_pct = 1.0 - (hero.ability2_cd / hero.ability2_cooldown)
+			ability2_cd_bar.value = clamp(a2_pct, 0.0, 1.0)
+			ability2_cd_bar.get_parent().visible = true
+		else:
+			ability2_cd_bar.get_parent().visible = false
 	
 	if reload_cd_bar:
 		var reload_pct = 1.0 - (hero.reload_cd / hero.reload_time) if hero.reload_time > 0 else 1.0
@@ -681,7 +705,50 @@ func _end_drug_effect() -> void:
 		drug_effect_layer.queue_free()
 		drug_effect_layer = null
 		drug_effect_rect = null
-		
+
+# --- BLIND EFFECT ---
+
+const BlindShader = preload("res://assets/shaders/blind.gdshader")
+
+func apply_blind_effect(duration: float) -> void:
+	var is_local = (input is LocalInput and player_id == 0) or (input is NetworkInput and input.is_local)
+	
+	is_blinded = true
+	blind_timer = duration
+	
+	if is_local:
+		_create_blind_effect_layer()
+
+func _create_blind_effect_layer() -> void:
+	if blind_effect_layer:
+		return
+	
+	blind_effect_layer = CanvasLayer.new()
+	blind_effect_layer.layer = 100
+	add_child(blind_effect_layer)
+	
+	blind_effect_rect = ColorRect.new()
+	blind_effect_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	blind_effect_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	var mat = ShaderMaterial.new()
+	mat.shader = BlindShader
+	mat.set_shader_parameter("flash_speed", 3.0)
+	mat.set_shader_parameter("intensity", 1)
+	mat.set_shader_parameter("fade", 1.0)
+	blind_effect_rect.material = mat
+	
+	blind_effect_layer.add_child(blind_effect_rect)
+
+func _end_blind_effect() -> void:
+	is_blinded = false
+	blind_timer = 0.0
+	
+	if blind_effect_layer:
+		blind_effect_layer.queue_free()
+		blind_effect_layer = null
+		blind_effect_rect = null
+
 
 # ---------- Death / Respawn ----------
 

@@ -149,3 +149,7 @@ func _do_aggressive(delta: float) -> void:
 	# Use abilities sometimes
 	if randf() < 0.005:
 		ability1_just = true
+	if randf() < 0.003:
+		ability2_just = true
+	if randf() < 0.002:
+		ult_just = true

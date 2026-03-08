@@ -8,7 +8,6 @@ max_health = 85.0
 move_speed_mult = 1.0
 shoot_cooldown = 0.3
 ability1_cooldown = 7.0
-ability2_cooldown = 14.0
 reload_time = 1.6
 mag_size = 14
 

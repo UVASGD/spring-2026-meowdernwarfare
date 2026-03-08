@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="HeroInfo" load_steps=2 format=3 uid="uid://bjgfiqsm7xhtk"]
+
+[ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = "Gooblin"
+desc = "def"
+shoot_name = "Anime Tears"
+shoot_desc = "Fire sparkling tears alternating from left and right eyes. Cooldown: 0.2s, Magazine: 20"
+ability1_name = "Boogie Bomb"
+ability1_desc = "Throw a disco bomb that blinds all enemies in a large area on impact. 15s cooldown, 3s blind duration."
+ability2_name = "Retreat"
+ability2_desc = "Gain a temporary speed boost to escape to safety. 8s cooldown, 2.5s duration."
+ult_name = "Summon Drooglin"
+ult_desc = "Summon Drooglin the Dragon to close off everyone's farm entrance with harmful fire for 30s. The caster is unaffected."

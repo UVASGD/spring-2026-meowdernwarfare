@@ -1,7 +1,7 @@
 extends Control
 
 const SERVER_URL = "wss://server-still-cherry-1856.fly.dev"
-const HEROES = ["Dealer", "Burple", "Alien", "Xyler", "Fergus", "LoanShark"]
+const HEROES = ["Dealer", "Burple", "Alien", "Xyler", "Fergus", "LoanShark", "Gooblin"]
 const MAPS = ["testArena", "Moon"]
 const CROPS = ["SpeedSprout", "IronRoot", "BlastBerry"]
 const MAX_STARTERS := 3

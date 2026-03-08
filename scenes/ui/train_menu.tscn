@@ -211,6 +211,46 @@ text = "[ Video ]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="Ability2Section" type="VBoxContainer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability2Section"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 22
+
+[node name="Desc" type="RichTextLabel" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability2Section"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="Video" type="ColorRect" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability2Section"]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+color = Color(0.08, 0.08, 0.13, 1)
+
+[node name="Label" type="Label" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability2Section/Video"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -14.0
+offset_right = 50.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
+text = "[ Video ]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="UltSection" type="VBoxContainer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent"]
 visible = false
 layout_mode = 2
