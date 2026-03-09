@@ -7,6 +7,7 @@ const _DEFAULT_HEROES: Array[HeroInfo] = [
 	preload("res://assets/resources/heroes/xylerfergus.tres"),
 	preload("res://assets/resources/heroes/loanshark.tres"),
 	preload("res://assets/resources/heroes/gooblin.tres"),
+	preload("res://assets/resources/heroes/garebare.tres"),
 ]
 
 @export var heroes: Array[HeroInfo] = []

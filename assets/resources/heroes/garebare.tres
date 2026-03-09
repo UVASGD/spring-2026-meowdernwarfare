@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="HeroInfo" load_steps=2 format=3 uid="uid://32b430kso7ul"]
+
+[ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = "Garebare"
+desc = "def"
+shoot_name = "Soundwave"
+shoot_desc = "0.4s cooldown."
+ability1_name = "Sonic Burst"
+ability1_desc = "Launch a sonic charge that stuns the first enemy hit for 2s. Stunned players cannot move, shoot, dash, or use skills. 10s cooldown."
+ability2_name = "Frequency Interference Emitter"
+ability2_desc = "Place up to 2 F.I.Es that suppress enemy Skills and Ults in their area. Enemies can destroy them, triggering a 10s respawn cooldown per slot."
+ult_name = "Amplitude"
+ult_desc = "Make a sonic burst dealing heavy damage around Garebare. All active FIEs also detonate, dealing damage in their areas and refreshing placement cooldowns."

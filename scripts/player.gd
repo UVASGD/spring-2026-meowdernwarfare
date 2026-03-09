@@ -59,6 +59,13 @@ var blind_timer: float = 0.0
 var blind_effect_layer: CanvasLayer = null
 var blind_effect_rect: ColorRect = null
 
+# Stun state
+var is_stunned: bool = false
+var stun_timer: float = 0.0
+
+# FIE suppression (incremented/decremented by FIE zones)
+var fie_suppress_count: int = 0
+
 # Crop state
 var crop_count: int = 0
 var held_crop: Crop = null
@@ -97,6 +104,7 @@ const HERO_SCENES = {
 	"Fergus": preload("res://scenes/heroes/fergus.tscn"),
 	"LoanShark": preload("res://scenes/heroes/loanshark.tscn"),
 	"Gooblin": preload("res://scenes/heroes/gooblin.tscn"),
+	"Garebare": preload("res://scenes/heroes/garebare.tscn"),
 }
 
 func _ready() -> void:
@@ -261,7 +269,17 @@ func _update_timers(delta: float) -> void:
 		if blind_timer <= 0:
 			_end_blind_effect()
 
+	# Stun timer
+	if stun_timer > 0:
+		stun_timer -= delta
+		if stun_timer <= 0:
+			is_stunned = false
+
 func _handle_movement(delta: float) -> void:
+	if is_stunned:
+		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
+		return
+
 	if is_dashing:
 		velocity = dash_dir * dash_speed
 		return
@@ -290,6 +308,11 @@ func _handle_rotation(delta: float) -> void:
 	
 
 func _handle_actions() -> void:
+	if is_stunned:
+		if hero and input.ult_just:
+			hero.ult(aim_dir, get_aim_position())
+		return
+
 	# Dash
 	if input.dash_just and dash_cd_timer <= 0 and not is_dashing and not is_dead():
 		_start_dash()
@@ -748,6 +771,12 @@ func _end_blind_effect() -> void:
 		blind_effect_layer.queue_free()
 		blind_effect_layer = null
 		blind_effect_rect = null
+
+# --- STUN ---
+
+func apply_stun(duration: float) -> void:
+	is_stunned = true
+	stun_timer = max(stun_timer, duration)
 
 
 # ---------- Death / Respawn ----------

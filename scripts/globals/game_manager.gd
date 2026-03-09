@@ -399,6 +399,12 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 	elif msg_type == "spawner_stage":
 		_handle_spawner_stage(data)
 
+	elif msg_type == "fie_placed":
+		_handle_fie_placed(from_id, data)
+
+	elif msg_type == "fie_destroyed":
+		_handle_fie_destroyed(from_id, data)
+
 func _broadcast_state() -> void:
 	if not Network.is_online():
 		return
@@ -427,6 +433,7 @@ func _broadcast_state() -> void:
 				state["invis"] = p.hero.is_invisible()
 		
 		state["cc"] = p.crop_count
+		state["stun"] = p.is_stunned
 		state["spec"] = p.in_spectate_mode
 		state["dead"] = p.is_dead()
 		state["await_resp"] = p.is_awaiting_respawn
@@ -511,12 +518,17 @@ func _apply_corrections(delta: float) -> void:
 			# Apply velocity for prediction
 			player.velocity = Vector2(state.get("vx", 0), state.get("vy", 0))
 			
-			# Sync dash/drug state
+			# Sync dash/drug/stun state
 			player.is_dashing = state.get("dash", false)
 			if state.get("drug", false) and not player.is_drugged:
 				player.is_drugged = true
 			elif not state.get("drug", false) and player.is_drugged:
 				player._end_drug_effect()
+			if state.get("stun", false) and not player.is_stunned:
+				player.apply_stun(1.0)
+			elif not state.get("stun", false) and player.is_stunned:
+				player.is_stunned = false
+				player.stun_timer = 0.0
 		
 		if player.hero:
 			if not is_local_player:
@@ -926,6 +938,58 @@ func _handle_spawner_stage(data: Dictionary) -> void:
 	var spawner = _spawners.get(sid)
 	if spawner and is_instance_valid(spawner):
 		spawner.stage = int(data.get("cs", 1))
+
+# --- FIE SYNC ---
+
+func send_fie_placed(pid: int, slot: int, pos: Vector2) -> void:
+	if mode == Mode.LOCAL:
+		return
+	var msg = {"type": "fie_placed", "pid": pid, "slot": slot, "x": pos.x, "y": pos.y}
+	if mode == Mode.ONLINE_HOST:
+		Network.broadcast(msg)
+	else:
+		Network.send_to_host(msg)
+
+func send_fie_destroyed(pid: int, slot: int) -> void:
+	if mode == Mode.LOCAL:
+		return
+	var msg = {"type": "fie_destroyed", "pid": pid, "slot": slot}
+	if mode == Mode.ONLINE_HOST:
+		Network.broadcast(msg)
+	else:
+		Network.send_to_host(msg)
+
+func _handle_fie_placed(from_id: int, data: Dictionary) -> void:
+	if mode == Mode.ONLINE_HOST:
+		Network.broadcast(data)
+	var pid = int(data.get("pid", from_id))
+	if pid == local_player_id:
+		return
+	var slot = int(data.get("slot", 0))
+	var pos = Vector2(data.get("x", 0), data.get("y", 0))
+	var p = get_player(pid)
+	if p == null or not is_instance_valid(p) or p.hero == null:
+		return
+	if p.hero is HeroGarebare:
+		p.hero._place_fie_remote(slot, pos)
+
+func _handle_fie_destroyed(from_id: int, data: Dictionary) -> void:
+	if mode == Mode.ONLINE_HOST:
+		Network.broadcast(data)
+	var pid = int(data.get("pid", from_id))
+	if pid == local_player_id:
+		return
+	var p = get_player(pid)
+	if p == null or not is_instance_valid(p) or p.hero == null:
+		return
+	if p.hero is HeroGarebare:
+		var slot = int(data.get("slot", 0))
+		if slot >= 0 and slot < p.hero.fies.size():
+			var fie = p.hero.fies[slot]
+			if fie and is_instance_valid(fie):
+				p.hero._fie_remote_op = true
+				fie._destroy()
+				p.hero._fie_remote_op = false
 
 # --- DESYNC TELEMETRY ---
 
