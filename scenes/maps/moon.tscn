@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=4 uid="uid://dea1hxmkkrroo"]
+[gd_scene load_steps=47 format=4 uid="uid://dea1hxmkkrroo"]
 
 [ext_resource type="PackedScene" uid="uid://jrafw8skg73p" path="res://scenes/crop_spawner.tscn" id="1_3ol52"]
 [ext_resource type="Texture2D" uid="uid://b806fl6i3ymrk" path="res://assets/maps/moon/moon texture.png" id="1_wodu6"]
@@ -16,6 +16,8 @@
 [ext_resource type="Texture2D" uid="uid://cv6mqks33jfhe" path="res://assets/maps/moon/objs/moon crater.png" id="15_64t7d"]
 [ext_resource type="Script" uid="uid://pdt7g4isc4pi" path="res://scripts/teleporter.gd" id="16_3ol52"]
 [ext_resource type="Texture2D" uid="uid://8jsfcccmc784" path="res://assets/maps/moon/objs/moon crater_normal.png" id="17_1wagi"]
+[ext_resource type="Shader" uid="uid://dtxj6rav7fw2q" path="res://scenes/ui/squiggle.gdshader" id="17_poxww"]
+[ext_resource type="Texture2D" uid="uid://bt71p1bjraquj" path="res://assets/maps/moon/objs/moonflowersheet.png" id="18_evwe5"]
 [ext_resource type="Texture2D" uid="uid://7sx3ccys0khy" path="res://assets/maps/moon/objs/moon crater_specular.png" id="18_poxww"]
 [ext_resource type="PackedScene" uid="uid://cih7402ccv0gh" path="res://scenes/sd_lights.tscn" id="19_8fg61"]
 [ext_resource type="Texture2D" uid="uid://wjb35hpxxleh" path="res://assets/maps/moon/objs/moon crater glow.png" id="19_evwe5"]
@@ -43,6 +45,149 @@ normal_texture = ExtResource("17_1wagi")
 specular_texture = ExtResource("18_poxww")
 specular_color = Color(6.93083e-06, 0.713355, 0.920679, 1)
 specular_shininess = 0.65
+
+[sub_resource type="Gradient" id="Gradient_6kqtc"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_5lgu8"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_t2jim"]
+color_ramp = SubResource("Gradient_6kqtc")
+noise = SubResource("FastNoiseLite_5lgu8")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_an7kh"]
+shader = ExtResource("17_poxww")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.5
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_t2jim")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oy6ua"]
+atlas = ExtResource("18_evwe5")
+region = Rect2(0, 0, 505, 635)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_78geq"]
+atlas = ExtResource("18_evwe5")
+region = Rect2(505, 0, 505, 635)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ell44"]
+atlas = ExtResource("18_evwe5")
+region = Rect2(1010, 0, 505, 635)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5ruec"]
+atlas = ExtResource("18_evwe5")
+region = Rect2(0, 635, 505, 635)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3musm"]
+atlas = ExtResource("18_evwe5")
+region = Rect2(505, 635, 505, 635)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ffa6f"]
+atlas = ExtResource("18_evwe5")
+region = Rect2(1010, 635, 505, 635)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lncul"]
+atlas = ExtResource("18_evwe5")
+region = Rect2(0, 1270, 505, 635)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_80v0w"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oy6ua")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_78geq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ell44")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5ruec")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3musm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ffa6f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lncul")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="Animation" id="Animation_b7kpc"]
+resource_name = "pulse"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("biglight:energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.966667, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [1.0, 0.3, 1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("littlelight:energy")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1, 1.96667),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [1.0, 0.3, 1.0]
+}
+
+[sub_resource type="Animation" id="Animation_lek1e"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("biglight:energy")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("littlelight:energy")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_78sp1"]
+_data = {
+&"RESET": SubResource("Animation_lek1e"),
+&"pulse": SubResource("Animation_b7kpc")
+}
+
+[sub_resource type="Gradient" id="Gradient_r1n43"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_bk8q8"]
+gradient = SubResource("Gradient_r1n43")
+fill = 1
+fill_from = Vector2(0.506098, 0.530488)
+fill_to = Vector2(0.780488, 0.307927)
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_qpo6k"]
 
@@ -204,9 +349,6 @@ texture = ExtResource("8_xq83h")
 [node name="squihouse" parent="map/objs/farms" instance=ExtResource("14_1wagi")]
 position = Vector2(915, 925)
 
-[node name="TileMapLayer" parent="map/objs/farms/squihouse" index="0"]
-tile_map_data = PackedByteArray("AAD+/wIAAAACAAAAAAACAAIAAAACAAAAAAADAAIAAAACAAAAAAD9/wIAAAACAAAAAAD8/wIAAAACAAAAAAAEAAIAAAACAAIAAAD7/wIAAAABAAIAAAD7/wEAAAABAAEAAAD7/wAAAAABAAEAAAD7////AAABAAEAAAD7//7/AAABAAEAAAD7//3/AAABAAAAAAD8//3/AAACAAAAAAD9//3/AAACAAAAAAD+//3/AAACAAAAAAABAP3/AAACAAAAAAACAP3/AAACAAAAAAADAP3/AAACAAAAAAAEAP3/AAACAAEAAAAEAP7/AAABAAEAAAAEAP//AAABAAEAAAAEAAAAAAABAAEAAAAEAAEAAAABAAEAAAABAAIAAAACAAAAAAD9/wAAAQAAAAAAAQD9////AQAAAAAAAQD+////AQAAAAAAAQD/////AQAAAAAAAQD+/wAAAQAAAAAAAQD//wAAAQAAAAAAAQAAAP//AQAAAAAAAQABAP//AQAAAAAAAQACAP//AQAAAAAAAQACAAAAAQAAAAAAAQABAAAAAQAAAAAAAQAAAAAAAQAAAAAAAQAAAAIAAAACAAAAAAD//wIAAAACAAAAAAA=")
-
 [node name="entrance" parent="map/objs/farms/squihouse" index="1"]
 position = Vector2(0, -391)
 
@@ -217,11 +359,11 @@ position = Vector2(430, -75)
 position = Vector2(14, 244)
 texture = ExtResource("9_1fm0i")
 
+[node name="TileMapLayer2" parent="map/objs/farms/squihouse" index="4"]
+tile_map_data = PackedByteArray("AADt//D/BQABAAAAAAAIAPD/BQABAAAAAAD2//D/BQABAAAAAADt/wkABQABAAAAAADt/wAABQABAAEAAADt//n/BQABAAEAAAARAPD/BQABAAAAAAAaAPf/BQABAAEAAAAaAAAABQABAAEAAAAaAAkABQABAAEAAAARAAkABQABAAAAAAAIAAkABQABAAAAAAD2/wkABQABAAAAAADt/wgABQABAAEAAAD//wkABQABAAAAAAA=")
+
 [node name="eviltrees2" parent="map/objs/farms" instance=ExtResource("14_1wagi")]
 position = Vector2(-948, 925)
-
-[node name="TileMapLayer" parent="map/objs/farms/eviltrees2" index="0"]
-tile_map_data = PackedByteArray("AAD+/wIAAAACAAAAAAACAAIAAAACAAAAAAADAAIAAAACAAAAAAD9/wIAAAACAAAAAAD8/wIAAAACAAAAAAAEAAIAAAACAAIAAAD7/wIAAAABAAIAAAD7/wEAAAABAAEAAAD7/wAAAAABAAEAAAD7////AAABAAEAAAD7//7/AAABAAEAAAD7//3/AAABAAAAAAD8//3/AAACAAAAAAD9//3/AAACAAAAAAD+//3/AAACAAAAAAABAP3/AAACAAAAAAACAP3/AAACAAAAAAADAP3/AAACAAAAAAAEAP3/AAACAAEAAAAEAP7/AAABAAEAAAAEAP//AAABAAEAAAAEAAAAAAABAAEAAAAEAAEAAAABAAEAAAABAAIAAAACAAAAAAD9/wAAAQAAAAAAAQD9////AQAAAAAAAQD+////AQAAAAAAAQD/////AQAAAAAAAQD+/wAAAQAAAAAAAQD//wAAAQAAAAAAAQAAAP//AQAAAAAAAQABAP//AQAAAAAAAQACAP//AQAAAAAAAQACAAAAAQAAAAAAAQABAAAAAQAAAAAAAQAAAAAAAQAAAAAAAQAAAAIAAAACAAAAAAD//wIAAAACAAAAAAA=")
 
 [node name="entrance" parent="map/objs/farms/eviltrees2" index="1"]
 position = Vector2(0, -389)
@@ -232,6 +374,9 @@ position = Vector2(11, -5)
 [node name="entranceSprite" parent="map/objs/farms/eviltrees2/spriteYsortOffset" index="0"]
 position = Vector2(-512, 180)
 texture = ExtResource("7_qpo6k")
+
+[node name="TileMapLayer2" parent="map/objs/farms/eviltrees2" index="4"]
+tile_map_data = PackedByteArray("AADt//D/BQABAAAAAAAIAPD/BQABAAAAAAD2//D/BQABAAAAAADt/wkABQABAAAAAADt/wAABQABAAEAAADt//n/BQABAAEAAAARAPD/BQABAAAAAAAaAPf/BQABAAEAAAAaAAAABQABAAEAAAAaAAkABQABAAEAAAARAAkABQABAAAAAAAIAAkABQABAAAAAAD2/wkABQABAAAAAADt/wgABQABAAEAAAD//wkABQABAAAAAAA=")
 
 [node name="teleporters" type="Node2D" parent="map/objs"]
 z_index = -1
@@ -282,6 +427,325 @@ texture = ExtResource("19_evwe5")
 height = 192.0
 
 [node name="deco" type="Node2D" parent="map"]
+
+[node name="flower" type="AnimatedSprite2D" parent="map/deco"]
+material = SubResource("ShaderMaterial_an7kh")
+position = Vector2(196, 411)
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_80v0w")
+autoplay = "default"
+frame_progress = 0.783657
+speed_scale = 0.5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="map/deco/flower"]
+libraries = {
+&"": SubResource("AnimationLibrary_78sp1")
+}
+autoplay = "pulse"
+
+[node name="biglight" type="PointLight2D" parent="map/deco/flower"]
+position = Vector2(44.9999, -4.99985)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 9.94
+height = 13.0
+
+[node name="littlelight" type="PointLight2D" parent="map/deco/flower"]
+position = Vector2(-95.0001, 55.0001)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 5.77
+height = 13.0
+
+[node name="flower2" type="AnimatedSprite2D" parent="map/deco"]
+material = SubResource("ShaderMaterial_an7kh")
+position = Vector2(1535, -389)
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_80v0w")
+autoplay = "default"
+frame_progress = 0.972826
+speed_scale = 0.5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="map/deco/flower2"]
+libraries = {
+&"": SubResource("AnimationLibrary_78sp1")
+}
+autoplay = "pulse"
+
+[node name="biglight" type="PointLight2D" parent="map/deco/flower2"]
+position = Vector2(44.9999, -4.99985)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 9.94
+height = 13.0
+
+[node name="littlelight" type="PointLight2D" parent="map/deco/flower2"]
+position = Vector2(-95.0001, 55.0001)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 5.77
+height = 13.0
+
+[node name="flower3" type="AnimatedSprite2D" parent="map/deco"]
+material = SubResource("ShaderMaterial_an7kh")
+position = Vector2(1128, 142)
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_80v0w")
+autoplay = "default"
+frame_progress = 0.972826
+speed_scale = 0.5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="map/deco/flower3"]
+libraries = {
+&"": SubResource("AnimationLibrary_78sp1")
+}
+autoplay = "pulse"
+
+[node name="biglight" type="PointLight2D" parent="map/deco/flower3"]
+position = Vector2(44.9999, -4.99985)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 9.94
+height = 13.0
+
+[node name="littlelight" type="PointLight2D" parent="map/deco/flower3"]
+position = Vector2(-95.0001, 55.0001)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 5.77
+height = 13.0
+
+[node name="flower4" type="AnimatedSprite2D" parent="map/deco"]
+material = SubResource("ShaderMaterial_an7kh")
+position = Vector2(-255, -428)
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_80v0w")
+autoplay = "default"
+frame_progress = 0.972826
+speed_scale = 0.5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="map/deco/flower4"]
+libraries = {
+&"": SubResource("AnimationLibrary_78sp1")
+}
+autoplay = "pulse"
+
+[node name="biglight" type="PointLight2D" parent="map/deco/flower4"]
+position = Vector2(44.9999, -4.99985)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 9.94
+height = 13.0
+
+[node name="littlelight" type="PointLight2D" parent="map/deco/flower4"]
+position = Vector2(-95.0001, 55.0001)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 5.77
+height = 13.0
+
+[node name="flower5" type="AnimatedSprite2D" parent="map/deco"]
+material = SubResource("ShaderMaterial_an7kh")
+position = Vector2(-1452, 358)
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_80v0w")
+autoplay = "default"
+frame_progress = 0.972826
+speed_scale = 0.5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="map/deco/flower5"]
+libraries = {
+&"": SubResource("AnimationLibrary_78sp1")
+}
+autoplay = "pulse"
+
+[node name="biglight" type="PointLight2D" parent="map/deco/flower5"]
+position = Vector2(44.9999, -4.99985)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 9.94
+height = 13.0
+
+[node name="littlelight" type="PointLight2D" parent="map/deco/flower5"]
+position = Vector2(-95.0001, 55.0001)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 5.77
+height = 13.0
+
+[node name="flower6" type="AnimatedSprite2D" parent="map/deco"]
+material = SubResource("ShaderMaterial_an7kh")
+position = Vector2(-117, 806)
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_80v0w")
+autoplay = "default"
+frame_progress = 0.972826
+speed_scale = 0.5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="map/deco/flower6"]
+libraries = {
+&"": SubResource("AnimationLibrary_78sp1")
+}
+autoplay = "pulse"
+
+[node name="biglight" type="PointLight2D" parent="map/deco/flower6"]
+position = Vector2(44.9999, -4.99985)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 9.94
+height = 13.0
+
+[node name="littlelight" type="PointLight2D" parent="map/deco/flower6"]
+position = Vector2(-95.0001, 55.0001)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 5.77
+height = 13.0
+
+[node name="flower7" type="AnimatedSprite2D" parent="map/deco"]
+material = SubResource("ShaderMaterial_an7kh")
+position = Vector2(-1806, 1408)
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_80v0w")
+autoplay = "default"
+frame_progress = 0.972826
+speed_scale = 0.5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="map/deco/flower7"]
+libraries = {
+&"": SubResource("AnimationLibrary_78sp1")
+}
+autoplay = "pulse"
+
+[node name="biglight" type="PointLight2D" parent="map/deco/flower7"]
+position = Vector2(44.9999, -4.99985)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 9.94
+height = 13.0
+
+[node name="littlelight" type="PointLight2D" parent="map/deco/flower7"]
+position = Vector2(-95.0001, 55.0001)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 5.77
+height = 13.0
+
+[node name="flower8" type="AnimatedSprite2D" parent="map/deco"]
+material = SubResource("ShaderMaterial_an7kh")
+position = Vector2(-1907, 140)
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_80v0w")
+autoplay = "default"
+frame_progress = 0.972826
+speed_scale = 0.5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="map/deco/flower8"]
+libraries = {
+&"": SubResource("AnimationLibrary_78sp1")
+}
+autoplay = "pulse"
+
+[node name="biglight" type="PointLight2D" parent="map/deco/flower8"]
+position = Vector2(44.9999, -4.99985)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 9.94
+height = 13.0
+
+[node name="littlelight" type="PointLight2D" parent="map/deco/flower8"]
+position = Vector2(-95.0001, 55.0001)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 5.77
+height = 13.0
+
+[node name="flower9" type="AnimatedSprite2D" parent="map/deco"]
+material = SubResource("ShaderMaterial_an7kh")
+position = Vector2(-1827, -871)
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_80v0w")
+autoplay = "default"
+frame_progress = 0.972826
+speed_scale = 0.5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="map/deco/flower9"]
+libraries = {
+&"": SubResource("AnimationLibrary_78sp1")
+}
+autoplay = "pulse"
+
+[node name="biglight" type="PointLight2D" parent="map/deco/flower9"]
+position = Vector2(44.9999, -4.99985)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 9.94
+height = 13.0
+
+[node name="littlelight" type="PointLight2D" parent="map/deco/flower9"]
+position = Vector2(-95.0001, 55.0001)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 5.77
+height = 13.0
+
+[node name="flower10" type="AnimatedSprite2D" parent="map/deco"]
+material = SubResource("ShaderMaterial_an7kh")
+position = Vector2(-119, -1336)
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_80v0w")
+autoplay = "default"
+frame_progress = 0.972826
+speed_scale = 0.5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="map/deco/flower10"]
+libraries = {
+&"": SubResource("AnimationLibrary_78sp1")
+}
+autoplay = "pulse"
+
+[node name="biglight" type="PointLight2D" parent="map/deco/flower10"]
+position = Vector2(44.9999, -4.99985)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 9.94
+height = 13.0
+
+[node name="littlelight" type="PointLight2D" parent="map/deco/flower10"]
+position = Vector2(-95.0001, 55.0001)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 5.77
+height = 13.0
+
+[node name="flower11" type="AnimatedSprite2D" parent="map/deco"]
+material = SubResource("ShaderMaterial_an7kh")
+position = Vector2(1802, -1417)
+scale = Vector2(0.2, 0.2)
+sprite_frames = SubResource("SpriteFrames_80v0w")
+autoplay = "default"
+frame_progress = 0.972826
+speed_scale = 0.5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="map/deco/flower11"]
+libraries = {
+&"": SubResource("AnimationLibrary_78sp1")
+}
+autoplay = "pulse"
+
+[node name="biglight" type="PointLight2D" parent="map/deco/flower11"]
+position = Vector2(44.9999, -4.99985)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 9.94
+height = 13.0
+
+[node name="littlelight" type="PointLight2D" parent="map/deco/flower11"]
+position = Vector2(-95.0001, 55.0001)
+color = Color(0, 0.709804, 1, 1)
+texture = SubResource("GradientTexture2D_bk8q8")
+texture_scale = 5.77
+height = 13.0
 
 [node name="worldbounds" type="Node2D" parent="map"]
 
