@@ -54,9 +54,19 @@ animations = [{
 [node name="Dealer" type="Node2D"]
 script = ExtResource("1_mxom3")
 invis_duration = 5.0
+drug_duration = null
+max_health = null
+move_speed_mult = null
 shoot_cooldown = 0.25
 ability1_cooldown = 15.0
+max_ult_points = null
 ult_points_on_hit = 10
+ult_points_on_dodge = null
+reload_time = null
+mag_size = null
+ability1_anim_duration = null
+ability2_anim_duration = null
+dash_anim_duration = null
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.3, 0.3)

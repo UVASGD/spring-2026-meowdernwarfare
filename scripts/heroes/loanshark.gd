@@ -17,13 +17,16 @@ func _do_shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	loanshark_animation.play("melee")
 	ammo += 1
 	await loanshark_animation.animation_finished
+	print(current_anim)
 	current_anim = "idle"
+	
 
 func _do_ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	print("LoanShark: ability1")
 	current_anim = "reap"
 	loanshark_animation.play("reap")
 	await loanshark_animation.animation_finished
+	print(current_anim)
 	current_anim = "idle"
 
 func _do_ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
