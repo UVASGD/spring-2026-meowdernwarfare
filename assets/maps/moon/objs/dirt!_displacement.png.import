@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bovwnk4loo062"
-path="res://.godot/imported/Flower 1_0001.png-9a58615b5369e3caa4b2d3213fe40527.ctex"
+uid="uid://vvff101ih5qe"
+path="res://.godot/imported/dirt!_displacement.png-a3f93f86cd3750e707fd4285698002c0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spritesheetcombiner_in/Flower 1_0001.png"
-dest_files=["res://.godot/imported/Flower 1_0001.png-9a58615b5369e3caa4b2d3213fe40527.ctex"]
+source_file="res://assets/maps/moon/objs/dirt!_displacement.png"
+dest_files=["res://.godot/imported/dirt!_displacement.png-a3f93f86cd3750e707fd4285698002c0.ctex"]
 
 [params]
 

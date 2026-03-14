@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dln4qov3tndy1" path="res://scenes/farm.gd" id="1_jjgid"]
 [ext_resource type="Texture2D" uid="uid://y5sgpaatsa01" path="res://assets/tilesets/spr_fencePost.png" id="1_o03py"]
-[ext_resource type="PackedScene" uid="uid://ctvx5w3xujxlg" path="res://scripts/plantable_tile.tscn" id="2_kjpqf"]
+[ext_resource type="PackedScene" uid="uid://ctvx5w3xujxlg" path="res://scripts/plantable_tile_moon.tscn" id="2_kjpqf"]
 [ext_resource type="Texture2D" uid="uid://cdnb1lc4dp2b" path="res://assets/maps/moon/awesome image2.png" id="4_k3ns2"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_kjpqf"]
@@ -58,6 +58,7 @@ size = Vector2(327, 117)
 [node name="farm" type="Node2D"]
 y_sort_enabled = true
 script = ExtResource("1_jjgid")
+max_crops = 12
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 scale = Vector2(5, 5)

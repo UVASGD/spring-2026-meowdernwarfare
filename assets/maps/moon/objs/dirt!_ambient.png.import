@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cmxgmxjie46a7"
-path="res://.godot/imported/Flower 1_0000.png-566121c9073db8d730c46cfa186b4b1a.ctex"
+uid="uid://wxwevc7c064e"
+path="res://.godot/imported/dirt!_ambient.png-ddc82ab1d1d6399120b67c482034c104.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spritesheetcombiner_in/Flower 1_0000.png"
-dest_files=["res://.godot/imported/Flower 1_0000.png-566121c9073db8d730c46cfa186b4b1a.ctex"]
+source_file="res://assets/maps/moon/objs/dirt!_ambient.png"
+dest_files=["res://.godot/imported/dirt!_ambient.png-ddc82ab1d1d6399120b67c482034c104.ctex"]
 
 [params]
 
