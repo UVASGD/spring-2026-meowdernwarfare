@@ -143,7 +143,7 @@ func _ready() -> void:
 	
 	# Default hero for testing
 	if hero == null:
-		set_hero("Gooblin")
+		set_hero(TestConfig.DEFAULT_HERO)
 	
 	# Enable camera/UI only for local human players
 	_setup_local_ui()
