@@ -154,14 +154,17 @@ func get_health_percent() -> float:
 func can_shoot() -> bool:
 	return shoot_cd <= 0 and reload_cd <= 0 and ammo > 0 and not is_dead
 
+func _is_fie_suppressed() -> bool:
+	return player and player.fie_suppress_count > 0
+
 func can_ability1() -> bool:
-	return ability1_cd <= 0
+	return ability1_cd <= 0 and not _is_fie_suppressed()
 
 func can_ability2() -> bool:
-	return ability2_cd <= 0 and ability2_cooldown > 0
+	return ability2_cd <= 0 and ability2_cooldown > 0 and not _is_fie_suppressed()
 
 func can_ult() -> bool:
-	return ult_points >= max_ult_points
+	return ult_points >= max_ult_points and not _is_fie_suppressed()
 
 func shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	if not can_shoot():

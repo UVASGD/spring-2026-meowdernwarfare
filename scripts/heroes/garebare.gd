@@ -1,0 +1,141 @@
+class_name HeroGarebare
+extends Hero
+
+const SoundwaveScene = preload("res://scenes/heroes/garebare/soundwave.tscn")
+const SonicBurstScene = preload("res://scenes/heroes/garebare/sonic_burst.tscn")
+const FIEScene = preload("res://scenes/heroes/garebare/fie.tscn")
+
+@export var pellet_count: int = 5
+@export var spread_angle: float = 30.0
+@export var stun_duration: float = 2.0
+@export var fie_suppress_radius: float = 150.0
+@export var fie_respawn_cd: float = 10.0
+@export var ult_damage: float = 60.0
+@export var ult_radius: float = 200.0
+@export var fie_detonate_damage: float = 40.0
+
+# FIE tracking: up to 2 slots
+var fies: Array = [null, null]
+var fie_cds: Array[float] = [0.0, 0.0]
+var _fie_remote_op: bool = false
+
+func _process(delta: float) -> void:
+	super._process(delta)
+	for i in range(fie_cds.size()):
+		if fie_cds[i] > 0:
+			fie_cds[i] = max(0.0, fie_cds[i] - delta)
+
+func get_hero_name() -> String:
+	return "Garebare"
+
+# --- SHOOT: shotgun soundwave spread ---
+
+@warning_ignore("unused_parameter")
+func _do_shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
+	var base_angle = aim_dir.angle()
+	var half_spread = deg_to_rad(spread_angle / 2.0)
+	for i in range(pellet_count):
+		var t = float(i) / max(pellet_count - 1, 1)
+		var angle = base_angle - half_spread + t * half_spread * 2.0
+		var dir = Vector2(cos(angle), sin(angle))
+		var bullet = SoundwaveScene.instantiate()
+		bullet.direction = dir
+		bullet.owner_player = player
+		bullet.global_position = player.global_position + dir * 30
+		bullet.rotation = angle
+		get_tree().current_scene.add_child(bullet)
+
+# --- ABILITY 1: sonic burst (stun projectile) ---
+
+@warning_ignore("unused_parameter")
+func _do_ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
+	var burst = SonicBurstScene.instantiate()
+	burst.direction = aim_dir
+	burst.owner_player = player
+	burst.stun_duration = stun_duration
+	burst.global_position = player.global_position + aim_dir * 40
+	burst.rotation = aim_dir.angle()
+	get_tree().current_scene.add_child(burst)
+
+# --- ABILITY 2: place FIE ---
+
+func can_ability2() -> bool:
+	if ability2_cd > 0 or _is_fie_suppressed():
+		return false
+	return _get_free_fie_slot() >= 0
+
+@warning_ignore("unused_parameter")
+func _do_ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
+	var slot = _get_free_fie_slot()
+	if slot < 0:
+		return
+
+	var place_pos = player.global_position + aim_dir * 60
+	# Wall check: abort if placement would be inside a wall
+	var space = player.get_world_2d().direct_space_state
+	var query = PhysicsRayQueryParameters2D.create(player.global_position, place_pos, 2)
+	var result = space.intersect_ray(query)
+	if result:
+		# Would collide with wall — refund cooldown
+		ability2_cd = 0.0
+		return
+
+	var fie = _create_fie()
+	fie.owner_player = player
+	fie.suppress_radius = fie_suppress_radius
+	fie.global_position = place_pos
+	get_tree().current_scene.add_child(fie)
+	fies[slot] = fie
+	fie.destroyed.connect(_on_fie_destroyed.bind(slot))
+
+	# Broadcast FIE placement for network sync
+	if GameManager.instance:
+		GameManager.instance.send_fie_placed(player.player_id, slot, place_pos)
+
+func _place_fie_remote(slot: int, pos: Vector2) -> void:
+	if slot < 0 or slot >= fies.size():
+		return
+	_fie_remote_op = true
+	var fie = _create_fie()
+	fie.owner_player = player
+	fie.suppress_radius = fie_suppress_radius
+	fie.global_position = pos
+	get_tree().current_scene.add_child(fie)
+	fies[slot] = fie
+	fie.destroyed.connect(_on_fie_destroyed.bind(slot))
+	_fie_remote_op = false
+
+func _get_free_fie_slot() -> int:
+	for i in range(fies.size()):
+		if (fies[i] == null or not is_instance_valid(fies[i])) and fie_cds[i] <= 0:
+			return i
+	return -1
+
+func _on_fie_destroyed(slot: int) -> void:
+	fies[slot] = null
+	fie_cds[slot] = fie_respawn_cd
+	if not _fie_remote_op and GameManager.instance:
+		GameManager.instance.send_fie_destroyed(player.player_id, slot)
+
+func _create_fie() -> StaticBody2D:
+	return FIEScene.instantiate()
+
+# --- ULT: amplitude AOE + detonate FIEs ---
+
+@warning_ignore("unused_parameter")
+func _do_ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
+	# AOE damage around caster
+	var all_players = get_tree().get_nodes_in_group("players")
+	if all_players.is_empty() and GameManager.instance:
+		all_players = GameManager.instance.players
+	for p in all_players:
+		if p is Player and p != player:
+			if p.global_position.distance_to(player.global_position) <= ult_radius:
+				p.take_damage(ult_damage, player)
+
+	# Detonate all existing FIEs (damage in their areas, then destroy)
+	for i in range(fies.size()):
+		if fies[i] != null and is_instance_valid(fies[i]):
+			fies[i].detonate(fie_detonate_damage)
+			fies[i] = null
+			fie_cds[i] = 0.0  # Refresh cooldowns after ult

@@ -1,0 +1,30 @@
+[gd_scene load_steps=7 format=3 uid="uid://ctvx5w3xujxlg"]
+
+[ext_resource type="Script" uid="uid://dwxextf0d33rq" path="res://plantable_tile.gd" id="1_binte"]
+[ext_resource type="Texture2D" uid="uid://d2se8ixlac2vd" path="res://assets/maps/moon/objs/dirt!.png" id="1_ukkcl"]
+[ext_resource type="Texture2D" uid="uid://7hctgbxr2ubu" path="res://assets/maps/moon/objs/dirt!_normal.png" id="2_wfbcq"]
+[ext_resource type="Texture2D" uid="uid://bvylcpw71nuxo" path="res://assets/maps/moon/objs/dirt!_specular.png" id="3_c6enh"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_oyq6n"]
+diffuse_texture = ExtResource("1_ukkcl")
+normal_texture = ExtResource("2_wfbcq")
+specular_texture = ExtResource("3_c6enh")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_blex0"]
+size = Vector2(152, 151)
+
+[node name="PlantableTile" type="Sprite2D"]
+z_index = -1
+scale = Vector2(0.2, 0.2)
+script = ExtResource("1_binte")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(-2.49999, 7.5)
+scale = Vector2(0.50995, 0.507901)
+texture = SubResource("CanvasTexture_oyq6n")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(1, 1.5)
+shape = SubResource("RectangleShape2D_blex0")

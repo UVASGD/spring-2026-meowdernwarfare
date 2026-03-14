@@ -9,10 +9,11 @@ radius = 5.0
 [sub_resource type="Gradient" id="Gradient_2tpwu"]
 colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
 
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_d534h"]
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_2tpwu"]
 gradient = SubResource("Gradient_2tpwu")
 fill = 1
 fill_from = Vector2(0.523148, 0.518519)
+fill_to = Vector2(0.862385, 0.151376)
 
 [node name="Bullet" type="Area2D"]
 collision_layer = 4
@@ -28,8 +29,9 @@ texture = ExtResource("1_waykb")
 visible = false
 shape = SubResource("CircleShape2D_2tpwu")
 
-[node name="PointLight2D" type="PointLight2D" parent="."]
-energy = 8.39
-texture = SubResource("GradientTexture2D_d534h")
-texture_scale = 0.52
-height = 110.0
+[node name="PointLight2D2" type="PointLight2D" parent="."]
+scale = Vector2(0.235, 0.235)
+energy = 0.75
+texture = SubResource("GradientTexture2D_2tpwu")
+texture_scale = 3.43
+height = 49.0
