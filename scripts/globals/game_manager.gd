@@ -2,15 +2,11 @@ class_name GameManager
 extends Node
 
 # Handles player spawning and multiplayer mode
-# Uses predefined spawn points from the map
 
 enum Mode { LOCAL, ONLINE_HOST, ONLINE_CLIENT }
 
 @export var player_scene: PackedScene
 @export var mode: Mode = Mode.LOCAL
-
-# Spawn points - set these from the map scene
-@export var spawn_points: Array[Marker2D] = []
 
 var players: Array[Player] = []
 var eliminated: Array[Player] = []
@@ -22,6 +18,7 @@ var stats: Dictionary = {}
 signal player_eliminated(player: Player)
 signal game_over_received(winner_id: int)
 signal sudden_death_received
+signal farm_spawns_received(assignments: Array)
 
 static var instance: GameManager = null
 
@@ -31,83 +28,6 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	if instance == self:
 		instance = null
-
-# --- SPAWN POINT SELECTION ---
-
-# Track which spawn points are taken (for initial spawns)
-var used_spawns: Array[int] = []
-# Seeded RNG for synchronized spawn selection across clients
-var spawn_rng: RandomNumberGenerator = RandomNumberGenerator.new()
-
-func init_spawn_rng(seed_string: String = "") -> void:
-	# Use room code as seed so all clients get same "random" sequence
-	if seed_string.is_empty() and Network.room_code:
-		seed_string = Network.room_code
-	spawn_rng.seed = hash(seed_string)
-	used_spawns.clear()
-
-func get_initial_spawn(_player_id: int) -> Vector2:
-	# Pick a random unused spawn point (using seeded RNG for sync)
-	if spawn_points.is_empty():
-		return _get_fallback_position(_player_id)
-	
-	# Find available spawn indices
-	var available: Array[int] = []
-	for i in range(spawn_points.size()):
-		if i not in used_spawns and spawn_points[i] != null:
-			available.append(i)
-	
-	# If all used, reset and pick any
-	if available.is_empty():
-		used_spawns.clear()
-		for i in range(spawn_points.size()):
-			if spawn_points[i] != null:
-				available.append(i)
-	
-	if available.is_empty():
-		return _get_fallback_position(_player_id)
-	
-	# Pick random from available using seeded RNG
-	var idx = available[spawn_rng.randi() % available.size()]
-	used_spawns.append(idx)
-	var sp = spawn_points[idx]
-	print("Player ", _player_id, " → spawn[", idx, "] pos=", sp.position, " global=", sp.global_position)
-	return spawn_points[idx].global_position
-
-func get_fair_respawn(player: Player) -> Vector2:
-	# Find the spawn point furthest from all living enemies
-	if spawn_points.is_empty():
-		return _get_fallback_position(player.player_id)
-	
-	var living_enemies: Array[Player] = []
-	for p in players:
-		if p != player and is_instance_valid(p) and not p.is_dead():
-			living_enemies.append(p)
-	
-	# If no enemies, just use assigned spawn
-	if living_enemies.is_empty():
-		return get_initial_spawn(player.player_id)
-	
-	# Find spawn with maximum minimum distance to any enemy
-	var best_spawn: Marker2D = null
-	var best_min_dist: float = -1
-	
-	for spawn in spawn_points:
-		if spawn == null:
-			continue
-		
-		var min_dist = INF
-		for enemy in living_enemies:
-			var dist = spawn.global_position.distance_to(enemy.global_position)
-			min_dist = min(min_dist, dist)
-		
-		if min_dist > best_min_dist:
-			best_min_dist = min_dist
-			best_spawn = spawn
-	
-	if best_spawn:
-		return best_spawn.global_position
-	return get_initial_spawn(player.player_id)
 
 func _get_fallback_position(id: int) -> Vector2:
 	var offset = 200
@@ -141,7 +61,7 @@ func spawn_local_player(id: int) -> Player:
 	local_input.set_player_node(player)
 	player.input = local_input
 	
-	var spawn_pos = get_initial_spawn(id)
+	var spawn_pos = _get_fallback_position(id)
 	_add_entity(player)
 	player.global_position = spawn_pos
 	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
@@ -165,7 +85,7 @@ func spawn_ai_player(id: int, target: Node2D = null) -> Player:
 		ai_input.set_target(target)
 	player.input = ai_input
 	
-	var spawn_pos = get_initial_spawn(id)
+	var spawn_pos = _get_fallback_position(id)
 	_add_entity(player)
 	player.global_position = spawn_pos
 	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
@@ -184,9 +104,11 @@ func respawn_player(player: Player) -> void:
 	var pos: Vector2
 	if player.farm:
 		var sp = player.farm.get_node_or_null("Spawnpoint")
+		if sp == null:
+			sp = player.farm.get_node_or_null("spawnpoint")
 		pos = sp.global_position if sp else player.farm.global_position
 	else:
-		pos = get_fair_respawn(player)
+		pos = _get_fallback_position(player.player_id)
 	
 	player.respawn_at(pos)
 
@@ -228,7 +150,6 @@ func clear_players() -> void:
 			p.queue_free()
 	players.clear()
 	eliminated.clear()
-	used_spawns.clear()
 	stats.clear()
 	sudden_death = false
 	game_over = false
@@ -330,9 +251,6 @@ func start_online_game(players_info: Array, settings: Dictionary) -> void:
 	local_player_id = Network.my_player_id
 	mode = Mode.ONLINE_HOST if Network.is_host else Mode.ONLINE_CLIENT
 	
-	# Initialize spawn RNG with room code so all clients get same spawn sequence
-	init_spawn_rng(Network.room_code)
-	
 	# Sort players by ID to ensure consistent spawn order across clients
 	var sorted_players = players_info.duplicate()
 	sorted_players.sort_custom(func(a, b): return int(a.get("id", 0)) < int(b.get("id", 0)))
@@ -404,6 +322,9 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 
 	elif msg_type == "fie_destroyed":
 		_handle_fie_destroyed(from_id, data)
+
+	elif msg_type == "farm_spawns":
+		_handle_farm_spawns(data)
 
 func _broadcast_state() -> void:
 	if not Network.is_online():
@@ -586,7 +507,7 @@ func _spawn_net_player(id: int, local: bool) -> Player:
 	player.input = net_input
 	net_inputs[id] = net_input
 	
-	var spawn_pos = get_initial_spawn(id)
+	var spawn_pos = _get_fallback_position(id)
 	_add_entity(player)
 	player.global_position = spawn_pos
 	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
@@ -646,6 +567,19 @@ func _handle_sudden_death() -> void:
 		return
 	sudden_death = true
 	sudden_death_received.emit()
+
+func broadcast_farm_spawns(assignments: Array) -> void:
+	if mode != Mode.ONLINE_HOST or not Network.is_online():
+		return
+	Network.broadcast({
+		"type": "farm_spawns",
+		"a": assignments
+	})
+
+func _handle_farm_spawns(data: Dictionary) -> void:
+	var assignments = data.get("a", [])
+	if assignments is Array:
+		farm_spawns_received.emit(assignments)
 
 # --- TELEPORTER SYNC ---
 

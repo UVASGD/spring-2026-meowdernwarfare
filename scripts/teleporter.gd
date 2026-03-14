@@ -12,7 +12,7 @@ var _base_energy: float
 
 func _ready() -> void:
 	add_to_group("teleporters")
-	body_entered.connect(_on_body_entered)
+	#body_entered.connect(_on_body_entered)
 	if light:
 		hue = randf()
 		_base_energy = light.energy
