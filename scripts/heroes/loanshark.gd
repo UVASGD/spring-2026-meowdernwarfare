@@ -7,7 +7,7 @@ var paymentPlanAbilityCount = 2
 var reapoCooldown = 8
 
 @onready var loanshark_animation: AnimatedSprite2D = $Sprite
-
+@onready var hurtbox_animation : AnimationPlayer = $AnimationPlayer
 func get_hero_name() -> String:
 	return "LoanShark"
 
@@ -15,6 +15,7 @@ func _do_shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	print("LoanShark: shoot")
 	current_anim = "melee"
 	loanshark_animation.play("melee")
+	hurtbox_animation.play("hurtbox") 
 	ammo += 1
 	await loanshark_animation.animation_finished
 	print(current_anim)
