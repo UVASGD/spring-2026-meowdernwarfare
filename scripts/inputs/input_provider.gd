@@ -14,7 +14,9 @@ var shoot: bool = false
 var reload: bool = false
 var ability1: bool = false
 var ability2: bool = false
+var ult: bool = false
 var interact: bool = false
+var drop: bool = false
 
 # "Just pressed" states for single-frame actions
 var dash_just: bool = false
@@ -22,7 +24,9 @@ var shoot_just: bool = false
 var reload_just: bool = false
 var ability1_just: bool = false
 var ability2_just: bool = false
+var ult_just: bool = false
 var interact_just: bool = false
+var drop_just: bool = false
 
 func update(delta: float) -> void:
 	# Override in subclasses
@@ -34,4 +38,6 @@ func clear_just_pressed() -> void:
 	reload_just = false
 	ability1_just = false
 	ability2_just = false
+	ult_just = false
 	interact_just = false
+	drop_just = false

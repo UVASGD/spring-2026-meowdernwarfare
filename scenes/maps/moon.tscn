@@ -1,0 +1,344 @@
+[gd_scene load_steps=28 format=4 uid="uid://dea1hxmkkrroo"]
+
+[ext_resource type="PackedScene" uid="uid://jrafw8skg73p" path="res://scenes/crop_spawner.tscn" id="1_3ol52"]
+[ext_resource type="Texture2D" uid="uid://b806fl6i3ymrk" path="res://assets/maps/moon/moon texture.png" id="1_wodu6"]
+[ext_resource type="Texture2D" uid="uid://1i1v210nrrxs" path="res://assets/maps/moon/sky/spacebg.png" id="2_30vaj"]
+[ext_resource type="Texture2D" uid="uid://uiwk4r7myxx7" path="res://assets/maps/moon/moon texture_normal.png" id="2_hyg50"]
+[ext_resource type="Texture2D" uid="uid://buv6rsdfll2hi" path="res://assets/maps/moon/moon texture_specular.png" id="3_8d86g"]
+[ext_resource type="Script" uid="uid://be3pnfxr2d7wk" path="res://scripts/spacebg.gd" id="3_uuv10"]
+[ext_resource type="Texture2D" uid="uid://b4sjmdki6dx7f" path="res://assets/maps/moon/sky/stars.png" id="4_64t7d"]
+[ext_resource type="Texture2D" uid="uid://bsag3dr3hyybg" path="res://assets/maps/moon/objs/Evil Eye House.png" id="5_8d86g"]
+[ext_resource type="PackedScene" uid="uid://dfnrmqfkj1p64" path="res://scenes/heroes/dealer/dealer.tscn" id="6_vfkfv"]
+[ext_resource type="Texture2D" uid="uid://cua3oasp2hwem" path="res://assets/maps/moon/objs/evil trees.png" id="7_qpo6k"]
+[ext_resource type="Texture2D" uid="uid://ni0dog6rvg0e" path="res://assets/maps/moon/objs/Radiohut.png" id="8_xq83h"]
+[ext_resource type="Texture2D" uid="uid://bomlsfawffdla" path="res://assets/maps/moon/objs/Squid house.png" id="9_1fm0i"]
+[ext_resource type="PackedScene" uid="uid://cq266dyabpgab" path="res://scenes/farm.tscn" id="14_1wagi"]
+[ext_resource type="Texture2D" uid="uid://cv6mqks33jfhe" path="res://assets/maps/moon/objs/moon crater.png" id="15_64t7d"]
+[ext_resource type="Script" uid="uid://pdt7g4isc4pi" path="res://scripts/teleporter.gd" id="16_3ol52"]
+[ext_resource type="Texture2D" uid="uid://8jsfcccmc784" path="res://assets/maps/moon/objs/moon crater_normal.png" id="17_1wagi"]
+[ext_resource type="Texture2D" uid="uid://7sx3ccys0khy" path="res://assets/maps/moon/objs/moon crater_specular.png" id="18_poxww"]
+[ext_resource type="PackedScene" uid="uid://cih7402ccv0gh" path="res://scenes/sd_lights.tscn" id="19_8fg61"]
+[ext_resource type="Texture2D" uid="uid://wjb35hpxxleh" path="res://assets/maps/moon/objs/moon crater glow.png" id="19_evwe5"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_8fg61"]
+diffuse_texture = ExtResource("1_wodu6")
+normal_texture = ExtResource("2_hyg50")
+specular_texture = ExtResource("3_8d86g")
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_1wagi"]
+texture = SubResource("CanvasTexture_8fg61")
+texture_region_size = Vector2i(2000, 1366)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_poxww"]
+tile_size = Vector2i(2000, 1366)
+sources/0 = SubResource("TileSetAtlasSource_1wagi")
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6kqtc"]
+radius = 89.0225
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_an7kh"]
+diffuse_texture = ExtResource("15_64t7d")
+normal_texture = ExtResource("17_1wagi")
+specular_texture = ExtResource("18_poxww")
+specular_color = Color(6.93083e-06, 0.713355, 0.920679, 1)
+specular_shininess = 0.65
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_qpo6k"]
+
+[sub_resource type="Gradient" id="Gradient_u2fso"]
+offsets = PackedFloat32Array(0, 0.522727, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.75974, 0.75974, 0.75974, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_r8xxi"]
+gradient = SubResource("Gradient_u2fso")
+fill = 1
+fill_from = Vector2(0.5, 0.502294)
+fill_to = Vector2(0.853211, 0.149083)
+
+[node name="testMap" type="Node2D"]
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="Marker2D" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-990, -1006)
+
+[node name="Marker2D2" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(873, -1015)
+
+[node name="Marker2D4" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(862, 940)
+
+[node name="Marker2D3" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(-955, 926)
+
+[node name="map" type="Node2D" parent="."]
+y_sort_enabled = true
+
+[node name="spacebg" type="TextureRect" parent="map"]
+z_index = -10
+offset_left = -1612.0
+offset_top = -1574.0
+offset_right = 1625.0
+offset_bottom = 1409.0
+scale = Vector2(3, 3)
+pivot_offset = Vector2(1608, 1537.67)
+texture = ExtResource("2_30vaj")
+stretch_mode = 1
+script = ExtResource("3_uuv10")
+fade_time = 0.5
+hold_time = 1.0
+
+[node name="stars" type="Node2D" parent="map/spacebg"]
+position = Vector2(1618.67, 1513.44)
+scale = Vector2(0.5, 0.5)
+
+[node name="stars" type="TextureRect" parent="map/spacebg/stars"]
+visible = false
+offset_left = -3629.0
+offset_top = -3281.0
+offset_right = 3873.0
+offset_bottom = 3116.0
+pivot_offset = Vector2(3630, 3287)
+texture = ExtResource("4_64t7d")
+stretch_mode = 1
+
+[node name="stars2" type="TextureRect" parent="map/spacebg/stars"]
+visible = false
+offset_left = -3629.0
+offset_top = -3281.0
+offset_right = 3873.0
+offset_bottom = 3116.0
+rotation = 0.192088
+pivot_offset = Vector2(3630, 3287)
+texture = ExtResource("4_64t7d")
+stretch_mode = 1
+
+[node name="stars3" type="TextureRect" parent="map/spacebg/stars"]
+visible = false
+offset_left = -3629.0
+offset_top = -3281.0
+offset_right = 3873.0
+offset_bottom = 3116.0
+rotation = 0.580005
+pivot_offset = Vector2(3630, 3287)
+texture = ExtResource("4_64t7d")
+stretch_mode = 1
+
+[node name="stars4" type="TextureRect" parent="map/spacebg/stars"]
+visible = false
+offset_left = -3629.0
+offset_top = -3281.0
+offset_right = 3873.0
+offset_bottom = 3116.0
+rotation = 0.943195
+pivot_offset = Vector2(3630, 3287)
+texture = ExtResource("4_64t7d")
+stretch_mode = 1
+
+[node name="stars5" type="TextureRect" parent="map/spacebg/stars"]
+visible = false
+offset_left = -3629.0
+offset_top = -3281.0
+offset_right = 3873.0
+offset_bottom = 3116.0
+rotation = 1.23219
+pivot_offset = Vector2(3630, 3287)
+texture = ExtResource("4_64t7d")
+stretch_mode = 1
+
+[node name="stars6" type="TextureRect" parent="map/spacebg/stars"]
+visible = false
+offset_left = -3629.0
+offset_top = -3281.0
+offset_right = 3873.0
+offset_bottom = 3116.0
+rotation = 1.51676
+pivot_offset = Vector2(3630, 3287)
+texture = ExtResource("4_64t7d")
+stretch_mode = 1
+
+[node name="stars7" type="TextureRect" parent="map/spacebg/stars"]
+visible = false
+offset_left = -3629.0
+offset_top = -3281.0
+offset_right = 3873.0
+offset_bottom = 3116.0
+rotation = 1.83968
+pivot_offset = Vector2(3630, 3287)
+texture = ExtResource("4_64t7d")
+stretch_mode = 1
+
+[node name="TileMapLayer" type="TileMapLayer" parent="map"]
+z_index = -9
+scale = Vector2(0.2, 0.2)
+tile_map_data = PackedByteArray("AAABAAEAAAAAAAAAAAABAAAAAAAAAAAAAAABAP//AAAAAAAAAAABAP7/AAAAAAAAAAABAP3/AAAAAAAAAAABAPz/AAAAAAAAAAABAPv/AAAAAAAAAAABAPr/AAAAAAAAAAD8/wMAAAAAAAAAAAD8/wIAAAAAAAAAAAD8/wEAAAAAAAAAAAD8/wAAAAAAAAAAAAD8////AAAAAAAAAAD8//7/AAAAAAAAAAD8//3/AAAAAAAAAAD8//z/AAAAAAAAAAD8//v/AAAAAAAAAAD8//r/AAAAAAAAAAD9//r/AAAAAAAAAAD9//v/AAAAAAAAAAD9//z/AAAAAAAAAAD9//3/AAAAAAAAAAD9//7/AAAAAAAAAAD9////AAAAAAAAAAD9/wAAAAAAAAAAAAD9/wEAAAAAAAAAAAD9/wIAAAAAAAAAAAD9/wMAAAAAAAAAAAD+/wMAAAAAAAAAAAD+/wIAAAAAAAAAAAD+/wEAAAAAAAAAAAD+/wAAAAAAAAAAAAD+////AAAAAAAAAAD+//7/AAAAAAAAAAD+//3/AAAAAAAAAAD+//z/AAAAAAAAAAD+//v/AAAAAAAAAAD+//r/AAAAAAAAAAD///r/AAAAAAAAAAD///v/AAAAAAAAAAD///z/AAAAAAAAAAD///3/AAAAAAAAAAD///7/AAAAAAAAAAD/////AAAAAAAAAAD//wAAAAAAAAAAAAD//wEAAAAAAAAAAAD//wIAAAAAAAAAAAD//wMAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAP//AAAAAAAAAAAAAP7/AAAAAAAAAAAAAP3/AAAAAAAAAAAAAPz/AAAAAAAAAAAAAPv/AAAAAAAAAAAAAPr/AAAAAAAAAAABAAIAAAAAAAAAAAABAAMAAAAAAAAAAAACAAMAAAAAAAAAAAACAAIAAAAAAAAAAAACAAEAAAAAAAAAAAACAAAAAAAAAAAAAAACAP//AAAAAAAAAAACAP7/AAAAAAAAAAACAP3/AAAAAAAAAAACAPz/AAAAAAAAAAACAPv/AAAAAAAAAAACAPr/AAAAAAAAAAADAPr/AAAAAAAAAAADAPv/AAAAAAAAAAADAPz/AAAAAAAAAAADAP3/AAAAAAAAAAADAP7/AAAAAAAAAAADAP//AAAAAAAAAAADAAAAAAAAAAAAAAADAAEAAAAAAAAAAAADAAIAAAAAAAAAAAADAAMAAAAAAAAAAAAEAAMAAAAAAAAAAAAEAAIAAAAAAAAAAAAEAAEAAAAAAAAAAAAEAAAAAAAAAAAAAAAEAP//AAAAAAAAAAAEAP7/AAAAAAAAAAAEAP3/AAAAAAAAAAAEAPz/AAAAAAAAAAAEAPv/AAAAAAAAAAAEAPr/AAAAAAAAAAD7//r/AAAAAAAAAAD7//v/AAAAAAAAAAD7//z/AAAAAAAAAAD7//3/AAAAAAAAAAD7//7/AAAAAAAAAAD7////AAAAAAAAAAD7/wAAAAAAAAAAAAD7/wEAAAAAAAAAAAD7/wIAAAAAAAAAAAD7/wMAAAAAAAAAAAD7/wQAAAAAAAAAAAD8/wQAAAAAAAAAAAD9/wQAAAAAAAAAAAD+/wQAAAAAAAAAAAD//wQAAAAAAAAAAAAAAAQAAAAAAAAAAAABAAQAAAAAAAAAAAACAAQAAAAAAAAAAAADAAQAAAAAAAAAAAAEAAQAAAAAAAAAAAAEAAUAAAAAAAAAAAADAAUAAAAAAAAAAAACAAUAAAAAAAAAAAABAAUAAAAAAAAAAAAAAAUAAAAAAAAAAAD//wUAAAAAAAAAAAD+/wUAAAAAAAAAAAD9/wUAAAAAAAAAAAD8/wUAAAAAAAAAAAD7/wUAAAAAAAAAAAA=")
+tile_set = SubResource("TileSet_poxww")
+
+[node name="objs" type="Node2D" parent="map"]
+y_sort_enabled = true
+
+[node name="farms" type="Node2D" parent="map/objs"]
+y_sort_enabled = true
+
+[node name="evileye2" parent="map/objs/farms" instance=ExtResource("14_1wagi")]
+position = Vector2(-951, -981)
+
+[node name="spriteYsortOffset" parent="map/objs/farms/evileye2" index="3"]
+position = Vector2(-3, 434)
+
+[node name="entranceSprite" parent="map/objs/farms/evileye2/spriteYsortOffset" index="0"]
+position = Vector2(-5, -68)
+texture = ExtResource("5_8d86g")
+
+[node name="radioHut2" parent="map/objs/farms" instance=ExtResource("14_1wagi")]
+position = Vector2(910, -979)
+
+[node name="spriteYsortOffset" parent="map/objs/farms/radioHut2" index="3"]
+position = Vector2(-1, 448)
+
+[node name="entranceSprite" parent="map/objs/farms/radioHut2/spriteYsortOffset" index="0"]
+position = Vector2(-5, -115)
+texture = ExtResource("8_xq83h")
+
+[node name="squihouse" parent="map/objs/farms" instance=ExtResource("14_1wagi")]
+position = Vector2(915, 925)
+
+[node name="TileMapLayer" parent="map/objs/farms/squihouse" index="0"]
+tile_map_data = PackedByteArray("AAD+/wIAAAACAAAAAAACAAIAAAACAAAAAAADAAIAAAACAAAAAAD9/wIAAAACAAAAAAD8/wIAAAACAAAAAAAEAAIAAAACAAIAAAD7/wIAAAABAAIAAAD7/wEAAAABAAEAAAD7/wAAAAABAAEAAAD7////AAABAAEAAAD7//7/AAABAAEAAAD7//3/AAABAAAAAAD8//3/AAACAAAAAAD9//3/AAACAAAAAAD+//3/AAACAAAAAAABAP3/AAACAAAAAAACAP3/AAACAAAAAAADAP3/AAACAAAAAAAEAP3/AAACAAEAAAAEAP7/AAABAAEAAAAEAP//AAABAAEAAAAEAAAAAAABAAEAAAAEAAEAAAABAAEAAAABAAIAAAACAAAAAAD9/wAAAQAAAAAAAQD9////AQAAAAAAAQD+////AQAAAAAAAQD/////AQAAAAAAAQD+/wAAAQAAAAAAAQD//wAAAQAAAAAAAQAAAP//AQAAAAAAAQABAP//AQAAAAAAAQACAP//AQAAAAAAAQACAAAAAQAAAAAAAQABAAAAAQAAAAAAAQAAAAAAAQAAAAAAAQAAAAIAAAACAAAAAAD//wIAAAACAAAAAAA=")
+
+[node name="entrance" parent="map/objs/farms/squihouse" index="1"]
+position = Vector2(0, -391)
+
+[node name="spriteYsortOffset" parent="map/objs/farms/squihouse" index="3"]
+position = Vector2(430, -75)
+
+[node name="entranceSprite" parent="map/objs/farms/squihouse/spriteYsortOffset" index="0"]
+position = Vector2(14, 244)
+texture = ExtResource("9_1fm0i")
+
+[node name="eviltrees2" parent="map/objs/farms" instance=ExtResource("14_1wagi")]
+position = Vector2(-948, 925)
+
+[node name="TileMapLayer" parent="map/objs/farms/eviltrees2" index="0"]
+tile_map_data = PackedByteArray("AAD+/wIAAAACAAAAAAACAAIAAAACAAAAAAADAAIAAAACAAAAAAD9/wIAAAACAAAAAAD8/wIAAAACAAAAAAAEAAIAAAACAAIAAAD7/wIAAAABAAIAAAD7/wEAAAABAAEAAAD7/wAAAAABAAEAAAD7////AAABAAEAAAD7//7/AAABAAEAAAD7//3/AAABAAAAAAD8//3/AAACAAAAAAD9//3/AAACAAAAAAD+//3/AAACAAAAAAABAP3/AAACAAAAAAACAP3/AAACAAAAAAADAP3/AAACAAAAAAAEAP3/AAACAAEAAAAEAP7/AAABAAEAAAAEAP//AAABAAEAAAAEAAAAAAABAAEAAAAEAAEAAAABAAEAAAABAAIAAAACAAAAAAD9/wAAAQAAAAAAAQD9////AQAAAAAAAQD+////AQAAAAAAAQD/////AQAAAAAAAQD+/wAAAQAAAAAAAQD//wAAAQAAAAAAAQAAAP//AQAAAAAAAQABAP//AQAAAAAAAQACAP//AQAAAAAAAQACAAAAAQAAAAAAAQABAAAAAQAAAAAAAQAAAAAAAQAAAAAAAQAAAAIAAAACAAAAAAD//wIAAAACAAAAAAA=")
+
+[node name="entrance" parent="map/objs/farms/eviltrees2" index="1"]
+position = Vector2(0, -389)
+
+[node name="spriteYsortOffset" parent="map/objs/farms/eviltrees2" index="3"]
+position = Vector2(11, -5)
+
+[node name="entranceSprite" parent="map/objs/farms/eviltrees2/spriteYsortOffset" index="0"]
+position = Vector2(-512, 180)
+texture = ExtResource("7_qpo6k")
+
+[node name="teleporters" type="Node2D" parent="map/objs"]
+z_index = -1
+y_sort_enabled = true
+
+[node name="crater1_2" type="Area2D" parent="map/objs/teleporters" groups=["teleporters"]]
+position = Vector2(-1484, 3)
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("16_3ol52")
+id = 1
+target_id = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/teleporters/crater1_2"]
+shape = SubResource("CircleShape2D_6kqtc")
+
+[node name="craterSprite" type="Sprite2D" parent="map/objs/teleporters/crater1_2"]
+scale = Vector2(0.2, 0.204978)
+texture = SubResource("CanvasTexture_an7kh")
+
+[node name="light" type="PointLight2D" parent="map/objs/teleporters/crater1_2"]
+scale = Vector2(0.2, 0.2)
+color = Color(0.879152, 0.097766, 0.782534, 1)
+energy = 4.26
+texture = ExtResource("19_evwe5")
+height = 192.0
+
+[node name="crater2_1" type="Area2D" parent="map/objs/teleporters" groups=["teleporters"]]
+position = Vector2(1431, -3)
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("16_3ol52")
+id = 2
+target_id = 1
+
+[node name="craterSprite" type="Sprite2D" parent="map/objs/teleporters/crater2_1"]
+scale = Vector2(0.2, 0.204978)
+texture = SubResource("CanvasTexture_an7kh")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/teleporters/crater2_1"]
+shape = SubResource("CircleShape2D_6kqtc")
+
+[node name="light" type="PointLight2D" parent="map/objs/teleporters/crater2_1"]
+scale = Vector2(0.2, 0.2)
+color = Color(0.879152, 0.097766, 0.782534, 1)
+energy = 4.26
+texture = ExtResource("19_evwe5")
+height = 192.0
+
+[node name="deco" type="Node2D" parent="map"]
+
+[node name="worldbounds" type="Node2D" parent="map"]
+
+[node name="up" type="StaticBody2D" parent="map/worldbounds"]
+position = Vector2(155, -1636)
+rotation = 3.14159
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="map/worldbounds/up"]
+shape = SubResource("WorldBoundaryShape2D_qpo6k")
+
+[node name="down" type="StaticBody2D" parent="map/worldbounds"]
+position = Vector2(61, 1646)
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="map/worldbounds/down"]
+shape = SubResource("WorldBoundaryShape2D_qpo6k")
+
+[node name="left" type="StaticBody2D" parent="map/worldbounds"]
+position = Vector2(-1997, 1073)
+rotation = 1.5708
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="map/worldbounds/left"]
+shape = SubResource("WorldBoundaryShape2D_qpo6k")
+
+[node name="right" type="StaticBody2D" parent="map/worldbounds"]
+position = Vector2(1996, 1057)
+rotation = 4.71239
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="map/worldbounds/right"]
+shape = SubResource("WorldBoundaryShape2D_qpo6k")
+
+[node name="testStuff" type="Node2D" parent="map"]
+
+[node name="playerSizeRef" parent="map/testStuff" instance=ExtResource("6_vfkfv")]
+
+[node name="testlight" type="PointLight2D" parent="map/testStuff"]
+position = Vector2(-556, -203)
+rotation = -3.14159
+scale = Vector2(3.94893, -4.16761)
+color = Color(1, 0, 0, 1)
+energy = 14.18
+shadow_color = Color(0, 0, 0, 1)
+texture = SubResource("GradientTexture2D_r8xxi")
+texture_scale = 2.0
+height = 9.0
+
+[node name="cropSpawner" parent="map" instance=ExtResource("1_3ol52")]
+
+[node name="SDLights" parent="map" instance=ExtResource("19_8fg61")]
+
+[connection signal="body_entered" from="map/objs/teleporters/crater1_2" to="map/objs/teleporters/crater1_2" method="_on_body_entered"]
+[connection signal="body_entered" from="map/objs/teleporters/crater2_1" to="map/objs/teleporters/crater2_1" method="_on_body_entered"]
+
+[editable path="map/objs/farms/evileye2"]
+[editable path="map/objs/farms/radioHut2"]
+[editable path="map/objs/farms/squihouse"]
+[editable path="map/objs/farms/eviltrees2"]

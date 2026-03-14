@@ -29,5 +29,5 @@ func _do_ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
 func _do_ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	print("LoanShark: ability2")
 
-func _do_ultimate(aim_dir: Vector2, aim_pos: Vector2) -> void:
+func _do_ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	print("LoanShark: ultimate")

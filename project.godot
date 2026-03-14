@@ -19,6 +19,7 @@ config/icon="res://assets/sprites/icon.svg"
 
 Network="*res://scripts/globals/network.gd"
 GameData="*res://scripts/globals/game_data.gd"
+TestConfig="*res://scripts/globals/test_config.gd"
 
 [debug]
 
@@ -40,3 +41,4 @@ project/assembly_name="The Catpitalist Too"
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true

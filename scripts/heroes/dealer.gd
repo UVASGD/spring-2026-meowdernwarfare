@@ -17,8 +17,8 @@ func _ready() -> void:
 	invis_material = ShaderMaterial.new()
 	invis_material.shader = InvisShader
 	invis_material.set_shader_parameter("u_roundness", 0.0)
-	invis_material.set_shader_parameter("u_distortion_intensity", 2)
-	invis_material.set_shader_parameter("u_blur_intensity", 2.0)
+	invis_material.set_shader_parameter("u_distortion_intensity", 0)
+	invis_material.set_shader_parameter("u_blur_intensity", 0.0)
 	
 	if sprite:
 		normal_material = sprite.material
@@ -64,7 +64,7 @@ func _end_invis() -> void:
 	player.health_bar.visible = true
 
 @warning_ignore("unused_parameter")
-func _do_ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
+func _do_ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	var all_players = get_tree().get_nodes_in_group("players")
 	
 	# If no group set up, try to find players via GameManager

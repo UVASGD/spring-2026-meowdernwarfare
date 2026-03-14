@@ -49,13 +49,17 @@ func _copy_from(src: InputProvider) -> void:
 	reload = src.reload
 	ability1 = src.ability1
 	ability2 = src.ability2
+	ult = src.ult
 	interact = src.interact
 	dash_just = src.dash_just
 	shoot_just = src.shoot_just
 	reload_just = src.reload_just
 	ability1_just = src.ability1_just
 	ability2_just = src.ability2_just
+	ult_just = src.ult_just
 	interact_just = src.interact_just
+	drop = src.drop
+	drop_just = src.drop_just
 
 func _send_to_network() -> void:
 	if not Network.is_online():
@@ -72,7 +76,9 @@ func _send_to_network() -> void:
 		"shj": shoot_just,
 		"r": reload_just,
 		"a1": ability1_just,
-		"a2": ability2_just
+		"a2": ability2_just,
+		"ul": ult_just,
+		"dr": drop_just
 	})
 
 func receive_input(data: Dictionary) -> void:
@@ -82,8 +88,24 @@ func _apply_buffered_input() -> void:
 	if input_buffer.is_empty():
 		return
 	
-	# Use most recent input
-	var data = input_buffer.pop_back()
+	# Use most recent input for continuous state, OR all _just flags so none are lost
+	var merged_dash := false
+	var merged_shj := false
+	var merged_r := false
+	var merged_a1 := false
+	var merged_a2 := false
+	var merged_ul := false
+	var merged_dr := false
+	for buf in input_buffer:
+		if buf.get("d", false): merged_dash = true
+		if buf.get("shj", false): merged_shj = true
+		if buf.get("r", false): merged_r = true
+		if buf.get("a1", false): merged_a1 = true
+		if buf.get("a2", false): merged_a2 = true
+		if buf.get("ul", false): merged_ul = true
+		if buf.get("dr", false): merged_dr = true
+	
+	var data = input_buffer.back()
 	input_buffer.clear()
 	
 	var m = data.get("m", [0, 0])
@@ -92,9 +114,11 @@ func _apply_buffered_input() -> void:
 	move_input = Vector2(m[0], m[1])
 	aim_input = Vector2(a[0], a[1])
 	sprint = data.get("sp", false)
-	dash_just = data.get("d", false)
 	shoot = data.get("sh", false)
-	shoot_just = data.get("shj", false)
-	reload_just = data.get("r", false)
-	ability1_just = data.get("a1", false)
-	ability2_just = data.get("a2", false)
+	dash_just = merged_dash
+	shoot_just = merged_shj
+	reload_just = merged_r
+	ability1_just = merged_a1
+	ability2_just = merged_a2
+	ult_just = merged_ul
+	drop_just = merged_dr

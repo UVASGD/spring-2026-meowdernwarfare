@@ -11,22 +11,26 @@ const KB_MAPS = {
 	0: { # WASD + QE + Space/Shift
 		"up": KEY_W, "down": KEY_S, "left": KEY_A, "right": KEY_D,
 		"sprint": KEY_SHIFT, "dash": KEY_SPACE,
-		"shoot": KEY_Q, "reload": KEY_R, "ability1": KEY_E, "ability2": KEY_F
+		"shoot": KEY_Q, "reload": KEY_R, "ability1": KEY_E, "ability2": KEY_F, "ult": KEY_C,
+		"drop": KEY_X
 	},
 	1: { # IJKL + UO + H/Y
 		"up": KEY_I, "down": KEY_K, "left": KEY_J, "right": KEY_L,
 		"sprint": KEY_H, "dash": KEY_Y,
-		"shoot": KEY_U, "reload": KEY_P, "ability1": KEY_O, "ability2": KEY_SEMICOLON
+		"shoot": KEY_U, "reload": KEY_P, "ability1": KEY_O, "ability2": KEY_SEMICOLON, "ult": KEY_APOSTROPHE,
+		"drop": KEY_N
 	},
 	2: { # Arrows + ,. + /RShift
 		"up": KEY_UP, "down": KEY_DOWN, "left": KEY_LEFT, "right": KEY_RIGHT,
 		"sprint": KEY_CTRL, "dash": KEY_SLASH,
-		"shoot": KEY_COMMA, "reload": KEY_BRACKETRIGHT, "ability1": KEY_PERIOD, "ability2": KEY_BACKSLASH
+		"shoot": KEY_COMMA, "reload": KEY_BRACKETRIGHT, "ability1": KEY_PERIOD, "ability2": KEY_BACKSLASH, "ult": KEY_BRACKETLEFT,
+		"drop": KEY_M
 	},
 	3: { # Numpad
 		"up": KEY_KP_8, "down": KEY_KP_5, "left": KEY_KP_4, "right": KEY_KP_6,
 		"sprint": KEY_KP_0, "dash": KEY_KP_ENTER,
-		"shoot": KEY_KP_7, "reload": KEY_KP_MULTIPLY, "ability1": KEY_KP_9, "ability2": KEY_KP_ADD
+		"shoot": KEY_KP_7, "reload": KEY_KP_MULTIPLY, "ability1": KEY_KP_9, "ability2": KEY_KP_ADD, "ult": KEY_KP_PERIOD,
+		"drop": KEY_KP_SUBTRACT
 	}
 }
 
@@ -66,12 +70,16 @@ func _read_keyboard() -> void:
 	reload = reload or Input.is_key_pressed(kb["reload"])
 	ability1 = ability1 or Input.is_key_pressed(kb["ability1"])
 	ability2 = ability2 or Input.is_key_pressed(kb["ability2"])
+	ult = ult or Input.is_key_pressed(kb["ult"])
+	drop = drop or Input.is_key_pressed(kb["drop"])
 	
 	dash_just = dash_just or Input.is_key_pressed(kb["dash"]) and not _was_pressed("dash")
 	shoot_just = shoot_just or Input.is_key_pressed(kb["shoot"]) and not _was_pressed("shoot")
 	reload_just = reload_just or Input.is_key_pressed(kb["reload"]) and not _was_pressed("reload")
 	ability1_just = ability1_just or Input.is_key_pressed(kb["ability1"]) and not _was_pressed("ability1")
 	ability2_just = ability2_just or Input.is_key_pressed(kb["ability2"]) and not _was_pressed("ability2")
+	ult_just = ult_just or Input.is_key_pressed(kb["ult"]) and not _was_pressed("ult")
+	drop_just = drop_just or Input.is_key_pressed(kb["drop"]) and not _was_pressed("drop")
 
 var _prev_states: Dictionary = {}
 
@@ -87,6 +95,8 @@ func _store_states() -> void:
 	_prev_states["reload"] = Input.is_key_pressed(kb["reload"])
 	_prev_states["ability1"] = Input.is_key_pressed(kb["ability1"])
 	_prev_states["ability2"] = Input.is_key_pressed(kb["ability2"])
+	_prev_states["ult"] = Input.is_key_pressed(kb["ult"])
+	_prev_states["drop"] = Input.is_key_pressed(kb["drop"])
 
 func _read_gamepad() -> void:
 	var gp = player_id  # Gamepad index matches player ID
@@ -118,6 +128,7 @@ func _read_gamepad() -> void:
 	reload = reload or Input.is_joy_button_pressed(gp, JOY_BUTTON_X)
 	ability1 = ability1 or Input.is_joy_button_pressed(gp, JOY_BUTTON_RIGHT_SHOULDER)
 	ability2 = ability2 or Input.is_joy_button_pressed(gp, JOY_BUTTON_Y)
+	ult = ult or Input.is_joy_button_pressed(gp, JOY_BUTTON_B)
 	interact = interact or Input.is_joy_button_pressed(gp, JOY_BUTTON_A)
 
 func _read_mouse() -> void:
@@ -147,4 +158,6 @@ func end_frame() -> void:
 	reload = false
 	ability1 = false
 	ability2 = false
+	ult = false
 	interact = false
+	drop = false

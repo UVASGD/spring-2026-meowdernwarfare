@@ -1,0 +1,292 @@
+[gd_scene load_steps=3 format=3 uid="uid://c26tutk12f6j8"]
+
+[ext_resource type="Script" uid="uid://dljguk5fdx0b1" path="res://scripts/ui/train_menu.gd" id="1_script"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.12, 0.12, 0.18, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="TrainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="BG" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.06, 0.06, 0.1, 1)
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 20
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="TopBar" type="HBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="BackBtn" type="Button" parent="Margin/VBox/TopBar"]
+custom_minimum_size = Vector2(100, 44)
+layout_mode = 2
+text = "< Back"
+
+[node name="Spacer" type="Control" parent="Margin/VBox/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TutorialBtn" type="Button" parent="Margin/VBox/TopBar"]
+custom_minimum_size = Vector2(150, 44)
+layout_mode = 2
+text = "Tutorial"
+
+[node name="VsAIBtn" type="Button" parent="Margin/VBox/TopBar"]
+custom_minimum_size = Vector2(150, 44)
+layout_mode = 2
+text = "vs AI"
+
+[node name="SoloBtn" type="Button" parent="Margin/VBox/TopBar"]
+custom_minimum_size = Vector2(150, 44)
+layout_mode = 2
+text = "Solo"
+
+[node name="Sep" type="HSeparator" parent="Margin/VBox"]
+layout_mode = 2
+
+[node name="Content" type="HBoxContainer" parent="Margin/VBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 20
+
+[node name="HeroGridScroll" type="ScrollContainer" parent="Margin/VBox/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.38
+
+[node name="HeroGrid" type="GridContainer" parent="Margin/VBox/Content/HeroGridScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 3
+
+[node name="SidePanel" type="PanelContainer" parent="Margin/VBox/Content"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.62
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="Scroll" type="ScrollContainer" parent="Margin/VBox/Content/SidePanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="PanelContent" type="VBoxContainer" parent="Margin/VBox/Content/SidePanel/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 14
+
+[node name="Portrait" type="TextureRect" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent"]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HeroName" type="Label" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Select a Hero"
+horizontal_alignment = 1
+
+[node name="HeroDesc" type="RichTextLabel" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+bbcode_enabled = true
+text = "Click on a hero in the grid to view their abilities."
+fit_content = true
+scroll_active = false
+
+[node name="ShootSection" type="VBoxContainer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/ShootSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 22
+
+[node name="Desc" type="RichTextLabel" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/ShootSection"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="Video" type="ColorRect" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/ShootSection"]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+color = Color(0.08, 0.08, 0.13, 1)
+
+[node name="Label" type="Label" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/ShootSection/Video"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -14.0
+offset_right = 50.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
+text = "[ Video ]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Ability1Section" type="VBoxContainer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability1Section"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 22
+
+[node name="Desc" type="RichTextLabel" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability1Section"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="Video" type="ColorRect" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability1Section"]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+color = Color(0.08, 0.08, 0.13, 1)
+
+[node name="Label" type="Label" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability1Section/Video"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -14.0
+offset_right = 50.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
+text = "[ Video ]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Ability2Section" type="VBoxContainer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability2Section"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 22
+
+[node name="Desc" type="RichTextLabel" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability2Section"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="Video" type="ColorRect" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability2Section"]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+color = Color(0.08, 0.08, 0.13, 1)
+
+[node name="Label" type="Label" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability2Section/Video"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -14.0
+offset_right = 50.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
+text = "[ Video ]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="UltSection" type="VBoxContainer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/UltSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.5, 0.5, 1)
+theme_override_font_sizes/font_size = 22
+
+[node name="Desc" type="RichTextLabel" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/UltSection"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="Video" type="ColorRect" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/UltSection"]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+color = Color(0.08, 0.08, 0.13, 1)
+
+[node name="Label" type="Label" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/UltSection/Video"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -14.0
+offset_right = 50.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
+text = "[ Video ]"
+horizontal_alignment = 1
+vertical_alignment = 1

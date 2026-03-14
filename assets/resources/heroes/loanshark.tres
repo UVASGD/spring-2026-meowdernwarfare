@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="HeroInfo" load_steps=2 format=3 uid="uid://ck0f4eatfhd6j"]
+
+[ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+id = "LoanShark"
+desc = "def"
+shoot_name = "Shoot"
+shoot_desc = "Basic ranged attack."
+ability1_name = "Ability 1"
+ability1_desc = "Special ability. (Coming soon)"
+ult_name = "Ultimate"
+ult_desc = "Powerful ultimate ability. (Coming soon)"

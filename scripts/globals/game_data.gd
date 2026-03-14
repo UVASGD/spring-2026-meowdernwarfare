@@ -4,12 +4,16 @@ const TransitionSettings = preload("res://scripts/globals/transition_settings.gd
 
 # Autoload for passing data between lobby and game scenes
 
-enum GameMode { NONE, HOST, JOIN, PRACTICE }
+enum GameMode { NONE, HOST, JOIN, PRACTICE, SOLO, TUTORIAL }
 
 var game_mode: GameMode = GameMode.NONE
 var pending_players: Array = []
 var pending_settings: Dictionary = {}
 var is_online_game: bool = false
+
+# Starter crop selection (persisted)
+var starter_crops: Array[String] = []
+var pending_starter_crops: Array[String] = []
 
 # Scene transition tracking
 var is_first_load: bool = true
@@ -19,6 +23,7 @@ var _transition_settings: TransitionSettings = null
 
 func _ready() -> void:
 	_create_transition_overlay()
+	_load_starter_crops()
 
 func _create_transition_overlay() -> void:
 	_transition_settings = load("res://assets/resources/default_transition.tres")
@@ -65,8 +70,30 @@ func set_online_game(players: Array, settings: Dictionary) -> void:
 func clear() -> void:
 	pending_players.clear()
 	pending_settings.clear()
+	pending_starter_crops.clear()
 	is_online_game = false
 	game_mode = GameMode.NONE
+
+func _load_starter_crops() -> void:
+	var config = ConfigFile.new()
+	if config.load("user://settings.cfg") == OK:
+		var saved = config.get_value("crops", "starters", [])
+		starter_crops.assign(saved)
+
+func save_starter_crops() -> void:
+	var config = ConfigFile.new()
+	config.load("user://settings.cfg")
+	config.set_value("crops", "starters", Array(starter_crops))
+	config.save("user://settings.cfg")
+
+const DEFAULT_STARTERS: Array[String] = ["SpeedSprout", "IronRoot", "BlastBerry"]
+
+func get_active_starters() -> Array[String]:
+	if not pending_starter_crops.is_empty():
+		return pending_starter_crops
+	if not starter_crops.is_empty():
+		return starter_crops
+	return DEFAULT_STARTERS
 
 func change_scene(path: String, duration: float = -1.0) -> void:
 	if duration < 0:
