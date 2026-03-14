@@ -1,7 +1,6 @@
-[gd_scene load_steps=34 format=3 uid="uid://bm518183utayv"]
+[gd_scene load_steps=37 format=3 uid="uid://bm518183utayv"]
 
 [ext_resource type="Script" uid="uid://kb44jk3w67cb" path="res://scripts/heroes/loanshark.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://dhj58brqe3yqh" path="res://assets/sprites/loanshark/loan shark.png" id="2_cpwo7"]
 [ext_resource type="Texture2D" uid="uid://cq3rks3mbbrif" path="res://assets/sprites/loanshark/reap animation/sharkbite_frame_1.png" id="3_e4u3g"]
 [ext_resource type="Texture2D" uid="uid://dii78tjrxsast" path="res://assets/sprites/loanshark/melee animation/melee_1.png" id="3_he6r5"]
 [ext_resource type="Texture2D" uid="uid://f2esd0yfirxq" path="res://assets/sprites/loanshark/reap animation/sharkbite_frame_2.png" id="4_4pbhw"]
@@ -18,8 +17,8 @@
 [ext_resource type="Texture2D" uid="uid://bd2plqukl38x3" path="res://assets/sprites/loanshark/walk frames/loan_walk_3.png" id="10_8flhq"]
 [ext_resource type="Texture2D" uid="uid://r77w0t2ljyss" path="res://assets/sprites/loanshark/walk frames/loan_walk_4.png" id="11_di7q2"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_yln50"]
-atlas = ExtResource("2_cpwo7")
+[sub_resource type="AtlasTexture" id="AtlasTexture_0flp1"]
+atlas = ExtResource("8_he6r5")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_713vh"]
@@ -42,11 +41,23 @@ region = Rect2(0, 0, 600, 600)
 atlas = ExtResource("8_rnqa7")
 region = Rect2(0, 0, 600, 600)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_he6r5"]
+atlas = ExtResource("4_sgv4u")
+region = Rect2(0, 0, 600, 600)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sgv4u"]
+atlas = ExtResource("3_he6r5")
+region = Rect2(0, 0, 600, 600)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_rnqa7"]
 atlas = ExtResource("3_e4u3g")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_y25vs"]
+atlas = ExtResource("4_4pbhw")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_di7q2"]
 atlas = ExtResource("4_4pbhw")
 region = Rect2(0, 0, 500, 500)
 
@@ -60,6 +71,10 @@ region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_oxqi2"]
 atlas = ExtResource("7_0flp1")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8flhq"]
+atlas = ExtResource("3_e4u3g")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jht6k"]
@@ -82,11 +97,11 @@ region = Rect2(0, 0, 500, 500)
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_yln50")
+"texture": SubResource("AtlasTexture_0flp1")
 }],
 "loop": true,
 "name": &"idle",
-"speed": 5.0
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -106,10 +121,16 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_udnv0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_he6r5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sgv4u")
 }],
-"loop": true,
-"name": &"melee animation",
-"speed": 9.0
+"loop": false,
+"name": &"melee",
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -119,17 +140,32 @@ animations = [{
 "texture": SubResource("AtlasTexture_y25vs")
 }, {
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_di7q2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hism")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4hism")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_4hism")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_6ueb8")
 }, {
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_6ueb8")
+}, {
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_oxqi2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8flhq")
 }],
-"loop": true,
-"name": &"reap animation",
-"speed": 4.0
+"loop": false,
+"name": &"reap",
+"speed": 8.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -145,7 +181,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_igxca")
 }],
 "loop": true,
-"name": &"walk animation",
+"name": &"run",
 "speed": 8.0
 }]
 
@@ -160,6 +196,4 @@ mag_size = 14
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.3, 0.3)
 sprite_frames = SubResource("SpriteFrames_713vh")
-animation = &"walk animation"
-frame = 3
-frame_progress = 0.845234
+animation = &"melee"
