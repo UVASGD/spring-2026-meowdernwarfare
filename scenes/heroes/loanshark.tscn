@@ -16,7 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://c5s58li1gkty1" path="res://assets/sprites/loanshark/walk frames/loan_walk_2.png" id="9_sgv4u"]
 [ext_resource type="Texture2D" uid="uid://bd2plqukl38x3" path="res://assets/sprites/loanshark/walk frames/loan_walk_3.png" id="10_8flhq"]
 [ext_resource type="Texture2D" uid="uid://r77w0t2ljyss" path="res://assets/sprites/loanshark/walk frames/loan_walk_4.png" id="11_di7q2"]
-[ext_resource type="PackedScene" path="res://scenes/hurtbox.tscn" id="17_he6r5"]
+[ext_resource type="PackedScene" uid="uid://cjivs3yh3w4tm" path="res://scenes/hurtbox.tscn" id="17_he6r5"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0flp1"]
 atlas = ExtResource("8_he6r5")

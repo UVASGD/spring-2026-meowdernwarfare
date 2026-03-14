@@ -2,25 +2,36 @@ extends Node2D
 
 @export var damage : int
 var owner_player
+var hit_map := {}
+@onready var area: Area2D = $Area2D
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	owner_player = get_parent().get_parent()
-	pass # Replace with function body.
 
+func start_swing() -> void:
+	hit_map.clear()
+	_hit_overlaps()
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
+func end_swing() -> void:
+	hit_map.clear()
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
+	_try_hit(body)
+
+func _hit_overlaps() -> void:
+	for body in area.get_overlapping_bodies():
+		_try_hit(body)
+
+func _try_hit(body: Node2D) -> void:
 	if body == owner_player:
 		return
-	
+
+	var body_id := body.get_instance_id()
+	if hit_map.has(body_id):
+		return
+	hit_map[body_id] = true
+
 	if body is Player:
 		body.take_damage(damage, owner_player)
-		queue_free()
 	elif body.has_method("take_damage"):
 		body.take_damage(damage)
-		queue_free()

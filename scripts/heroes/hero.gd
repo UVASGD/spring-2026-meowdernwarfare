@@ -26,6 +26,10 @@ signal died
 @export var ability2_anim_duration: float = 0.5
 @export var ult_anim_duration: float = 0.5
 @export var dash_anim_duration: float = 0.2
+@export var shoot_actionable: bool = true
+@export var ability1_actionable: bool = true
+@export var ability2_actionable: bool = true
+@export var ult_actionable: bool = true
 
 # State
 var health: float = 100.0
@@ -42,6 +46,10 @@ var ability1_anim_timer: float = 0.0
 var ability2_anim_timer: float = 0.0
 var ult_anim_timer: float = 0.0
 var current_anim: String = "idle"
+var anim_locked: bool = false
+var lock_anim: String = ""
+var lock_skill: String = ""
+var missing_anim_warn := {}
 
 # Set by Player
 var player: Node2D = null
@@ -56,6 +64,8 @@ func _ready() -> void:
 	sprite = get_node_or_null("Sprite")
 	if sprite == null:
 		sprite = get_node_or_null("AnimatedSprite2D")
+	if sprite and not sprite.animation_finished.is_connected(_on_sprite_animation_finished):
+		sprite.animation_finished.connect(_on_sprite_animation_finished)
 	
 	_setup_visuals()
 
@@ -81,32 +91,30 @@ func _update_animation(delta: float) -> void:
 	if sprite == null or player == null:
 		return
 	
+	_update_anim_lock()
+	if anim_locked:
+		return
+	
 	var new_anim = _get_animation_state()
 	if new_anim != current_anim:
 		current_anim = new_anim
-		if sprite.sprite_frames and sprite.sprite_frames.has_animation(new_anim):
-			sprite.play(new_anim)
+		if new_anim == "run":
+			_play_anim_candidates(PackedStringArray(["run", "idle"]), "run")
+		elif new_anim == "idle":
+			_play_anim_candidates(PackedStringArray(["idle"]), "idle")
+		elif new_anim == "dash":
+			_play_anim_candidates(PackedStringArray(["dash", "run", "idle"]), "dash")
 
 func _get_animation_state() -> String:
 	var is_moving = player.velocity.length() > 10 if "velocity" in player else false
 	var is_dashing = player.is_dashing if "is_dashing" in player else false
-	var is_reloading = reload_cd > 0
 	
-	# Priority: dash > ult > ability2 > ability1 > reload > run/idle
+	# Priority: death > dash > run/idle
+	if is_dead:
+		return "death"
+
 	if is_dashing:
 		return "dash"
-	
-	if ult_anim_timer > 0:
-		return "ult"
-	
-	if ability2_anim_timer > 0:
-		return "ability2"
-	
-	if ability1_anim_timer > 0:
-		return "ability1"
-	
-	if is_reloading:
-		return "reload_run" if is_moving else "reload_idle"
 	
 	return "run" if is_moving else "idle"
 
@@ -144,6 +152,9 @@ func heal(amount: float) -> void:
 
 func _die() -> void:
 	is_dead = true
+	_begin_skill("death")
+	_play_action_anim("death")
+	_capture_skill_anim()
 	died.emit()
 
 func get_health_percent() -> float:
@@ -152,31 +163,37 @@ func get_health_percent() -> float:
 # ABILITIES
 
 func can_shoot() -> bool:
-	return shoot_cd <= 0 and reload_cd <= 0 and ammo > 0 and not is_dead
+	return shoot_cd <= 0 and reload_cd <= 0 and ammo > 0 and not is_dead and not _is_action_blocked()
 
 func _is_fie_suppressed() -> bool:
 	return player and player.fie_suppress_count > 0
 
 func can_ability1() -> bool:
-	return ability1_cd <= 0 and not _is_fie_suppressed()
+	return ability1_cd <= 0 and not _is_fie_suppressed() and not _is_action_blocked()
 
 func can_ability2() -> bool:
-	return ability2_cd <= 0 and ability2_cooldown > 0 and not _is_fie_suppressed()
+	return ability2_cd <= 0 and ability2_cooldown > 0 and not _is_fie_suppressed() and not _is_action_blocked()
 
 func can_ult() -> bool:
-	return ult_points >= max_ult_points and not _is_fie_suppressed()
+	return ult_points >= max_ult_points and not _is_fie_suppressed() and not _is_action_blocked()
 
 func shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	if not can_shoot():
 		return
 	shoot_cd = shoot_cooldown
 	ammo -= 1
+	_begin_skill("shoot")
+	_play_action_anim("shoot")
+	_capture_skill_anim()
 	_do_shoot(aim_dir, aim_pos)
 
 func reload() -> void:
 	if reload_cd > 0:
 		return
 	reload_cd = reload_time
+	_begin_skill("reload")
+	_play_action_anim("reload")
+	_capture_skill_anim()
 	_do_reload()
 
 func ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
@@ -184,6 +201,9 @@ func ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
 		return
 	ability1_cd = ability1_cooldown
 	ability1_anim_timer = ability1_anim_duration
+	_begin_skill("ability1")
+	_play_action_anim("ability1")
+	_capture_skill_anim()
 	_do_ability1(aim_dir, aim_pos)
 
 func ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
@@ -191,6 +211,9 @@ func ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
 		return
 	ability2_cd = ability2_cooldown
 	ability2_anim_timer = ability2_anim_duration
+	_begin_skill("ability2")
+	_play_action_anim("ability2")
+	_capture_skill_anim()
 	_do_ability2(aim_dir, aim_pos)
 
 func ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
@@ -199,6 +222,9 @@ func ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	ult_points = 0
 	ult_changed.emit(ult_points, max_ult_points)
 	ult_anim_timer = ult_anim_duration
+	_begin_skill("ult")
+	_play_action_anim("ult")
+	_capture_skill_anim()
 	_do_ult(aim_dir, aim_pos)
 
 func _do_shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
@@ -244,3 +270,114 @@ func disable_sprite() -> void:
 	var hero_sprite = get_node_or_null("Sprite")
 	if hero_sprite and hero_sprite is AnimatedSprite2D:
 		hero_sprite.visible = false 
+
+func _begin_skill(skill: String) -> void:
+	lock_skill = skill
+
+func _play_action_anim(kind: String) -> void:
+	var moving: bool = false
+	if player and "velocity" in player:
+		moving = player.velocity.length() > 10
+	if kind == "shoot":
+		if moving:
+			_play_anim_candidates(PackedStringArray(["shoot_run", "shoot_idle", "shoot", "idle"]), "shoot")
+		else:
+			_play_anim_candidates(PackedStringArray(["shoot_idle", "shoot", "idle"]), "shoot")
+		return
+	if kind == "reload":
+		if moving:
+			_play_anim_candidates(PackedStringArray(["reload_run", "reload_idle", "reload", "idle"]), "reload")
+		else:
+			_play_anim_candidates(PackedStringArray(["reload_idle", "reload", "idle"]), "reload")
+		return
+	if kind == "ability1":
+		if moving:
+			_play_anim_candidates(PackedStringArray(["ability1_run", "ability1_idle", "ability1", "idle"]), "ability1")
+		else:
+			_play_anim_candidates(PackedStringArray(["ability1_idle", "ability1", "idle"]), "ability1")
+		return
+	if kind == "ability2":
+		if moving:
+			_play_anim_candidates(PackedStringArray(["ability2_run", "ability2_idle", "ability2", "idle"]), "ability2")
+		else:
+			_play_anim_candidates(PackedStringArray(["ability2_idle", "ability2", "idle"]), "ability2")
+		return
+	if kind == "ult":
+		_play_anim_candidates(PackedStringArray(["ult_idle", "ult", "idle"]), "ult")
+		return
+	if kind == "death":
+		_play_anim_candidates(PackedStringArray(["death", "idle"]), "death")
+		return
+
+func _play_anim_candidates(cands: PackedStringArray, req: String) -> void:
+	if sprite == null or sprite.sprite_frames == null:
+		_warn_missing_anim(req, cands)
+		return
+	for name in cands:
+		if sprite.sprite_frames.has_animation(name):
+			current_anim = name
+			sprite.play(name)
+			return
+	_warn_missing_anim(req, cands)
+
+func _warn_missing_anim(req: String, cands: PackedStringArray) -> void:
+	var key := req + "|" + ",".join(cands)
+	if missing_anim_warn.has(key):
+		return
+	missing_anim_warn[key] = true
+	print("Hero anim missing for ", get_hero_name(), " request=", req, " candidates=", ",".join(cands))
+
+func _capture_skill_anim() -> void:
+	if sprite == null:
+		return
+	var anim := sprite.animation
+	if anim == &"":
+		lock_skill = ""
+		return
+	var anim_name := String(anim)
+	if anim_name == "idle" or anim_name == "run":
+		lock_skill = ""
+		return
+	if sprite.sprite_frames == null or not sprite.sprite_frames.has_animation(anim_name):
+		lock_skill = ""
+		return
+	if sprite.sprite_frames.get_animation_loop(anim_name):
+		lock_skill = ""
+		return
+	lock_anim = anim_name
+	current_anim = anim_name
+	anim_locked = true
+
+func _update_anim_lock() -> void:
+	if not anim_locked:
+		return
+	if sprite == null or lock_anim == "":
+		_clear_anim_lock()
+		return
+	if String(sprite.animation) != lock_anim:
+		_clear_anim_lock()
+		return
+	if sprite.is_playing():
+		return
+	_clear_anim_lock()
+
+func _clear_anim_lock() -> void:
+	anim_locked = false
+	lock_anim = ""
+	lock_skill = ""
+
+func _on_sprite_animation_finished() -> void:
+	_update_anim_lock()
+
+func _is_action_blocked() -> bool:
+	if not anim_locked:
+		return false
+	if lock_skill == "shoot":
+		return not shoot_actionable
+	if lock_skill == "ability1":
+		return not ability1_actionable
+	if lock_skill == "ability2":
+		return not ability2_actionable
+	if lock_skill == "ult":
+		return not ult_actionable
+	return false
