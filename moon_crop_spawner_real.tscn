@@ -230,8 +230,10 @@ animations = [{
 [sub_resource type="Gradient" id="Gradient_kmnc8"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_cbrmg"]
+frequency = 0.0492
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ct68i"]
+seamless = true
 color_ramp = SubResource("Gradient_kmnc8")
 noise = SubResource("FastNoiseLite_cbrmg")
 
@@ -242,7 +244,8 @@ shader_parameter/edge_width = 0.041
 shader_parameter/edge_color = Color(0.243137, 0.847059, 0, 1)
 shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
 shader_parameter/noise_texture = SubResource("NoiseTexture2D_ct68i")
-shader_parameter/noise_scale = 1.0
+shader_parameter/noise_scale = 0.426
+shader_parameter/alpha_cutoff = 0.01
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6b8mr"]
 atlas = ExtResource("7_jjhjr")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=59 format=4 uid="uid://dea1hxmkkrroo"]
+[gd_scene load_steps=63 format=4 uid="uid://dea1hxmkkrroo"]
 
 [ext_resource type="Texture2D" uid="uid://b806fl6i3ymrk" path="res://assets/maps/moon/moon texture.png" id="1_wodu6"]
 [ext_resource type="Texture2D" uid="uid://1i1v210nrrxs" path="res://assets/maps/moon/sky/spacebg.png" id="2_30vaj"]
@@ -23,6 +23,8 @@
 [ext_resource type="PackedScene" uid="uid://cih7402ccv0gh" path="res://scenes/sd_lights.tscn" id="19_8fg61"]
 [ext_resource type="Texture2D" uid="uid://wjb35hpxxleh" path="res://assets/maps/moon/objs/moon crater glow.png" id="19_evwe5"]
 [ext_resource type="PackedScene" uid="uid://dg266xce3jg3q" path="res://moon_crop_spawner_real.tscn" id="23_6kqtc"]
+[ext_resource type="AudioStream" uid="uid://ccd465ueq1ado" path="res://assets/sound/music/Moon Map Catpitalist 2.ogg" id="24_5lgu8"]
+[ext_resource type="AudioStream" uid="uid://dl2weybrdbc1h" path="res://assets/sound/music/Pokémon Black & White - Critical Health Music (HQ).mp3" id="25_t2jim"]
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_8fg61"]
 diffuse_texture = ExtResource("1_wodu6")
@@ -276,6 +278,14 @@ gradient = SubResource("Gradient_u2fso")
 fill = 1
 fill_from = Vector2(0.5, 0.502294)
 fill_to = Vector2(0.853211, 0.149083)
+
+[sub_resource type="Gradient" id="Gradient_5lgu8"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.463415, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_t2jim"]
+gradient = SubResource("Gradient_5lgu8")
 
 [node name="testMap" type="Node2D"]
 
@@ -1642,6 +1652,23 @@ height = 9.0
 [node name="SDLights" parent="map" instance=ExtResource("19_8fg61")]
 
 [node name="cropSpawner" parent="map" instance=ExtResource("23_6kqtc")]
+
+[node name="PointLight2D" type="PointLight2D" parent="map"]
+position = Vector2(-29.5001, -2.50018)
+scale = Vector2(11.5735, 2272.77)
+color = Color(0.365951, 0.146061, 0.853499, 1)
+energy = 0.86
+texture = SubResource("GradientTexture1D_t2jim")
+texture_scale = 50.0
+height = 596.0
+
+[node name="Theme" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("24_5lgu8")
+volume_db = -4.0
+
+[node name="SDTheme" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("25_t2jim")
+volume_db = -14.0
 
 [connection signal="body_entered" from="map/objs/teleporters/crater1_2" to="map/objs/teleporters/crater1_2" method="_on_body_entered"]
 [connection signal="body_entered" from="map/objs/teleporters/crater2_1" to="map/objs/teleporters/crater2_1" method="_on_body_entered"]

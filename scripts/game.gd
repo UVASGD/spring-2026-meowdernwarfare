@@ -24,6 +24,8 @@ const SUDDEN_DEATH_DURATION := 120.0
 
 @onready var gm: GameManager = $GameManager
 var map_node: Node = null
+var map_theme: Node = null
+var map_sd_theme: Node = null
 var farms: Array = []
 var game_timer: float = 0.0
 var game_active: bool = false
@@ -53,6 +55,7 @@ func _ready() -> void:
 		start_solo_vs_ai()
 	
 	_assign_farms()
+	_play_map_theme()
 	await get_tree().process_frame
 	await get_tree().process_frame
 	_collect_farms_tiles()
@@ -73,8 +76,53 @@ func _load_map(map_name: String) -> void:
 		map_node.name = "map"
 		add_child(map_node)
 		move_child(map_node, 0)
+		_cache_map_music_nodes()
 	else:
 		push_error("Game: Failed to load map scene: ", path)
+
+func _cache_map_music_nodes() -> void:
+	map_theme = null
+	map_sd_theme = null
+	if map_node == null:
+		return
+	map_theme = map_node.get_node_or_null("Theme")
+	if map_theme == null:
+		map_theme = map_node.find_child("Theme", true, false)
+	map_sd_theme = map_node.get_node_or_null("SDTheme")
+	if map_sd_theme == null:
+		map_sd_theme = map_node.find_child("SDTheme", true, false)
+
+func _play_map_theme() -> void:
+	if map_node == null:
+		return
+	if map_theme == null and map_sd_theme == null:
+		_cache_map_music_nodes()
+	_stop_audio_node(map_sd_theme)
+	_play_audio_node(map_theme, "Theme")
+
+func _play_sd_theme() -> void:
+	if map_node == null:
+		return
+	if map_theme == null and map_sd_theme == null:
+		_cache_map_music_nodes()
+	_stop_audio_node(map_theme)
+	_play_audio_node(map_sd_theme, "SDTheme")
+
+func _play_audio_node(node: Node, label: String) -> void:
+	if node == null:
+		push_warning("Game: Map has no %s node" % label)
+		return
+	if not node.has_method("play"):
+		push_warning("Game: %s node has no play() method" % label)
+		return
+	if node.has_method("is_playing") and bool(node.call("is_playing")):
+		return
+	node.call("play")
+
+func _stop_audio_node(node: Node) -> void:
+	if node == null:
+		return
+	node.call("stop")
 
 func _setup_spawn_points() -> void:
 	gm.spawn_points.clear()
@@ -262,6 +310,7 @@ func _trigger_sudden_death() -> void:
 func _activate_sudden_death() -> void:
 	gm.sudden_death = true
 	print("SUDDEN DEATH activated")
+	_play_sd_theme()
 	if _sudden_label:
 		_sudden_label.visible = true
 	_spawn_killzone()

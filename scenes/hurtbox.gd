@@ -19,6 +19,8 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	_try_hit(body)
 
 func _hit_overlaps() -> void:
+	if not area.monitoring:
+		return 
 	for body in area.get_overlapping_bodies():
 		_try_hit(body)
 
