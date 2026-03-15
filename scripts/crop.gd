@@ -23,12 +23,19 @@ var _buff_callable: Callable
 var is_planted: bool = false
 var owner_farm = null  # Farm ref when planted
 
+@export var bob_amplitude: float = 4.0
+@export var bob_speed: float = 3.0
+var _bob_time: float = 0.0
+var _base_y_sprite: float = 0.0
+
 @onready var light:Light2D = $light
 @onready var sprite:Sprite2D = $Sprite
 @onready var plantedSprite:Sprite2D = $plantedSprite
 signal picked_up
 
 func _ready() -> void:
+	if sprite:
+		_base_y_sprite = sprite.position.y
 	collision_layer = 16
 	collision_mask = 0
 	monitoring = false
@@ -37,6 +44,12 @@ func _ready() -> void:
 	set_planted_visual(is_planted)
 	_apply_stage_visuals()
 	_setup()
+
+func _process(delta: float) -> void:
+	_bob_time += delta
+	var off = sin(_bob_time * bob_speed) * bob_amplitude
+	if sprite:
+		sprite.position.y = _base_y_sprite + off
 
 # Subclasses override to configure buff values per stage
 func _setup() -> void:
