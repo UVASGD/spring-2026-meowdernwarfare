@@ -396,6 +396,9 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 	elif msg_type == "crop_spawned":
 		_handle_crop_spawned(data)
 	
+	elif msg_type == "crop_bring":
+		_handle_crop_bring(data)
+	
 	elif msg_type == "spawner_stage":
 		_handle_spawner_stage(data)
 
@@ -922,6 +925,11 @@ func send_crop_spawned(sid: int, crop_idx: int, stg: int) -> void:
 		return
 	Network.broadcast({"type": "crop_spawned", "sid": sid, "ci": crop_idx, "cs": stg})
 
+func send_crop_bring(sid: int) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	Network.broadcast({"type": "crop_bring", "sid": sid})
+
 func send_spawner_stage(sid: int, stg: int) -> void:
 	if mode != Mode.ONLINE_HOST:
 		return
@@ -932,6 +940,12 @@ func _handle_crop_spawned(data: Dictionary) -> void:
 	var spawner = _spawners.get(sid)
 	if spawner and is_instance_valid(spawner):
 		spawner.spawn_crop_remote(int(data.get("ci", 0)), int(data.get("cs", 1)))
+
+func _handle_crop_bring(data: Dictionary) -> void:
+	var sid = int(data.get("sid", -1))
+	var spawner = _spawners.get(sid)
+	if spawner and is_instance_valid(spawner):
+		spawner.play_bring_remote()
 
 func _handle_spawner_stage(data: Dictionary) -> void:
 	var sid = int(data.get("sid", -1))

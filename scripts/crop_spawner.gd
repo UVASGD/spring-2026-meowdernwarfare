@@ -8,9 +8,12 @@ extends Node2D
 @onready var start_timer: Timer = $startTimer
 @onready var stage_timer: Timer = $stageTimer
 @onready var spawn_point: Marker2D = $cropSpawnPoint
+@onready var anim: AnimationPlayer = $AnimationPlayer
 
 var current_crop: Node = null
 var spawner_id: int = -1
+var is_bringing: bool = false
+var remote_bring_visual_only: bool = false
 
 func _ready() -> void:
 	# Defer so game mode is set before we check host/client
@@ -31,9 +34,20 @@ func spawn_crop() -> void:
 		return
 	if current_crop != null and is_instance_valid(current_crop):
 		return
-	$AnimationPlayer.play("bring") # bring animation should have a call method track that calls bring() when the ThingThatBrings reaches the platform
+	if is_bringing:
+		return
+	is_bringing = true
+	if anim:
+		anim.play("bring") # bring animation has a method track calling bring()
+	var gm = GameManager.instance
+	if gm and not gm.is_local() and gm.is_host():
+		gm.send_crop_bring(spawner_id)
 
 func bring() -> void:
+	is_bringing = false
+	if remote_bring_visual_only:
+		remote_bring_visual_only = false
+		return
 	var idx = randi() % crop_scenes.size()
 	var scene = crop_scenes[idx]
 	var crop = scene.instantiate() as Crop
@@ -50,12 +64,24 @@ func bring() -> void:
 		gm.send_crop_spawned(spawner_id, idx, stage)
 	return
 
+func play_bring_remote() -> void:
+	if crop_scenes.is_empty():
+		return
+	if current_crop != null and is_instance_valid(current_crop):
+		return
+	if is_bringing:
+		return
+	remote_bring_visual_only = true
+	is_bringing = true
+	if anim:
+		anim.play("bring")
+
 func spawn_crop_remote(crop_idx: int, stg: int) -> void:
+	is_bringing = false
 	if crop_scenes.is_empty() or crop_idx < 0 or crop_idx >= crop_scenes.size():
 		return
 	if current_crop != null and is_instance_valid(current_crop):
-		current_crop.queue_free()
-		current_crop = null
+		return
 	
 	var scene = crop_scenes[crop_idx]
 	var crop = scene.instantiate() as Crop
