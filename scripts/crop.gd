@@ -2,9 +2,9 @@ class_name Crop
 extends Area2D
 
 const STAGE_COLORS := {
-	1: Color(0.6, 0.9, 0.6),
-	2: Color(0.3, 0.7, 1.0),
-	3: Color(1.0, 0.55, 0.1),
+	1: Color(0.0, 1, 0.0),
+	2: Color(0.0, 0.0, 1.0),
+	3: Color(1.0, 0.5, 0),
 }
 
 @export var crop_name: String = "Crop"
@@ -23,6 +23,8 @@ var _buff_callable: Callable
 var is_planted: bool = false
 var owner_farm = null  # Farm ref when planted
 
+@onready var light:Light2D = $light
+@onready var sprite:Sprite2D = $Sprite
 signal picked_up
 
 func _ready() -> void:
@@ -30,6 +32,7 @@ func _ready() -> void:
 	collision_mask = 0
 	monitoring = false
 	monitorable = true
+	_apply_stage_visuals()
 	_setup()
 
 # Subclasses override to configure buff values per stage
@@ -78,6 +81,21 @@ func get_type_id() -> String:
 
 func get_stage_color() -> Color:
 	return STAGE_COLORS.get(stage, Color.WHITE)
+
+func _apply_stage_visuals() -> void:
+	var c := get_stage_color()
+	if light:
+		light.color = c
+	if not sprite:
+		return
+	var mat := sprite.material
+	if mat == null or not (mat is ShaderMaterial):
+		return
+	var shader_mat: ShaderMaterial = mat
+	shader_mat.set_shader_parameter("edge_color_a", c)
+	shader_mat.set_shader_parameter("edge_color_b", c)
+	shader_mat.set_shader_parameter("inner_color_a", c)
+	shader_mat.set_shader_parameter("inner_color_b", c)
 
 func get_tooltip_bbcode() -> String:
 	var c = get_stage_color()

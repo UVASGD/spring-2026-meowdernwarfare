@@ -31,7 +31,9 @@ func spawn_crop() -> void:
 		return
 	if current_crop != null and is_instance_valid(current_crop):
 		return
-	
+	$AnimationPlayer.play("bring") # bring animation should have a call method track that calls bring() when the ThingThatBrings reaches the platform
+
+func bring() -> void:
 	var idx = randi() % crop_scenes.size()
 	var scene = crop_scenes[idx]
 	var crop = scene.instantiate() as Crop
@@ -46,6 +48,7 @@ func spawn_crop() -> void:
 	var gm = GameManager.instance
 	if gm and not gm.is_local() and gm.is_host():
 		gm.send_crop_spawned(spawner_id, idx, stage)
+	return
 
 func spawn_crop_remote(crop_idx: int, stg: int) -> void:
 	if crop_scenes.is_empty() or crop_idx < 0 or crop_idx >= crop_scenes.size():

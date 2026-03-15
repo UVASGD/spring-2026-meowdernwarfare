@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://d3cs42n3vytv5" path="res://scripts/crop_spawner.gd" id="1_2kaq1"]
 [ext_resource type="Texture2D" uid="uid://dq04ttuxfkx3x" path="res://assets/sprites/icon.svg" id="1_hb8wk"]
-[ext_resource type="PackedScene" path="res://scenes/crops/blast_berry.tscn" id="2_ojhc7"]
-[ext_resource type="PackedScene" path="res://scenes/crops/iron_root.tscn" id="3_4o8ky"]
+[ext_resource type="PackedScene" uid="uid://bmcmtou0dvt1" path="res://scenes/crops/blast_berry.tscn" id="2_ojhc7"]
+[ext_resource type="PackedScene" uid="uid://cxi2jh8m478w6" path="res://scenes/crops/iron_root.tscn" id="3_4o8ky"]
 [ext_resource type="PackedScene" uid="uid://midwqrc2tccp" path="res://scenes/crops/speed_sprout.tscn" id="4_ww02r"]
 
 [node name="cropSpawner" type="Node2D"]

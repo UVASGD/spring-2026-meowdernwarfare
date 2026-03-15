@@ -1,6 +1,5 @@
 [gd_scene load_steps=59 format=4 uid="uid://dea1hxmkkrroo"]
 
-[ext_resource type="PackedScene" uid="uid://jrafw8skg73p" path="res://scenes/crop_spawner.tscn" id="1_3ol52"]
 [ext_resource type="Texture2D" uid="uid://b806fl6i3ymrk" path="res://assets/maps/moon/moon texture.png" id="1_wodu6"]
 [ext_resource type="Texture2D" uid="uid://1i1v210nrrxs" path="res://assets/maps/moon/sky/spacebg.png" id="2_30vaj"]
 [ext_resource type="Texture2D" uid="uid://uiwk4r7myxx7" path="res://assets/maps/moon/moon texture_normal.png" id="2_hyg50"]
@@ -23,6 +22,7 @@
 [ext_resource type="Texture2D" uid="uid://ddd30hsv8f5w5" path="res://assets/maps/moon/moongrassspritesheet.png" id="19_6kqtc"]
 [ext_resource type="PackedScene" uid="uid://cih7402ccv0gh" path="res://scenes/sd_lights.tscn" id="19_8fg61"]
 [ext_resource type="Texture2D" uid="uid://wjb35hpxxleh" path="res://assets/maps/moon/objs/moon crater glow.png" id="19_evwe5"]
+[ext_resource type="PackedScene" uid="uid://dg266xce3jg3q" path="res://moon_crop_spawner_real.tscn" id="23_6kqtc"]
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_8fg61"]
 diffuse_texture = ExtResource("1_wodu6")
@@ -1614,6 +1614,7 @@ collision_layer = 2
 shape = SubResource("WorldBoundaryShape2D_qpo6k")
 
 [node name="testStuff" type="Node2D" parent="map"]
+visible = false
 
 [node name="playerSizeRef" parent="map/testStuff" instance=ExtResource("6_vfkfv")]
 drug_duration = 10.0
@@ -1638,9 +1639,9 @@ texture = SubResource("GradientTexture2D_r8xxi")
 texture_scale = 2.0
 height = 9.0
 
-[node name="cropSpawner" parent="map" instance=ExtResource("1_3ol52")]
-
 [node name="SDLights" parent="map" instance=ExtResource("19_8fg61")]
+
+[node name="cropSpawner" parent="map" instance=ExtResource("23_6kqtc")]
 
 [connection signal="body_entered" from="map/objs/teleporters/crater1_2" to="map/objs/teleporters/crater1_2" method="_on_body_entered"]
 [connection signal="body_entered" from="map/objs/teleporters/crater2_1" to="map/objs/teleporters/crater2_1" method="_on_body_entered"]
