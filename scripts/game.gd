@@ -43,9 +43,9 @@ func _ready() -> void:
 	var map_name = GameData.pending_settings.get("map", DEFAULT_MAP)
 	var starters = GameData.get_active_starters()
 	_load_map(map_name)
-	_setup_spawn_points()
 	_setup_entity_layer()
 	_collect_farms()
+	gm.farm_spawns_received.connect(_on_farm_spawns_received)
 	
 	if GameData.is_online_game:
 		_start_from_lobby()
@@ -124,23 +124,6 @@ func _stop_audio_node(node: Node) -> void:
 		return
 	node.call("stop")
 
-func _setup_spawn_points() -> void:
-	gm.spawn_points.clear()
-	
-	var target = map_node if map_node else self
-	var spawns = target.get_node_or_null("SpawnPoints")
-	if spawns == null:
-		spawns = target.find_child("SpawnPoints", true, false)
-	if spawns == null:
-		push_warning("Game: No SpawnPoints node found in map")
-		return
-	
-	for child in spawns.get_children():
-		if child is Marker2D:
-			gm.spawn_points.append(child)
-	
-	print("Found ", gm.spawn_points.size(), " spawn points")
-
 func _setup_entity_layer() -> void:
 	if map_node == null:
 		return
@@ -181,18 +164,62 @@ func _collect_farms_tiles() -> void:
 	pass
 
 func _assign_farms() -> void:
-	var available = farms.duplicate()
-	for player in gm.players:
-		var best_farm = null
-		var best_dist := INF
-		for f in available:
-			var dist = f.global_position.distance_to(player.global_position)
-			if dist < best_dist:
-				best_dist = dist
-				best_farm = f
-		if best_farm:
-			best_farm.assign_owner(player)
-			available.erase(best_farm)
+	if farms.is_empty() or gm.players.is_empty():
+		return
+	var sorted_farms = farms.duplicate()
+	sorted_farms.sort_custom(func(a, b): return str(a.get_path()) < str(b.get_path()))
+	var sorted_players = gm.players.duplicate()
+	sorted_players.sort_custom(func(a, b): return a.player_id < b.player_id)
+	var assignments: Array = []
+	var count = mini(sorted_farms.size(), sorted_players.size())
+	for i in range(count):
+		var farm = sorted_farms[i]
+		var player = sorted_players[i]
+		var spawn_pos = _get_farm_spawn_pos(farm)
+		farm.assign_owner(player)
+		player.global_position = spawn_pos
+		assignments.append({
+			"pid": player.player_id,
+			"farm_path": str(farm.get_path()),
+			"x": spawn_pos.x,
+			"y": spawn_pos.y
+		})
+	if gm.mode == GameManager.Mode.ONLINE_HOST:
+		gm.broadcast_farm_spawns(assignments)
+
+func _get_farm_spawn_pos(farm: Node) -> Vector2:
+	var sp = farm.get_node_or_null("Spawnpoint")
+	if sp == null:
+		sp = farm.get_node_or_null("spawnpoint")
+	if sp and sp is Node2D:
+		return sp.global_position
+	return farm.global_position
+
+func _on_farm_spawns_received(assignments: Array) -> void:
+	if gm.mode != GameManager.Mode.ONLINE_CLIENT:
+		return
+	_apply_farm_spawns(assignments)
+
+func _apply_farm_spawns(assignments: Array) -> void:
+	var farm_by_path := {}
+	for farm in farms:
+		farm_by_path[str(farm.get_path())] = farm
+	for item in assignments:
+		if not (item is Dictionary):
+			continue
+		var pid = int(item.get("pid", -1))
+		var player = gm.get_player(pid)
+		if player == null or not is_instance_valid(player):
+			continue
+		var farm_path = str(item.get("farm_path", ""))
+		var farm = farm_by_path.get(farm_path, null)
+		if farm == null:
+			continue
+		farm.assign_owner(player)
+		player.global_position = Vector2(
+			item.get("x", player.global_position.x),
+			item.get("y", player.global_position.y)
+		)
 
 func _plant_starter_crops(starters: Array[String] = []) -> void:
 	if starters.is_empty():
