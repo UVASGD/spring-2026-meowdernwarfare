@@ -5,6 +5,15 @@ signal health_changed(current: float, max_hp: float)
 signal ult_changed(current: int, max_points: int)
 signal died
 
+signal shot
+
+signal ran_out_of_ammo
+signal started_reload
+signal finished_reload
+
+signal used_ability_1
+signal ability_1_refreshed
+
 # Stats 
 @export var max_health: float = 100.0
 @export var move_speed_mult: float = 1.0
@@ -56,6 +65,13 @@ var player: Node2D = null
 var sprite: AnimatedSprite2D = null
 var hitbox: CollisionShape2D = null
 
+# Default UI
+const DEFAULT_HERO_UI_COLOR = Color.WHITE;
+const ABILITY_ICON_TEMP_2 = preload("res://assets/ui/player/ability_icon_temp2.png")
+const ABILITY_ICON_TEMP_1 = preload("res://assets/ui/player/ability_icon_temp1.png")
+const PROFILE_ANGRY_PLACEHOLDER = preload("res://assets/ui/player/profile_angry_placeholder.png")
+const PROFILE_PLACEHOLDER = preload("res://assets/ui/player/profile_placeholder.png")
+
 func _ready() -> void:
 	health = max_health
 	ammo = mag_size
@@ -75,13 +91,18 @@ func _process(delta: float) -> void:
 
 func _update_cooldowns(delta: float) -> void:
 	shoot_cd = max(0, shoot_cd - delta)
+	
+	var ability1_was_on_cooldown = ability1_cd > 0;
 	ability1_cd = max(0, ability1_cd - delta)
 	ability2_cd = max(0, ability2_cd - delta)
+	if ability1_was_on_cooldown and ability1_cd <= 0:
+		ability_1_refreshed.emit();
 	
 	var was_reloading = reload_cd > 0
 	reload_cd = max(0, reload_cd - delta)
 	if was_reloading and reload_cd <= 0:
 		ammo = mag_size
+		finished_reload.emit();
 	
 	ability1_anim_timer = max(0, ability1_anim_timer - delta)
 	ability2_anim_timer = max(0, ability2_anim_timer - delta)
@@ -160,6 +181,9 @@ func _die() -> void:
 func get_health_percent() -> float:
 	return health / max_health
 
+func get_health() -> float:
+	return health;
+
 # ABILITIES
 
 func can_shoot() -> bool:
@@ -185,15 +209,19 @@ func shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	_begin_skill("shoot")
 	_play_action_anim("shoot")
 	_capture_skill_anim()
+	if ammo == 0:
+		ran_out_of_ammo.emit()
+	shot.emit();
 	_do_shoot(aim_dir, aim_pos)
 
 func reload() -> void:
-	if reload_cd > 0:
+	if reload_cd > 0 or ammo == mag_size:
 		return
 	reload_cd = reload_time
 	_begin_skill("reload")
 	_play_action_anim("reload")
 	_capture_skill_anim()
+	started_reload.emit();
 	_do_reload()
 
 func ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
@@ -204,6 +232,7 @@ func ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	_begin_skill("ability1")
 	_play_action_anim("ability1")
 	_capture_skill_anim()
+	used_ability_1.emit();
 	_do_ability1(aim_dir, aim_pos)
 
 func ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
@@ -381,3 +410,20 @@ func _is_action_blocked() -> bool:
 	if lock_skill == "ult":
 		return not ult_actionable
 	return false
+
+# UI
+
+func get_hero_default_profile() -> Texture2D:
+	return PROFILE_PLACEHOLDER;
+
+func get_hero_ult_profile() -> Texture2D:
+	return PROFILE_ANGRY_PLACEHOLDER;
+
+func get_hero_ability1_icon() -> Texture2D:
+	return ABILITY_ICON_TEMP_1;
+
+func get_hero_ability2_icon() -> Texture2D:
+	return ABILITY_ICON_TEMP_2;
+
+func get_hero_ui_color() -> Color:
+	return DEFAULT_HERO_UI_COLOR;
