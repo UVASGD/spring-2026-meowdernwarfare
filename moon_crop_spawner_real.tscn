@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://d3cs42n3vytv5" path="res://scripts/crop_spawner.gd" id="1_ae7ms"]
 [ext_resource type="PackedScene" uid="uid://bmcmtou0dvt1" path="res://scenes/crops/blast_berry.tscn" id="2_nbkmp"]
 [ext_resource type="PackedScene" uid="uid://cxi2jh8m478w6" path="res://scenes/crops/iron_root.tscn" id="3_mq74h"]
-[ext_resource type="PackedScene" uid="uid://midwqrc2tccp" path="res://scenes/crops/speed_sprout.tscn" id="4_61syj"]
+[ext_resource type="PackedScene" uid="uid://midwqrc2tccp" path="res://scenes/crops/speed_carrot.tscn" id="4_61syj"]
 [ext_resource type="Texture2D" uid="uid://bld7tqcqsvern" path="res://assets/maps/moon/objs/crop base.png" id="5_12xm0"]
 [ext_resource type="Shader" uid="uid://cpng23u3yom2" path="res://assets/shaders/burn_reveal.gdshader" id="6_4ind0"]
 [ext_resource type="Texture2D" uid="uid://wpkxc704cn56" path="res://assets/maps/moon/objs/ufo-ezgif.com-gif-to-sprite-converter.png" id="7_jjhjr"]

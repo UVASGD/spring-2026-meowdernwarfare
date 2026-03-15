@@ -1627,16 +1627,6 @@ shape = SubResource("WorldBoundaryShape2D_qpo6k")
 visible = false
 
 [node name="playerSizeRef" parent="map/testStuff" instance=ExtResource("6_vfkfv")]
-drug_duration = 10.0
-max_health = 100.0
-move_speed_mult = 1.0
-max_ult_points = 50
-ult_points_on_dodge = 1
-reload_time = 1.5
-mag_size = 15
-ability1_anim_duration = 0.5
-ability2_anim_duration = 0.5
-dash_anim_duration = 0.2
 
 [node name="testlight" type="PointLight2D" parent="map/testStuff"]
 position = Vector2(-556, -203)

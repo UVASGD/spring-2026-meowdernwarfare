@@ -20,6 +20,7 @@ func plant_crop(crop: Crop, tile) -> void:
 		return
 	crops.append(crop)
 	crop.is_planted = true
+	crop.set_planted_visual(true)
 	crop.owner_farm = self
 	tile.plant(crop)
 	crop.add_buff(_owner)
@@ -30,6 +31,7 @@ func remove_crop(crop: Crop) -> Crop:
 	crops.erase(crop)
 	crop.remove_buff(_owner)
 	crop.is_planted = false
+	crop.set_planted_visual(false)
 	crop.owner_farm = null
 	if crop.get_parent() and crop.get_parent().has_method("uproot"):
 		crop.get_parent().uproot()

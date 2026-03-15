@@ -86,7 +86,7 @@ func save_starter_crops() -> void:
 	config.set_value("crops", "starters", Array(starter_crops))
 	config.save("user://settings.cfg")
 
-const DEFAULT_STARTERS: Array[String] = ["SpeedSprout", "IronRoot", "BlastBerry"]
+const DEFAULT_STARTERS: Array[String] = ["SpeedCarrot", "IronRoot", "BlastBerry"]
 
 func get_active_starters() -> Array[String]:
 	if not pending_starter_crops.is_empty():

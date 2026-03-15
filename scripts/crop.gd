@@ -25,6 +25,7 @@ var owner_farm = null  # Farm ref when planted
 
 @onready var light:Light2D = $light
 @onready var sprite:Sprite2D = $Sprite
+@onready var plantedSprite:Sprite2D = $plantedSprite
 signal picked_up
 
 func _ready() -> void:
@@ -32,6 +33,8 @@ func _ready() -> void:
 	collision_mask = 0
 	monitoring = false
 	monitorable = true
+	_make_unique_mats()
+	set_planted_visual(is_planted)
 	_apply_stage_visuals()
 	_setup()
 
@@ -82,20 +85,41 @@ func get_type_id() -> String:
 func get_stage_color() -> Color:
 	return STAGE_COLORS.get(stage, Color.WHITE)
 
+func set_planted_visual(planted: bool) -> void:
+	if sprite:
+		sprite.visible = not planted
+	if plantedSprite:
+		plantedSprite.visible = planted
+
+func _make_unique_mats() -> void:
+	if sprite and sprite.material and sprite.material is ShaderMaterial:
+		var base = sprite.material
+		var sm: ShaderMaterial = base.duplicate()
+		sprite.material = sm
+		if plantedSprite and plantedSprite.material == base:
+			plantedSprite.material = sm
+	if plantedSprite and plantedSprite.material and plantedSprite.material is ShaderMaterial:
+		if not sprite or plantedSprite.material != sprite.material:
+			plantedSprite.material = plantedSprite.material.duplicate()
+
+func _set_stage_on_sprite(s: Sprite2D, c: Color) -> void:
+	if not s:
+		return
+	var mat := s.material
+	if mat == null or not (mat is ShaderMaterial):
+		return
+	var sm: ShaderMaterial = mat
+	sm.set_shader_parameter("edge_color_a", c)
+	sm.set_shader_parameter("edge_color_b", c)
+	sm.set_shader_parameter("inner_color_a", c)
+	sm.set_shader_parameter("inner_color_b", c)
+
 func _apply_stage_visuals() -> void:
 	var c := get_stage_color()
 	if light:
 		light.color = c
-	if not sprite:
-		return
-	var mat := sprite.material
-	if mat == null or not (mat is ShaderMaterial):
-		return
-	var shader_mat: ShaderMaterial = mat
-	shader_mat.set_shader_parameter("edge_color_a", c)
-	shader_mat.set_shader_parameter("edge_color_b", c)
-	shader_mat.set_shader_parameter("inner_color_a", c)
-	shader_mat.set_shader_parameter("inner_color_b", c)
+	_set_stage_on_sprite(sprite, c)
+	_set_stage_on_sprite(plantedSprite, c)
 
 func get_tooltip_bbcode() -> String:
 	var c = get_stage_color()

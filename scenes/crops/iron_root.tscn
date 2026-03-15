@@ -1,7 +1,9 @@
-[gd_scene load_steps=8 format=3 uid="uid://cxi2jh8m478w6"]
+[gd_scene load_steps=9 format=3 uid="uid://cxi2jh8m478w6"]
 
 [ext_resource type="Script" uid="uid://dtv75q50520t1" path="res://scripts/crops/iron_root.gd" id="1_script"]
 [ext_resource type="Shader" uid="uid://bwnlbf6bnmnyk" path="res://assets/shaders/electric_wrap_inner.gdshader" id="2_7dtxp"]
+[ext_resource type="Texture2D" uid="uid://lfdylg4fis3v" path="res://assets/sprites/crops/ironroot_world-removebg-preview.png" id="3_vgx5u"]
+[ext_resource type="Texture2D" uid="uid://cbs3lyxoj7sb2" path="res://assets/sprites/crops/ironroot_plant-removebg-preview.png" id="4_32o71"]
 
 [sub_resource type="Gradient" id="Gradient_vgx5u"]
 offsets = PackedFloat32Array(0.0921053, 0.940789)
@@ -14,7 +16,7 @@ fill_from = Vector2(0.527778, 0.486111)
 fill_to = Vector2(0.861111, 0.0787037)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
-radius = 18.0
+radius = 34.2345
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_32o71"]
 shader = ExtResource("2_7dtxp")
@@ -32,9 +34,6 @@ shader_parameter/pulse = 1.0
 shader_parameter/inner_threshold = 0.5
 shader_parameter/alpha_cutoff = 0.01
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_1"]
-size = Vector2(32, 32)
-
 [node name="IronRoot" type="Area2D"]
 script = ExtResource("1_script")
 
@@ -46,7 +45,16 @@ height = 140.0
 shape = SubResource("CircleShape2D_1")
 
 [node name="Sprite" type="Sprite2D" parent="."]
-modulate = Color(0.6, 0.4, 0.2, 1)
 light_mask = 2
 material = SubResource("ShaderMaterial_32o71")
-texture = SubResource("PlaceholderTexture2D_1")
+position = Vector2(7, 22)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("3_vgx5u")
+
+[node name="plantedSprite" type="Sprite2D" parent="."]
+visible = false
+light_mask = 2
+material = SubResource("ShaderMaterial_32o71")
+position = Vector2(5, 4)
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("4_32o71")

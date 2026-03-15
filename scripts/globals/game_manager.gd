@@ -606,7 +606,7 @@ func _handle_teleporter_used(from_id: int, data: Dictionary) -> void:
 # --- CROP SYNC ---
 
 const CROP_SCENES := {
-	"SpeedSprout": preload("res://scenes/crops/speed_sprout.tscn"),
+	"SpeedCarrot": preload("res://scenes/crops/speed_carrot.tscn"),
 	"IronRoot": preload("res://scenes/crops/iron_root.tscn"),
 	"BlastBerry": preload("res://scenes/crops/blast_berry.tscn"),
 }

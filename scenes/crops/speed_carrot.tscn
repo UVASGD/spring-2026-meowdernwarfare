@@ -1,10 +1,15 @@
-[gd_scene load_steps=8 format=3 uid="uid://midwqrc2tccp"]
+[gd_scene load_steps=9 format=3 uid="uid://midwqrc2tccp"]
 
-[ext_resource type="Script" uid="uid://cj1mv4etarwd7" path="res://scripts/crops/speed_sprout.gd" id="1_script"]
-[ext_resource type="Shader" uid="uid://bwnlbf6bnmnyk" path="res://assets/shaders/electric_wrap_inner.gdshader" id="2_jld5j"]
+[ext_resource type="Script" uid="uid://cj1mv4etarwd7" path="res://scripts/crops/speed_carrot.gd" id="1_2uh7b"]
+[ext_resource type="Shader" uid="uid://bwnlbf6bnmnyk" path="res://assets/shaders/electric_wrap_inner.gdshader" id="2_scbfu"]
+[ext_resource type="Texture2D" uid="uid://bthv14d4yi04n" path="res://assets/sprites/crops/speed carrot.png" id="3_scbfu"]
+[ext_resource type="Texture2D" uid="uid://tyu5h2ugglqv" path="res://assets/sprites/crops/speed carrot ground.png" id="4_6x1tb"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
+radius = 32.1403
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8j3hh"]
-shader = ExtResource("2_jld5j")
+shader = ExtResource("2_scbfu")
 shader_parameter/edge_color_a = Color(1, 1, 1, 1)
 shader_parameter/edge_color_b = Color(1, 1, 1, 1)
 shader_parameter/inner_color_a = Color(1, 1, 1, 1)
@@ -19,12 +24,6 @@ shader_parameter/pulse = 1.0
 shader_parameter/inner_threshold = 0.5
 shader_parameter/alpha_cutoff = 0.01
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_1"]
-size = Vector2(32, 32)
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_1"]
-radius = 18.0
-
 [sub_resource type="Gradient" id="Gradient_ws5op"]
 offsets = PackedFloat32Array(0.0921053, 0.940789)
 colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
@@ -35,17 +34,26 @@ fill = 1
 fill_from = Vector2(0.527778, 0.486111)
 fill_to = Vector2(0.861111, 0.0787037)
 
-[node name="SpeedSprout" type="Area2D"]
-script = ExtResource("1_script")
-
-[node name="Sprite" type="Sprite2D" parent="."]
-modulate = Color(0.3, 0.9, 0.3, 1)
-light_mask = 2
-material = SubResource("ShaderMaterial_8j3hh")
-texture = SubResource("PlaceholderTexture2D_1")
+[node name="SpeedCarrot" type="Area2D"]
+script = ExtResource("1_2uh7b")
+crop_name = "SpeedCarrot"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_1")
+
+[node name="Sprite" type="Sprite2D" parent="."]
+light_mask = 2
+material = SubResource("ShaderMaterial_8j3hh")
+scale = Vector2(0.266, 0.206)
+texture = ExtResource("3_scbfu")
+
+[node name="plantedSprite" type="Sprite2D" parent="."]
+visible = false
+light_mask = 2
+material = SubResource("ShaderMaterial_8j3hh")
+position = Vector2(0, -5)
+scale = Vector2(0.266, 0.206)
+texture = ExtResource("4_6x1tb")
 
 [node name="light" type="PointLight2D" parent="."]
 texture = SubResource("GradientTexture2D_jld5j")

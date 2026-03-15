@@ -1,7 +1,7 @@
 extends CanvasLayer
 
 const CROP_SCENES := {
-	"SpeedSprout": preload("res://scenes/crops/speed_sprout.tscn"),
+	"SpeedCarrot": preload("res://scenes/crops/speed_carrot.tscn"),
 	"IronRoot": preload("res://scenes/crops/iron_root.tscn"),
 	"BlastBerry": preload("res://scenes/crops/blast_berry.tscn"),
 }
