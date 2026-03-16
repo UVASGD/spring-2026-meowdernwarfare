@@ -311,7 +311,7 @@ ability2_cooldown = 1.0
 mag_size = 8
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
-scale = Vector2(0.280003, 0.279999)
+scale = Vector2(0.2, 0.2)
 sprite_frames = SubResource("SpriteFrames_kkeq4")
 animation = &"shoot_run"
 autoplay = "idle"
