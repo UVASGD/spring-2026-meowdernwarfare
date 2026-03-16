@@ -149,7 +149,7 @@ fit_content = true
 scroll_active = false
 
 [node name="Video" type="ColorRect" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/ShootSection"]
-custom_minimum_size = Vector2(0, 160)
+custom_minimum_size = Vector2(0, 240)
 layout_mode = 2
 color = Color(0.08, 0.08, 0.13, 1)
 
@@ -170,6 +170,20 @@ theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
 text = "[ Video ]"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Fit" type="AspectRatioContainer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/ShootSection/Video"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+ratio = 1.77778
+
+[node name="Player" type="VideoStreamPlayer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/ShootSection/Video/Fit"]
+layout_mode = 2
+mouse_filter = 2
+expand = true
 
 [node name="Ability1Section" type="VBoxContainer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent"]
 visible = false
@@ -211,6 +225,20 @@ text = "[ Video ]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="Fit" type="AspectRatioContainer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability1Section/Video"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+ratio = 1.77778
+
+[node name="Player" type="VideoStreamPlayer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability1Section/Video/Fit"]
+layout_mode = 2
+mouse_filter = 2
+expand = true
+
 [node name="Ability2Section" type="VBoxContainer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent"]
 visible = false
 layout_mode = 2
@@ -251,6 +279,20 @@ text = "[ Video ]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="Fit" type="AspectRatioContainer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability2Section/Video"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+ratio = 1.77778
+
+[node name="Player" type="VideoStreamPlayer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability2Section/Video/Fit"]
+layout_mode = 2
+mouse_filter = 2
+expand = true
+
 [node name="UltSection" type="VBoxContainer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent"]
 visible = false
 layout_mode = 2
@@ -290,3 +332,17 @@ theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
 text = "[ Video ]"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="Fit" type="AspectRatioContainer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/UltSection/Video"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+ratio = 1.77778
+
+[node name="Player" type="VideoStreamPlayer" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent/UltSection/Video/Fit"]
+layout_mode = 2
+mouse_filter = 2
+expand = true
