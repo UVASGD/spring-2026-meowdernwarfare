@@ -112,6 +112,8 @@ var farm = null
 var in_spectate_mode: bool = false
 var is_ai_player: bool = false
 var is_awaiting_respawn: bool = false
+var is_dying: bool = false
+var _show_aux_ui: bool = false
 var respawn_countdown: float = 0.0
 var _death_ui: CanvasLayer = null
 var _death_timer_label: Label = null
@@ -220,14 +222,14 @@ func _setup_local_ui() -> void:
 	ammo_left.visible = show_aux
 	reload_bar.visible = show_aux
 	reload_prompt.visible = show_aux
+	_show_aux_ui = show_aux
 	
 	if camera:
 		camera.enabled = show_ui
 	
 	if cooldown_ui:
 		cooldown_ui.visible = show_ui
-	if health_bar and not in_spectate_mode and not is_awaiting_respawn:
-		health_bar.visible = true
+	_refresh_world_health_bar()
 	
 	if show_ui:
 		_create_tooltip()
@@ -265,6 +267,22 @@ func _setup_nametag() -> void:
 	else:
 		nametag.text = "Player %d" % player_id
 
+func _show_enemy_health_bar() -> bool:
+	return not _is_local_player() and not in_spectate_mode and not is_awaiting_respawn and not is_dying and not is_dead()
+
+func _refresh_world_health_bar() -> void:
+	if health_bar == null:
+		return
+	var show_enemy = _show_enemy_health_bar()
+	health_bar.visible = _show_aux_ui or show_enemy
+	if health_bar_fill:
+		health_bar_fill.visible = show_enemy
+	var bg = health_bar.get_node_or_null("Background")
+	if bg:
+		bg.visible = show_enemy
+	if nametag:
+		nametag.visible = show_enemy
+
 func _physics_process(delta: float) -> void:
 	if input == null:
 		return
@@ -283,6 +301,13 @@ func _physics_process(delta: float) -> void:
 	
 	if is_awaiting_respawn:
 		_update_death_countdown(delta)
+		if input is LocalInput:
+			input.end_frame()
+		return
+
+	if is_dying:
+		velocity = Vector2.ZERO
+		_refresh_world_health_bar()
 		if input is LocalInput:
 			input.end_frame()
 		return
@@ -382,6 +407,9 @@ func _handle_actions() -> void:
 			hero.ult(aim_dir, get_aim_position())
 		return
 
+	if is_dying or is_dead():
+		return
+
 	# Dash
 	if input.dash_just and dash_cd_timer <= 0 and not is_dashing and not is_dead():
 		_start_dash()
@@ -411,10 +439,27 @@ func _start_dash() -> void:
 func _on_hero_died() -> void:
 	print("[PLAYER] _on_hero_died: pid=", player_id, " crop_count=", crop_count, " is_local=", _is_local_player())
 	died.emit()
+	is_dying = true
+	velocity = Vector2.ZERO
+	_refresh_world_health_bar()
+	await _wait_for_death_anim()
+	is_dying = false
 	if crop_count <= 0:
 		enter_spectate_mode()
 	else:
 		_enter_death_state()
+
+func _wait_for_death_anim() -> void:
+	if hero == null or hero.sprite == null or hero.sprite.sprite_frames == null:
+		return
+	if not hero.sprite.sprite_frames.has_animation("death"):
+		return
+	if String(hero.sprite.animation) != "death":
+		hero.sprite.play("death")
+	if hero.sprite.sprite_frames.get_animation_loop("death"):
+		return
+	if hero.sprite.is_playing():
+		await hero.sprite.animation_finished
 
 func _on_hero_health_changed(current: float, max_hp: float) -> void:
 	_update_health_bar()
@@ -475,10 +520,7 @@ func is_dead() -> bool:
 func _update_health_bar() -> void:
 	if health_bar_fill == null or hero == null:
 		return
-	health_bar_fill.visible = true
-	var bg = health_bar.get_node_or_null("Background") if health_bar else null
-	if bg:
-		bg.visible = true
+	_refresh_world_health_bar()
 	
 	var pct = hero.get_health_percent()
 	health_bar_fill.scale.x = pct
@@ -536,7 +578,7 @@ func _update_cooldown_ui() -> void:
 	
 	ult_percent_label.text = str(int(hero.get_ult_percent() * 100));
 	if(hero.get_ult_percent() >= 1):
-		ult_percent_label.text = "f";
+		ult_percent_label.text = "c";
 		character_profile.texture = hero.get_hero_ult_profile();
 	else:
 		character_profile.texture = hero.get_hero_default_profile();
@@ -947,6 +989,7 @@ func _show_death_timer_ui() -> void:
 	_death_ui.add_child(_death_timer_label)
 
 func respawn_at(pos: Vector2) -> void:
+	is_dying = false
 	is_awaiting_respawn = false
 	respawn_countdown = 0.0
 	
@@ -975,8 +1018,7 @@ func respawn_at(pos: Vector2) -> void:
 	if _is_local_player():
 		if cooldown_ui:
 			cooldown_ui.visible = true
-	if health_bar:
-		health_bar.visible = true
+	_refresh_world_health_bar()
 	
 	is_invulnerable = true
 	_update_health_bar()
@@ -1004,6 +1046,7 @@ func enter_spectate_mode() -> void:
 	print("[PLAYER] enter_spectate_mode: pid=", player_id, " already=", in_spectate_mode, " is_local=", _is_local_player(), " game_over=", GameManager.instance.game_over if GameManager.instance else "no_gm")
 	if in_spectate_mode:
 		return
+	is_dying = false
 	in_spectate_mode = true
 	
 	if cooldown_ui:

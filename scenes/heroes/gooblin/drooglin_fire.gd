@@ -5,7 +5,7 @@ extends Area2D
 
 var owner_player: Player = null
 var _tick_timer: float = 0.0
-const TICK_INTERVAL := 0.5
+@export var TICK_INTERVAL := 0.5
 
 func _ready() -> void:
 	get_tree().create_timer(duration).timeout.connect(queue_free)

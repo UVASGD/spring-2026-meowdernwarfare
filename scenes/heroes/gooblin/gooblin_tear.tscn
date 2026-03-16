@@ -35,7 +35,7 @@ shape = SubResource("CircleShape2D_2tpwu")
 [node name="PointLight2D2" type="PointLight2D" parent="."]
 scale = Vector2(0.235, 0.235)
 color = Color(0, 1, 1, 1)
-energy = 0.75
+energy = 0.4
 texture = SubResource("GradientTexture2D_2tpwu")
 texture_scale = 3.43
 height = 49.0
