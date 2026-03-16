@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://boptkq5mt31f1"
-path="res://.godot/imported/grass 1_0006.png-ed798500fc354ad005aa3815313882bf.ctex"
+uid="uid://bqg62w5r14tq6"
+path="res://.godot/imported/death.png-4709026f97a0b633806e4b93457dedce.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spritesheetcombiner_in/grass 1_0006.png"
-dest_files=["res://.godot/imported/grass 1_0006.png-ed798500fc354ad005aa3815313882bf.ctex"]
+source_file="res://assets/sprites/gooblin/death.png"
+dest_files=["res://.godot/imported/death.png-4709026f97a0b633806e4b93457dedce.ctex"]
 
 [params]
 

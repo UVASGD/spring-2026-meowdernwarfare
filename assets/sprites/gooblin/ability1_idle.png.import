@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d2g5hl8os7slu"
-path="res://.godot/imported/grass 1_0001.png-c1e3cc8ad612919c5fe861742658b812.ctex"
+uid="uid://dtpforsfxmum2"
+path="res://.godot/imported/ability1_idle.png-1922dff5d814eb40b44801052bcad6b8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spritesheetcombiner_in/grass 1_0001.png"
-dest_files=["res://.godot/imported/grass 1_0001.png-c1e3cc8ad612919c5fe861742658b812.ctex"]
+source_file="res://assets/sprites/gooblin/ability1_idle.png"
+dest_files=["res://.godot/imported/ability1_idle.png-1922dff5d814eb40b44801052bcad6b8.ctex"]
 
 [params]
 

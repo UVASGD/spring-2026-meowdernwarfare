@@ -48,4 +48,4 @@ animations = [{
 material = SubResource("ShaderMaterial_my5kp")
 sprite_frames = SubResource("SpriteFrames_qlax8")
 autoplay = "default"
-frame_progress = 0.83355
+frame_progress = 0.456499

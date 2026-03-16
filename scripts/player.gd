@@ -135,7 +135,7 @@ const HERO_SCENES = {
 	"Xyler": preload("res://scenes/heroes/xyler.tscn"),
 	"Fergus": preload("res://scenes/heroes/fergus.tscn"),
 	"LoanShark": preload("res://scenes/heroes/loanshark.tscn"),
-	"Gooblin": preload("res://scenes/heroes/gooblin.tscn"),
+	"Gooblin": preload("res://scenes/heroes/gooblin/gooblin.tscn"),
 	"Garebare": preload("res://scenes/heroes/garebare.tscn"),
 }
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cba2cudet8oyk"
-path="res://.godot/imported/grass 1_0005.png-07d199c08124a27250cec7f9fef732af.ctex"
+uid="uid://y675xloavmdu"
+path="res://.godot/imported/boogiebomb.png-e251d55e2a3207e0a4398067be461ca8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spritesheetcombiner_in/grass 1_0005.png"
-dest_files=["res://.godot/imported/grass 1_0005.png-07d199c08124a27250cec7f9fef732af.ctex"]
+source_file="res://assets/sprites/gooblin/boogiebomb.png"
+dest_files=["res://.godot/imported/boogiebomb.png-e251d55e2a3207e0a4398067be461ca8.ctex"]
 
 [params]
 

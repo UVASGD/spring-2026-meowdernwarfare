@@ -6,11 +6,11 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_sw"]
 radius = 19.0263
 
-[sub_resource type="Gradient" id="Gradient_r1n43"]
+[sub_resource type="Gradient" id="Gradient_eyhph"]
 colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_eyhph"]
-gradient = SubResource("Gradient_r1n43")
+gradient = SubResource("Gradient_eyhph")
 fill = 1
 fill_from = Vector2(0.506098, 0.530488)
 fill_to = Vector2(0.780488, 0.307927)

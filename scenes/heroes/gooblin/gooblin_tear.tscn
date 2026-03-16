@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=3 uid="uid://xsr6lt26ukso"]
+
+[ext_resource type="Script" uid="uid://c34ngn7knuwkm" path="res://scenes/heroes/dealer/bullet.gd" id="1_tdt6a"]
+[ext_resource type="Texture2D" uid="uid://derp6gtx8d46q" path="res://assets/sprites/gooblin/gooblin_tear.png" id="2_lhtkw"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2tpwu"]
+radius = 5.0
+
+[sub_resource type="Gradient" id="Gradient_2tpwu"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_2tpwu"]
+gradient = SubResource("Gradient_2tpwu")
+fill = 1
+fill_from = Vector2(0.523148, 0.518519)
+fill_to = Vector2(0.862385, 0.151376)
+
+[node name="Bullet" type="Area2D"]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_tdt6a")
+speed = 900.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+light_mask = 2
+rotation = -1.5708
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("2_lhtkw")
+region_enabled = true
+region_rect = Rect2(209, 120.5, 67, 99)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_2tpwu")
+
+[node name="PointLight2D2" type="PointLight2D" parent="."]
+scale = Vector2(0.235, 0.235)
+color = Color(0, 1, 1, 1)
+energy = 0.75
+texture = SubResource("GradientTexture2D_2tpwu")
+texture_scale = 3.43
+height = 49.0
