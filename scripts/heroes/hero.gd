@@ -13,8 +13,10 @@ signal finished_reload
 
 signal used_ability_1
 signal ability_1_refreshed
+signal used_ult
 
 # Stats 
+@export_category("Hero Stats")
 @export var max_health: float = 100.0
 @export var move_speed_mult: float = 1.0
 
@@ -40,6 +42,12 @@ signal ability_1_refreshed
 @export var ability2_actionable: bool = true
 @export var ult_actionable: bool = true
 
+
+#UI stuff
+@export_category("Hero UI stuff")
+@export var portrait_outline_color:Color = Color(1,1,1,1)
+@export var normal_portrait: Texture2D
+@export var ult_portrait: Texture2D
 # State
 var health: float = 100.0
 var shoot_cd: float = 0.0
@@ -254,6 +262,7 @@ func ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	_begin_skill("ult")
 	_play_action_anim("ult")
 	_capture_skill_anim()
+	used_ult.emit()
 	_do_ult(aim_dir, aim_pos)
 
 func _do_shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
@@ -414,9 +423,13 @@ func _is_action_blocked() -> bool:
 # UI
 
 func get_hero_default_profile() -> Texture2D:
-	return PROFILE_PLACEHOLDER;
+	return normal_portrait if normal_portrait else PROFILE_PLACEHOLDER;
 
 func get_hero_ult_profile() -> Texture2D:
+	if ult_portrait:
+		return ult_portrait
+	if normal_portrait:
+		return normal_portrait
 	return PROFILE_ANGRY_PLACEHOLDER;
 
 func get_hero_ability1_icon() -> Texture2D:

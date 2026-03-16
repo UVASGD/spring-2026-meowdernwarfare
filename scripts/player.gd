@@ -196,6 +196,7 @@ func set_hero(hero_name: String) -> void:
 
 	hero.died.connect(_on_hero_died)
 	hero.health_changed.connect(_on_hero_health_changed)
+	hero.used_ult.connect(_on_hero_used_ult)
 	
 	# Update hitbox if we have one
 	var hitbox = get_node_or_null("CollisionShape2D")
@@ -206,23 +207,27 @@ func set_hero(hero_name: String) -> void:
 
 func _setup_local_ui() -> void:
 	var show_ui = false
+	var show_aux = false
 	if input is LocalInput:
 		show_ui = (player_id == 0)
+		show_aux = show_ui
 	elif input is NetworkInput:
 		show_ui = input.is_local
-		ammo_left.visible = false;
-		reload_bar.visible = false;
-		reload_prompt.visible = false;
+		show_aux = show_ui
 	else:
-		ammo_left.visible = false;
-		reload_bar.visible = false;
-		reload_prompt.visible = false;
+		show_aux = false
+	
+	ammo_left.visible = show_aux
+	reload_bar.visible = show_aux
+	reload_prompt.visible = show_aux
 	
 	if camera:
 		camera.enabled = show_ui
 	
 	if cooldown_ui:
 		cooldown_ui.visible = show_ui
+	if health_bar and not in_spectate_mode and not is_awaiting_respawn:
+		health_bar.visible = true
 	
 	if show_ui:
 		_create_tooltip()
@@ -414,6 +419,12 @@ func _on_hero_died() -> void:
 func _on_hero_health_changed(current: float, max_hp: float) -> void:
 	_update_health_bar()
 
+func _on_hero_used_ult() -> void:
+	var gm = GameManager.instance
+	if gm == null:
+		return
+	gm.notify_ult_used(player_id)
+
 # --- PUBLIC API ---
 
 func get_aim_direction() -> Vector2:
@@ -464,6 +475,10 @@ func is_dead() -> bool:
 func _update_health_bar() -> void:
 	if health_bar_fill == null or hero == null:
 		return
+	health_bar_fill.visible = true
+	var bg = health_bar.get_node_or_null("Background") if health_bar else null
+	if bg:
+		bg.visible = true
 	
 	var pct = hero.get_health_percent()
 	health_bar_fill.scale.x = pct

@@ -7,6 +7,10 @@ uniform float glow_strength : hint_range(0.0, 4.0) = 1.4;
 uniform float speed : hint_range(0.0, 8.0) = 1.5;
 uniform float noise_scale : hint_range(1.0, 120.0) = 48.0;
 uniform float pulse : hint_range(0.0, 1.0) = 0.35;
+uniform float progress : hint_range(0.0, 1.0) = 1.0;
+uniform float edge_width : hint_range(0.0, 0.2) = 0.05;
+uniform vec4 edge_color : source_color = vec4(1.0, 0.5, 0.1, 1.0);
+uniform vec4 edge_color_inner : source_color = vec4(1.0, 0.9, 0.3, 1.0);
 uniform float alpha_cutoff : hint_range(0.0, 0.2) = 0.01;
 
 float hash(vec2 p) {
@@ -62,6 +66,14 @@ void fragment() {
 	if (out_a < alpha_cutoff) {
 		discard;
 	}
-
-	COLOR = vec4(rgb, out_a);
+	float diff = n - progress;
+	if (diff > edge_width) {
+		COLOR = vec4(0.0);
+	} else if (diff > 0.0) {
+		float t = diff / edge_width;
+		vec4 glow = mix(edge_color, edge_color_inner, t);
+		COLOR = vec4(glow.rgb, glow.a * out_a);
+	} else {
+		COLOR = vec4(rgb, out_a);
+	}
 }

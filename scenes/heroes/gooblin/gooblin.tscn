@@ -1,8 +1,10 @@
-[gd_scene load_steps=84 format=3 uid="uid://b32tdnxdbv8db"]
+[gd_scene load_steps=86 format=3 uid="uid://b32tdnxdbv8db"]
 
 [ext_resource type="Script" uid="uid://5ne3ob77tmat" path="res://scripts/heroes/gooblin.gd" id="1_lgcj0"]
+[ext_resource type="Texture2D" uid="uid://bvg2w74qsp3hy" path="res://assets/sprites/gooblin/Gooblin__Base_-removebg-preview.png" id="2_2g137"]
 [ext_resource type="Texture2D" uid="uid://dtpforsfxmum2" path="res://assets/sprites/gooblin/ability1_idle.png" id="2_3dy8j"]
 [ext_resource type="Texture2D" uid="uid://8elpuqpulmn" path="res://assets/sprites/gooblin/ability1_run.png" id="3_2g137"]
+[ext_resource type="Texture2D" uid="uid://cqdn3xu5xuqqi" path="res://assets/sprites/gooblin/Gooblin__Ulting_-removebg-preview.png" id="3_87eb1"]
 [ext_resource type="Texture2D" uid="uid://bqg62w5r14tq6" path="res://assets/sprites/gooblin/death.png" id="4_87eb1"]
 [ext_resource type="Texture2D" uid="uid://bxep4n3ifscij" path="res://assets/sprites/gooblin/idle.png" id="5_pg2do"]
 [ext_resource type="Texture2D" uid="uid://bphoida0566cn" path="res://assets/sprites/gooblin/reload_idle.png" id="6_vcl2g"]
@@ -607,6 +609,8 @@ shoot_cooldown = 0.2
 ability1_cooldown = 15.0
 ability2_cooldown = 8.0
 mag_size = 20
+normal_portrait = ExtResource("2_2g137")
+ult_portrait = ExtResource("3_87eb1")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.2, 0.2)

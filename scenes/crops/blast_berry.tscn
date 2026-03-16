@@ -41,8 +41,8 @@ script = ExtResource("1_script")
 modulate = Color(1, 0.3, 0.2, 1)
 light_mask = 2
 material = SubResource("ShaderMaterial_qq1bn")
-position = Vector2(1, 14)
-scale = Vector2(0.4, 0.4)
+position = Vector2(1, -15)
+scale = Vector2(0.2, 0.2)
 texture = ExtResource("3_d80vp")
 
 [node name="plantedSprite" type="Sprite2D" parent="."]
@@ -50,8 +50,8 @@ visible = false
 modulate = Color(1, 0.3, 0.2, 1)
 light_mask = 2
 material = SubResource("ShaderMaterial_qq1bn")
-position = Vector2(2, 37)
-scale = Vector2(0.4, 0.4)
+position = Vector2(3, -12)
+scale = Vector2(0.2, 0.2)
 texture = ExtResource("4_q3q3y")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

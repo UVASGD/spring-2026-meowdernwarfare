@@ -18,6 +18,7 @@ const CROP_SCENES := {
 
 const DebugMenu = preload("res://scripts/ui/debug_menu.gd")
 const Killzone = preload("res://scripts/killzone.gd")
+const UltBannerScene = preload("res://scenes/ui/ultbanner.tscn")
 
 const GAME_DURATION := 300.0
 const SUDDEN_DEATH_DURATION := 120.0
@@ -35,6 +36,8 @@ var killzone_node: Node2D = null
 var _timer_layer: CanvasLayer = null
 var _timer_label: Label = null
 var _sudden_label: Label = null
+var _ult_layer: CanvasLayer = null
+var _ult_banner: CanvasGroup = null
 
 func _ready() -> void:
 	var dbg = DebugMenu.new()
@@ -46,6 +49,8 @@ func _ready() -> void:
 	_setup_entity_layer()
 	_collect_farms()
 	gm.farm_spawns_received.connect(_on_farm_spawns_received)
+	gm.ult_used_received.connect(_on_ult_used_received)
+	_setup_ult_banner()
 	
 	if GameData.is_online_game:
 		_start_from_lobby()
@@ -67,6 +72,23 @@ func _ready() -> void:
 	_create_timer_hud()
 	game_timer = 0.0
 	game_active = true
+
+func _setup_ult_banner() -> void:
+	_ult_layer = CanvasLayer.new()
+	_ult_layer.layer = 90
+	add_child(_ult_layer)
+	_ult_banner = UltBannerScene.instantiate()
+	_ult_layer.add_child(_ult_banner)
+
+func _on_ult_used_received(player_id: int) -> void:
+	if _ult_banner == null:
+		return
+	var p = gm.get_player(player_id)
+	if p == null or not is_instance_valid(p) or p.hero == null:
+		return
+	var name = gm.get_player_username(player_id)
+	if _ult_banner.has_method("show_ult"):
+		_ult_banner.show_ult(p, name)
 
 func _load_map(map_name: String) -> void:
 	var path = MAP_SCENES.get(map_name, MAP_SCENES[DEFAULT_MAP])

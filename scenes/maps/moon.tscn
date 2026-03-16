@@ -81,6 +81,12 @@ shader_parameter/scale = Vector2(1, 1)
 shader_parameter/strength = 0.5
 shader_parameter/fps = 3.0
 shader_parameter/noise = SubResource("NoiseTexture2D_t2jim")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_oy6ua"]
 atlas = ExtResource("18_evwe5")

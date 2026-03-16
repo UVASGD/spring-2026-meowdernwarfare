@@ -19,6 +19,7 @@ signal player_eliminated(player: Player)
 signal game_over_received(winner_id: int)
 signal sudden_death_received
 signal farm_spawns_received(assignments: Array)
+signal ult_used_received(player_id: int)
 
 static var instance: GameManager = null
 
@@ -329,6 +330,9 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 	elif msg_type == "farm_spawns":
 		_handle_farm_spawns(data)
 
+	elif msg_type == "ult_used":
+		_handle_ult_used(data)
+
 func _broadcast_state() -> void:
 	if not Network.is_online():
 		return
@@ -583,6 +587,21 @@ func _handle_farm_spawns(data: Dictionary) -> void:
 	var assignments = data.get("a", [])
 	if assignments is Array:
 		farm_spawns_received.emit(assignments)
+
+func notify_ult_used(player_id: int) -> void:
+	if mode == Mode.LOCAL:
+		ult_used_received.emit(player_id)
+		return
+	if mode == Mode.ONLINE_HOST and Network.is_online():
+		ult_used_received.emit(player_id)
+		Network.broadcast({"type": "ult_used", "pid": player_id})
+
+func _handle_ult_used(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	var pid = int(data.get("pid", -1))
+	if pid >= 0:
+		ult_used_received.emit(pid)
 
 # --- TELEPORTER SYNC ---
 

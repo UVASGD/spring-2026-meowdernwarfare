@@ -47,7 +47,7 @@ shape = SubResource("CircleShape2D_1")
 [node name="Sprite" type="Sprite2D" parent="."]
 light_mask = 2
 material = SubResource("ShaderMaterial_32o71")
-position = Vector2(7, 22)
+position = Vector2(7, -19)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("3_vgx5u")
 
@@ -55,6 +55,6 @@ texture = ExtResource("3_vgx5u")
 visible = false
 light_mask = 2
 material = SubResource("ShaderMaterial_32o71")
-position = Vector2(5, 4)
+position = Vector2(5, -26)
 scale = Vector2(0.3, 0.3)
 texture = ExtResource("4_32o71")
