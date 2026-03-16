@@ -1,0 +1,51 @@
+[gd_scene load_steps=10 format=3 uid="uid://t1vm2ihw61d0"]
+
+[ext_resource type="Shader" uid="uid://dtxj6rav7fw2q" path="res://scenes/ui/squiggle.gdshader" id="1_rkq80"]
+[ext_resource type="Texture2D" uid="uid://dr3ajrlxlypu3" path="res://assets/sprites/garebare/garebarebulletsheet.png" id="2_7twqr"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_a8rtm"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_7l05p"]
+noise = SubResource("FastNoiseLite_a8rtm")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_my5kp"]
+shader = ExtResource("1_rkq80")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = -0.3
+shader_parameter/fps = 12.0
+shader_parameter/noise = SubResource("NoiseTexture2D_7l05p")
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x2lfk"]
+atlas = ExtResource("2_7twqr")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fdkv1"]
+atlas = ExtResource("2_7twqr")
+region = Rect2(500, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dwqca"]
+atlas = ExtResource("2_7twqr")
+region = Rect2(1000, 0, 500, 500)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_qlax8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x2lfk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fdkv1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dwqca")
+}],
+"loop": true,
+"name": &"default",
+"speed": 3.0
+}]
+
+[node name="garebareBullet" type="AnimatedSprite2D"]
+material = SubResource("ShaderMaterial_my5kp")
+sprite_frames = SubResource("SpriteFrames_qlax8")
+autoplay = "default"
+frame_progress = 0.83355

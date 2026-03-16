@@ -5,7 +5,7 @@ const SoundwaveScene = preload("res://scenes/heroes/garebare/soundwave.tscn")
 const SonicBurstScene = preload("res://scenes/heroes/garebare/sonic_burst.tscn")
 const FIEScene = preload("res://scenes/heroes/garebare/fie.tscn")
 
-@export var pellet_count: int = 5
+@export var pellet_count: int = 3
 @export var spread_angle: float = 30.0
 @export var stun_duration: float = 2.0
 @export var fie_suppress_radius: float = 150.0
@@ -41,7 +41,7 @@ func _do_shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 		var bullet = SoundwaveScene.instantiate()
 		bullet.direction = dir
 		bullet.owner_player = player
-		bullet.global_position = player.global_position + dir * 30
+		bullet.global_position = $bulletSpawnPoint.global_position
 		bullet.rotation = angle
 		get_tree().current_scene.add_child(bullet)
 
