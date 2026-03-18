@@ -1,0 +1,84 @@
+[gd_scene load_steps=6 format=3 uid="uid://cevvcg5umt3dx"]
+
+[ext_resource type="Script" uid="uid://ciygdeycqh624" path="res://scenes/ui/lobby/char_select_remote.gd" id="1_03dnt"]
+[ext_resource type="PackedScene" uid="uid://ducbymckwwd56" path="res://scenes/ui/sprite_button.tscn" id="1_7am6t"]
+[ext_resource type="PackedScene" uid="uid://1cageijr1rft" path="res://scenes/ui/lobby/char_select_sprite_button.tscn" id="2_8nh10"]
+[ext_resource type="Texture2D" uid="uid://dfi1lem32j3qs" path="res://assets/sprites/gooblin/mini_icon.png" id="3_idr1g"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_7vhxf"]
+size = Vector2(800, 600)
+
+[node name="CharSelectRemote" type="Node2D"]
+script = ExtResource("1_03dnt")
+
+[node name="remoteSprite" type="Sprite2D" parent="."]
+texture = SubResource("PlaceholderTexture2D_7vhxf")
+
+[node name="charButtons" type="Node2D" parent="."]
+
+[node name="Gooblin" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(-70, -242)
+charName = "Gooblin"
+
+[node name="tempIcon" type="Sprite2D" parent="charButtons/Gooblin"]
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("3_idr1g")
+
+[node name="Garebare" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(118, -241)
+charName = "Garebare"
+
+[node name="LoanShark" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(-74, -112)
+charName = "LoanShark"
+
+[node name="Dealer" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(117, -116)
+charName = "Dealer"
+
+[node name="XylerFergus" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(119, 170)
+charName = "XylerFergus"
+
+[node name="Burple" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(-75, 6)
+charName = "Burple"
+
+[node name="AnimeGirl" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(118, 6)
+charName = "AnimeGirl"
+
+[node name="ElonMusk" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(-71, 186)
+charName = "ElonMusk"
+
+[node name="controlbuttons" type="Node2D" parent="."]
+
+[node name="readyUp" parent="controlbuttons" instance=ExtResource("1_7am6t")]
+position = Vector2(318, 219)
+toggleable = true
+
+[node name="Leave" parent="controlbuttons" instance=ExtResource("1_7am6t")]
+position = Vector2(-301, 217)
+
+[connection signal="char_hovered" from="charButtons/Gooblin" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/Gooblin" to="." method="_on_char_pressed"]
+[connection signal="char_unhovered" from="charButtons/Gooblin" to="." method="_on_char_unhovered"]
+[connection signal="char_hovered" from="charButtons/Garebare" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/Garebare" to="." method="_on_char_pressed"]
+[connection signal="char_hovered" from="charButtons/LoanShark" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/LoanShark" to="." method="_on_char_pressed"]
+[connection signal="char_hovered" from="charButtons/Dealer" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/Dealer" to="." method="_on_char_pressed"]
+[connection signal="char_hovered" from="charButtons/XylerFergus" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/XylerFergus" to="." method="_on_char_pressed"]
+[connection signal="char_hovered" from="charButtons/Burple" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/Burple" to="." method="_on_char_pressed"]
+[connection signal="char_hovered" from="charButtons/AnimeGirl" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/AnimeGirl" to="." method="_on_char_pressed"]
+[connection signal="char_hovered" from="charButtons/ElonMusk" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/ElonMusk" to="." method="_on_char_pressed"]
+[connection signal="pressed" from="controlbuttons/readyUp" to="." method="_on_ready_up_pressed"]
+[connection signal="pressed" from="controlbuttons/Leave" to="." method="_on_leave_pressed"]
+
+[editable path="charButtons/Gooblin"]

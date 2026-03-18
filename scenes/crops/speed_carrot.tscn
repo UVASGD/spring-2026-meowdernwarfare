@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://midwqrc2tccp"]
 
-[ext_resource type="Script" path="res://scripts/crops/speed_carrot.gd" id="1_2uh7b"]
+[ext_resource type="Script" uid="uid://cj1mv4etarwd7" path="res://scripts/crops/speed_carrot.gd" id="1_2uh7b"]
 [ext_resource type="Shader" uid="uid://bwnlbf6bnmnyk" path="res://assets/shaders/electric_wrap_inner.gdshader" id="2_scbfu"]
 [ext_resource type="Texture2D" uid="uid://bthv14d4yi04n" path="res://assets/sprites/crops/speed carrot.png" id="3_scbfu"]
 [ext_resource type="Texture2D" uid="uid://tyu5h2ugglqv" path="res://assets/sprites/crops/speed carrot ground.png" id="4_6x1tb"]

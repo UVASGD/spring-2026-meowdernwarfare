@@ -1,338 +1,212 @@
 extends Control
 
-const SERVER_URL = "wss://server-still-cherry-1856.fly.dev"
-const HEROES = ["Dealer", "Burple", "Alien", "Xyler", "Fergus", "LoanShark", "Gooblin", "Garebare"]
-const MAPS = ["testArena", "Moon"]
-const CROPS = ["SpeedCarrot", "IronRoot", "BlastBerry"]
-const MAX_STARTERS := 3
+@onready var host_tv = $tvs/HostTV
+@onready var p2_tv = $tvs/P2TV
+@onready var p3_tv = $tvs/P3TV
+@onready var p4_tv = $tvs/P4TV
+@onready var all_tvs: Array = []
 
-@onready var code_label: Label = $VBox/CodeLabel
-@onready var player_list: VBoxContainer = $VBox/PlayerList
-@onready var hero_selector: OptionButton = $VBox/HeroSelector
-@onready var settings_panel: Control = $VBox/SettingsPanel
-@onready var map_selector: OptionButton = $VBox/SettingsPanel/MapSelector
-@onready var start_btn: Button = $VBox/ButtonRow/StartBtn
-@onready var leave_btn: Button = $VBox/ButtonRow/LeaveBtn
-@onready var status_label: Label = $VBox/StatusLabel
-@onready var join_panel: Control = $JoinPanel
-@onready var host_panel: Control = $HostPanel
-@onready var guestbg: TextureRect = $guestbg
-@onready var hostbg: TextureRect = $hostbg
+@onready var remote = $CharSelectRemote
+@onready var sponsor = $SponsorSelector
+@onready var map_sel = $mapSelector
+@onready var code_label: Label = $RoomCodeLabel/Label
 
-var player_rows: Dictionary = {}
-var _username: String = ""
-var crop_buttons: Dictionary = {}
-var selected_crops: Array[String] = []
+var selected_crop := ""
+var ready_states: Dictionary = {}
+var tv_map: Dictionary = {} # pid -> tv index
 
 func _ready() -> void:
-	_load_username()
-	
-	# Setup hero selector
-	hero_selector.clear()
-	for h in HEROES:
-		hero_selector.add_item(h)
-	hero_selector.item_selected.connect(_on_hero_selected)
-	
-	# Setup map selector
-	map_selector.clear()
-	for map in MAPS:
-		map_selector.add_item(map)
-	map_selector.item_selected.connect(_on_map_selected)
-	
-	# Setup crop selector
-	_setup_crop_selector()
-	
-	# Buttons
-	start_btn.pressed.connect(_on_start)
-	leave_btn.pressed.connect(_on_leave)
-	
+	all_tvs = [host_tv, p2_tv, p3_tv, p4_tv]
+
+	code_label.text = "Room code:\n" + Network.room_code
+
 	# Network signals
 	Network.lobby_state_updated.connect(_on_lobby_state)
 	Network.kicked.connect(_on_kicked)
 	Network.game_started.connect(_on_game_started)
 	Network.became_host.connect(_on_became_host)
 	Network.disconnected.connect(_on_disconnected)
-	Network.hosted.connect(_on_room_hosted)
-	Network.joined_room.connect(_on_room_joined)
-	Network.error.connect(_on_network_error)
-	
-	# Initial UI state
-	status_label.text = ""
-	hero_selector.select(0)
-	
-	# If returning from a game with an active connection, skip host/join flow
-	if Network.is_online() and Network.room_code != "":
-		_resume_lobby()
-	else:
-		match GameData.game_mode:
-			GameData.GameMode.HOST:
-				_start_hosting()
-			GameData.GameMode.JOIN:
-				_show_join_ui()
-			_:
-				_show_join_ui()
+	Network.message_received.connect(_on_message)
 
-func _load_username() -> void:
-	var config = ConfigFile.new()
-	if config.load("user://settings.cfg") == OK:
-		_username = config.get_value("player", "username", "")
-	if _username.is_empty():
-		_username = "Player" + str(randi() % 1000)
+	# CharSelectRemote
+	remote.hero_selected.connect(_on_hero_selected)
+	remote.hero_hovered.connect(_on_hero_hovered)
+	remote.ready_toggled.connect(_on_ready_toggled)
+	remote.leave_requested.connect(_on_leave)
 
-func _save_username() -> void:
-	var config = ConfigFile.new()
-	config.set_value("player", "username", _username)
-	config.save("user://settings.cfg")
+	# Map selector
+	map_sel.map_selected.connect(_on_map_selected)
 
-func _get_username() -> String:
-	if _username.is_empty():
-		return "Player" + str(randi() % 1000)
-	return _username
+	# TV kick buttons
+	for tv in all_tvs:
+		tv.kick_requested.connect(_on_kick)
 
-func _resume_lobby() -> void:
-	join_panel.visible = false
-	host_panel.visible = false
-	$VBox.visible = true
-	code_label.text = "Room: " + Network.room_code
-	status_label.visible = false
-	_update_host_controls()
+	# Host-specific setup
+	_apply_host_controls()
+	if Network.is_host:
+		Network.set_settings({"map": map_sel.selected_map})
+
+	# Restore state when returning from a game
 	if not Network.lobby_state.is_empty():
 		_on_lobby_state(Network.lobby_state)
 
-func _start_hosting() -> void:
-	join_panel.visible = false
-	$VBox.visible = false
-	host_panel.visible = true
-	status_label.text = ""
-	
-	# Pre-fill username
-	$HostPanel/UsernameInput.text = _username
-
-func _on_create_room_pressed() -> void:
-	_username = $HostPanel/UsernameInput.text.strip_edges()
-	if _username.length() > 15:
-		_username = _username.substr(0, 15)
-	if _username.is_empty():
-		_username = "Player" + str(randi() % 1000)
-	_save_username()
-	
-	host_panel.visible = false
-	status_label.text = "Connecting..."
-	status_label.visible = true
-	
-	Network.connected.connect(_on_connected_as_host, CONNECT_ONE_SHOT)
-	Network.connect_to_server(SERVER_URL)
-
-func _on_connected_as_host() -> void:
-	status_label.text = "Creating room..."
-	Network.host_room(_get_username())
-	# UI will be shown when hosted signal fires
-
-func _on_room_hosted(_room_code: String, _player_id: int) -> void:
-	host_panel.visible = false
-	$VBox.visible = true
-	code_label.text = "Room: " + Network.room_code
-	status_label.visible = false
-	_update_host_controls()
-	Network.set_hero(HEROES[0])
-
-func _show_join_ui() -> void:
-	$VBox.visible = false
-	join_panel.visible = true
-	status_label.text = ""
-	# Pre-fill username if we have one
-	if $JoinPanel.has_node("UsernameInput"):
-		$JoinPanel/UsernameInput.text = _username
-
-func _on_join_submit(code: String) -> void:
-	if code.length() != 6:
-		status_label.text = "Code must be 6 characters"
-		return
-	
-	# Get username from input if available
-	if $JoinPanel.has_node("UsernameInput"):
-		_username = $JoinPanel/UsernameInput.text.strip_edges()
-		if _username.length() > 15:
-			_username = _username.substr(0, 15)
-		_save_username()
-	
-	join_panel.visible = false
-	status_label.text = "Connecting..."
-	status_label.visible = true
-	
-	var room_code = code.to_upper()
-	Network.connected.connect(func(): _on_connected_as_client(room_code), CONNECT_ONE_SHOT)
-	Network.connect_to_server(SERVER_URL)
-
-func _on_connected_as_client(code: String) -> void:
-	status_label.text = "Joining room..."
-	Network.join_room(code, _get_username())
-
-func _on_room_joined(_player_id: int, _is_host: bool) -> void:
-	$VBox.visible = true
-	code_label.text = "Room: " + Network.room_code
-	_update_host_controls()
-	Network.set_hero(HEROES[0])
-	
-	if not Network.lobby_state.is_empty():
-		_on_lobby_state(Network.lobby_state)
-
-func _on_network_error(msg: String) -> void:
-	status_label.text = "Error: " + msg
-	status_label.visible = true
-	if not $VBox.visible:
-		# Show the appropriate panel based on game mode
-		if GameData.game_mode == GameData.GameMode.HOST:
-			host_panel.visible = true
-		else:
-			join_panel.visible = true
+# ---------- LOBBY STATE ----------
 
 func _on_lobby_state(state: Dictionary) -> void:
 	var players = state.get("players", [])
-	
-	for child in player_list.get_children():
-		child.queue_free()
-	player_rows.clear()
-	
+	var settings = state.get("settings", {})
+
+	# Build tv_map: host always on TV 0, others fill 1-3 in order
+	tv_map.clear()
+	var host_p = null
+	var others: Array = []
 	for p in players:
-		var pid = int(p.get("id", -1))
-		var row = _create_player_row(p)
-		player_list.add_child(row)
-		player_rows[pid] = row
+		if p.get("is_host", false):
+			host_p = p
+		else:
+			others.append(p)
 
-func _create_player_row(p: Dictionary) -> HBoxContainer:
-	var row = HBoxContainer.new()
-	var pid = int(p.get("id", -1))
-	var username = p.get("username", "Player")
-	var hero = p.get("hero", "")
-	var is_host = p.get("is_host", false)
-	
-	var name_label = Label.new()
-	name_label.text = username
-	if is_host:
-		name_label.text += " (Host)"
-	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(name_label)
-	
-	var hero_label = Label.new()
-	hero_label.text = hero if hero else "[No hero]"
-	hero_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(hero_label)
-	
-	if Network.is_host and pid != Network.my_player_id:
-		var kick_btn = Button.new()
-		kick_btn.text = "Kick"
-		kick_btn.pressed.connect(func(): _kick_player(pid))
-		row.add_child(kick_btn)
-	
-	return row
+	if host_p:
+		tv_map[int(host_p["id"])] = 0
+	for i in range(mini(others.size(), 3)):
+		tv_map[int(others[i]["id"])] = i + 1
 
-func _kick_player(pid: int) -> void:
-	Network.kick_player(pid)
+	# Purge stale ready states
+	var active_pids: Array = []
+	for p in players:
+		active_pids.append(int(p["id"]))
+	for pid in ready_states.keys():
+		if pid not in active_pids:
+			ready_states.erase(pid)
 
-func _on_hero_selected(idx: int) -> void:
-	var hero = HEROES[idx]
-	Network.set_hero(hero)
+	# Refresh every TV
+	for i in range(4):
+		var tv = all_tvs[i]
+		var pdata = _player_at_tv(i, players)
+		if pdata:
+			var pid = int(pdata["id"])
+			tv.pid = pid
+			tv.turn_on(pdata.get("username", "Player"), pdata.get("is_host", false))
+			tv.show_hero(pdata.get("hero", ""))
+			tv.set_ready(ready_states.get(pid, false))
+			tv.show_kick(Network.is_host and pid != Network.my_player_id)
+		else:
+			tv.turn_off()
 
-func _on_map_selected(idx: int) -> void:
-	var map_name = map_selector.get_item_text(idx)
-	Network.set_settings({"map": map_name})
+	# Guests sync map from server settings
+	if not Network.is_host and settings.has("map"):
+		map_sel.set_map(settings["map"])
 
-func _update_host_controls() -> void:
+	_update_start_btn()
+
+func _player_at_tv(idx: int, players: Array):
+	for p in players:
+		if tv_map.get(int(p["id"]), -1) == idx:
+			return p
+	return null
+
+# ---------- HERO SELECTION ----------
+
+func _on_hero_selected(hero_name: String) -> void:
+	Network.set_hero(hero_name)
+	_update_local_tv(hero_name, false)
+	_update_start_btn()
+
+func _on_hero_hovered(hero_name: String) -> void:
+	_update_local_tv(hero_name, true)
+
+func _update_local_tv(hero_name: String, preview: bool) -> void:
+	var idx = tv_map.get(Network.my_player_id, -1)
+	if idx >= 0:
+		all_tvs[idx].show_hero(hero_name, preview)
+
+# ---------- READY / START ----------
+
+func _on_ready_toggled(is_ready: bool) -> void:
 	if Network.is_host:
-		settings_panel.visible = true
-		start_btn.visible = true
-		hostbg.visible = true
-		
-		guestbg.visible = false
+		Network.start_game()
 	else:
-		settings_panel.visible = false
-		start_btn.visible = false
-		hostbg.visible = false
-		
-		guestbg.visible = true
-	
+		ready_states[Network.my_player_id] = is_ready
+		Network.broadcast({"action": "ready", "ready": is_ready})
+		var idx = tv_map.get(Network.my_player_id, -1)
+		if idx >= 0:
+			all_tvs[idx].set_ready(is_ready)
+		sponsor.set_interactive(not is_ready)
 
-func _on_became_host() -> void:
-	_update_host_controls()
+func _on_message(from_id: int, data: Dictionary) -> void:
+	if data.get("action") == "ready":
+		ready_states[from_id] = data.get("ready", false)
+		var idx = tv_map.get(from_id, -1)
+		if idx >= 0:
+			all_tvs[idx].set_ready(ready_states[from_id])
+		_update_start_btn()
 
-func _on_start() -> void:
-	Network.start_game()
+func _update_start_btn() -> void:
+	if not Network.is_host:
+		return
+	var can_start = _all_guests_ready() and not remote.current_hero.is_empty()
+	if can_start:
+		remote.ready_btn.enable()
+	else:
+		remote.ready_btn.disable()
+
+func _all_guests_ready() -> bool:
+	for pid in tv_map:
+		if pid == Network.my_player_id:
+			continue
+		if not ready_states.get(pid, false):
+			return false
+	return true
+
+# ---------- SPONSOR ----------
+
+func _on_crop_selected(crop_name: String) -> void:
+	selected_crop = crop_name
+
+# ---------- MAP ----------
+
+func _on_map_selected(map_name) -> void:
+	if Network.is_host:
+		Network.set_settings({"map": map_name})
+
+# ---------- KICK / LEAVE ----------
+
+func _on_kick(player_id: int) -> void:
+	if Network.is_host:
+		Network.kick_player(player_id)
 
 func _on_leave() -> void:
 	Network.leave_room()
 	Network.disconnect_from_server()
 	GameData.change_scene("res://scenes/ui/main_menu.tscn")
 
+# ---------- HOST CONTROLS ----------
+
+func _apply_host_controls() -> void:
+	map_sel.set_interactive(Network.is_host)
+	if Network.is_host:
+		remote.ready_btn.toggleable = false
+		remote.ready_btn.disable()
+
+func _on_became_host() -> void:
+	ready_states.clear()
+	_apply_host_controls()
+	if not Network.lobby_state.is_empty():
+		_on_lobby_state(Network.lobby_state)
+
+# ---------- NETWORK EVENTS ----------
+
 func _on_kicked() -> void:
-	status_label.text = "You were kicked"
-	await get_tree().create_timer(1.5).timeout
 	Network.disconnect_from_server()
-	GameData.change_scene("res://scenes/ui/main_menu.tscn")
+	GameData.change_scene("res://scenes/ui/joinscreen.tscn")
 
 func _on_game_started(players: Array, settings: Dictionary) -> void:
 	GameData.set_online_game(players, settings)
-	if not selected_crops.is_empty():
-		GameData.pending_starter_crops = selected_crops.duplicate()
-		GameData.starter_crops = selected_crops.duplicate()
+	if not selected_crop.is_empty():
+		GameData.pending_starter_crops = [selected_crop]
+		GameData.starter_crops = [selected_crop]
 		GameData.save_starter_crops()
 	GameData.change_scene("res://scenes/game.tscn")
 
 func _on_disconnected() -> void:
-	status_label.text = "Disconnected"
-	await get_tree().create_timer(1.0).timeout
 	GameData.change_scene("res://scenes/ui/main_menu.tscn")
-
-func _on_join_btn_pressed() -> void:
-	var code = $JoinPanel/CodeInput.text.strip_edges()
-	_on_join_submit(code)
-
-func _on_back_btn_pressed() -> void:
-	GameData.change_scene("res://scenes/ui/main_menu.tscn")
-
-# --- CROP SELECTOR ---
-
-func _setup_crop_selector() -> void:
-	selected_crops = GameData.starter_crops.duplicate()
-	
-	var vbox = $VBox
-	var container = VBoxContainer.new()
-	container.name = "CropSelector"
-	
-	var title = Label.new()
-	title.text = "Starter Crops (%d/%d)" % [selected_crops.size(), MAX_STARTERS]
-	title.name = "CropTitle"
-	container.add_child(title)
-	
-	var grid = HBoxContainer.new()
-	grid.name = "CropGrid"
-	for crop_name in CROPS:
-		var btn = Button.new()
-		btn.text = crop_name
-		btn.toggle_mode = true
-		btn.button_pressed = crop_name in selected_crops
-		btn.toggled.connect(func(pressed): _on_crop_toggled(crop_name, pressed))
-		grid.add_child(btn)
-		crop_buttons[crop_name] = btn
-	container.add_child(grid)
-	
-	# Insert before ButtonRow
-	var btn_row = $VBox/ButtonRow
-	vbox.add_child(container)
-	vbox.move_child(container, btn_row.get_index())
-
-func _on_crop_toggled(crop_name: String, pressed: bool) -> void:
-	if pressed:
-		if selected_crops.size() >= MAX_STARTERS:
-			crop_buttons[crop_name].button_pressed = false
-			return
-		if crop_name not in selected_crops:
-			selected_crops.append(crop_name)
-	else:
-		selected_crops.erase(crop_name)
-	
-	var title = $VBox/CropSelector/CropTitle
-	if title:
-		title.text = "Starter Crops (%d/%d)" % [selected_crops.size(), MAX_STARTERS]
-	
-	GameData.pending_starter_crops = selected_crops.duplicate()

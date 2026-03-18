@@ -1,0 +1,76 @@
+[gd_scene load_steps=9 format=3 uid="uid://dyjsukavayr35"]
+
+[ext_resource type="Script" uid="uid://jfrori7lcxij" path="res://scripts/ui/map_selector.gd" id="1_45j7k"]
+[ext_resource type="FontFile" uid="uid://dt2nbaox60w53" path="res://assets/ui/fonts/BATTLESANSSERIF.OTF" id="2_uqr41"]
+[ext_resource type="PackedScene" uid="uid://ducbymckwwd56" path="res://scenes/ui/sprite_button.tscn" id="3_kpivp"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_5t5el"]
+font = ExtResource("2_uqr41")
+font_size = 32
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_6eomt"]
+size = Vector2(50, 100)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_fb7gw"]
+size = Vector2(50, 100)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_icbh0"]
+size = Vector2(400, 200)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_tht5s"]
+size = Vector2(400, 200)
+
+[node name="mapSelector" type="Node2D"]
+script = ExtResource("1_45j7k")
+
+[node name="Label" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -150.0
+offset_right = 400.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+text = "MAP"
+label_settings = SubResource("LabelSettings_5t5el")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="nextButton" parent="." instance=ExtResource("3_kpivp")]
+position = Vector2(250, 0)
+
+[node name="off" parent="nextButton" index="1"]
+texture = SubResource("PlaceholderTexture2D_6eomt")
+
+[node name="backButton" parent="." instance=ExtResource("3_kpivp")]
+position = Vector2(-250, 0)
+
+[node name="off" parent="backButton" index="1"]
+texture = SubResource("PlaceholderTexture2D_fb7gw")
+
+[node name="options" type="Sprite2D" parent="."]
+clip_children = 1
+texture = SubResource("PlaceholderTexture2D_icbh0")
+
+[node name="option1" type="Sprite2D" parent="options"]
+modulate = Color(0.497474, 0.497474, 0.497474, 1)
+texture = SubResource("PlaceholderTexture2D_tht5s")
+
+[node name="option2" type="Sprite2D" parent="options"]
+modulate = Color(0.201005, 0.579862, 0.634829, 1)
+texture = SubResource("PlaceholderTexture2D_tht5s")
+
+[node name="option3" type="Sprite2D" parent="options"]
+modulate = Color(0.742104, 0.435636, 0.137577, 1)
+texture = SubResource("PlaceholderTexture2D_tht5s")
+
+[connection signal="pressed" from="nextButton" to="." method="_on_next_button_pressed"]
+[connection signal="pressed" from="backButton" to="." method="_on_back_button_pressed"]
+
+[editable path="nextButton"]
+[editable path="backButton"]

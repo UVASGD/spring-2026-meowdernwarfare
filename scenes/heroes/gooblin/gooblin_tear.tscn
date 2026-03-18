@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://xsr6lt26ukso"]
 
-[ext_resource type="Script" uid="uid://c34ngn7knuwkm" path="res://scenes/heroes/dealer/bullet.gd" id="1_tdt6a"]
+[ext_resource type="Script" uid="uid://ck0ywt842ebcq" path="res://scenes/heroes/gooblin/gooblin_tear.gd" id="1_tdt6a"]
 [ext_resource type="Texture2D" uid="uid://derp6gtx8d46q" path="res://assets/sprites/gooblin/gooblin_tear.png" id="2_lhtkw"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_2tpwu"]

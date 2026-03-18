@@ -688,7 +688,7 @@ scale = Vector2(0.7, 0.7)
 
 [node name="burple" type="Node2D" parent="introgroup1/cardholder"]
 script = ExtResource("6_pw24t")
-next_scene_path = "res://scenes/ui/lobby.tscn"
+next_scene_path = "res://scenes/ui/joinscreen.tscn"
 card_action = 1
 
 [node name="bg" type="Sprite2D" parent="introgroup1/cardholder/burple"]
@@ -723,7 +723,7 @@ libraries = {
 
 [node name="dealer" parent="introgroup1/cardholder" instance=ExtResource("1_1g8jr")]
 position = Vector2(-382.857, 67.1429)
-next_scene_path = "res://scenes/ui/lobby.tscn"
+next_scene_path = "res://scenes/ui/joinscreen.tscn"
 card_action = 2
 
 [node name="bg" parent="introgroup1/cardholder/dealer" index="0"]
