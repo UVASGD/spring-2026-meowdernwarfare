@@ -3,11 +3,12 @@ extends Control
 const _DEFAULT_HEROES: Array[HeroInfo] = [
 	preload("res://assets/resources/heroes/dealer.tres"),
 	preload("res://assets/resources/heroes/burple.tres"),
-	preload("res://assets/resources/heroes/alien.tres"),
+	preload("res://assets/resources/heroes/animegirl.tres"),
 	preload("res://assets/resources/heroes/xylerfergus.tres"),
 	preload("res://assets/resources/heroes/loanshark.tres"),
 	preload("res://assets/resources/heroes/gooblin.tres"),
 	preload("res://assets/resources/heroes/garebare.tres"),
+	preload("res://assets/resources/heroes/elonmusk.tres"),
 ]
 
 @export var heroes: Array[HeroInfo] = []

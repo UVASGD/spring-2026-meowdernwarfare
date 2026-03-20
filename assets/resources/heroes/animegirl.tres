@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="HeroInfo" load_steps=2 format=3 uid="uid://of40nyaxkx6l"]
+
+[ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="2_3vee4"]
+
+[resource]
+script = ExtResource("2_3vee4")
+id = "Anime Girl"
+desc = "def"
+shoot_name = "Shoot"
+shoot_desc = "Basic ranged attack."
+ability1_name = "Ability 1"
+ability1_desc = "Special ability. (Coming soon)"
+ability2_name = ""
+ability2_desc = ""
+ult_name = "Ultimate"
+ult_desc = "Powerful ultimate ability. (Coming soon)"

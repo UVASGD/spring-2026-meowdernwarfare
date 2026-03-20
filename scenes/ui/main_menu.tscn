@@ -816,7 +816,6 @@ stream = ExtResource("20_5dct7")
 volume_db = -12.0
 
 [node name="BurnOverlay" type="ColorRect" parent="."]
-visible = false
 material = SubResource("ShaderMaterial_qch7b")
 layout_mode = 1
 anchors_preset = 15
@@ -848,7 +847,6 @@ region_enabled = true
 region_rect = Rect2(0, 0, 1044.41, 812.826)
 
 [node name="ColorRect2" type="ColorRect" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
