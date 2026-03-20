@@ -40,6 +40,7 @@ var _ult_layer: CanvasLayer = null
 var _ult_banner: CanvasGroup = null
 
 func _ready() -> void:
+	GameData.stop_menu_theme()
 	var dbg = DebugMenu.new()
 	add_child(dbg)
 	

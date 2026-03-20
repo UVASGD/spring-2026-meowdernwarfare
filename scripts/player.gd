@@ -190,8 +190,19 @@ func set_hero(hero_name: String) -> void:
 	if hero_scene == null:
 		push_warning("Unknown hero: ", hero_name, ", defaulting to Dealer")
 		hero_scene = HERO_SCENES["Dealer"]
-	
-	hero = hero_scene.instantiate()
+
+	var inst = hero_scene.instantiate()
+	if inst == null or not (inst is Hero):
+		push_error("Failed to instantiate hero '%s', defaulting to Dealer" % hero_name)
+		if hero_name != "Dealer":
+			var dealer_scene = HERO_SCENES.get("Dealer")
+			if dealer_scene:
+				inst = dealer_scene.instantiate()
+		if inst == null or not (inst is Hero):
+			push_error("Failed to instantiate fallback hero Dealer")
+			return
+
+	hero = inst as Hero
 	hero.player = self
 	add_child(hero)
 	

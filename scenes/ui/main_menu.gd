@@ -39,11 +39,19 @@ func _ready() -> void:
 	_connect_card(dealer)
 	_connect_card(burple)
 	_connect_card(garebare)
+	var local_theme = $introgroup1/AudioStreamPlayer
+	local_theme.stop()
+	local_theme.stream = null
 	
 	# Skip intro if returning from another scene
 	if not GameData.is_first_load:
+		GameData.ensure_menu_theme()
 		_skip_intro()
 	else:
+		get_tree().create_timer(1.0).timeout.connect(func():
+			if is_inside_tree():
+				GameData.ensure_menu_theme()
+		, CONNECT_ONE_SHOT)
 		GameData.mark_intro_seen()
 
 func _skip_intro() -> void:
@@ -55,8 +63,7 @@ func _skip_intro() -> void:
 	if anim_player:
 		anim_player.stop()
 		anim_player.play("idle2")
-	if not $introgroup1/AudioStreamPlayer.playing:
-		$introgroup1/AudioStreamPlayer.playing = true
+	GameData.ensure_menu_theme()
 	# Ensure hover areas are enabled (animation keyframes at -0.1 won't apply)
 	_enable_hover_areas()
 

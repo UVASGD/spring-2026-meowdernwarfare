@@ -1,6 +1,7 @@
 extends Node
 
 const TransitionSettings = preload("res://scripts/globals/transition_settings.gd")
+const MENU_THEME = preload("res://assets/sound/mainthemev2.wav")
 
 # Autoload for passing data between lobby and game scenes
 
@@ -20,10 +21,12 @@ var is_first_load: bool = true
 var _transition_overlay: ColorRect = null
 var _transitioning: bool = false
 var _transition_settings: TransitionSettings = null
+var _menu_theme: AudioStreamPlayer = null
 
 func _ready() -> void:
 	_create_transition_overlay()
 	_load_starter_crops()
+	_create_menu_theme_player()
 
 func _create_transition_overlay() -> void:
 	_transition_settings = load("res://assets/resources/default_transition.tres")
@@ -57,6 +60,25 @@ func _apply_transition_settings(mat: ShaderMaterial) -> void:
 func _add_overlay_to_root() -> void:
 	get_tree().root.add_child(_transition_overlay)
 	_transition_overlay.z_index = 100
+
+func _create_menu_theme_player() -> void:
+	if _menu_theme != null:
+		return
+	_menu_theme = AudioStreamPlayer.new()
+	_menu_theme.name = "MenuTheme"
+	_menu_theme.stream = MENU_THEME
+	_menu_theme.volume_db = -12.0
+	add_child(_menu_theme)
+
+func ensure_menu_theme() -> void:
+	if _menu_theme == null:
+		_create_menu_theme_player()
+	if _menu_theme and not _menu_theme.playing:
+		_menu_theme.play()
+
+func stop_menu_theme() -> void:
+	if _menu_theme and _menu_theme.playing:
+		_menu_theme.stop()
 
 func set_mode(mode: GameMode) -> void:
 	game_mode = mode
