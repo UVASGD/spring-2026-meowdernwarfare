@@ -25,6 +25,8 @@ size = Vector2(300, 100)
 [sub_resource type="LabelSettings" id="LabelSettings_id02d"]
 font = ExtResource("2_5t5el")
 font_size = 32
+outline_size = 16
+outline_color = Color(0, 0, 0, 1)
 
 [node name="Lobby" type="Control"]
 layout_mode = 3

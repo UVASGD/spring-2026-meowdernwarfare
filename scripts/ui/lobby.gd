@@ -18,7 +18,7 @@ var tv_map: Dictionary = {} # pid -> tv index
 func _ready() -> void:
 	all_tvs = [host_tv, p2_tv, p3_tv, p4_tv]
 
-	code_label.text = "Room code:\n" + Network.room_code
+	code_label.text = "room code:\n" + Network.room_code
 
 	# Network signals
 	Network.lobby_state_updated.connect(_on_lobby_state)

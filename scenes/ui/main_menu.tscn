@@ -1,8 +1,9 @@
-[gd_scene load_steps=48 format=3 uid="uid://bvwst8w4gqsjj"]
+[gd_scene load_steps=52 format=3 uid="uid://bvwst8w4gqsjj"]
 
 [ext_resource type="PackedScene" uid="uid://bw2et0odpc4ii" path="res://scenes/ui/menu_hero_card.tscn" id="1_1g8jr"]
 [ext_resource type="Script" uid="uid://b1a1ksgkshlog" path="res://scenes/ui/main_menu.gd" id="1_qilvv"]
 [ext_resource type="Texture2D" uid="uid://cn8dgmjfg5gnn" path="res://assets/ui/titlescreen/new/background_lowest_layer2.png" id="2_877pj"]
+[ext_resource type="Shader" uid="uid://bh4rp8fhlog86" path="res://assets/shaders/3deffect.gdshader" id="2_jbte4"]
 [ext_resource type="Shader" uid="uid://cpng23u3yom2" path="res://assets/shaders/burn_reveal.gdshader" id="2_qilvv"]
 [ext_resource type="Texture2D" uid="uid://cfpeirwkv3snv" path="res://assets/ui/titlescreen/new/background_highest_layer.png" id="3_ayp64"]
 [ext_resource type="Texture2D" uid="uid://h4s2lwvcqu3e" path="res://assets/resources/burn_noise.tres" id="3_jbte4"]
@@ -21,6 +22,22 @@
 [ext_resource type="Texture2D" uid="uid://ba10ri207kse" path="res://assets/ui/titlescreen/new/meowderwarfare_final_03.png" id="17_pw24t"]
 [ext_resource type="PackedScene" uid="uid://dfxxrh3fefwru" path="res://scenes/ui/option_banner.tscn" id="17_y1h5l"]
 [ext_resource type="AudioStream" uid="uid://dpq8lkuf8caie" path="res://assets/sound/mainthemev2.wav" id="20_5dct7"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_e0hcc"]
+shader = ExtResource("2_jbte4")
+shader_parameter/fov = 179.0
+shader_parameter/cull_back = true
+shader_parameter/y_rot = 0.0
+shader_parameter/x_rot = 0.0
+shader_parameter/inset = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jbte4"]
+shader = ExtResource("2_jbte4")
+shader_parameter/fov = 179.0
+shader_parameter/cull_back = true
+shader_parameter/y_rot = 0.0
+shader_parameter/x_rot = 0.0
+shader_parameter/inset = 0.0
 
 [sub_resource type="Gradient" id="Gradient_s0w7w"]
 
@@ -195,6 +212,14 @@ shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
 shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
 shader_parameter/burn_noise_scale = 1.0
 shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1mexh"]
+shader = ExtResource("2_jbte4")
+shader_parameter/fov = 90.0
+shader_parameter/cull_back = true
+shader_parameter/y_rot = 0.0
+shader_parameter/x_rot = 0.0
+shader_parameter/inset = 0.352
 
 [sub_resource type="Animation" id="Animation_jbte4"]
 length = 0.001
@@ -634,6 +659,10 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_qilvv")
+bg_rot_bottom = Vector2(5, 3.5)
+bg_rot_top = Vector2(8, 5.5)
+text_rot_bottom = Vector2(20, 14)
+text_rot_top = Vector2(32, 22)
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 1
@@ -655,6 +684,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="bgbottomlayer" type="TextureRect" parent="introgroup1"]
+material = SubResource("ShaderMaterial_e0hcc")
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -664,6 +694,7 @@ texture = ExtResource("2_877pj")
 expand_mode = 1
 
 [node name="bgtoplayer" type="TextureRect" parent="introgroup1"]
+material = SubResource("ShaderMaterial_jbte4")
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -769,6 +800,7 @@ scale = Vector2(6.61708, 8.89873)
 polygon = PackedVector2Array(62.0877, 28.355, 46.4141, -14.3282, 22.5184, -24.7605, 23.4016, 32.3872)
 
 [node name="meowdern" type="Sprite2D" parent="introgroup1"]
+material = SubResource("ShaderMaterial_1mexh")
 position = Vector2(1348.8, 934.353)
 texture = ExtResource("17_pw24t")
 
@@ -784,6 +816,7 @@ stream = ExtResource("20_5dct7")
 volume_db = -12.0
 
 [node name="BurnOverlay" type="ColorRect" parent="."]
+visible = false
 material = SubResource("ShaderMaterial_qch7b")
 layout_mode = 1
 anchors_preset = 15
@@ -815,6 +848,7 @@ region_enabled = true
 region_rect = Rect2(0, 0, 1044.41, 812.826)
 
 [node name="ColorRect2" type="ColorRect" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
