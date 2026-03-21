@@ -1,5 +1,11 @@
 extends Control
 
+@export var parallax_purple: Vector2 = Vector2(14.0, 10.0)
+@export var parallax_blue: Vector2 = Vector2(30.0, 22.0)
+@export var parallax_smooth: float = 12.0
+
+@onready var bg_purple: AnimatedSprite2D = $bgPurple
+@onready var bg_blue: AnimatedSprite2D = $bgBlue
 @onready var host_tv = $tvs/HostTV
 @onready var p2_tv = $tvs/P2TV
 @onready var p3_tv = $tvs/P3TV
@@ -15,8 +21,15 @@ var selected_crop := ""
 var ready_states: Dictionary = {}
 var tv_map: Dictionary = {} # pid -> tv index
 
+var _purple_base: Vector2
+var _blue_base: Vector2
+var _purple_off: Vector2 = Vector2.ZERO
+var _blue_off: Vector2 = Vector2.ZERO
+
 func _ready() -> void:
 	all_tvs = [host_tv, p2_tv, p3_tv, p4_tv]
+	_purple_base = bg_purple.position
+	_blue_base = bg_blue.position
 
 	code_label.text = "room code:\n" + Network.room_code
 
@@ -49,6 +62,24 @@ func _ready() -> void:
 	# Restore state when returning from a game
 	if not Network.lobby_state.is_empty():
 		_on_lobby_state(Network.lobby_state)
+
+func _process(delta: float) -> void:
+	_update_bg_parallax(delta)
+
+func _update_bg_parallax(delta: float) -> void:
+	var vp := get_viewport().get_visible_rect().size
+	if vp.x <= 0.0 or vp.y <= 0.0:
+		return
+	var m := get_viewport().get_mouse_position()
+	var nx := (m.x / vp.x) * 2.0 - 1.0
+	var ny := (m.y / vp.y) * 2.0 - 1.0
+	var tp := Vector2(nx * parallax_purple.x, -ny * parallax_purple.y)
+	var tb := Vector2(nx * parallax_blue.x, -ny * parallax_blue.y)
+	var k := 1.0 - exp(-delta * parallax_smooth)
+	_purple_off = _purple_off.lerp(tp, k)
+	_blue_off = _blue_off.lerp(tb, k)
+	bg_purple.position = _purple_base + _purple_off
+	bg_blue.position = _blue_base + _blue_off
 
 # ---------- LOBBY STATE ----------
 
