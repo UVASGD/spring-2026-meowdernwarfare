@@ -10,13 +10,17 @@ func _ready() -> void:
 
 func start_swing() -> void:
 	hit_map.clear()
+	area.monitoring = true
 	_hit_overlaps()
 
 func end_swing() -> void:
+	area.monitoring = false
 	hit_map.clear()
+	
 
 func _on_area_2d_body_entered(body: Node2D) -> void:
-	_try_hit(body)
+	if area.monitoring: 
+		_try_hit(body)
 
 func _hit_overlaps() -> void:
 	if not area.monitoring:
