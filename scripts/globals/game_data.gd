@@ -11,6 +11,7 @@ var game_mode: GameMode = GameMode.NONE
 var pending_players: Array = []
 var pending_settings: Dictionary = {}
 var is_online_game: bool = false
+var menu_pause_local: bool = false
 
 # Starter crop selection (persisted)
 var starter_crops: Array[String] = []
@@ -137,6 +138,7 @@ func clear() -> void:
 	pending_settings.clear()
 	pending_starter_crops.clear()
 	is_online_game = false
+	menu_pause_local = false
 	game_mode = GameMode.NONE
 
 func _load_starter_crops() -> void:

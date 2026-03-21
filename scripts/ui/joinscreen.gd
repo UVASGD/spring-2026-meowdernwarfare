@@ -3,23 +3,37 @@ extends Control
 const SERVER_URL = "wss://server-still-cherry-1856.fly.dev"
 const SAVE_PATH = "user://settings.cfg"
 
+@export var bg_rot_bottom: Vector2 = Vector2(5.0, 3.5)
+@export var bg_rot_top: Vector2 = Vector2(8.0, 5.5)
+@export var bg_rot_smooth: float = 12.0
+
 @onready var username_input: LineEdit = $VBox/UsernameInput
 @onready var code_label_node: Label = $VBox/CodeLabel
 @onready var code_input: LineEdit = $VBox/CodeInput
 @onready var action_btn: Button = $VBox/ActionBtn
 @onready var status_label: Label = $VBox/StatusLabel
 @onready var back_btn: Button = $VBox/BackBtn
+@onready var bg_bottom: TextureRect = $bgbottomlayer
+@onready var bg_top: TextureRect = $bgtoplayer
+@onready var title: Label = $VBox/Title
 
 var _is_host: bool = false
+var _bg_bottom_mat: ShaderMaterial = null
+var _bg_top_mat: ShaderMaterial = null
+var _bg_rot_b: Vector2 = Vector2.ZERO
+var _bg_rot_t: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	_is_host = GameData.game_mode == GameData.GameMode.HOST
 	_load_username()
+	_bg_bottom_mat = bg_bottom.material as ShaderMaterial
+	_bg_top_mat = bg_top.material as ShaderMaterial
 
 	if _is_host:
 		code_label_node.visible = false
 		code_input.visible = false
 		action_btn.text = "HOST"
+		title.text = "Host a lobby"
 	else:
 		action_btn.text = "JOIN"
 
@@ -34,6 +48,28 @@ func _ready() -> void:
 	Network.disconnected.connect(_on_disconnected)
 
 	status_label.text = ""
+
+func _process(delta: float) -> void:
+	_update_bg_3d_mouse(delta)
+
+func _update_bg_3d_mouse(delta: float) -> void:
+	if _bg_bottom_mat == null or _bg_top_mat == null:
+		return
+	var vp := get_viewport().get_visible_rect().size
+	if vp.x <= 0.0 or vp.y <= 0.0:
+		return
+	var m := get_viewport().get_mouse_position()
+	var nx := (m.x / vp.x) * 2.0 - 1.0
+	var ny := (m.y / vp.y) * 2.0 - 1.0
+	var tb := Vector2(nx * bg_rot_bottom.x, -ny * bg_rot_bottom.y)
+	var tt := Vector2(nx * bg_rot_top.x, -ny * bg_rot_top.y)
+	var k := 1.0 - exp(-delta * bg_rot_smooth)
+	_bg_rot_b = _bg_rot_b.lerp(tb, k)
+	_bg_rot_t = _bg_rot_t.lerp(tt, k)
+	_bg_bottom_mat.set_shader_parameter("y_rot", _bg_rot_b.x)
+	_bg_bottom_mat.set_shader_parameter("x_rot", _bg_rot_b.y)
+	_bg_top_mat.set_shader_parameter("y_rot", _bg_rot_t.x)
+	_bg_top_mat.set_shader_parameter("x_rot", _bg_rot_t.y)
 
 func _load_username() -> void:
 	var config = ConfigFile.new()
