@@ -120,6 +120,7 @@ var respawn_countdown: float = 0.0
 var _death_ui: CanvasLayer = null
 var _death_timer_label: Label = null
 var is_invulnerable: bool = false
+var _suppress_shoot_until_release := false
 const FARM_RADIUS := 600.0
 var last_attacker: Player = null
 
@@ -405,8 +406,8 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 	
 	_handle_rotation(delta)
-	_handle_actions()
-	_handle_crops(delta)
+	var consumed_shoot := _handle_crops(delta)
+	_handle_actions(consumed_shoot)
 	
 	if health_bar:
 		health_bar.global_position = global_position + Vector2(-25, -60)
@@ -487,7 +488,14 @@ func _handle_rotation(delta: float) -> void:
 	rotation = lerp_angle(rotation, target_rot, rotation_speed * delta)
 	
 
-func _handle_actions() -> void:
+func _handle_actions(consumed_shoot := false) -> void:
+	if consumed_shoot:
+		_suppress_shoot_until_release = true
+	if _suppress_shoot_until_release:
+		if not input.shoot:
+			_suppress_shoot_until_release = false
+		else:
+			consumed_shoot = true
 	if is_stunned:
 		if hero and input.ult_just:
 			hero.ult(aim_dir, get_aim_position())
@@ -504,7 +512,7 @@ func _handle_actions() -> void:
 		return
 	
 	# Delegate to hero
-	if input.shoot:
+	if input.shoot and not consumed_shoot:
 		hero.shoot(aim_dir, get_aim_position())
 	if input.ability1_just:
 		hero.ability1(aim_dir, get_aim_position())
@@ -758,29 +766,31 @@ func _on_crop_area_entered(area: Area2D) -> void:
 	if area is Crop and held_crop == null and drop_cd <= 0 and not area.is_planted:
 		pickup_world_crop(area)
 
-func _handle_crops(_delta: float) -> void:
+func _handle_crops(_delta: float) -> bool:
 	if input == null:
-		return
+		return false
+	var consumed_shoot := false
 	
 	# Drop held crop
 	if input.drop_just and held_crop != null:
 		drop_held_crop()
-		return
+		return false
 	
 	# Plant held crop (LMB click while holding)
 	if input.shoot_just and held_crop != null:
-		_try_plant()
-		return
+		consumed_shoot = _try_plant()
+		return consumed_shoot
 	
 	# Pick up planted crop (LMB click on planted crop, not holding anything)
 	if input.shoot_just and held_crop == null:
-		_try_uproot()
+		consumed_shoot = _try_uproot()
 	
 	if held_sprite and held_crop:
 		var behind = -aim_dir.normalized() * 40.0
 		held_sprite.global_position = global_position + behind
 	if _remote_held_sprite and _remote_held_sprite.visible:
 		_remote_held_sprite.position = Vector2(0, 40).rotated(-rotation_offset)
+	return consumed_shoot
 
 func pickup_world_crop(crop: Crop) -> void:
 	var crop_pos = crop.global_position
@@ -828,18 +838,18 @@ func _tile_at_cursor(tiles: Array) -> Node:
 			return tile
 	return null
 
-func _try_plant() -> void:
+func _try_plant() -> bool:
 	if farm == null or held_crop == null:
-		return
+		return false
 	if not farm.has_space():
-		return
+		return false
 	
 	var tiles = _get_plantable_tiles(farm)
 	var tile = _tile_at_cursor(tiles)
 	if tile == null or tile.planted_crop != null:
-		return
+		return false
 	if tile.global_position.distance_to(global_position) > INTERACT_RANGE:
-		return
+		return false
 	
 	var crop = held_crop
 	var crop_type = crop.get_type_id()
@@ -856,8 +866,9 @@ func _try_plant() -> void:
 	if gm and not gm.is_local():
 		var tile_idx = tiles.find(tile)
 		gm.send_crop_planted(player_id, tile_idx, crop_type, stg)
+	return true
 
-func _try_uproot() -> void:
+func _try_uproot() -> bool:
 	var farms_list = get_tree().get_nodes_in_group("farms")
 	for f in farms_list:
 		var tiles = _get_plantable_tiles(f)
@@ -876,7 +887,9 @@ func _try_uproot() -> void:
 			var gm = GameManager.instance
 			if gm and not gm.is_local() and victim:
 				gm.send_crop_uproot(victim.player_id, tile_idx, crop.get_type_id(), crop.stage)
-		return
+			return true
+		return false
+	return false
 
 func _get_plantable_tiles(f) -> Array:
 	var tiles: Array = []
