@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://dy2c0w7wleg3l"]
+
+[ext_resource type="SpriteFrames" uid="uid://dvhdf8pqoyaep" path="res://assets/resources/chubbsanim.tres" id="1_j3g06"]
+
+[node name="Node2D" type="AnimatedSprite2D"]
+sprite_frames = ExtResource("1_j3g06")
+frame_progress = 0.0905088
