@@ -1456,7 +1456,6 @@ shader_parameter/scanline_count = 50.0
 shader_parameter/scanline_speed = 0.05
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_b3ko0"]
-size = Vector2(300, 100)
 
 [sub_resource type="LabelSettings" id="LabelSettings_id02d"]
 font = ExtResource("2_5t5el")

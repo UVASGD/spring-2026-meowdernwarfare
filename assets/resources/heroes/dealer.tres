@@ -1,13 +1,13 @@
 [gd_resource type="Resource" script_class="HeroInfo" load_steps=3 format=3 uid="uid://crxrsvx2k7ir2"]
 
+[ext_resource type="Texture2D" uid="uid://c6uic0e3x023" path="res://assets/sprites/dealer/dealer_portrait_normal.png" id="1_arhhi"]
 [ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://c4gwwno17mwg5" path="res://assets/ui/titlescreen/new/catnip_dealer_main_menu_portrait.png" id="2_portrait"]
 
 [resource]
 script = ExtResource("1_script")
 id = "Dealer"
 desc = "def"
-portrait = ExtResource("2_portrait")
+portrait = ExtResource("1_arhhi")
 shoot_name = "Catnip Shot"
 shoot_desc = "Fire a bullet in the aim direction. Cooldown: 0.3s, Magazine: 15"
 ability1_name = "Invisibility"

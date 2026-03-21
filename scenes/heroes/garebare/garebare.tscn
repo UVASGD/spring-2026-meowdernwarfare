@@ -312,6 +312,8 @@ ability2_cooldown = 1.0
 mag_size = 8
 portrait_outline_color = Color(1, 0, 0.32549, 1)
 normal_portrait = ExtResource("2_0r88g")
+portrait_offset = Vector2(50, -70)
+ult_banner_portrait_offset = Vector2(60, 0)
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.2, 0.2)

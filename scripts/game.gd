@@ -311,6 +311,7 @@ func start_solo_vs_ai() -> void:
 	gm.clear_players()
 	
 	var human = gm.spawn_local_player(0)
+	human.set_hero(GameData.train_hero_for_game())
 	
 	for i in range(1, 4):
 		var ai = gm.spawn_ai_player(i, human)
@@ -332,7 +333,8 @@ func start_sandbox() -> void:
 func start_solo_practice() -> void:
 	gm.disconnect_online()
 	gm.clear_players()
-	gm.spawn_local_player(0)
+	var human = gm.spawn_local_player(0)
+	human.set_hero(GameData.train_hero_for_game())
 	var npc = gm.spawn_ai_player(1)
 	npc.is_invulnerable = true
 	npc.modulate = Color(0.7, 0.7, 1.0)

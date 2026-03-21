@@ -16,6 +16,16 @@ var is_online_game: bool = false
 var starter_crops: Array[String] = []
 var pending_starter_crops: Array[String] = []
 
+var train_last_hero: String = ""
+const TRAIN_HERO_ALIAS := {
+	"Anime Girl": "AnimeGirl",
+	"Xyler and Fergus": "XylerFergus",
+	"Elon. Musk.": "ElonMusk",
+	"Alien": "AnimeGirl",
+	"Xyler": "XylerFergus",
+	"Fergus": "XylerFergus",
+}
+
 # Scene transition tracking
 var is_first_load: bool = true
 var _transition_overlay: ColorRect = null
@@ -26,6 +36,7 @@ var _menu_theme: AudioStreamPlayer = null
 func _ready() -> void:
 	_create_transition_overlay()
 	_load_starter_crops()
+	_load_train_hero()
 	_create_menu_theme_player()
 
 func _create_transition_overlay() -> void:
@@ -108,6 +119,29 @@ func save_starter_crops() -> void:
 	config.load("user://settings.cfg")
 	config.set_value("crops", "starters", Array(starter_crops))
 	config.save("user://settings.cfg")
+
+func _load_train_hero() -> void:
+	var config = ConfigFile.new()
+	if config.load("user://settings.cfg") == OK:
+		train_last_hero = _norm_train_hero(str(config.get_value("train", "last_hero", "")))
+
+func save_train_hero() -> void:
+	var config = ConfigFile.new()
+	config.load("user://settings.cfg")
+	config.set_value("train", "last_hero", train_last_hero)
+	config.save("user://settings.cfg")
+
+func set_train_last_hero(game_id: String) -> void:
+	train_last_hero = _norm_train_hero(game_id)
+	save_train_hero()
+
+func train_hero_for_game() -> String:
+	if train_last_hero.is_empty():
+		return TestConfig.DEFAULT_HERO
+	return _norm_train_hero(train_last_hero)
+
+func _norm_train_hero(hero_id: String) -> String:
+	return TRAIN_HERO_ALIAS.get(hero_id, hero_id)
 
 const DEFAULT_STARTERS: Array[String] = ["BlastBerry"]
 

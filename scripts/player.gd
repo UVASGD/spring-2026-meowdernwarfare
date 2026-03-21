@@ -54,6 +54,8 @@ var target_health_bar_color : Color = Color.WHITE;;
 
 @onready var character_profile = $CooldownUI/Profile
 @onready var ult_percent_label = $CooldownUI/Profile/Label
+var _profile_base_pos: Vector2 = Vector2.ZERO
+var _ui_bound_hero: Hero = null
 
 @onready var reload_bar = $HealthBar/ReloadBar
 @onready var reload_bar_animation = $HealthBar/ReloadBar/AnimationPlayer
@@ -132,16 +134,25 @@ var reasonable_timer_max = 1.0
 # Hero name -> Hero scene mapping
 const HERO_SCENES = {
 	"Dealer": preload("res://scenes/heroes/dealer/dealer.tscn"),
-	"Burple": preload("res://scenes/heroes/burple.tscn"),
-	"Alien": preload("res://scenes/heroes/alien.tscn"),
-	"Xyler": preload("res://scenes/heroes/xyler.tscn"),
-	"Fergus": preload("res://scenes/heroes/fergus.tscn"),
-	"LoanShark": preload("res://scenes/heroes/loanshark.tscn"),
+	"Burple": preload("res://scenes/heroes/burple/burple.tscn"),
+	"LoanShark": preload("res://scenes/heroes/loanshark/loanshark.tscn"),
 	"Gooblin": preload("res://scenes/heroes/gooblin/gooblin.tscn"),
-	"Garebare": preload("res://scenes/heroes/garebare.tscn"),
+	"Garebare": preload("res://scenes/heroes/garebare/garebare.tscn"),
+	"AnimeGirl": preload("res://scenes/heroes/animegirl/animegirl.tscn"),
+	"XylerFergus": preload("res://scenes/heroes/xylerfergus/xylerfergus.tscn"),
+	"ElonMusk": preload("res://scenes/heroes/elonmusk/elonmusk.tscn"),
+
+	# Backward-compat names
+	"Anime Girl": preload("res://scenes/heroes/animegirl/animegirl.tscn"),
+	"Xyler and Fergus": preload("res://scenes/heroes/xylerfergus/xylerfergus.tscn"),
+	"Elon. Musk.": preload("res://scenes/heroes/elonmusk/elonmusk.tscn"),
+	"Alien": preload("res://scenes/heroes/animegirl/animegirl.tscn"),
+	"Xyler": preload("res://scenes/heroes/xylerfergus/xylerfergus.tscn"),
+	"Fergus": preload("res://scenes/heroes/xylerfergus/xylerfergus.tscn"),
 }
 
 func _ready() -> void:
+	_profile_base_pos = character_profile.position
 	add_to_group("players")
 	
 	# Default input for testing
@@ -182,7 +193,9 @@ func _ready() -> void:
 	_setup_nametag()
 
 func set_hero(hero_name: String) -> void:
+	var prev = hero
 	if hero:
+		_unbind_hero_ui_signals(hero)
 		hero.queue_free()
 		hero = null
 	
@@ -215,6 +228,12 @@ func set_hero(hero_name: String) -> void:
 	var hitbox = get_node_or_null("CollisionShape2D")
 	if hitbox:
 		hitbox.shape = hero.get_hitbox_shape()
+
+	if prev == _ui_bound_hero:
+		_ui_bound_hero = null
+	if _should_show_local_ui():
+		_bind_hero_ui_signals(hero)
+		_refresh_hero_ui()
 	
 	#print("Player ", player_id, " set hero to ", hero.get_hero_name())
 
@@ -245,26 +264,82 @@ func _setup_local_ui() -> void:
 	if show_ui:
 		_create_tooltip()
 		if hero:
-			var health_amount : int = int(hero.get_health());
-			target_health_bar_value = hero.get_health_percent() * 100
-			target_health_bar_color = Color.WHITE;
-			local_health_bar_label.text = str(health_amount);
-			
-			character_profile.texture = hero.get_hero_default_profile();
-			
-			ability_1_icon.texture = hero.get_hero_ability1_icon();
-			ability_2_icon.texture = hero.get_hero_ability2_icon();
-			ability_1_bar.modulate = hero.get_hero_ui_color();
-			ability_2_bar.modulate = hero.get_hero_ui_color();
-			
-			hero.used_ability_1.connect(ability_1_use_animation);
-			hero.ability_1_refreshed.connect(ability_1_refresh_animation);
-			
-			hero.ran_out_of_ammo.connect(prompt_reload);
-			hero.started_reload.connect(show_reload_bar);
-			hero.finished_reload.connect(hide_reload_bar);
-			hero.finished_reload.connect(update_ammo_left);
-			hero.shot.connect(update_ammo_left);
+			_bind_hero_ui_signals(hero)
+			_refresh_hero_ui()
+
+func _should_show_local_ui() -> bool:
+	if input is LocalInput:
+		return player_id == 0
+	if input is NetworkInput:
+		return input.is_local
+	return false
+
+func _bind_hero_ui_signals(h: Hero) -> void:
+	if h == null:
+		return
+	if _ui_bound_hero != null and _ui_bound_hero != h:
+		_unbind_hero_ui_signals(_ui_bound_hero)
+	_ui_bound_hero = h
+
+	var cb_a1_use := Callable(self, "ability_1_use_animation")
+	if not h.used_ability_1.is_connected(cb_a1_use):
+		h.used_ability_1.connect(cb_a1_use)
+	var cb_a1_ref := Callable(self, "ability_1_refresh_animation")
+	if not h.ability_1_refreshed.is_connected(cb_a1_ref):
+		h.ability_1_refreshed.connect(cb_a1_ref)
+	var cb_out := Callable(self, "prompt_reload")
+	if not h.ran_out_of_ammo.is_connected(cb_out):
+		h.ran_out_of_ammo.connect(cb_out)
+	var cb_start := Callable(self, "show_reload_bar")
+	if not h.started_reload.is_connected(cb_start):
+		h.started_reload.connect(cb_start)
+	var cb_fin := Callable(self, "hide_reload_bar")
+	if not h.finished_reload.is_connected(cb_fin):
+		h.finished_reload.connect(cb_fin)
+	var cb_upd := Callable(self, "update_ammo_left")
+	if not h.finished_reload.is_connected(cb_upd):
+		h.finished_reload.connect(cb_upd)
+	if not h.shot.is_connected(cb_upd):
+		h.shot.connect(cb_upd)
+
+func _unbind_hero_ui_signals(h: Hero) -> void:
+	if h == null:
+		return
+	var cb_a1_use := Callable(self, "ability_1_use_animation")
+	if h.used_ability_1.is_connected(cb_a1_use):
+		h.used_ability_1.disconnect(cb_a1_use)
+	var cb_a1_ref := Callable(self, "ability_1_refresh_animation")
+	if h.ability_1_refreshed.is_connected(cb_a1_ref):
+		h.ability_1_refreshed.disconnect(cb_a1_ref)
+	var cb_out := Callable(self, "prompt_reload")
+	if h.ran_out_of_ammo.is_connected(cb_out):
+		h.ran_out_of_ammo.disconnect(cb_out)
+	var cb_start := Callable(self, "show_reload_bar")
+	if h.started_reload.is_connected(cb_start):
+		h.started_reload.disconnect(cb_start)
+	var cb_fin := Callable(self, "hide_reload_bar")
+	if h.finished_reload.is_connected(cb_fin):
+		h.finished_reload.disconnect(cb_fin)
+	var cb_upd := Callable(self, "update_ammo_left")
+	if h.finished_reload.is_connected(cb_upd):
+		h.finished_reload.disconnect(cb_upd)
+	if h.shot.is_connected(cb_upd):
+		h.shot.disconnect(cb_upd)
+
+func _refresh_hero_ui() -> void:
+	if hero == null:
+		return
+	var health_amount : int = int(hero.get_health())
+	target_health_bar_value = hero.get_health_percent() * 100
+	target_health_bar_color = Color.WHITE
+	local_health_bar_label.text = str(health_amount)
+	character_profile.texture = hero.get_hero_default_profile()
+	character_profile.position = _profile_base_pos + hero.get_hero_portrait_offset()
+	ability_1_icon.texture = hero.get_hero_ability1_icon()
+	ability_2_icon.texture = hero.get_hero_ability2_icon()
+	ability_1_bar.modulate = hero.get_hero_ui_color()
+	ability_2_bar.modulate = hero.get_hero_ui_color()
+	update_ammo_left()
 
 func _setup_nametag() -> void:
 	nametag = health_bar.get_node_or_null("Nametag") if health_bar else null
@@ -593,6 +668,7 @@ func _update_cooldown_ui() -> void:
 		character_profile.texture = hero.get_hero_ult_profile();
 	else:
 		character_profile.texture = hero.get_hero_default_profile();
+	character_profile.position = _profile_base_pos + hero.get_hero_portrait_offset()
 	
 	if ult_bar:
 		ult_bar.value = hero.get_ult_percent()

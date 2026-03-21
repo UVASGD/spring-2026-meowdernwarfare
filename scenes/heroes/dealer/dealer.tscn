@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://dfnrmqfkj1p64"]
+[gd_scene load_steps=10 format=3 uid="uid://dfnrmqfkj1p64"]
 
 [ext_resource type="Script" uid="uid://bqcgmjarjiwq4" path="res://scripts/heroes/dealer.gd" id="1_mxom3"]
 [ext_resource type="Texture2D" uid="uid://3ynu7rvu5b7m" path="res://assets/sprites/dealer/mousie.png" id="2_5casg"]
+[ext_resource type="Texture2D" uid="uid://c6uic0e3x023" path="res://assets/sprites/dealer/dealer_portrait_normal.png" id="2_6dwrx"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_iv3g0"]
 atlas = ExtResource("2_5casg")
@@ -57,6 +58,10 @@ invis_duration = 5.0
 shoot_cooldown = 0.25
 ability1_cooldown = 15.0
 ult_points_on_hit = 10
+portrait_outline_color = Color(0.542343, 0.0411495, 0.523819, 1)
+normal_portrait = ExtResource("2_6dwrx")
+portrait_offset = Vector2(100, -50)
+ult_banner_portrait_offset = Vector2(-150, 0)
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.3, 0.3)

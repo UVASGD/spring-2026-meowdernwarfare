@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://blu0gxdbmr4db" path="res://scripts/heroes/alien.gd" id="1_script"]
 
-[node name="Alien" type="Node2D"]
+[node name="AnimeGirl" type="Node2D"]
 script = ExtResource("1_script")
 max_health = 80.0
 move_speed_mult = 1.2

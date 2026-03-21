@@ -4,12 +4,13 @@ signal kick_requested(player_id: int)
 
 const HERO_SCENE_MAP := {
 	"Dealer": "res://scenes/heroes/dealer/dealer.tscn",
-	"Burple": "res://scenes/heroes/burple.tscn",
-	"ElonMusk": "res://scenes/heroes/alien.tscn",
-	"XylerFergus": "res://scenes/heroes/xyler.tscn",
-	"LoanShark": "res://scenes/heroes/loanshark.tscn",
+	"Burple": "res://scenes/heroes/burple/burple.tscn",
+	"ElonMusk": "res://scenes/heroes/elonmusk/elonmusk.tscn",
+	"XylerFergus": "res://scenes/heroes/xylerfergus/xylerfergus.tscn",
+	"LoanShark": "res://scenes/heroes/loanshark/loanshark.tscn",
 	"Gooblin": "res://scenes/heroes/gooblin/gooblin.tscn",
-	"Garebare": "res://scenes/heroes/garebare.tscn",
+	"Garebare": "res://scenes/heroes/garebare/garebare.tscn",
+	"AnimeGirl": "res://scenes/heroes/animegirl/animegirl.tscn",
 }
 static var _portrait_cache: Dictionary = {}
 static var _color_cache: Dictionary = {}

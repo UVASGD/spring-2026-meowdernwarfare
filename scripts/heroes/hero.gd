@@ -48,6 +48,8 @@ signal used_ult
 @export var portrait_outline_color:Color = Color(1,1,1,1)
 @export var normal_portrait: Texture2D
 @export var ult_portrait: Texture2D
+@export var portrait_offset: Vector2 = Vector2.ZERO
+@export var ult_banner_portrait_offset: Vector2 = Vector2.ZERO
 # State
 var health: float = 100.0
 var shoot_cd: float = 0.0
@@ -431,6 +433,12 @@ func get_hero_ult_profile() -> Texture2D:
 	if normal_portrait:
 		return normal_portrait
 	return PROFILE_ANGRY_PLACEHOLDER;
+
+func get_hero_portrait_offset() -> Vector2:
+	return portrait_offset
+
+func get_hero_ult_banner_portrait_offset() -> Vector2:
+	return ult_banner_portrait_offset
 
 func get_hero_ability1_icon() -> Texture2D:
 	return ABILITY_ICON_TEMP_1;
