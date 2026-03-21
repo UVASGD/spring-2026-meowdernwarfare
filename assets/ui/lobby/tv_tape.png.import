@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dig4h0jji0s8o"
-path="res://.godot/imported/tv_ready_indicator.png-7c969f6570062c453dc5cf63582ef1a6.ctex"
+uid="uid://bsh8fn5fhtffu"
+path="res://.godot/imported/tv_tape.png-5c5663dd8c82cdbc1683fbee1ac7eb21.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/tv_ready_indicator.png"
-dest_files=["res://.godot/imported/tv_ready_indicator.png-7c969f6570062c453dc5cf63582ef1a6.ctex"]
+source_file="res://assets/ui/lobby/tv_tape.png"
+dest_files=["res://.godot/imported/tv_tape.png-5c5663dd8c82cdbc1683fbee1ac7eb21.ctex"]
 
 [params]
 

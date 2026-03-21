@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dadbs8hodkik8"
-path="res://.godot/imported/1920x1080-white-solid-color-background.jpg-4ef8820ef9a5fd40d61541e67a40298b.ctex"
+uid="uid://dxourfsngrc7h"
+path="res://.godot/imported/dither_it_spritesheet-table-427-240 (2).png-d89b5cf850264502575fe8316051653f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/1920x1080-white-solid-color-background.jpg"
-dest_files=["res://.godot/imported/1920x1080-white-solid-color-background.jpg-4ef8820ef9a5fd40d61541e67a40298b.ctex"]
+source_file="res://assets/ui/lobby/dither_it_spritesheet-table-427-240 (2).png"
+dest_files=["res://.godot/imported/dither_it_spritesheet-table-427-240 (2).png-d89b5cf850264502575fe8316051653f.ctex"]
 
 [params]
 

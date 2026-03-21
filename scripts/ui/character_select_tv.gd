@@ -37,7 +37,7 @@ func turn_on(username: String, is_host: bool) -> void:
 	host_ind.visible = is_host
 	ready_ind.modulate = Color(0.5, 0.5, 0.5)
 	static_overlay.visible = true
-	screenlight.energy = 7
+	screenlight.energy = 11
 
 func turn_off() -> void:
 	on_node.hide()

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://wijbpgs0wox4"
-path="res://.godot/imported/tv_on.png-152477c5cc190170ca554c815244afae.ctex"
+uid="uid://chkwyy87q6ykq"
+path="res://.godot/imported/dither_it_spritesheet-table-427-240 (1).png-a576a89f2b3fb415f18107b09cbac17e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/tv_on.png"
-dest_files=["res://.godot/imported/tv_on.png-152477c5cc190170ca554c815244afae.ctex"]
+source_file="res://assets/ui/lobby/dither_it_spritesheet-table-427-240 (1).png"
+dest_files=["res://.godot/imported/dither_it_spritesheet-table-427-240 (1).png-a576a89f2b3fb415f18107b09cbac17e.ctex"]
 
 [params]
 

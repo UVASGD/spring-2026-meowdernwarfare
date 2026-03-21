@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cb247jtkwuept"
-path="res://.godot/imported/off_button_on.png-866b2eb8eb719bcadb57dcedd1845206.ctex"
+uid="uid://wijbpgs0wox4"
+path="res://.godot/imported/tv_on.png-f754ce61ef28f1943ee63e71fa5f897f.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/off_button_on.png"
-dest_files=["res://.godot/imported/off_button_on.png-866b2eb8eb719bcadb57dcedd1845206.ctex"]
+source_file="res://assets/ui/lobby/tv_on.png"
+dest_files=["res://.godot/imported/tv_on.png-f754ce61ef28f1943ee63e71fa5f897f.ctex"]
 
 [params]
 

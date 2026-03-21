@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cmdqfxf315skv"
-path="res://.godot/imported/off_button_disabled.png-4983223ef2605c9f1b28ca312e1d170d.ctex"
+uid="uid://dadbs8hodkik8"
+path="res://.godot/imported/1920x1080-white-solid-color-background.jpg-eecdb06776eccd45a0cdb0957300096a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/off_button_disabled.png"
-dest_files=["res://.godot/imported/off_button_disabled.png-4983223ef2605c9f1b28ca312e1d170d.ctex"]
+source_file="res://assets/ui/lobby/1920x1080-white-solid-color-background.jpg"
+dest_files=["res://.godot/imported/1920x1080-white-solid-color-background.jpg-eecdb06776eccd45a0cdb0957300096a.ctex"]
 
 [params]
 

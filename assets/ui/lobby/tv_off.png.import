@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dwnbplt235ivv"
-path="res://.godot/imported/tv_lightmap.png-070dd840787140b0d1b72e62b1d862a4.ctex"
+uid="uid://bvucgkdeduint"
+path="res://.godot/imported/tv_off.png-691c0bb5008c53b1d4e954993ea5041c.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/ui/tv_lightmap.png"
-dest_files=["res://.godot/imported/tv_lightmap.png-070dd840787140b0d1b72e62b1d862a4.ctex"]
+source_file="res://assets/ui/lobby/tv_off.png"
+dest_files=["res://.godot/imported/tv_off.png-691c0bb5008c53b1d4e954993ea5041c.ctex"]
 
 [params]
 

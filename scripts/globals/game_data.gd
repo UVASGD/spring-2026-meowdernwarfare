@@ -37,6 +37,7 @@ func _create_transition_overlay() -> void:
 	_transition_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_transition_overlay.color = Color.BLACK
 	_transition_overlay.visible = false
+	_transition_overlay.light_mask = 0
 	
 	var shader = load("res://assets/shaders/scene_wipe.gdshader")
 	if shader:
