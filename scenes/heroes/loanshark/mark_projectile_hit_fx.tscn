@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://bbjikpslaqegb"]
+
+[ext_resource type="Script" path="res://scenes/heroes/loanshark/mark_projectile_hit_fx.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cdmsalqy06w63" path="res://assets/sprites/loanshark/marked icon/mark_frame_1.png" id="2_tex"]
+
+[node name="MarkProjectileHitFx" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_tex")

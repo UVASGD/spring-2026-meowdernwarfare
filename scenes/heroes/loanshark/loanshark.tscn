@@ -1,93 +1,93 @@
 [gd_scene load_steps=40 format=3 uid="uid://bm518183utayv"]
 
-[ext_resource type="Script" uid="uid://kb44jk3w67cb" path="res://scripts/heroes/loanshark.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://cq3rks3mbbrif" path="res://assets/sprites/loanshark/reap animation/sharkbite_frame_1.png" id="3_e4u3g"]
-[ext_resource type="Texture2D" uid="uid://dii78tjrxsast" path="res://assets/sprites/loanshark/melee animation/melee_1.png" id="3_he6r5"]
-[ext_resource type="Texture2D" uid="uid://f2esd0yfirxq" path="res://assets/sprites/loanshark/reap animation/sharkbite_frame_2.png" id="4_4pbhw"]
-[ext_resource type="Texture2D" uid="uid://fsqxbqo1k2t3" path="res://assets/sprites/loanshark/melee animation/melee_2.png" id="4_sgv4u"]
-[ext_resource type="Texture2D" uid="uid://dqb7vlm6nqvts" path="res://assets/sprites/loanshark/reap animation/sharkbite_frame_3.png" id="5_6kx2j"]
-[ext_resource type="Texture2D" uid="uid://bv4xspvg3fuit" path="res://assets/sprites/loanshark/melee animation/melee_3.png" id="5_8flhq"]
-[ext_resource type="Texture2D" uid="uid://d1jogyvvvpdl3" path="res://assets/sprites/loanshark/melee animation/melee_4.png" id="6_di7q2"]
-[ext_resource type="Texture2D" uid="uid://c2458foa4ds34" path="res://assets/sprites/loanshark/reap animation/sharkbite_frame_4.png" id="6_kuev5"]
-[ext_resource type="Texture2D" uid="uid://ct13w145vql0s" path="res://assets/sprites/loanshark/reap animation/sharkbite_frame_5.png" id="7_0flp1"]
-[ext_resource type="Texture2D" uid="uid://bg7uu37pfwp68" path="res://assets/sprites/loanshark/melee animation/melee_5.png" id="7_yln50"]
-[ext_resource type="Texture2D" uid="uid://qsyqys7j2edl" path="res://assets/sprites/loanshark/walk frames/loan_walk_1.png" id="8_he6r5"]
-[ext_resource type="Texture2D" uid="uid://cms0ehosxge4w" path="res://assets/sprites/loanshark/melee animation/melee_6.png" id="8_rnqa7"]
-[ext_resource type="Texture2D" uid="uid://c5s58li1gkty1" path="res://assets/sprites/loanshark/walk frames/loan_walk_2.png" id="9_sgv4u"]
-[ext_resource type="Texture2D" uid="uid://bd2plqukl38x3" path="res://assets/sprites/loanshark/walk frames/loan_walk_3.png" id="10_8flhq"]
-[ext_resource type="Texture2D" uid="uid://r77w0t2ljyss" path="res://assets/sprites/loanshark/walk frames/loan_walk_4.png" id="11_di7q2"]
-[ext_resource type="PackedScene" uid="uid://cjivs3yh3w4tm" path="res://scenes/hurtbox.tscn" id="17_he6r5"]
+[ext_resource type="Script" uid="uid://kb44jk3w67cb" path="res://scripts/heroes/loanshark.gd" id="1_raqiv"]
+[ext_resource type="Texture2D" uid="uid://qsyqys7j2edl" path="res://assets/sprites/loanshark/walk frames/loan_walk_1.png" id="2_2uins"]
+[ext_resource type="Texture2D" uid="uid://dii78tjrxsast" path="res://assets/sprites/loanshark/melee animation/melee_1.png" id="3_b4b3o"]
+[ext_resource type="Texture2D" uid="uid://fsqxbqo1k2t3" path="res://assets/sprites/loanshark/melee animation/melee_2.png" id="4_6s4jh"]
+[ext_resource type="Texture2D" uid="uid://bv4xspvg3fuit" path="res://assets/sprites/loanshark/melee animation/melee_3.png" id="5_q2224"]
+[ext_resource type="Texture2D" uid="uid://d1jogyvvvpdl3" path="res://assets/sprites/loanshark/melee animation/melee_4.png" id="6_cukxx"]
+[ext_resource type="Texture2D" uid="uid://bg7uu37pfwp68" path="res://assets/sprites/loanshark/melee animation/melee_5.png" id="7_84q18"]
+[ext_resource type="Texture2D" uid="uid://cms0ehosxge4w" path="res://assets/sprites/loanshark/melee animation/melee_6.png" id="8_uyrop"]
+[ext_resource type="Texture2D" uid="uid://cq3rks3mbbrif" path="res://assets/sprites/loanshark/reap animation/sharkbite_frame_1.png" id="9_5ippq"]
+[ext_resource type="Texture2D" uid="uid://f2esd0yfirxq" path="res://assets/sprites/loanshark/reap animation/sharkbite_frame_2.png" id="10_yvu3h"]
+[ext_resource type="Texture2D" uid="uid://dqb7vlm6nqvts" path="res://assets/sprites/loanshark/reap animation/sharkbite_frame_3.png" id="11_ujw2e"]
+[ext_resource type="Texture2D" uid="uid://c2458foa4ds34" path="res://assets/sprites/loanshark/reap animation/sharkbite_frame_4.png" id="12_0v68v"]
+[ext_resource type="Texture2D" uid="uid://ct13w145vql0s" path="res://assets/sprites/loanshark/reap animation/sharkbite_frame_5.png" id="13_53axr"]
+[ext_resource type="Texture2D" uid="uid://c5s58li1gkty1" path="res://assets/sprites/loanshark/walk frames/loan_walk_2.png" id="14_cdicx"]
+[ext_resource type="Texture2D" uid="uid://bd2plqukl38x3" path="res://assets/sprites/loanshark/walk frames/loan_walk_3.png" id="15_ej6rm"]
+[ext_resource type="Texture2D" uid="uid://r77w0t2ljyss" path="res://assets/sprites/loanshark/walk frames/loan_walk_4.png" id="16_3ndub"]
+[ext_resource type="PackedScene" uid="uid://cjivs3yh3w4tm" path="res://scenes/hurtbox.tscn" id="17_8jmhs"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_0flp1"]
-atlas = ExtResource("8_he6r5")
+atlas = ExtResource("2_2uins")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_713vh"]
-atlas = ExtResource("4_sgv4u")
+atlas = ExtResource("4_6s4jh")
 region = Rect2(0, 0, 600, 600)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_5vfep"]
-atlas = ExtResource("5_8flhq")
+atlas = ExtResource("5_q2224")
 region = Rect2(0, 0, 600, 600)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j34ix"]
-atlas = ExtResource("6_di7q2")
+atlas = ExtResource("6_cukxx")
 region = Rect2(0, 0, 600, 600)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_fullv"]
-atlas = ExtResource("7_yln50")
+atlas = ExtResource("7_84q18")
 region = Rect2(0, 0, 600, 600)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_udnv0"]
-atlas = ExtResource("8_rnqa7")
+atlas = ExtResource("8_uyrop")
 region = Rect2(0, 0, 600, 600)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_he6r5"]
-atlas = ExtResource("4_sgv4u")
+atlas = ExtResource("4_6s4jh")
 region = Rect2(0, 0, 600, 600)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rnqa7"]
-atlas = ExtResource("3_e4u3g")
+atlas = ExtResource("9_5ippq")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_y25vs"]
-atlas = ExtResource("4_4pbhw")
+atlas = ExtResource("10_yvu3h")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_di7q2"]
-atlas = ExtResource("4_4pbhw")
+atlas = ExtResource("10_yvu3h")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4hism"]
-atlas = ExtResource("5_6kx2j")
+atlas = ExtResource("11_ujw2e")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_6ueb8"]
-atlas = ExtResource("6_kuev5")
+atlas = ExtResource("12_0v68v")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_oxqi2"]
-atlas = ExtResource("7_0flp1")
+atlas = ExtResource("13_53axr")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8flhq"]
-atlas = ExtResource("3_e4u3g")
+atlas = ExtResource("9_5ippq")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jht6k"]
-atlas = ExtResource("8_he6r5")
+atlas = ExtResource("2_2uins")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_e7m0o"]
-atlas = ExtResource("9_sgv4u")
+atlas = ExtResource("14_cdicx")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_71870"]
-atlas = ExtResource("10_8flhq")
+atlas = ExtResource("15_ej6rm")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_igxca"]
-atlas = ExtResource("11_di7q2")
+atlas = ExtResource("16_3ndub")
 region = Rect2(0, 0, 500, 500)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_713vh"]
@@ -102,7 +102,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("3_he6r5")
+"texture": ExtResource("3_b4b3o")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_713vh")
@@ -211,9 +211,10 @@ _data = {
 
 [node name="LoanShark" type="Node2D"]
 scale = Vector2(0.85, 0.85)
-script = ExtResource("1_script")
+script = ExtResource("1_raqiv")
 max_health = 85.0
 ability1_cooldown = 7.0
+ability2_cooldown = 9.0
 reload_time = 1.6
 mag_size = 14
 ability1_anim_duration = 1.0
@@ -231,7 +232,7 @@ libraries = {
 &"": SubResource("AnimationLibrary_di7q2")
 }
 
-[node name="hurtbox" parent="." instance=ExtResource("17_he6r5")]
+[node name="hurtbox" parent="." instance=ExtResource("17_8jmhs")]
 damage = 20
 
 [node name="Area2D" parent="hurtbox" index="0"]

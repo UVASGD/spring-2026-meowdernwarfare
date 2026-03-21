@@ -53,10 +53,6 @@ animations = [{
 
 [node name="Dealer" type="Node2D"]
 script = ExtResource("1_mxom3")
-invis_duration = 5.0
-shoot_cooldown = 0.25
-ability1_cooldown = 15.0
-ult_points_on_hit = 10
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.3, 0.3)

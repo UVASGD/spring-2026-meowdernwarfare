@@ -209,6 +209,14 @@ func can_ability2() -> bool:
 func can_ult() -> bool:
 	return ult_points >= max_ult_points and not _is_fie_suppressed() and not _is_action_blocked()
 
+## If false, the player cannot use the default movement dash (space). Ability-based dashes still work.
+func allows_movement_dash() -> bool:
+	return true
+
+## If false, hero has no magazine/reload (e.g. pure melee); UI and input skip ammo/reload.
+func uses_gun_ammo() -> bool:
+	return true
+
 func shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	if not can_shoot():
 		return
@@ -290,6 +298,13 @@ func add_ult_points(amount: int) -> void:
 
 func get_ult_percent() -> float:
 	return float(ult_points) / float(max_ult_points) if max_ult_points > 0 else 0.0
+
+## Sets ability 1 cooldown to ready and emits ability_1_refreshed if it was on cooldown.
+func refresh_ability1_cooldown() -> void:
+	var was_on_cooldown := ability1_cd > 0.0
+	ability1_cd = 0.0
+	if was_on_cooldown:
+		ability_1_refreshed.emit()
 
 # Util
 

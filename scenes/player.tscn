@@ -1,10 +1,11 @@
-[gd_scene load_steps=34 format=3 uid="uid://bmq5l1vihuc5d"]
+[gd_scene load_steps=35 format=3 uid="uid://bmq5l1vihuc5d"]
 
 [ext_resource type="Script" uid="uid://ffhwp6btwq2k" path="res://scripts/player.gd" id="1_onrkg"]
 [ext_resource type="Texture2D" uid="uid://d4dfsjrtf3ya7" path="res://assets/ui/player/profile_placeholder.png" id="2_g2els"]
 [ext_resource type="FontFile" uid="uid://dt2nbaox60w53" path="res://assets/ui/fonts/BATTLESANSSERIF.OTF" id="3_qhqgy"]
 [ext_resource type="Texture2D" uid="uid://d0kdrsiknvaaw" path="res://assets/ui/player/ability_icon_temp1.png" id="4_dqkch"]
 [ext_resource type="Texture2D" uid="uid://cyhotyp75ff0t" path="res://assets/ui/player/ability_icon_temp2.png" id="5_qlg0r"]
+[ext_resource type="Texture2D" uid="uid://cdmsalqy06w63" path="res://assets/sprites/loanshark/marked icon/mark_frame_1.png" id="6_mark_icon"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hqtel"]
 radius = 15.0
@@ -497,6 +498,19 @@ layout_mode = 0
 offset_right = 50.0
 offset_bottom = 10.0
 color = Color(0.2, 0.8, 0.2, 1)
+
+[node name="MarkIndicator" type="TextureRect" parent="HealthBar"]
+visible = false
+z_index = 1
+layout_mode = 0
+offset_left = 5.0
+offset_top = -42.0
+offset_right = 45.0
+offset_bottom = -22.0
+mouse_filter = 2
+texture = ExtResource("6_mark_icon")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Nametag" type="Label" parent="HealthBar"]
 layout_mode = 0
