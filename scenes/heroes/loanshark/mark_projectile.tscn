@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://ddnj0h8mergu0"]
+
+[ext_resource type="Script" uid="uid://c3y5dl277do1q" path="res://scenes/heroes/loanshark/mark_projectile.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cdmsalqy06w63" path="res://assets/sprites/loanshark/marked icon/mark_frame_1.png" id="2_kw07b"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kw07b"]
+size = Vector2(80, 63)
+
+[node name="MarkProjectile" type="Area2D"]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.4, 0.75, 1, 1)
+rotation = 4.71239
+texture = ExtResource("2_kw07b")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(3, -0.5)
+shape = SubResource("RectangleShape2D_kw07b")

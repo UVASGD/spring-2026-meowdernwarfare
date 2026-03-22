@@ -1,0 +1,58 @@
+[gd_scene load_steps=13 format=3 uid="uid://cvipejxu5rerb"]
+
+[ext_resource type="Texture2D" uid="uid://6xl3r2oktajq" path="res://assets/sprites/loanshark/chomp damage animation/chomp_frame_1.png" id="1_4yxrj"]
+[ext_resource type="Texture2D" uid="uid://boou27q3ac5o6" path="res://assets/sprites/loanshark/chomp damage animation/chomp_frame_2.png" id="2_snokp"]
+[ext_resource type="Texture2D" uid="uid://2gpyy1yiwow5" path="res://assets/sprites/loanshark/chomp damage animation/chomp_frame_3.png" id="3_y4ago"]
+[ext_resource type="Texture2D" uid="uid://ubl6vmc4bcbt" path="res://assets/sprites/loanshark/chomp damage animation/chomp_frame_4.png" id="4_pfiom"]
+[ext_resource type="Texture2D" uid="uid://ds4qfqe4i7e73" path="res://assets/sprites/loanshark/chomp damage animation/chomp_frame_5.png" id="5_ivmio"]
+[ext_resource type="Script" uid="uid://desre0gxtms2t" path="res://scenes/heroes/loanshark/chomp_effect.gd" id="6_snokp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1fhxe"]
+atlas = ExtResource("1_4yxrj")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lsr1k"]
+atlas = ExtResource("2_snokp")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_10dun"]
+atlas = ExtResource("3_y4ago")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yjsxe"]
+atlas = ExtResource("4_pfiom")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_38lfn"]
+atlas = ExtResource("5_ivmio")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_p7kgb"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1fhxe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lsr1k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_10dun")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yjsxe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_38lfn")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
+
+[node name="ChompEffect" type="AnimatedSprite2D"]
+z_index = 5
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_p7kgb")
+frame_progress = 0.298981
+script = ExtResource("6_snokp")

@@ -31,6 +31,9 @@ var cooldown_ui: CanvasLayer = null
 var shoot_cd_bar: ProgressBar = null
 var ability1_cd_bar: ProgressBar = null
 var ability2_cd_bar: ProgressBar = null
+var ability2_charge_bar_1: ProgressBar = null
+var ability2_charge_bar_2: ProgressBar = null
+var loan_shark_charge_row: Control = null
 var reload_cd_bar: ProgressBar = null
 var dash_cd_bar: ProgressBar = null
 var ammo_label: Label = null
@@ -39,6 +42,9 @@ var ult_label: Label = null
 var tooltip_layer: CanvasLayer = null
 var tooltip_label: RichTextLabel = null
 var nametag: Label = null
+var mark_indicator: CanvasItem = null
+
+const MarkProjectileHitFxScene = preload("res://scenes/heroes/loanshark/mark_projectile_hit_fx.tscn")
 
 @onready var local_health_bar = $CooldownUI/HealthBar
 var target_health_bar_value : float;
@@ -166,6 +172,7 @@ func _ready() -> void:
 	if health_bar:
 		health_bar.top_level = true
 		health_bar_fill = health_bar.get_node_or_null("Fill")
+		mark_indicator = health_bar.get_node_or_null("MarkIndicator")
 	
 	# Camera follows only local players
 	camera = get_node_or_null("Camera2D")
@@ -178,6 +185,9 @@ func _ready() -> void:
 			shoot_cd_bar = container.get_node_or_null("ShootCD/Bar")
 			ability1_cd_bar = container.get_node_or_null("Ability1CD/Bar")
 			ability2_cd_bar = container.get_node_or_null("Ability2CD/Bar")
+			loan_shark_charge_row = container.get_node_or_null("Ability2CD/LoanSharkCharges")
+			ability2_charge_bar_1 = container.get_node_or_null("Ability2CD/LoanSharkCharges/Charge1")
+			ability2_charge_bar_2 = container.get_node_or_null("Ability2CD/LoanSharkCharges/Charge2")
 			reload_cd_bar = container.get_node_or_null("ReloadCD/Bar")
 			dash_cd_bar = container.get_node_or_null("DashCD/Bar")
 			ammo_label = container.get_node_or_null("Ammo/Count")
@@ -236,7 +246,61 @@ func set_hero(hero_name: String) -> void:
 		_bind_hero_ui_signals(hero)
 		_refresh_hero_ui()
 	
-	#print("Player ", player_id, " set hero to ", hero.get_hero_name())
+	_refresh_ability2_charge_ui_visibility()
+	_refresh_movement_dash_ui_visibility()
+	_refresh_gun_ui_visibility()
+
+func _refresh_gun_ui_visibility() -> void:
+	if hero == null:
+		return
+	var gun := hero.uses_gun_ammo()
+	if cooldown_ui:
+		var c := cooldown_ui.get_node_or_null("Container")
+		if c:
+			var rc := c.get_node_or_null("ReloadCD")
+			if rc:
+				rc.visible = gun and _show_aux_ui
+			var am := c.get_node_or_null("Ammo")
+			if am:
+				am.visible = gun and _show_aux_ui
+	if reload_bar:
+		reload_bar.visible = gun and _show_aux_ui
+	if reload_prompt:
+		reload_prompt.visible = gun and _show_aux_ui
+	if ammo_left:
+		ammo_left.visible = gun and _show_aux_ui
+
+func _refresh_ability2_charge_ui_visibility() -> void:
+	if ability2_cd_bar == null:
+		return
+	var a2_parent := ability2_cd_bar.get_parent()
+	if a2_parent == null:
+		return
+	if hero is HeroLoanShark:
+		a2_parent.visible = hero.ability2_cooldown > 0
+		ability2_cd_bar.visible = false
+		if loan_shark_charge_row:
+			loan_shark_charge_row.visible = true
+	elif hero != null:
+		a2_parent.visible = hero.ability2_cooldown > 0
+		ability2_cd_bar.visible = hero.ability2_cooldown > 0
+		if loan_shark_charge_row:
+			loan_shark_charge_row.visible = false
+	else:
+		a2_parent.visible = false
+		if loan_shark_charge_row:
+			loan_shark_charge_row.visible = false
+
+func _refresh_movement_dash_ui_visibility() -> void:
+	if dash_cd_bar == null:
+		return
+	var dash_parent := dash_cd_bar.get_parent()
+	if dash_parent == null:
+		return
+	if hero and not hero.allows_movement_dash():
+		dash_parent.visible = false
+	else:
+		dash_parent.visible = _show_aux_ui
 
 func _setup_local_ui() -> void:
 	var show_ui = false
@@ -250,9 +314,6 @@ func _setup_local_ui() -> void:
 	else:
 		show_aux = false
 	
-	ammo_left.visible = show_aux
-	reload_bar.visible = show_aux
-	reload_prompt.visible = show_aux
 	_show_aux_ui = show_aux
 	
 	if camera:
@@ -342,6 +403,10 @@ func _refresh_hero_ui() -> void:
 	ability_2_bar.modulate = hero.get_hero_ui_color()
 	update_ammo_left()
 
+	_refresh_movement_dash_ui_visibility()
+	_refresh_ability2_charge_ui_visibility()
+	_refresh_gun_ui_visibility()
+
 func _setup_nametag() -> void:
 	nametag = health_bar.get_node_or_null("Nametag") if health_bar else null
 	if nametag == null:
@@ -369,6 +434,12 @@ func _refresh_world_health_bar() -> void:
 		bg.visible = show_enemy
 	if nametag:
 		nametag.visible = show_enemy
+	_refresh_mark_indicator_visibility()
+
+func _refresh_mark_indicator_visibility() -> void:
+	if mark_indicator == null or health_bar == null:
+		return
+	mark_indicator.visible = is_marked and health_bar.visible
 
 func _physics_process(delta: float) -> void:
 	if input == null:
@@ -450,6 +521,12 @@ func _update_timers(delta: float) -> void:
 		if blind_timer <= 0:
 			_end_blind_effect()
 
+	# Marked effect (Loan Shark)
+	if marked_timer > 0:
+		marked_timer -= delta
+		if marked_timer <= 0:
+			_end_marked_effect()
+
 	# Stun timer
 	if stun_timer > 0:
 		stun_timer -= delta
@@ -504,9 +581,10 @@ func _handle_actions(consumed_shoot := false) -> void:
 	if is_dying or is_dead():
 		return
 
-	# Dash
+	# Dash (disabled for heroes that only use ability-based dashes, e.g. Loan Shark)
 	if input.dash_just and dash_cd_timer <= 0 and not is_dashing and not is_dead():
-		_start_dash()
+		if hero == null or hero.allows_movement_dash():
+			_start_dash()
 	
 	if hero == null:
 		return
@@ -520,7 +598,7 @@ func _handle_actions(consumed_shoot := false) -> void:
 		hero.ability2(aim_dir, get_aim_position())
 	if input.ult_just:
 		hero.ult(aim_dir, get_aim_position())
-	if input.reload_just:
+	if input.reload_just and hero.uses_gun_ammo():
 		hero.reload()
 
 func _start_dash() -> void:
@@ -531,6 +609,7 @@ func _start_dash() -> void:
 	dashed.emit()
 
 func _on_hero_died() -> void:
+	clear_mark_effect()
 	print("[PLAYER] _on_hero_died: pid=", player_id, " crop_count=", crop_count, " is_local=", _is_local_player())
 	died.emit()
 	is_dying = true
@@ -577,11 +656,13 @@ func get_aim_position() -> Vector2:
 func is_moving() -> bool:
 	return input != null and input.move_input.length() > 0.1
 
-func take_damage(amount: float, attacker: Player = null) -> void:
-	if is_dead() or in_spectate_mode or is_awaiting_respawn or is_invulnerable: return
+## Returns whether damage was applied (false if dead, invulnerable, dashing with i-frames, etc.).
+func take_damage(amount: float, attacker: Player = null) -> bool:
+	if is_dead() or in_spectate_mode or is_awaiting_respawn or is_invulnerable:
+		return false
 	if is_dashing:
 		on_bullet_dodged()
-		return
+		return false
 	
 	if hero:
 		if attacker:
@@ -590,6 +671,8 @@ func take_damage(amount: float, attacker: Player = null) -> void:
 		took_damage.emit(amount)
 		if attacker and attacker.hero:
 			attacker.hero.add_ult_points(attacker.hero.ult_points_on_hit)
+		return true
+	return false
 
 func on_bullet_dodged() -> void:
 	if hero:
@@ -651,23 +734,47 @@ func _update_cooldown_ui() -> void:
 	
 	
 	if ability2_cd_bar:
-		if hero.ability2_cooldown > 0:
+		if hero is HeroLoanShark:
+			var ls := hero as HeroLoanShark
+			ability2_cd_bar.get_parent().visible = hero.ability2_cooldown > 0
+			ability2_cd_bar.visible = false
+			if loan_shark_charge_row:
+				loan_shark_charge_row.visible = true
+			if ability2_charge_bar_1:
+				ability2_charge_bar_1.value = clamp(ls.get_ability2_charge_slot_recharge_progress(0), 0.0, 1.0)
+			if ability2_charge_bar_2:
+				ability2_charge_bar_2.value = clamp(ls.get_ability2_charge_slot_recharge_progress(1), 0.0, 1.0)
+		elif hero.ability2_cooldown > 0:
+			ability2_cd_bar.visible = true
 			var a2_pct = 1.0 - (hero.ability2_cd / hero.ability2_cooldown)
 			ability2_cd_bar.value = clamp(a2_pct, 0.0, 1.0)
 			ability2_cd_bar.get_parent().visible = true
+			if loan_shark_charge_row:
+				loan_shark_charge_row.visible = false
 		else:
 			ability2_cd_bar.get_parent().visible = false
+			if loan_shark_charge_row:
+				loan_shark_charge_row.visible = false
 	
-	if reload_cd_bar:
+	if ability_2_bar:
+		if hero is HeroLoanShark:
+			var ls2 := hero as HeroLoanShark
+			ability_2_bar.value = float(ls2.ability2_charges) / 2.0
+			ability_2_bar.modulate.a = 0.35 if ls2.ability2_charges <= 0 else 1.0
+		elif hero and hero.ability2_cooldown > 0:
+			var a2_pct2 = 1.0 - (hero.ability2_cd / hero.ability2_cooldown)
+			ability_2_bar.modulate.a = 0.35 if a2_pct2 < 1.0 else 1.0
+	
+	if reload_cd_bar and hero.uses_gun_ammo():
 		var reload_pct = 1.0 - (hero.reload_cd / hero.reload_time) if hero.reload_time > 0 else 1.0
 		reload_cd_bar.value = clamp(reload_pct, 0.0, 1.0)
 		reload_bar.value = clamp(reload_pct, 0.15, 1.0);
 		
-	if dash_cd_bar:
+	if dash_cd_bar and hero and hero.allows_movement_dash():
 		var dash_pct = 1.0 - (dash_cd_timer / dash_cooldown) if dash_cooldown > 0 else 1.0
 		dash_cd_bar.value = clamp(dash_pct, 0.0, 1.0)
 	
-	if ammo_label:
+	if ammo_label and hero.uses_gun_ammo():
 		ammo_label.text = "%d/%d" % [hero.ammo, hero.mag_size]
 	
 	ult_percent_label.text = str(int(hero.get_ult_percent() * 100));
@@ -992,6 +1099,31 @@ func _end_drug_effect() -> void:
 		drug_effect_layer.queue_free()
 		drug_effect_layer = null
 		drug_effect_rect = null
+
+# --- MARKED EFFECT (LOAN SHARK) ---
+
+func apply_mark_effect(duration: float) -> void:
+	is_marked = true
+	marked_timer = duration
+	_refresh_mark_indicator_visibility()
+
+func _end_marked_effect() -> void:
+	clear_mark_effect()
+
+## Clears Loan Shark mark (timer, UI). Safe to call when not marked.
+func clear_mark_effect() -> void:
+	if not is_marked:
+		return
+	is_marked = false
+	marked_timer = 0.0
+	_refresh_mark_indicator_visibility()
+
+## World-space pop when Loan Shark's mark projectile connects (visible to all players).
+func spawn_mark_projectile_hit_fx() -> void:
+	var fx: Node2D = MarkProjectileHitFxScene.instantiate()
+	add_child(fx)
+	fx.global_position = global_position + Vector2(0, -72)
+
 
 # --- BLIND EFFECT ---
 

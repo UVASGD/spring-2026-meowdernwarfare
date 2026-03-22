@@ -136,7 +136,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_di7q2")
 }, {
-"duration": 3.0,
+"duration": 8.0,
 "texture": SubResource("AtlasTexture_4hism")
 }, {
 "duration": 2.0,
@@ -153,7 +153,7 @@ animations = [{
 }],
 "loop": false,
 "name": &"reap",
-"speed": 8.0
+"speed": 24.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -214,6 +214,7 @@ scale = Vector2(0.85, 0.85)
 script = ExtResource("1_raqiv")
 max_health = 85.0
 ability1_cooldown = 7.0
+ability2_cooldown = 9.0
 reload_time = 1.6
 mag_size = 14
 ability1_anim_duration = 1.0
@@ -223,7 +224,7 @@ ult_anim_duration = 1.0
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.3, 0.3)
 sprite_frames = SubResource("SpriteFrames_713vh")
-animation = &"idle"
+animation = &"reap"
 autoplay = "idle"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
