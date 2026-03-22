@@ -1,16 +1,15 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=3 format=3 uid="uid://bgvjewsp0p3j2"]
 
-[ext_resource type="Script" path="res://scenes/heroes/gooblin/drooglin_fire.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://bv66ua8ab22il" path="res://scenes/heroes/gooblin/drooglin_fire.gd" id="1_script"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fire"]
 size = Vector2(327, 117)
 
 [node name="DrooglinFire" type="Area2D"]
 collision_layer = 0
-collision_mask = 1
-monitoring = true
 monitorable = false
 script = ExtResource("1_script")
+TICK_INTERVAL = 0.1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_fire")

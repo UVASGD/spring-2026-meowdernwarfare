@@ -1,4 +1,4 @@
-[gd_scene load_steps=48 format=3 uid="uid://dv716gne5iet3"]
+[gd_scene load_steps=48 format=3 uid="uid://bvwst8w4gqsjj"]
 
 [ext_resource type="PackedScene" uid="uid://bw2et0odpc4ii" path="res://scenes/ui/menu_hero_card.tscn" id="1_1g8jr"]
 [ext_resource type="Script" uid="uid://b1a1ksgkshlog" path="res://scenes/ui/main_menu.gd" id="1_qilvv"]
@@ -36,6 +36,12 @@ shader_parameter/scale = Vector2(1, 1)
 shader_parameter/strength = 0.15
 shader_parameter/fps = 4.0
 shader_parameter/noise = SubResource("NoiseTexture2D_4b0ex")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
 
 [sub_resource type="Animation" id="Animation_1mexh"]
 length = 0.001
@@ -141,6 +147,12 @@ shader_parameter/scale = Vector2(1, 1)
 shader_parameter/strength = 0.1
 shader_parameter/fps = 6.0
 shader_parameter/noise = SubResource("NoiseTexture2D_5dct7")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
 
 [sub_resource type="Gradient" id="Gradient_jbte4"]
 
@@ -156,6 +168,12 @@ shader_parameter/scale = Vector2(1, 1)
 shader_parameter/strength = 0.1
 shader_parameter/fps = 6.0
 shader_parameter/noise = SubResource("NoiseTexture2D_qch7b")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
 
 [sub_resource type="Gradient" id="Gradient_1mexh"]
 
@@ -171,6 +189,12 @@ shader_parameter/scale = Vector2(1, 1)
 shader_parameter/strength = 0.15
 shader_parameter/fps = 5.0
 shader_parameter/noise = SubResource("NoiseTexture2D_qqxfm")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
 
 [sub_resource type="Animation" id="Animation_jbte4"]
 length = 0.001
@@ -599,6 +623,7 @@ shader_parameter/edge_color = Color(1, 0.343837, 0.915106, 1)
 shader_parameter/edge_color_inner = Color(0.960606, 0.848106, 1, 1)
 shader_parameter/noise_texture = ExtResource("3_jbte4")
 shader_parameter/noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
 
 [node name="main_menu" type="Control"]
 layout_mode = 3

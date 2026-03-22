@@ -1,13 +1,17 @@
-[gd_resource type="Resource" script_class="HeroInfo" load_steps=2 format=3 uid="uid://bjgfiqsm7xhtk"]
+[gd_resource type="Resource" script_class="HeroInfo" load_steps=4 format=3 uid="uid://bjgfiqsm7xhtk"]
 
+[ext_resource type="Texture2D" uid="uid://bvg2w74qsp3hy" path="res://assets/sprites/gooblin/Gooblin__Base_-removebg-preview.png" id="1_aef7n"]
 [ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="1_script"]
+[ext_resource type="VideoStream" uid="uid://bft438s02a423" path="res://assets/demovids/gooblin/shoot_fixed.ogv" id="3_aef7n"]
 
 [resource]
 script = ExtResource("1_script")
 id = "Gooblin"
 desc = "def"
+portrait = ExtResource("1_aef7n")
 shoot_name = "Anime Tears"
 shoot_desc = "Fire sparkling tears alternating from left and right eyes. Cooldown: 0.2s, Magazine: 20"
+shoot_video = ExtResource("3_aef7n")
 ability1_name = "Boogie Bomb"
 ability1_desc = "Throw a disco bomb that blinds all enemies in a large area on impact. 15s cooldown, 3s blind duration."
 ability2_name = "Retreat"

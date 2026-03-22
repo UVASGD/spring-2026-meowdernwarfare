@@ -1,19 +1,62 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=9 format=3 uid="uid://bmcmtou0dvt1"]
 
-[ext_resource type="Script" path="res://scripts/crops/blast_berry.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://i7k0p4lijxsi" path="res://scripts/crops/blast_berry.gd" id="1_script"]
+[ext_resource type="Shader" uid="uid://bwnlbf6bnmnyk" path="res://assets/shaders/electric_wrap_inner.gdshader" id="2_dgw55"]
+[ext_resource type="Texture2D" uid="uid://da8jnxkjyqftm" path="res://assets/sprites/crops/blastberry_world.png" id="3_d80vp"]
+[ext_resource type="Texture2D" uid="uid://b65jb3n8swjrt" path="res://assets/sprites/crops/blastberry_planted.png" id="4_q3q3y"]
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_1"]
-size = Vector2(32, 32)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qq1bn"]
+shader = ExtResource("2_dgw55")
+shader_parameter/edge_color_a = Color(1, 1, 1, 1)
+shader_parameter/edge_color_b = Color(1, 1, 1, 1)
+shader_parameter/inner_color_a = Color(1, 1, 1, 1)
+shader_parameter/inner_color_b = Color(1, 1, 1, 1)
+shader_parameter/edge_px = 3.819
+shader_parameter/edge_strength = 2.077
+shader_parameter/inner_strength = 1.641
+shader_parameter/speed = 2.327
+shader_parameter/edge_noise_scale = 48.0
+shader_parameter/inner_noise_scale = 1.0
+shader_parameter/pulse = 1.0
+shader_parameter/inner_threshold = 0.5
+shader_parameter/alpha_cutoff = 0.01
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1"]
-radius = 18.0
+radius = 33.0151
+
+[sub_resource type="Gradient" id="Gradient_xevmx"]
+offsets = PackedFloat32Array(0.0921053, 0.940789)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_xt63k"]
+gradient = SubResource("Gradient_xevmx")
+fill = 1
+fill_from = Vector2(0.527778, 0.486111)
+fill_to = Vector2(0.861111, 0.0787037)
 
 [node name="BlastBerry" type="Area2D"]
 script = ExtResource("1_script")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 modulate = Color(1, 0.3, 0.2, 1)
-texture = SubResource("PlaceholderTexture2D_1")
+light_mask = 2
+material = SubResource("ShaderMaterial_qq1bn")
+position = Vector2(1, -15)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("3_d80vp")
+
+[node name="plantedSprite" type="Sprite2D" parent="."]
+visible = false
+modulate = Color(1, 0.3, 0.2, 1)
+light_mask = 2
+material = SubResource("ShaderMaterial_qq1bn")
+position = Vector2(3, -12)
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("4_q3q3y")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_1")
+
+[node name="light" type="PointLight2D" parent="."]
+texture = SubResource("GradientTexture2D_xt63k")
+height = 140.0

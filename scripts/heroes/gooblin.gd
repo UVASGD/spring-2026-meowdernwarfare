@@ -1,7 +1,7 @@
 class_name HeroGooblin
 extends Hero
 
-const BulletScene = preload("res://scenes/heroes/dealer/bullet.tscn")
+const BulletScene = preload("res://scenes/heroes/gooblin/gooblin_tear.tscn")
 const BoogieBombScene = preload("res://scenes/heroes/gooblin/boogie_bomb.tscn")
 const DrooglinFireScene = preload("res://scenes/heroes/gooblin/drooglin_fire.tscn")
 
@@ -13,10 +13,14 @@ const DrooglinFireScene = preload("res://scenes/heroes/gooblin/drooglin_fire.tsc
 var _shoot_left: bool = true
 var retreat_timer: float = 0.0
 var _base_speed_mult: float = 1.0
+var _pending_bomb: bool = false
+var _pending_bomb_aim_dir: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	super._ready()
 	_base_speed_mult = move_speed_mult
+	if sprite and not sprite.animation_finished.is_connected(_on_ability1_anim_finished):
+		sprite.animation_finished.connect(_on_ability1_anim_finished)
 
 func _process(delta: float) -> void:
 	super._process(delta)
@@ -44,8 +48,19 @@ func _do_shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	bullet.rotation = aim_dir.angle()
 	get_tree().current_scene.add_child(bullet)
 
-# Boogie Bomb: larger slower projectile that explodes and blinds
+# Boogie Bomb: spawn after ability1_idle or ability1_run finishes
 func _do_ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
+	_pending_bomb = true
+	_pending_bomb_aim_dir = aim_dir
+
+func _on_ability1_anim_finished() -> void:
+	if not _pending_bomb or sprite == null or is_dead:
+		return
+	var anim := String(sprite.animation)
+	if anim != "ability1_idle" and anim != "ability1_run" and anim != "ability1":
+		return
+	_pending_bomb = false
+	var aim_dir := _pending_bomb_aim_dir
 	var bomb = BoogieBombScene.instantiate()
 	bomb.direction = aim_dir
 	bomb.owner_player = player

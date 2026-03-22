@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://d13fl6s401svr"]
 
-[ext_resource type="Script" path="res://scripts/heroes/xyler.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://buvr42r3c72q7" path="res://scripts/heroes/xyler.gd" id="1_script"]
 
 [node name="Xyler" type="Node2D"]
 script = ExtResource("1_script")
@@ -13,8 +13,3 @@ mag_size = 18
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.28, 0.28)
-
-
-
-
-

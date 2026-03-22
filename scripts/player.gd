@@ -40,6 +40,35 @@ var tooltip_layer: CanvasLayer = null
 var tooltip_label: RichTextLabel = null
 var nametag: Label = null
 
+@onready var local_health_bar = $CooldownUI/HealthBar
+var target_health_bar_value : float;
+var target_health_bar_color : Color = Color.WHITE;;
+@onready var local_health_bar_label = $CooldownUI/HealthBar/Label
+
+@onready var ability_1_bar = $CooldownUI/Ability1
+@onready var ability_1_icon = $CooldownUI/Ability1/TextureRect
+@onready var ability_1_animation = $CooldownUI/Ability1/AnimationPlayer
+
+@onready var ability_2_bar = $CooldownUI/Ability2
+@onready var ability_2_icon = $CooldownUI/Ability2/TextureRect
+
+@onready var character_profile = $CooldownUI/Profile
+@onready var ult_percent_label = $CooldownUI/Profile/Label
+
+@onready var reload_bar = $HealthBar/ReloadBar
+@onready var reload_bar_animation = $HealthBar/ReloadBar/AnimationPlayer
+@onready var reload_bar_finish_animation = $HealthBar/ReloadBar/Finish
+
+@onready var reload_prompt = $HealthBar/ReloadPrompt
+@onready var reload_prompt_animation = $HealthBar/ReloadPrompt/AnimationPlayer
+
+@onready var ammo_left = $HealthBar/AmmoLeft
+@onready var ammo_left_animation = $HealthBar/AmmoLeft/AnimationPlayer
+
+
+
+
+
 # State
 var aim_dir: Vector2 = Vector2.RIGHT
 var is_dashing: bool = false
@@ -53,6 +82,9 @@ var drug_timer: float = 0.0
 var drug_effect_layer: CanvasLayer = null
 var drug_effect_rect: ColorRect = null
 
+# Loan Shark Mark 
+var is_marked: bool = false
+var marked_timer: float = 0.0
 # Blind effect state
 var is_blinded: bool = false
 var blind_timer: float = 0.0
@@ -80,6 +112,8 @@ var farm = null
 var in_spectate_mode: bool = false
 var is_ai_player: bool = false
 var is_awaiting_respawn: bool = false
+var is_dying: bool = false
+var _show_aux_ui: bool = false
 var respawn_countdown: float = 0.0
 var _death_ui: CanvasLayer = null
 var _death_timer_label: Label = null
@@ -103,7 +137,7 @@ const HERO_SCENES = {
 	"Xyler": preload("res://scenes/heroes/xyler.tscn"),
 	"Fergus": preload("res://scenes/heroes/fergus.tscn"),
 	"LoanShark": preload("res://scenes/heroes/loanshark.tscn"),
-	"Gooblin": preload("res://scenes/heroes/gooblin.tscn"),
+	"Gooblin": preload("res://scenes/heroes/gooblin/gooblin.tscn"),
 	"Garebare": preload("res://scenes/heroes/garebare.tscn"),
 }
 
@@ -140,7 +174,7 @@ func _ready() -> void:
 	
 	# Default hero for testing
 	if hero == null:
-		set_hero("Gooblin")
+		set_hero(TestConfig.DEFAULT_HERO)
 	
 	# Enable camera/UI only for local human players
 	_setup_local_ui()
@@ -164,6 +198,7 @@ func set_hero(hero_name: String) -> void:
 
 	hero.died.connect(_on_hero_died)
 	hero.health_changed.connect(_on_hero_health_changed)
+	hero.used_ult.connect(_on_hero_used_ult)
 	
 	# Update hitbox if we have one
 	var hitbox = get_node_or_null("CollisionShape2D")
@@ -174,19 +209,51 @@ func set_hero(hero_name: String) -> void:
 
 func _setup_local_ui() -> void:
 	var show_ui = false
+	var show_aux = false
 	if input is LocalInput:
 		show_ui = (player_id == 0)
+		show_aux = show_ui
 	elif input is NetworkInput:
 		show_ui = input.is_local
+		show_aux = show_ui
+	else:
+		show_aux = false
+	
+	ammo_left.visible = show_aux
+	reload_bar.visible = show_aux
+	reload_prompt.visible = show_aux
+	_show_aux_ui = show_aux
 	
 	if camera:
 		camera.enabled = show_ui
 	
 	if cooldown_ui:
 		cooldown_ui.visible = show_ui
+	_refresh_world_health_bar()
 	
 	if show_ui:
 		_create_tooltip()
+		if hero:
+			var health_amount : int = int(hero.get_health());
+			target_health_bar_value = hero.get_health_percent() * 100
+			target_health_bar_color = Color.WHITE;
+			local_health_bar_label.text = str(health_amount);
+			
+			character_profile.texture = hero.get_hero_default_profile();
+			
+			ability_1_icon.texture = hero.get_hero_ability1_icon();
+			ability_2_icon.texture = hero.get_hero_ability2_icon();
+			ability_1_bar.modulate = hero.get_hero_ui_color();
+			ability_2_bar.modulate = hero.get_hero_ui_color();
+			
+			hero.used_ability_1.connect(ability_1_use_animation);
+			hero.ability_1_refreshed.connect(ability_1_refresh_animation);
+			
+			hero.ran_out_of_ammo.connect(prompt_reload);
+			hero.started_reload.connect(show_reload_bar);
+			hero.finished_reload.connect(hide_reload_bar);
+			hero.finished_reload.connect(update_ammo_left);
+			hero.shot.connect(update_ammo_left);
 
 func _setup_nametag() -> void:
 	nametag = health_bar.get_node_or_null("Nametag") if health_bar else null
@@ -199,6 +266,22 @@ func _setup_nametag() -> void:
 		nametag.text = "Bot %d" % player_id
 	else:
 		nametag.text = "Player %d" % player_id
+
+func _show_enemy_health_bar() -> bool:
+	return not _is_local_player() and not in_spectate_mode and not is_awaiting_respawn and not is_dying and not is_dead()
+
+func _refresh_world_health_bar() -> void:
+	if health_bar == null:
+		return
+	var show_enemy = _show_enemy_health_bar()
+	health_bar.visible = _show_aux_ui or show_enemy
+	if health_bar_fill:
+		health_bar_fill.visible = show_enemy
+	var bg = health_bar.get_node_or_null("Background")
+	if bg:
+		bg.visible = show_enemy
+	if nametag:
+		nametag.visible = show_enemy
 
 func _physics_process(delta: float) -> void:
 	if input == null:
@@ -221,6 +304,13 @@ func _physics_process(delta: float) -> void:
 		if input is LocalInput:
 			input.end_frame()
 		return
+
+	if is_dying:
+		velocity = Vector2.ZERO
+		_refresh_world_health_bar()
+		if input is LocalInput:
+			input.end_frame()
+		return
 	
 	_update_timers(delta)
 	
@@ -240,6 +330,10 @@ func _physics_process(delta: float) -> void:
 	
 	if is_invulnerable:
 		_check_farm_invulnerability()
+	
+	# Update local health bar
+	local_health_bar.value = lerpf(local_health_bar.value, target_health_bar_value, delta * 10);
+	local_health_bar.modulate = lerp(local_health_bar.modulate, target_health_bar_color, delta * 10);
 	
 	if input is LocalInput:
 		input.end_frame()
@@ -313,6 +407,9 @@ func _handle_actions() -> void:
 			hero.ult(aim_dir, get_aim_position())
 		return
 
+	if is_dying or is_dead():
+		return
+
 	# Dash
 	if input.dash_just and dash_cd_timer <= 0 and not is_dashing and not is_dead():
 		_start_dash()
@@ -342,13 +439,36 @@ func _start_dash() -> void:
 func _on_hero_died() -> void:
 	print("[PLAYER] _on_hero_died: pid=", player_id, " crop_count=", crop_count, " is_local=", _is_local_player())
 	died.emit()
+	is_dying = true
+	velocity = Vector2.ZERO
+	_refresh_world_health_bar()
+	await _wait_for_death_anim()
+	is_dying = false
 	if crop_count <= 0:
 		enter_spectate_mode()
 	else:
 		_enter_death_state()
 
+func _wait_for_death_anim() -> void:
+	if hero == null or hero.sprite == null or hero.sprite.sprite_frames == null:
+		return
+	if not hero.sprite.sprite_frames.has_animation("death"):
+		return
+	if String(hero.sprite.animation) != "death":
+		hero.sprite.play("death")
+	if hero.sprite.sprite_frames.get_animation_loop("death"):
+		return
+	if hero.sprite.is_playing():
+		await hero.sprite.animation_finished
+
 func _on_hero_health_changed(current: float, max_hp: float) -> void:
 	_update_health_bar()
+
+func _on_hero_used_ult() -> void:
+	var gm = GameManager.instance
+	if gm == null:
+		return
+	gm.notify_ult_used(player_id)
 
 # --- PUBLIC API ---
 
@@ -400,16 +520,25 @@ func is_dead() -> bool:
 func _update_health_bar() -> void:
 	if health_bar_fill == null or hero == null:
 		return
+	_refresh_world_health_bar()
 	
 	var pct = hero.get_health_percent()
 	health_bar_fill.scale.x = pct
 	
 	if pct > 0.5:
 		health_bar_fill.color = Color(0.2, 0.8, 0.2)
+		target_health_bar_color = Color.WHITE;
 	elif pct > 0.25:
 		health_bar_fill.color = Color(0.8, 0.8, 0.2)
+		target_health_bar_color = Color.CORAL;
 	else:
 		health_bar_fill.color = Color(0.8, 0.2, 0.2)
+		target_health_bar_color = Color.RED;
+	
+	var health_amount : int = int(hero.get_health());
+	local_health_bar_label.text = str(health_amount);
+	target_health_bar_value = hero.get_health_percent() * 100;
+	
 
 func _update_cooldown_ui() -> void:
 	if hero == null or cooldown_ui == null or not cooldown_ui.visible:
@@ -422,6 +551,10 @@ func _update_cooldown_ui() -> void:
 	if ability1_cd_bar:
 		var a1_pct = 1.0 - (hero.ability1_cd / hero.ability1_cooldown) if hero.ability1_cooldown > 0 else 1.0
 		ability1_cd_bar.value = clamp(a1_pct, 0.0, 1.0)
+		ability_1_bar.value = clamp(a1_pct, 0.0, 1.0)
+		if(a1_pct < 1.0): ability_1_bar.modulate.a = 0.35;
+		else: ability_1_bar.modulate.a = 1;
+	
 	
 	if ability2_cd_bar:
 		if hero.ability2_cooldown > 0:
@@ -434,6 +567,7 @@ func _update_cooldown_ui() -> void:
 	if reload_cd_bar:
 		var reload_pct = 1.0 - (hero.reload_cd / hero.reload_time) if hero.reload_time > 0 else 1.0
 		reload_cd_bar.value = clamp(reload_pct, 0.0, 1.0)
+		reload_bar.value = clamp(reload_pct, 0.15, 1.0);
 		
 	if dash_cd_bar:
 		var dash_pct = 1.0 - (dash_cd_timer / dash_cooldown) if dash_cooldown > 0 else 1.0
@@ -442,8 +576,16 @@ func _update_cooldown_ui() -> void:
 	if ammo_label:
 		ammo_label.text = "%d/%d" % [hero.ammo, hero.mag_size]
 	
+	ult_percent_label.text = str(int(hero.get_ult_percent() * 100));
+	if(hero.get_ult_percent() >= 1):
+		ult_percent_label.text = "c";
+		character_profile.texture = hero.get_hero_ult_profile();
+	else:
+		character_profile.texture = hero.get_hero_default_profile();
+	
 	if ult_bar:
 		ult_bar.value = hero.get_ult_percent()
+		
 	if ult_label:
 		ult_label.text = "%d/%d" % [hero.ult_points, hero.max_ult_points]
 
@@ -684,6 +826,28 @@ func clear_remote_held_crop() -> void:
 	if _remote_held_sprite:
 		_remote_held_sprite.visible = false
 
+func prompt_reload() -> void:
+	reload_prompt_animation.play("appear");
+
+func show_reload_bar() -> void:
+	if(hero.ammo == 0): reload_prompt_animation.play("disappear");
+	reload_bar_animation.play("appear");
+
+func hide_reload_bar() -> void:
+	reload_bar_animation.play("finish");
+	reload_bar_finish_animation.play("finish");
+
+func update_ammo_left() -> void:
+	ammo_left.text = str(hero.ammo);
+	ammo_left_animation.stop();
+	ammo_left_animation.play("shoot");
+
+func ability_1_use_animation() -> void:
+	ability_1_animation.play("use");
+
+func ability_1_refresh_animation() -> void:
+	ability_1_animation.play("refreshed");
+
 # --- DRUG EFFECT ---
 
 const DrugShader = preload("res://assets/shaders/drug.gdshader")
@@ -825,6 +989,7 @@ func _show_death_timer_ui() -> void:
 	_death_ui.add_child(_death_timer_label)
 
 func respawn_at(pos: Vector2) -> void:
+	is_dying = false
 	is_awaiting_respawn = false
 	respawn_countdown = 0.0
 	
@@ -853,8 +1018,7 @@ func respawn_at(pos: Vector2) -> void:
 	if _is_local_player():
 		if cooldown_ui:
 			cooldown_ui.visible = true
-	if health_bar:
-		health_bar.visible = true
+	_refresh_world_health_bar()
 	
 	is_invulnerable = true
 	_update_health_bar()
@@ -882,6 +1046,7 @@ func enter_spectate_mode() -> void:
 	print("[PLAYER] enter_spectate_mode: pid=", player_id, " already=", in_spectate_mode, " is_local=", _is_local_player(), " game_over=", GameManager.instance.game_over if GameManager.instance else "no_gm")
 	if in_spectate_mode:
 		return
+	is_dying = false
 	in_spectate_mode = true
 	
 	if cooldown_ui:

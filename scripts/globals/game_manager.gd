@@ -19,6 +19,7 @@ signal player_eliminated(player: Player)
 signal game_over_received(winner_id: int)
 signal sudden_death_received
 signal farm_spawns_received(assignments: Array)
+signal ult_used_received(player_id: int)
 
 static var instance: GameManager = null
 
@@ -314,6 +315,9 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 	elif msg_type == "crop_spawned":
 		_handle_crop_spawned(data)
 	
+	elif msg_type == "crop_bring":
+		_handle_crop_bring(data)
+	
 	elif msg_type == "spawner_stage":
 		_handle_spawner_stage(data)
 
@@ -325,6 +329,9 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 
 	elif msg_type == "farm_spawns":
 		_handle_farm_spawns(data)
+
+	elif msg_type == "ult_used":
+		_handle_ult_used(data)
 
 func _broadcast_state() -> void:
 	if not Network.is_online():
@@ -581,6 +588,21 @@ func _handle_farm_spawns(data: Dictionary) -> void:
 	if assignments is Array:
 		farm_spawns_received.emit(assignments)
 
+func notify_ult_used(player_id: int) -> void:
+	if mode == Mode.LOCAL:
+		ult_used_received.emit(player_id)
+		return
+	if mode == Mode.ONLINE_HOST and Network.is_online():
+		ult_used_received.emit(player_id)
+		Network.broadcast({"type": "ult_used", "pid": player_id})
+
+func _handle_ult_used(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	var pid = int(data.get("pid", -1))
+	if pid >= 0:
+		ult_used_received.emit(pid)
+
 # --- TELEPORTER SYNC ---
 
 func send_teleporter_used(tp_id: int, target_tp_id: int) -> void:
@@ -603,7 +625,7 @@ func _handle_teleporter_used(from_id: int, data: Dictionary) -> void:
 # --- CROP SYNC ---
 
 const CROP_SCENES := {
-	"SpeedSprout": preload("res://scenes/crops/speed_sprout.tscn"),
+	"SpeedCarrot": preload("res://scenes/crops/speed_carrot.tscn"),
 	"IronRoot": preload("res://scenes/crops/iron_root.tscn"),
 	"BlastBerry": preload("res://scenes/crops/blast_berry.tscn"),
 }
@@ -856,6 +878,11 @@ func send_crop_spawned(sid: int, crop_idx: int, stg: int) -> void:
 		return
 	Network.broadcast({"type": "crop_spawned", "sid": sid, "ci": crop_idx, "cs": stg})
 
+func send_crop_bring(sid: int) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	Network.broadcast({"type": "crop_bring", "sid": sid})
+
 func send_spawner_stage(sid: int, stg: int) -> void:
 	if mode != Mode.ONLINE_HOST:
 		return
@@ -866,6 +893,12 @@ func _handle_crop_spawned(data: Dictionary) -> void:
 	var spawner = _spawners.get(sid)
 	if spawner and is_instance_valid(spawner):
 		spawner.spawn_crop_remote(int(data.get("ci", 0)), int(data.get("cs", 1)))
+
+func _handle_crop_bring(data: Dictionary) -> void:
+	var sid = int(data.get("sid", -1))
+	var spawner = _spawners.get(sid)
+	if spawner and is_instance_valid(spawner):
+		spawner.play_bring_remote()
 
 func _handle_spawner_stage(data: Dictionary) -> void:
 	var sid = int(data.get("sid", -1))

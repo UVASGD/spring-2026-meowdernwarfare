@@ -1,6 +1,5 @@
-[gd_scene load_steps=59 format=4 uid="uid://dea1hxmkkrroo"]
+[gd_scene load_steps=63 format=4 uid="uid://dea1hxmkkrroo"]
 
-[ext_resource type="PackedScene" uid="uid://jrafw8skg73p" path="res://scenes/crop_spawner.tscn" id="1_3ol52"]
 [ext_resource type="Texture2D" uid="uid://b806fl6i3ymrk" path="res://assets/maps/moon/moon texture.png" id="1_wodu6"]
 [ext_resource type="Texture2D" uid="uid://1i1v210nrrxs" path="res://assets/maps/moon/sky/spacebg.png" id="2_30vaj"]
 [ext_resource type="Texture2D" uid="uid://uiwk4r7myxx7" path="res://assets/maps/moon/moon texture_normal.png" id="2_hyg50"]
@@ -23,6 +22,9 @@
 [ext_resource type="Texture2D" uid="uid://ddd30hsv8f5w5" path="res://assets/maps/moon/moongrassspritesheet.png" id="19_6kqtc"]
 [ext_resource type="PackedScene" uid="uid://cih7402ccv0gh" path="res://scenes/sd_lights.tscn" id="19_8fg61"]
 [ext_resource type="Texture2D" uid="uid://wjb35hpxxleh" path="res://assets/maps/moon/objs/moon crater glow.png" id="19_evwe5"]
+[ext_resource type="PackedScene" uid="uid://dg266xce3jg3q" path="res://moon_crop_spawner_real.tscn" id="23_6kqtc"]
+[ext_resource type="AudioStream" uid="uid://ccd465ueq1ado" path="res://assets/sound/music/Moon Map Catpitalist 2.ogg" id="24_5lgu8"]
+[ext_resource type="AudioStream" uid="uid://dl2weybrdbc1h" path="res://assets/sound/music/Pokémon Black & White - Critical Health Music (HQ).mp3" id="25_t2jim"]
 
 [sub_resource type="CanvasTexture" id="CanvasTexture_8fg61"]
 diffuse_texture = ExtResource("1_wodu6")
@@ -79,6 +81,12 @@ shader_parameter/scale = Vector2(1, 1)
 shader_parameter/strength = 0.5
 shader_parameter/fps = 3.0
 shader_parameter/noise = SubResource("NoiseTexture2D_t2jim")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_oy6ua"]
 atlas = ExtResource("18_evwe5")
@@ -199,11 +207,11 @@ _data = {
 &"pulse": SubResource("Animation_b7kpc")
 }
 
-[sub_resource type="Gradient" id="Gradient_r1n43"]
+[sub_resource type="Gradient" id="Gradient_oy6ua"]
 colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_bk8q8"]
-gradient = SubResource("Gradient_r1n43")
+gradient = SubResource("Gradient_oy6ua")
 fill = 1
 fill_from = Vector2(0.506098, 0.530488)
 fill_to = Vector2(0.780488, 0.307927)
@@ -276,6 +284,14 @@ gradient = SubResource("Gradient_u2fso")
 fill = 1
 fill_from = Vector2(0.5, 0.502294)
 fill_to = Vector2(0.853211, 0.149083)
+
+[sub_resource type="Gradient" id="Gradient_5lgu8"]
+interpolation_mode = 1
+offsets = PackedFloat32Array(0, 0.463415, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_t2jim"]
+gradient = SubResource("Gradient_5lgu8")
 
 [node name="testMap" type="Node2D"]
 
@@ -1614,6 +1630,7 @@ collision_layer = 2
 shape = SubResource("WorldBoundaryShape2D_qpo6k")
 
 [node name="testStuff" type="Node2D" parent="map"]
+visible = false
 
 [node name="playerSizeRef" parent="map/testStuff" instance=ExtResource("6_vfkfv")]
 
@@ -1628,9 +1645,26 @@ texture = SubResource("GradientTexture2D_r8xxi")
 texture_scale = 2.0
 height = 9.0
 
-[node name="cropSpawner" parent="map" instance=ExtResource("1_3ol52")]
-
 [node name="SDLights" parent="map" instance=ExtResource("19_8fg61")]
+
+[node name="cropSpawner" parent="map" instance=ExtResource("23_6kqtc")]
+
+[node name="PointLight2D" type="PointLight2D" parent="map"]
+position = Vector2(-29.5001, -2.50018)
+scale = Vector2(11.5735, 2272.77)
+color = Color(0.365951, 0.146061, 0.853499, 1)
+energy = 0.86
+texture = SubResource("GradientTexture1D_t2jim")
+texture_scale = 50.0
+height = 596.0
+
+[node name="Theme" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("24_5lgu8")
+volume_db = -4.0
+
+[node name="SDTheme" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("25_t2jim")
+volume_db = -14.0
 
 [connection signal="body_entered" from="map/objs/teleporters/crater1_2" to="map/objs/teleporters/crater1_2" method="_on_body_entered"]
 [connection signal="body_entered" from="map/objs/teleporters/crater2_1" to="map/objs/teleporters/crater2_1" method="_on_body_entered"]

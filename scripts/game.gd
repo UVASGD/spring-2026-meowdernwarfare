@@ -10,7 +10,7 @@ const MAP_SCENES := {
 	"Moon": "res://scenes/maps/moon.tscn",
 }
 const CROP_SCENES := {
-	"SpeedSprout": preload("res://scenes/crops/speed_sprout.tscn"),
+	"SpeedCarrot": preload("res://scenes/crops/speed_carrot.tscn"),
 	"IronRoot": preload("res://scenes/crops/iron_root.tscn"),
 	"BlastBerry": preload("res://scenes/crops/blast_berry.tscn"),
 }
@@ -18,12 +18,15 @@ const CROP_SCENES := {
 
 const DebugMenu = preload("res://scripts/ui/debug_menu.gd")
 const Killzone = preload("res://scripts/killzone.gd")
+const UltBannerScene = preload("res://scenes/ui/ultbanner.tscn")
 
 const GAME_DURATION := 300.0
 const SUDDEN_DEATH_DURATION := 120.0
 
 @onready var gm: GameManager = $GameManager
 var map_node: Node = null
+var map_theme: Node = null
+var map_sd_theme: Node = null
 var farms: Array = []
 var game_timer: float = 0.0
 var game_active: bool = false
@@ -33,6 +36,8 @@ var killzone_node: Node2D = null
 var _timer_layer: CanvasLayer = null
 var _timer_label: Label = null
 var _sudden_label: Label = null
+var _ult_layer: CanvasLayer = null
+var _ult_banner: CanvasGroup = null
 
 func _ready() -> void:
 	var dbg = DebugMenu.new()
@@ -44,6 +49,8 @@ func _ready() -> void:
 	_setup_entity_layer()
 	_collect_farms()
 	gm.farm_spawns_received.connect(_on_farm_spawns_received)
+	gm.ult_used_received.connect(_on_ult_used_received)
+	_setup_ult_banner()
 	
 	if GameData.is_online_game:
 		_start_from_lobby()
@@ -53,6 +60,7 @@ func _ready() -> void:
 		start_solo_vs_ai()
 	
 	_assign_farms()
+	_play_map_theme()
 	await get_tree().process_frame
 	await get_tree().process_frame
 	_collect_farms_tiles()
@@ -65,6 +73,23 @@ func _ready() -> void:
 	game_timer = 0.0
 	game_active = true
 
+func _setup_ult_banner() -> void:
+	_ult_layer = CanvasLayer.new()
+	_ult_layer.layer = 90
+	add_child(_ult_layer)
+	_ult_banner = UltBannerScene.instantiate()
+	_ult_layer.add_child(_ult_banner)
+
+func _on_ult_used_received(player_id: int) -> void:
+	if _ult_banner == null:
+		return
+	var p = gm.get_player(player_id)
+	if p == null or not is_instance_valid(p) or p.hero == null:
+		return
+	var name = gm.get_player_username(player_id)
+	if _ult_banner.has_method("show_ult"):
+		_ult_banner.show_ult(p, name)
+
 func _load_map(map_name: String) -> void:
 	var path = MAP_SCENES.get(map_name, MAP_SCENES[DEFAULT_MAP])
 	var scene = load(path)
@@ -73,8 +98,53 @@ func _load_map(map_name: String) -> void:
 		map_node.name = "map"
 		add_child(map_node)
 		move_child(map_node, 0)
+		_cache_map_music_nodes()
 	else:
 		push_error("Game: Failed to load map scene: ", path)
+
+func _cache_map_music_nodes() -> void:
+	map_theme = null
+	map_sd_theme = null
+	if map_node == null:
+		return
+	map_theme = map_node.get_node_or_null("Theme")
+	if map_theme == null:
+		map_theme = map_node.find_child("Theme", true, false)
+	map_sd_theme = map_node.get_node_or_null("SDTheme")
+	if map_sd_theme == null:
+		map_sd_theme = map_node.find_child("SDTheme", true, false)
+
+func _play_map_theme() -> void:
+	if map_node == null:
+		return
+	if map_theme == null and map_sd_theme == null:
+		_cache_map_music_nodes()
+	_stop_audio_node(map_sd_theme)
+	_play_audio_node(map_theme, "Theme")
+
+func _play_sd_theme() -> void:
+	if map_node == null:
+		return
+	if map_theme == null and map_sd_theme == null:
+		_cache_map_music_nodes()
+	_stop_audio_node(map_theme)
+	_play_audio_node(map_sd_theme, "SDTheme")
+
+func _play_audio_node(node: Node, label: String) -> void:
+	if node == null:
+		push_warning("Game: Map has no %s node" % label)
+		return
+	if not node.has_method("play"):
+		push_warning("Game: %s node has no play() method" % label)
+		return
+	if node.has_method("is_playing") and bool(node.call("is_playing")):
+		return
+	node.call("play")
+
+func _stop_audio_node(node: Node) -> void:
+	if node == null:
+		return
+	node.call("stop")
 
 func _setup_entity_layer() -> void:
 	if map_node == null:
@@ -122,7 +192,6 @@ func _assign_farms() -> void:
 	sorted_farms.sort_custom(func(a, b): return str(a.get_path()) < str(b.get_path()))
 	var sorted_players = gm.players.duplicate()
 	sorted_players.sort_custom(func(a, b): return a.player_id < b.player_id)
-	
 	var assignments: Array = []
 	var count = mini(sorted_farms.size(), sorted_players.size())
 	for i in range(count):
@@ -137,13 +206,13 @@ func _assign_farms() -> void:
 			"x": spawn_pos.x,
 			"y": spawn_pos.y
 		})
-	
 	if gm.mode == GameManager.Mode.ONLINE_HOST:
 		gm.broadcast_farm_spawns(assignments)
 
 func _get_farm_spawn_pos(farm: Node) -> Vector2:
 	var sp = farm.get_node_or_null("Spawnpoint")
-
+	if sp == null:
+		sp = farm.get_node_or_null("spawnpoint")
 	if sp and sp is Node2D:
 		return sp.global_position
 	return farm.global_position
@@ -169,8 +238,10 @@ func _apply_farm_spawns(assignments: Array) -> void:
 		if farm == null:
 			continue
 		farm.assign_owner(player)
-		var spawn_pos = Vector2(item.get("x", player.global_position.x), item.get("y", player.global_position.y))
-		player.global_position = spawn_pos
+		player.global_position = Vector2(
+			item.get("x", player.global_position.x),
+			item.get("y", player.global_position.y)
+		)
 
 func _plant_starter_crops(starters: Array[String] = []) -> void:
 	if starters.is_empty():
@@ -288,6 +359,7 @@ func _trigger_sudden_death() -> void:
 func _activate_sudden_death() -> void:
 	gm.sudden_death = true
 	print("SUDDEN DEATH activated")
+	_play_sd_theme()
 	if _sudden_label:
 		_sudden_label.visible = true
 	_spawn_killzone()

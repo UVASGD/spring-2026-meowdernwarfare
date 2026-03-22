@@ -1,7 +1,7 @@
 extends CanvasLayer
 
 const CROP_SCENES := {
-	"SpeedSprout": preload("res://scenes/crops/speed_sprout.tscn"),
+	"SpeedCarrot": preload("res://scenes/crops/speed_carrot.tscn"),
 	"IronRoot": preload("res://scenes/crops/iron_root.tscn"),
 	"BlastBerry": preload("res://scenes/crops/blast_berry.tscn"),
 }
@@ -17,10 +17,12 @@ func _ready() -> void:
 	_build_ui()
 	panel.visible = false
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_TAB:
 		visible_flag = !visible_flag
 		panel.visible = visible_flag
+		if not visible_flag:
+			get_viewport().gui_release_focus()
 		get_viewport().set_input_as_handled()
 
 func _get_local_player() -> Player:
