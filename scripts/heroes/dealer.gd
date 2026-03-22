@@ -65,6 +65,13 @@ func _end_invis() -> void:
 
 @warning_ignore("unused_parameter")
 func _do_ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
+	_apply_drug_to_enemies()
+
+@warning_ignore("unused_parameter")
+func _do_ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
+	_apply_drug_to_enemies()
+
+func _apply_drug_to_enemies() -> void:
 	var all_players = get_tree().get_nodes_in_group("players")
 	
 	# If no group set up, try to find players via GameManager

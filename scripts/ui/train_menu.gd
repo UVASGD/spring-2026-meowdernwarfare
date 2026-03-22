@@ -1,13 +1,20 @@
 extends Control
 
+const TRAIN_TO_GAME := {
+	"Anime Girl": "AnimeGirl",
+	"Xyler and Fergus": "XylerFergus",
+	"Elon. Musk.": "ElonMusk",
+}
+
 const _DEFAULT_HEROES: Array[HeroInfo] = [
 	preload("res://assets/resources/heroes/dealer.tres"),
 	preload("res://assets/resources/heroes/burple.tres"),
-	preload("res://assets/resources/heroes/alien.tres"),
+	preload("res://assets/resources/heroes/animegirl.tres"),
 	preload("res://assets/resources/heroes/xylerfergus.tres"),
 	preload("res://assets/resources/heroes/loanshark.tres"),
 	preload("res://assets/resources/heroes/gooblin.tres"),
 	preload("res://assets/resources/heroes/garebare.tres"),
+	preload("res://assets/resources/heroes/elonmusk.tres"),
 ]
 
 @export var heroes: Array[HeroInfo] = []
@@ -37,6 +44,18 @@ func _ready() -> void:
 	vsai_btn.pressed.connect(_on_vs_ai)
 	solo_btn.pressed.connect(_on_solo)
 	_populate_hero_grid()
+	_restore_last_hero_ui()
+
+func _game_id(info: HeroInfo) -> String:
+	return TRAIN_TO_GAME.get(info.id, info.id)
+
+func _restore_last_hero_ui() -> void:
+	if GameData.train_last_hero.is_empty():
+		return
+	for info in heroes:
+		if _game_id(info) == GameData.train_last_hero:
+			_on_hero_selected(info)
+			break
 
 func _populate_hero_grid() -> void:
 	for info in heroes:
@@ -57,6 +76,7 @@ func _populate_hero_grid() -> void:
 
 func _on_hero_selected(info: HeroInfo) -> void:
 	selected_hero = info.id
+	GameData.set_train_last_hero(_game_id(info))
 
 	if info.portrait:
 		portrait.texture = info.portrait

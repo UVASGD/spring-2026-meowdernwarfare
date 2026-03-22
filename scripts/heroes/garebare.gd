@@ -1,9 +1,9 @@
 class_name HeroGarebare
 extends Hero
 
-const SoundwaveScene = preload("res://scenes/heroes/garebare/soundwave.tscn")
-const SonicBurstScene = preload("res://scenes/heroes/garebare/sonic_burst.tscn")
-const FIEScene = preload("res://scenes/heroes/garebare/fie.tscn")
+const SOUNDWAVE_SCENE := "res://scenes/heroes/garebare/soundwave.tscn"
+const SONIC_BURST_SCENE := "res://scenes/heroes/garebare/sonic_burst.tscn"
+const FIE_SCENE := "res://scenes/heroes/garebare/fie.tscn"
 
 @export var pellet_count: int = 3
 @export var spread_angle: float = 30.0
@@ -18,6 +18,9 @@ const FIEScene = preload("res://scenes/heroes/garebare/fie.tscn")
 var fies: Array = [null, null]
 var fie_cds: Array[float] = [0.0, 0.0]
 var _fie_remote_op: bool = false
+var _soundwave_scene: PackedScene = null
+var _sonic_burst_scene: PackedScene = null
+var _fie_scene: PackedScene = null
 
 func _process(delta: float) -> void:
 	super._process(delta)
@@ -32,13 +35,17 @@ func get_hero_name() -> String:
 
 @warning_ignore("unused_parameter")
 func _do_shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
+	if _soundwave_scene == null:
+		_soundwave_scene = load(SOUNDWAVE_SCENE) as PackedScene
+	if _soundwave_scene == null:
+		return
 	var base_angle = aim_dir.angle()
 	var half_spread = deg_to_rad(spread_angle / 2.0)
 	for i in range(pellet_count):
 		var t = float(i) / max(pellet_count - 1, 1)
 		var angle = base_angle - half_spread + t * half_spread * 2.0
 		var dir = Vector2(cos(angle), sin(angle))
-		var bullet = SoundwaveScene.instantiate()
+		var bullet = _soundwave_scene.instantiate()
 		bullet.direction = dir
 		bullet.owner_player = player
 		bullet.global_position = $bulletSpawnPoint.global_position
@@ -49,7 +56,11 @@ func _do_shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 
 @warning_ignore("unused_parameter")
 func _do_ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
-	var burst = SonicBurstScene.instantiate()
+	if _sonic_burst_scene == null:
+		_sonic_burst_scene = load(SONIC_BURST_SCENE) as PackedScene
+	if _sonic_burst_scene == null:
+		return
+	var burst = _sonic_burst_scene.instantiate()
 	burst.direction = aim_dir
 	burst.owner_player = player
 	burst.stun_duration = stun_duration
@@ -81,6 +92,9 @@ func _do_ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
 		return
 
 	var fie = _create_fie()
+	if fie == null:
+		ability2_cd = 0.0
+		return
 	fie.owner_player = player
 	fie.suppress_radius = fie_suppress_radius
 	fie.global_position = place_pos
@@ -97,6 +111,9 @@ func _place_fie_remote(slot: int, pos: Vector2) -> void:
 		return
 	_fie_remote_op = true
 	var fie = _create_fie()
+	if fie == null:
+		_fie_remote_op = false
+		return
 	fie.owner_player = player
 	fie.suppress_radius = fie_suppress_radius
 	fie.global_position = pos
@@ -118,7 +135,11 @@ func _on_fie_destroyed(slot: int) -> void:
 		GameManager.instance.send_fie_destroyed(player.player_id, slot)
 
 func _create_fie() -> StaticBody2D:
-	return FIEScene.instantiate()
+	if _fie_scene == null:
+		_fie_scene = load(FIE_SCENE) as PackedScene
+	if _fie_scene == null:
+		return null
+	return _fie_scene.instantiate()
 
 # --- ULT: amplitude AOE + detonate FIEs ---
 

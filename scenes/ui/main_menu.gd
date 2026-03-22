@@ -10,20 +10,48 @@ const CardAction = preload("res://scripts/ui/menu_hero_card.gd").CardAction
 @onready var garebare = $introgroup1/cardholder/garebare
 @onready var anim_player = $introgroup1/AnimationPlayer
 @onready var burn_overlay = $BurnOverlay
+@onready var bg_bottom = $introgroup1/bgbottomlayer
+@onready var bg_top = $introgroup1/bgtoplayer
+@onready var meowdern: Sprite2D = $introgroup1/meowdern
+
+@export var bg_rot_bottom: Vector2 = Vector2(10.0, 7.0)
+@export var bg_rot_top: Vector2 = Vector2(16.0, 11.0)
+@export var text_rot_bottom: Vector2 = Vector2(10.0, 7.0)
+@export var text_rot_top: Vector2 = Vector2(16.0, 11.0)
+@export var text_rot_smooth: float = 12.0
+@export var bg_rot_smooth: float = 12.0
 
 var skippable = true
+var _bg_bottom_mat: ShaderMaterial
+var _bg_top_mat: ShaderMaterial
+var _text_mat: ShaderMaterial
+var _text_rot_b: Vector2 = Vector2.ZERO
+var _text_rot_t: Vector2 = Vector2.ZERO
+var _bg_rot_b: Vector2 = Vector2.ZERO
+var _bg_rot_t: Vector2 = Vector2.ZERO
 var _current_hovered: CardAction = CardAction.NONE
 var _unhover_timer: SceneTreeTimer = null
 
 func _ready() -> void:
+	_bg_bottom_mat = bg_bottom.material as ShaderMaterial
+	_bg_top_mat = bg_top.material as ShaderMaterial
+	_text_mat = meowdern.material as ShaderMaterial
 	_connect_card(dealer)
 	_connect_card(burple)
 	_connect_card(garebare)
+	var local_theme = $introgroup1/AudioStreamPlayer
+	local_theme.stop()
+	local_theme.stream = null
 	
 	# Skip intro if returning from another scene
 	if not GameData.is_first_load:
+		GameData.ensure_menu_theme()
 		_skip_intro()
 	else:
+		get_tree().create_timer(1.0).timeout.connect(func():
+			if is_inside_tree():
+				GameData.ensure_menu_theme()
+		, CONNECT_ONE_SHOT)
 		GameData.mark_intro_seen()
 
 func _skip_intro() -> void:
@@ -35,8 +63,7 @@ func _skip_intro() -> void:
 	if anim_player:
 		anim_player.stop()
 		anim_player.play("idle2")
-	if not $introgroup1/AudioStreamPlayer.playing:
-		$introgroup1/AudioStreamPlayer.playing = true
+	GameData.ensure_menu_theme()
 	# Ensure hover areas are enabled (animation keyframes at -0.1 won't apply)
 	_enable_hover_areas()
 
@@ -54,7 +81,32 @@ func _connect_card(card: Node) -> void:
 		card.card_unhovered.connect(_on_card_unhovered)
 
 func _process(delta: float) -> void:
-	pass
+	_update_bg_3d_mouse(delta)
+
+func _update_bg_3d_mouse(delta: float) -> void:
+	if _bg_bottom_mat == null or _bg_top_mat == null:
+		return
+	var vp := get_viewport().get_visible_rect().size
+	if vp.x <= 0.0 or vp.y <= 0.0:
+		return
+	var m := get_viewport().get_mouse_position()
+	var nx := (m.x / vp.x) * 2.0 - 1.0
+	var ny := (m.y / vp.y) * 2.0 - 1.0
+	var tb := Vector2(nx * bg_rot_bottom.x, -ny * bg_rot_bottom.y)
+	var tt := Vector2(nx * bg_rot_top.x, -ny * bg_rot_top.y)
+	var zb := Vector2(nx * text_rot_bottom.x, -ny * text_rot_bottom.y)
+	var zt := Vector2(nx * text_rot_top.x, -ny * text_rot_top.y)
+	var k := 1.0 - exp(-delta * bg_rot_smooth)
+	_bg_rot_b = _bg_rot_b.lerp(tb, k)
+	_bg_rot_t = _bg_rot_t.lerp(tt, k)
+	_text_rot_b = _text_rot_b.lerp(zb, k)
+	_text_rot_t = _text_rot_t.lerp(zt, k)
+	_bg_bottom_mat.set_shader_parameter("y_rot", _bg_rot_b.x)
+	_bg_bottom_mat.set_shader_parameter("x_rot", _bg_rot_b.y)
+	_bg_top_mat.set_shader_parameter("y_rot", _bg_rot_t.x)
+	_bg_top_mat.set_shader_parameter("x_rot", _bg_rot_t.y)
+	_text_mat.set_shader_parameter("y_rot", _text_rot_b.x)
+	_text_mat.set_shader_parameter("x_rot", _text_rot_b.y)
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_accept"):

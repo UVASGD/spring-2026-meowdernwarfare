@@ -9,6 +9,7 @@ script = ExtResource("1_script")
 id = "Gooblin"
 desc = "def"
 portrait = ExtResource("1_aef7n")
+portrait_outline_color = Color(0.917647, 0.486275, 0.341176, 1)
 shoot_name = "Anime Tears"
 shoot_desc = "Fire sparkling tears alternating from left and right eyes. Cooldown: 0.2s, Magazine: 20"
 shoot_video = ExtResource("3_aef7n")

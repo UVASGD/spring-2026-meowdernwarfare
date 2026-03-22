@@ -609,6 +609,7 @@ shoot_cooldown = 0.2
 ability1_cooldown = 15.0
 ability2_cooldown = 8.0
 mag_size = 20
+portrait_outline_color = Color(0.917647, 0.486275, 0.341176, 1)
 normal_portrait = ExtResource("2_2g137")
 ult_portrait = ExtResource("3_87eb1")
 

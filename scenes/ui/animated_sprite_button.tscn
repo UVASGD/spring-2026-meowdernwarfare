@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3 uid="uid://bw28dpjs1fx3i"]
+
+[ext_resource type="Script" uid="uid://d66fssiuadph" path="res://scripts/ui/animated_sprite_button.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+
+[node name="AnimatedSpriteButton" type="Node2D"]
+script = ExtResource("1_script")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+shape = SubResource("RectangleShape2D_1")
+
+[node name="off" type="Sprite2D" parent="."]
+
+[node name="hovered" type="Sprite2D" parent="."]
+
+[node name="on" type="Sprite2D" parent="."]
+
+[node name="disabled" type="Sprite2D" parent="."]
+
+[node name="on_animation" type="AnimatedSprite2D" parent="."]
+
+[node name="off_animation" type="AnimatedSprite2D" parent="."]
+
+[connection signal="input_event" from="Area2D" to="." method="_on_area_2d_input_event"]
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]

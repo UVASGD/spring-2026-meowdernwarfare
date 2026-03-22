@@ -1,0 +1,47 @@
+[gd_scene load_steps=7 format=3 uid="uid://1cageijr1rft"]
+
+[ext_resource type="Script" uid="uid://b8hhb7ttw0k8x" path="res://scenes/ui/lobby/char_select_sprite_button.gd" id="1_gqfqp"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eepx7"]
+size = Vector2(99, 100.5)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_gqfqp"]
+size = Vector2(100, 100)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_748cx"]
+size = Vector2(100, 100)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_y8ofk"]
+size = Vector2(100, 100)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_8gu56"]
+size = Vector2(100, 100)
+
+[node name="charSelectButton" type="Node2D"]
+script = ExtResource("1_gqfqp")
+toggleable = true
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0.5, 0)
+shape = SubResource("RectangleShape2D_eepx7")
+
+[node name="off" type="Sprite2D" parent="."]
+texture = SubResource("PlaceholderTexture2D_gqfqp")
+
+[node name="hovered" type="Sprite2D" parent="."]
+modulate = Color(0.7, 0.7, 0.7, 1)
+texture = SubResource("PlaceholderTexture2D_748cx")
+
+[node name="on" type="Sprite2D" parent="."]
+modulate = Color(0.3, 0.9, 0.3, 1)
+texture = SubResource("PlaceholderTexture2D_y8ofk")
+
+[node name="disabled" type="Sprite2D" parent="."]
+modulate = Color(0.4, 0.4, 0.4, 0.5)
+texture = SubResource("PlaceholderTexture2D_8gu56")
+
+[connection signal="input_event" from="Area2D" to="." method="_on_area_2d_input_event"]
+[connection signal="mouse_entered" from="Area2D" to="." method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Area2D" to="." method="_on_area_2d_mouse_exited"]

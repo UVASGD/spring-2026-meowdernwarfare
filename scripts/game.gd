@@ -3,7 +3,7 @@ extends Node2D
 # F1: Solo (you vs 3 AI)
 # F2-F4: Local multiplayer (keyboard split)
 # F5: Sandbox (no enemies)
-# ESC: Back to menu
+# ESC: Pause menu
 
 const MAP_SCENES := {
 	"testArena": "res://scenes/maps/maze_map.tscn",
@@ -19,6 +19,7 @@ const CROP_SCENES := {
 const DebugMenu = preload("res://scripts/ui/debug_menu.gd")
 const Killzone = preload("res://scripts/killzone.gd")
 const UltBannerScene = preload("res://scenes/ui/ultbanner.tscn")
+const PauseMenuScene = preload("res://scenes/ui/pause_menu.tscn")
 
 const GAME_DURATION := 300.0
 const SUDDEN_DEATH_DURATION := 120.0
@@ -38,8 +39,11 @@ var _timer_label: Label = null
 var _sudden_label: Label = null
 var _ult_layer: CanvasLayer = null
 var _ult_banner: CanvasGroup = null
+var _pause_layer: CanvasLayer = null
+var _pause_menu: Control = null
 
 func _ready() -> void:
+	GameData.stop_menu_theme()
 	var dbg = DebugMenu.new()
 	add_child(dbg)
 	
@@ -69,9 +73,21 @@ func _ready() -> void:
 	gm.player_eliminated.connect(_on_player_eliminated)
 	gm.game_over_received.connect(_on_game_over_received)
 	gm.sudden_death_received.connect(_activate_sudden_death)
+	_setup_pause_menu()
 	_create_timer_hud()
 	game_timer = 0.0
 	game_active = true
+
+func _setup_pause_menu() -> void:
+	_pause_layer = CanvasLayer.new()
+	_pause_layer.layer = 120
+	_pause_layer.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(_pause_layer)
+	_pause_menu = PauseMenuScene.instantiate()
+	_pause_menu.process_mode = Node.PROCESS_MODE_ALWAYS
+	_pause_layer.add_child(_pause_menu)
+	_pause_menu.continue_pressed.connect(_close_pause_menu)
+	_pause_menu.back_to_menu_pressed.connect(_pause_back_to_menu)
 
 func _setup_ult_banner() -> void:
 	_ult_layer = CanvasLayer.new()
@@ -280,11 +296,15 @@ func _start_from_lobby() -> void:
 func _input(event: InputEvent) -> void:
 	if not (event is InputEventKey and event.pressed):
 		return
+	if event.echo:
+		return
+	if event.keycode == KEY_ESCAPE:
+		_toggle_pause_menu()
+		get_viewport().set_input_as_handled()
+		return
 	
 	# Only allow mode switching in local mode
 	if gm.mode != GameManager.Mode.LOCAL:
-		if event.keycode == KEY_ESCAPE:
-			_back_to_menu()
 		return
 	
 	match event.keycode:
@@ -298,8 +318,35 @@ func _input(event: InputEvent) -> void:
 			start_local(4)
 		KEY_F5:
 			start_sandbox()
-		KEY_ESCAPE:
-			_back_to_menu()
+
+func _toggle_pause_menu() -> void:
+	if _pause_menu == null:
+		return
+	if _pause_menu.visible:
+		_close_pause_menu()
+	else:
+		_open_pause_menu()
+
+func _pause_uses_tree_freeze() -> bool:
+	return gm.mode == GameManager.Mode.LOCAL
+
+func _open_pause_menu() -> void:
+	if _pause_uses_tree_freeze():
+		get_tree().paused = true
+	else:
+		GameData.menu_pause_local = true
+	_pause_menu.open_menu()
+
+func _close_pause_menu() -> void:
+	GameData.menu_pause_local = false
+	get_tree().paused = false
+	if _pause_menu:
+		_pause_menu.close_menu()
+
+func _pause_back_to_menu() -> void:
+	GameData.menu_pause_local = false
+	get_tree().paused = false
+	_back_to_menu()
 
 func _back_to_menu() -> void:
 	gm.disconnect_online()
@@ -310,6 +357,7 @@ func start_solo_vs_ai() -> void:
 	gm.clear_players()
 	
 	var human = gm.spawn_local_player(0)
+	human.set_hero(GameData.train_hero_for_game())
 	
 	for i in range(1, 4):
 		var ai = gm.spawn_ai_player(i, human)
@@ -331,7 +379,8 @@ func start_sandbox() -> void:
 func start_solo_practice() -> void:
 	gm.disconnect_online()
 	gm.clear_players()
-	gm.spawn_local_player(0)
+	var human = gm.spawn_local_player(0)
+	human.set_hero(GameData.train_hero_for_game())
 	var npc = gm.spawn_ai_player(1)
 	npc.is_invulnerable = true
 	npc.modulate = Color(0.7, 0.7, 1.0)

@@ -1,0 +1,224 @@
+[gd_scene load_steps=15 format=3 uid="uid://dyjsukavayr35"]
+
+[ext_resource type="Script" uid="uid://jfrori7lcxij" path="res://scripts/ui/map_selector.gd" id="1_45j7k"]
+[ext_resource type="FontFile" uid="uid://dt2nbaox60w53" path="res://assets/ui/fonts/BATTLESANSSERIF.OTF" id="2_uqr41"]
+[ext_resource type="Shader" uid="uid://cmo7wddinj6pm" path="res://assets/shaders/textshine.gdshader" id="2_w3qjh"]
+[ext_resource type="PackedScene" uid="uid://ducbymckwwd56" path="res://scenes/ui/sprite_button.tscn" id="3_kpivp"]
+[ext_resource type="Texture2D" uid="uid://xjjvy7nk2qct" path="res://assets/ui/general/arrow.png" id="5_qm5no"]
+[ext_resource type="Texture2D" uid="uid://dtvfyhky1c3rs" path="res://assets/ui/general/arrow_on.png" id="6_sxpp3"]
+[ext_resource type="Texture2D" uid="uid://cl331l63rstcp" path="res://assets/ui/mapicons/moon.png" id="7_qm5no"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_r6wag"]
+shader = ExtResource("2_w3qjh")
+shader_parameter/shine_color = Color(1, 1, 1, 1)
+shader_parameter/shine_progress = 0.0
+shader_parameter/shine_size = 0.08
+shader_parameter/shine_angle = 45.0
+shader_parameter/text_size = Vector2(800, 50)
+
+[sub_resource type="LabelSettings" id="LabelSettings_v1svj"]
+font = ExtResource("2_uqr41")
+font_size = 32
+outline_size = 16
+outline_color = Color(0.14244, 0.112688, 0.160711, 1)
+shadow_offset = Vector2(-4.895, 3.915)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_icbh0"]
+size = Vector2(400, 200)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_tht5s"]
+size = Vector2(400, 200)
+
+[sub_resource type="Animation" id="Animation_4cqhx"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Label:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-400, -150)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Label:material:shader_parameter/shine_progress")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("nextButton:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(250, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("backButton:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-250, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_q7cc7"]
+resource_name = "bob_text"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Label:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.233333, 0.466667, 0.733333, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-400, -150), Vector2(-400, -142), Vector2(-400, -150), Vector2(-400, -158), Vector2(-400, -150)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Label:material:shader_parameter/shine_progress")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("nextButton:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.233333, 0.466667, 0.733333, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(250, 0), Vector2(258, 0), Vector2(250, 0), Vector2(242, 0), Vector2(250, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("backButton:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.233333, 0.466667, 0.733333, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-250, 0), Vector2(-258, 0), Vector2(-250, 0), Vector2(-242, 0), Vector2(-250, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lft8l"]
+_data = {
+&"RESET": SubResource("Animation_4cqhx"),
+&"idle": SubResource("Animation_q7cc7")
+}
+
+[node name="mapSelector" type="Node2D"]
+script = ExtResource("1_45j7k")
+
+[node name="Label" type="Label" parent="."]
+material = SubResource("ShaderMaterial_r6wag")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -150.0
+offset_right = 400.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+text = "map"
+label_settings = SubResource("LabelSettings_v1svj")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="nextButton" parent="." instance=ExtResource("3_kpivp")]
+position = Vector2(250, 0)
+
+[node name="off" parent="nextButton" index="1"]
+texture = ExtResource("5_qm5no")
+flip_h = true
+
+[node name="hovered" parent="nextButton" index="2"]
+visible = false
+flip_h = true
+
+[node name="on" parent="nextButton" index="3"]
+texture = ExtResource("6_sxpp3")
+flip_h = true
+
+[node name="disabled" parent="nextButton" index="4"]
+visible = false
+flip_h = true
+
+[node name="backButton" parent="." instance=ExtResource("3_kpivp")]
+position = Vector2(-250, 0)
+
+[node name="off" parent="backButton" index="1"]
+texture = ExtResource("5_qm5no")
+
+[node name="hovered" parent="backButton" index="2"]
+visible = false
+
+[node name="on" parent="backButton" index="3"]
+texture = ExtResource("6_sxpp3")
+
+[node name="disabled" parent="backButton" index="4"]
+visible = false
+
+[node name="options" type="Sprite2D" parent="."]
+clip_children = 1
+texture = SubResource("PlaceholderTexture2D_icbh0")
+
+[node name="moon" type="Sprite2D" parent="options"]
+modulate = Color(0.497474, 0.497474, 0.497474, 1)
+texture = ExtResource("7_qm5no")
+
+[node name="option2" type="Sprite2D" parent="options"]
+modulate = Color(0.201005, 0.579862, 0.634829, 1)
+texture = SubResource("PlaceholderTexture2D_tht5s")
+
+[node name="Sprite2D" type="Sprite2D" parent="options"]
+modulate = Color(0.742104, 0.435636, 0.137577, 1)
+texture = SubResource("PlaceholderTexture2D_tht5s")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_lft8l")
+}
+autoplay = "idle"
+speed_scale = 0.5
+
+[connection signal="pressed" from="nextButton" to="." method="_on_next_button_pressed"]
+[connection signal="pressed" from="backButton" to="." method="_on_back_button_pressed"]
+
+[editable path="nextButton"]
+[editable path="backButton"]

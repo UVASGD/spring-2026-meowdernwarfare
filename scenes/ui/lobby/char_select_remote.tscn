@@ -1,0 +1,750 @@
+[gd_scene load_steps=74 format=3 uid="uid://cevvcg5umt3dx"]
+
+[ext_resource type="Script" uid="uid://ciygdeycqh624" path="res://scenes/ui/lobby/char_select_remote.gd" id="1_03dnt"]
+[ext_resource type="PackedScene" uid="uid://ducbymckwwd56" path="res://scenes/ui/sprite_button.tscn" id="1_7am6t"]
+[ext_resource type="PackedScene" uid="uid://1cageijr1rft" path="res://scenes/ui/lobby/char_select_sprite_button.tscn" id="2_8nh10"]
+[ext_resource type="Shader" uid="uid://b22phw37pkjou" path="res://assets/shaders/outline.gdshader" id="2_ornws"]
+[ext_resource type="Texture2D" uid="uid://d3v0y1wi1x2bs" path="res://assets/ui/lobby/remote/base.png" id="2_vua5n"]
+[ext_resource type="Texture2D" uid="uid://ny6makoipwsj" path="res://assets/ui/lobby/remote/gooblin.png" id="4_ornws"]
+[ext_resource type="Shader" uid="uid://dtxj6rav7fw2q" path="res://scenes/ui/squiggle.gdshader" id="5_ieli1"]
+[ext_resource type="Texture2D" uid="uid://d3w2sfyrualf4" path="res://assets/ui/lobby/remote/gooblin_clicked.png" id="5_uhs1o"]
+[ext_resource type="Texture2D" uid="uid://b72s6xhjb08kn" path="res://assets/ui/lobby/remote/garebare.png" id="6_ieli1"]
+[ext_resource type="Texture2D" uid="uid://cwdqgwobktfr5" path="res://assets/ui/lobby/remote/garebare_clicked.png" id="7_emgrv"]
+[ext_resource type="Texture2D" uid="uid://deo7v78t56pu0" path="res://assets/ui/lobby/remote/xylerfergus.png" id="8_ems3i"]
+[ext_resource type="Texture2D" uid="uid://cuv0jexbqxx7v" path="res://assets/ui/lobby/remote/xylerfergus_clicked.png" id="9_xe1kf"]
+[ext_resource type="Texture2D" uid="uid://by08htf67j12d" path="res://assets/ui/lobby/remote/dealer.png" id="10_a6lf1"]
+[ext_resource type="Texture2D" uid="uid://ctfmwwhgevgxw" path="res://assets/ui/lobby/remote/dealer_clicked.png" id="11_qcy10"]
+[ext_resource type="Texture2D" uid="uid://okhr8pcrhapv" path="res://assets/ui/lobby/remote/loanshark.png" id="12_tc7dv"]
+[ext_resource type="Texture2D" uid="uid://cx7oceq6rw5mb" path="res://assets/ui/lobby/remote/loanshark_clicked.png" id="13_5g6qw"]
+[ext_resource type="Texture2D" uid="uid://c246dqt72rvas" path="res://assets/ui/lobby/remote/burple.png" id="14_m4ej4"]
+[ext_resource type="Texture2D" uid="uid://dg7ekp306hj11" path="res://assets/ui/lobby/remote/burple_clicked.png" id="15_y0250"]
+[ext_resource type="Texture2D" uid="uid://vy6hbd2f3b0c" path="res://assets/ui/lobby/remote/elonmusk.png" id="16_e5h11"]
+[ext_resource type="Texture2D" uid="uid://cktoue2s8sj7l" path="res://assets/ui/lobby/remote/elonmusk_clicked.png" id="17_uyvyl"]
+[ext_resource type="Texture2D" uid="uid://crueqqthymy5x" path="res://assets/ui/lobby/remote/animegirl.png" id="18_wilre"]
+[ext_resource type="Texture2D" uid="uid://guu2bryd4kw7" path="res://assets/ui/lobby/remote/animegirl_clicked.png" id="19_rtied"]
+[ext_resource type="Texture2D" uid="uid://bka3v0aocn8ik" path="res://assets/ui/lobby/remote/ready.png" id="21_udd5u"]
+[ext_resource type="Texture2D" uid="uid://ce2h8x8fookeo" path="res://assets/ui/lobby/remote/ready_clicked.png" id="22_tk0n2"]
+[ext_resource type="Texture2D" uid="uid://dw5wy68d7s1ey" path="res://assets/ui/lobby/remote/back.png" id="23_b4kcs"]
+[ext_resource type="Texture2D" uid="uid://cjqfakubwfoox" path="res://assets/ui/lobby/remote/back_clicked.png" id="24_rihve"]
+
+[sub_resource type="Gradient" id="Gradient_ornws"]
+colors = PackedColorArray(2.40654e-06, 0.57237, 0.658063, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_uhs1o"]
+gradient = SubResource("Gradient_ornws")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_ieli1"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_emgrv"]
+noise = SubResource("FastNoiseLite_ieli1")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uhs1o"]
+shader = ExtResource("2_ornws")
+shader_parameter/scrollingTexture = SubResource("NoiseTexture2D_emgrv")
+shader_parameter/textureScale = Vector2(-0.735, 1)
+shader_parameter/angle = 45.0
+shader_parameter/textureSpeed = 0.1
+shader_parameter/textureStrength = 0.5
+shader_parameter/maxLineWidth = 15.618
+shader_parameter/minLineWidth = 5.0
+shader_parameter/speed = 3.022
+shader_parameter/blockSize = 20.0
+shader_parameter/color = SubResource("GradientTexture2D_uhs1o")
+shader_parameter/gradientResolution = 10
+shader_parameter/tolerance = 0.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ethdr"]
+size = Vector2(169, 82)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_emgrv"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ems3i"]
+noise = SubResource("FastNoiseLite_emgrv")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_xe1kf"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_a6lf1"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qcy10"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_os104"]
+size = Vector2(159, 87)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tc7dv"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5g6qw"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m4ej4"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cua78"]
+size = Vector2(155, 85)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_y0250"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_e5h11"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uyvyl"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6epa1"]
+size = Vector2(147, 82)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wilre"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rtied"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_udd5u"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lnyi2"]
+size = Vector2(125, 77)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tk0n2"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b4kcs"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rihve"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0prre"]
+size = Vector2(138, 80)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ethdr"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_os104"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cua78"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_37s61"]
+size = Vector2(146, 76)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_6epa1"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_lnyi2"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0prre"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_210s2"]
+size = Vector2(128, 76)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_37s61"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_210s2"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0lah8"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0lah8"]
+size = Vector2(115, 87)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_4yass"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_w6p6g"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_c2flw"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4yass"]
+size = Vector2(113, 86)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tywg8"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_u5epb"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0ur3y"]
+shader = ExtResource("5_ieli1")
+shader_parameter/scale = Vector2(1, 1)
+shader_parameter/strength = 0.2
+shader_parameter/fps = 3.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ems3i")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.05
+shader_parameter/edge_color = Color(1, 0.5, 0.1, 1)
+shader_parameter/edge_color_inner = Color(1, 0.9, 0.3, 1)
+shader_parameter/burn_noise_scale = 1.0
+shader_parameter/alpha_cutoff = 0.01
+
+[node name="CharSelectRemote" type="Node2D"]
+script = ExtResource("1_03dnt")
+
+[node name="remoteSprite" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_uhs1o")
+texture = ExtResource("2_vua5n")
+
+[node name="charButtons" type="Node2D" parent="."]
+
+[node name="Gooblin" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(-16, 9)
+charName = "Gooblin"
+
+[node name="CollisionShape2D" parent="charButtons/Gooblin/Area2D" index="0"]
+position = Vector2(-174.5, -196)
+shape = SubResource("RectangleShape2D_ethdr")
+
+[node name="off" parent="charButtons/Gooblin" index="1"]
+material = SubResource("ShaderMaterial_xe1kf")
+texture = ExtResource("4_ornws")
+
+[node name="hovered" parent="charButtons/Gooblin" index="2"]
+visible = false
+
+[node name="on" parent="charButtons/Gooblin" index="3"]
+material = SubResource("ShaderMaterial_a6lf1")
+texture = ExtResource("5_uhs1o")
+
+[node name="disabled" parent="charButtons/Gooblin" index="4"]
+material = SubResource("ShaderMaterial_qcy10")
+texture = ExtResource("5_uhs1o")
+
+[node name="Garebare" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(20, 9)
+charName = "Garebare"
+
+[node name="CollisionShape2D" parent="charButtons/Garebare/Area2D" index="0"]
+position = Vector2(137.5, -199.5)
+shape = SubResource("RectangleShape2D_os104")
+
+[node name="off" parent="charButtons/Garebare" index="1"]
+material = SubResource("ShaderMaterial_tc7dv")
+texture = ExtResource("6_ieli1")
+
+[node name="hovered" parent="charButtons/Garebare" index="2"]
+visible = false
+
+[node name="on" parent="charButtons/Garebare" index="3"]
+material = SubResource("ShaderMaterial_5g6qw")
+texture = ExtResource("7_emgrv")
+
+[node name="disabled" parent="charButtons/Garebare" index="4"]
+material = SubResource("ShaderMaterial_m4ej4")
+texture = ExtResource("7_emgrv")
+
+[node name="XylerFergus" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(-7, 5)
+charName = "XylerFergus"
+
+[node name="CollisionShape2D" parent="charButtons/XylerFergus/Area2D" index="0"]
+position = Vector2(-174.5, -81.5)
+shape = SubResource("RectangleShape2D_cua78")
+
+[node name="off" parent="charButtons/XylerFergus" index="1"]
+material = SubResource("ShaderMaterial_y0250")
+texture = ExtResource("8_ems3i")
+
+[node name="hovered" parent="charButtons/XylerFergus" index="2"]
+visible = false
+
+[node name="on" parent="charButtons/XylerFergus" index="3"]
+material = SubResource("ShaderMaterial_e5h11")
+texture = ExtResource("9_xe1kf")
+
+[node name="disabled" parent="charButtons/XylerFergus" index="4"]
+material = SubResource("ShaderMaterial_uyvyl")
+texture = ExtResource("9_xe1kf")
+
+[node name="Dealer" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(-2, 4)
+charName = "Dealer"
+
+[node name="CollisionShape2D" parent="charButtons/Dealer/Area2D" index="0"]
+position = Vector2(139.5, -79)
+shape = SubResource("RectangleShape2D_6epa1")
+
+[node name="off" parent="charButtons/Dealer" index="1"]
+material = SubResource("ShaderMaterial_wilre")
+texture = ExtResource("10_a6lf1")
+
+[node name="hovered" parent="charButtons/Dealer" index="2"]
+visible = false
+
+[node name="on" parent="charButtons/Dealer" index="3"]
+material = SubResource("ShaderMaterial_rtied")
+texture = ExtResource("11_qcy10")
+
+[node name="disabled" parent="charButtons/Dealer" index="4"]
+material = SubResource("ShaderMaterial_udd5u")
+texture = ExtResource("11_qcy10")
+
+[node name="LoanShark" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(-5, 5)
+charName = "LoanShark"
+
+[node name="CollisionShape2D" parent="charButtons/LoanShark/Area2D" index="0"]
+position = Vector2(-155.5, 19.5)
+shape = SubResource("RectangleShape2D_lnyi2")
+
+[node name="off" parent="charButtons/LoanShark" index="1"]
+material = SubResource("ShaderMaterial_tk0n2")
+texture = ExtResource("12_tc7dv")
+
+[node name="hovered" parent="charButtons/LoanShark" index="2"]
+visible = false
+
+[node name="on" parent="charButtons/LoanShark" index="3"]
+material = SubResource("ShaderMaterial_b4kcs")
+texture = ExtResource("13_5g6qw")
+
+[node name="disabled" parent="charButtons/LoanShark" index="4"]
+material = SubResource("ShaderMaterial_rihve")
+texture = ExtResource("13_5g6qw")
+
+[node name="Burple" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(2, 9)
+charName = "Burple"
+
+[node name="CollisionShape2D" parent="charButtons/Burple/Area2D" index="0"]
+position = Vector2(109, 15)
+shape = SubResource("RectangleShape2D_0prre")
+
+[node name="off" parent="charButtons/Burple" index="1"]
+material = SubResource("ShaderMaterial_ethdr")
+texture = ExtResource("14_m4ej4")
+
+[node name="hovered" parent="charButtons/Burple" index="2"]
+visible = false
+
+[node name="on" parent="charButtons/Burple" index="3"]
+material = SubResource("ShaderMaterial_os104")
+texture = ExtResource("15_y0250")
+
+[node name="disabled" parent="charButtons/Burple" index="4"]
+material = SubResource("ShaderMaterial_cua78")
+texture = ExtResource("15_y0250")
+
+[node name="ElonMusk" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(-25, 7)
+charName = "ElonMusk"
+
+[node name="CollisionShape2D" parent="charButtons/ElonMusk/Area2D" index="0"]
+position = Vector2(-104, 120)
+shape = SubResource("RectangleShape2D_37s61")
+
+[node name="off" parent="charButtons/ElonMusk" index="1"]
+material = SubResource("ShaderMaterial_6epa1")
+texture = ExtResource("16_e5h11")
+
+[node name="hovered" parent="charButtons/ElonMusk" index="2"]
+visible = false
+
+[node name="on" parent="charButtons/ElonMusk" index="3"]
+material = SubResource("ShaderMaterial_lnyi2")
+texture = ExtResource("17_uyvyl")
+
+[node name="disabled" parent="charButtons/ElonMusk" index="4"]
+material = SubResource("ShaderMaterial_0prre")
+texture = ExtResource("17_uyvyl")
+
+[node name="AnimeGirl" parent="charButtons" instance=ExtResource("2_8nh10")]
+position = Vector2(5, 10)
+charName = "AnimeGirl"
+
+[node name="CollisionShape2D" parent="charButtons/AnimeGirl/Area2D" index="0"]
+position = Vector2(89, 117)
+shape = SubResource("RectangleShape2D_210s2")
+
+[node name="off" parent="charButtons/AnimeGirl" index="1"]
+material = SubResource("ShaderMaterial_37s61")
+texture = ExtResource("18_wilre")
+
+[node name="hovered" parent="charButtons/AnimeGirl" index="2"]
+visible = false
+
+[node name="on" parent="charButtons/AnimeGirl" index="3"]
+material = SubResource("ShaderMaterial_210s2")
+texture = ExtResource("19_rtied")
+
+[node name="disabled" parent="charButtons/AnimeGirl" index="4"]
+material = SubResource("ShaderMaterial_0lah8")
+texture = ExtResource("19_rtied")
+
+[node name="controlbuttons" type="Node2D" parent="."]
+
+[node name="readyUp" parent="controlbuttons" instance=ExtResource("1_7am6t")]
+position = Vector2(-4, 1)
+toggleable = true
+
+[node name="CollisionShape2D" parent="controlbuttons/readyUp/Area2D" index="0"]
+position = Vector2(104.5, 226.5)
+shape = SubResource("RectangleShape2D_0lah8")
+
+[node name="off" parent="controlbuttons/readyUp" index="1"]
+material = SubResource("ShaderMaterial_4yass")
+texture = ExtResource("21_udd5u")
+
+[node name="hovered" parent="controlbuttons/readyUp" index="2"]
+visible = false
+
+[node name="on" parent="controlbuttons/readyUp" index="3"]
+material = SubResource("ShaderMaterial_w6p6g")
+texture = ExtResource("22_tk0n2")
+
+[node name="disabled" parent="controlbuttons/readyUp" index="4"]
+material = SubResource("ShaderMaterial_c2flw")
+texture = ExtResource("22_tk0n2")
+
+[node name="Leave" parent="controlbuttons" instance=ExtResource("1_7am6t")]
+position = Vector2(10, 0)
+
+[node name="CollisionShape2D" parent="controlbuttons/Leave/Area2D" index="0"]
+position = Vector2(-126.5, 229)
+shape = SubResource("RectangleShape2D_4yass")
+
+[node name="off" parent="controlbuttons/Leave" index="1"]
+material = SubResource("ShaderMaterial_tywg8")
+texture = ExtResource("23_b4kcs")
+
+[node name="hovered" parent="controlbuttons/Leave" index="2"]
+visible = false
+
+[node name="on" parent="controlbuttons/Leave" index="3"]
+material = SubResource("ShaderMaterial_u5epb")
+texture = ExtResource("24_rihve")
+
+[node name="disabled" parent="controlbuttons/Leave" index="4"]
+material = SubResource("ShaderMaterial_0ur3y")
+texture = ExtResource("24_rihve")
+
+[connection signal="char_hovered" from="charButtons/Gooblin" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/Gooblin" to="." method="_on_char_pressed"]
+[connection signal="char_unhovered" from="charButtons/Gooblin" to="." method="_on_char_unhovered"]
+[connection signal="char_hovered" from="charButtons/Garebare" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/Garebare" to="." method="_on_char_pressed"]
+[connection signal="char_hovered" from="charButtons/XylerFergus" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/XylerFergus" to="." method="_on_char_pressed"]
+[connection signal="char_hovered" from="charButtons/Dealer" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/Dealer" to="." method="_on_char_pressed"]
+[connection signal="char_hovered" from="charButtons/LoanShark" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/LoanShark" to="." method="_on_char_pressed"]
+[connection signal="char_hovered" from="charButtons/Burple" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/Burple" to="." method="_on_char_pressed"]
+[connection signal="char_hovered" from="charButtons/ElonMusk" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/ElonMusk" to="." method="_on_char_pressed"]
+[connection signal="char_hovered" from="charButtons/AnimeGirl" to="." method="_on_char_hovered"]
+[connection signal="char_pressed" from="charButtons/AnimeGirl" to="." method="_on_char_pressed"]
+[connection signal="pressed" from="controlbuttons/readyUp" to="." method="_on_ready_up_pressed"]
+[connection signal="pressed" from="controlbuttons/Leave" to="." method="_on_leave_pressed"]
+
+[editable path="charButtons/Gooblin"]
+[editable path="charButtons/Garebare"]
+[editable path="charButtons/XylerFergus"]
+[editable path="charButtons/Dealer"]
+[editable path="charButtons/LoanShark"]
+[editable path="charButtons/Burple"]
+[editable path="charButtons/ElonMusk"]
+[editable path="charButtons/AnimeGirl"]
+[editable path="controlbuttons/readyUp"]
+[editable path="controlbuttons/Leave"]

@@ -1,11 +1,14 @@
-[gd_resource type="Resource" script_class="HeroInfo" load_steps=2 format=3 uid="uid://32b430kso7ul"]
+[gd_resource type="Resource" script_class="HeroInfo" load_steps=3 format=3 uid="uid://32b430kso7ul"]
 
 [ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://c8xu4kfogucot" path="res://assets/sprites/garebare/garebare_portrait_normal.png" id="1_t2as0"]
 
 [resource]
 script = ExtResource("1_script")
 id = "Garebare"
 desc = "def"
+portrait = ExtResource("1_t2as0")
+portrait_outline_color = Color(1, 0, 0.32549, 1)
 shoot_name = "Soundwave"
 shoot_desc = "0.4s cooldown."
 ability1_name = "Sonic Burst"

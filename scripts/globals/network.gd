@@ -42,7 +42,7 @@ func _process(delta: float) -> void:
 				state = State.CONNECTED
 				connected.emit()
 			
-			while socket.get_available_packet_count() > 0:
+			while socket != null and socket.get_available_packet_count() > 0:
 				var packet = socket.get_packet()
 				_handle_message(packet.get_string_from_utf8())
 		

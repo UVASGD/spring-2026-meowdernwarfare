@@ -30,14 +30,38 @@ func update(delta: float) -> void:
 	clear_just_pressed()
 	
 	if is_local:
-		# Read local input and send to network
 		local_source.update(delta)
 		_copy_from(local_source)
+		if GameData.menu_pause_local:
+			_strip_for_menu_pause()
 		_send_to_network()
 		local_source.end_frame()
 	else:
 		# Apply buffered input from network
 		_apply_buffered_input()
+
+func _strip_for_menu_pause() -> void:
+	move_input = Vector2.ZERO
+	sprint = false
+	dash = false
+	shoot = false
+	reload = false
+	ability1 = false
+	ability2 = false
+	ult = false
+	interact = false
+	drop = false
+	dash_just = false
+	shoot_just = false
+	reload_just = false
+	ability1_just = false
+	ability2_just = false
+	ult_just = false
+	interact_just = false
+	drop_just = false
+	if player_node:
+		aim_input = Vector2.RIGHT.rotated(player_node.rotation)
+		aim_position = player_node.global_position + aim_input * 320.0
 
 func _copy_from(src: InputProvider) -> void:
 	move_input = src.move_input

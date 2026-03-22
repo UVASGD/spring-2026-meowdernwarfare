@@ -1,0 +1,321 @@
+[gd_scene load_steps=29 format=3 uid="uid://bl6vu788s8qhf"]
+
+[ext_resource type="Script" uid="uid://bmtspt4n8gvgd" path="res://scripts/ui/sponsor_selector.gd" id="1_6eomt"]
+[ext_resource type="FontFile" uid="uid://dt2nbaox60w53" path="res://assets/ui/fonts/BATTLESANSSERIF.OTF" id="1_w78ym"]
+[ext_resource type="Shader" uid="uid://cmo7wddinj6pm" path="res://assets/shaders/textshine.gdshader" id="2_c5xoa"]
+[ext_resource type="PackedScene" uid="uid://ducbymckwwd56" path="res://scenes/ui/sprite_button.tscn" id="2_gm7v4"]
+[ext_resource type="Texture2D" uid="uid://cspbf15kxgjhj" path="res://assets/ui/sponsors/berryblast_sheet.png" id="4_icbh0"]
+[ext_resource type="Texture2D" uid="uid://xjjvy7nk2qct" path="res://assets/ui/general/arrow.png" id="4_q7cc7"]
+[ext_resource type="Shader" uid="uid://c3emtticjkhg4" path="res://scenes/ui/lobby/crt.gdshader" id="4_tht5s"]
+[ext_resource type="Texture2D" uid="uid://dtvfyhky1c3rs" path="res://assets/ui/general/arrow_on.png" id="5_4cqhx"]
+[ext_resource type="Texture2D" uid="uid://coc4jhaaym02y" path="res://assets/ui/sponsors/speedster_sheet.png" id="8_4cqhx"]
+[ext_resource type="Texture2D" uid="uid://b0sa4gtg5go8x" path="res://assets/ui/sponsors/iron_sheet.png" id="9_lft8l"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qccqi"]
+shader = ExtResource("2_c5xoa")
+shader_parameter/shine_color = Color(1, 1, 1, 1)
+shader_parameter/shine_progress = 0.0
+shader_parameter/shine_size = 0.08
+shader_parameter/shine_angle = 36.8
+shader_parameter/text_size = Vector2(800, 50)
+
+[sub_resource type="LabelSettings" id="LabelSettings_5t5el"]
+font = ExtResource("1_w78ym")
+font_size = 32
+outline_size = 16
+outline_color = Color(0.14244, 0.112688, 0.160711, 1)
+shadow_offset = Vector2(-4.895, 3.915)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fb7gw"]
+shader = ExtResource("4_tht5s")
+shader_parameter/wiggle = 0.03
+shader_parameter/wiggle_speed = 20.0
+shader_parameter/smear = 0.091
+shader_parameter/blur_samples = 15
+shader_parameter/scanline_intensity = 0.08
+shader_parameter/scanline_count = 50.0
+shader_parameter/scanline_speed = 0.06
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_icbh0"]
+size = Vector2(400, 200)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tht5s"]
+atlas = ExtResource("4_icbh0")
+region = Rect2(0, 0, 400, 200)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fb7gw"]
+atlas = ExtResource("4_icbh0")
+region = Rect2(400, 0, 400, 200)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_q7cc7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tht5s")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fb7gw")
+}],
+"loop": true,
+"name": &"default",
+"speed": 1.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lft8l"]
+atlas = ExtResource("8_4cqhx")
+region = Rect2(0, 0, 400, 200)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c5xoa"]
+atlas = ExtResource("8_4cqhx")
+region = Rect2(400, 0, 400, 200)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qccqi"]
+atlas = ExtResource("8_4cqhx")
+region = Rect2(0, 200, 400, 200)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_x7mmd"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lft8l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c5xoa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qccqi")
+}],
+"loop": true,
+"name": &"default",
+"speed": 1.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x7mmd"]
+atlas = ExtResource("9_lft8l")
+region = Rect2(0, 0, 400, 200)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_baofy"]
+atlas = ExtResource("9_lft8l")
+region = Rect2(400, 0, 400, 200)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qwnh3"]
+atlas = ExtResource("9_lft8l")
+region = Rect2(0, 200, 400, 200)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_srh42"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x7mmd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_baofy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qwnh3")
+}],
+"loop": true,
+"name": &"default",
+"speed": 1.0
+}]
+
+[sub_resource type="Animation" id="Animation_4cqhx"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Label:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-400, -150)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Label:material:shader_parameter/shine_progress")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("nextButton:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(250, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("backButton:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(-250, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_q7cc7"]
+resource_name = "bob_text"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Label:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.233333, 0.466667, 0.733333, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-400, -150), Vector2(-400, -142), Vector2(-400, -150), Vector2(-400, -158), Vector2(-400, -150)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Label:material:shader_parameter/shine_progress")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("nextButton:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.233333, 0.466667, 0.733333, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(250, 0), Vector2(258, 0), Vector2(250, 0), Vector2(242, 0), Vector2(250, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("backButton:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.233333, 0.466667, 0.733333, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(-250, 0), Vector2(-258, 0), Vector2(-250, 0), Vector2(-242, 0), Vector2(-250, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lft8l"]
+_data = {
+&"RESET": SubResource("Animation_4cqhx"),
+&"idle": SubResource("Animation_q7cc7")
+}
+
+[node name="SponsorSelector" type="Node2D"]
+script = ExtResource("1_6eomt")
+
+[node name="Label" type="Label" parent="."]
+material = SubResource("ShaderMaterial_qccqi")
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -150.0
+offset_right = 400.0
+offset_bottom = -100.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+text = "select a sponsor"
+label_settings = SubResource("LabelSettings_5t5el")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="nextButton" parent="." instance=ExtResource("2_gm7v4")]
+position = Vector2(250, 0)
+
+[node name="off" parent="nextButton" index="1"]
+texture = ExtResource("4_q7cc7")
+flip_h = true
+
+[node name="hovered" parent="nextButton" index="2"]
+visible = false
+flip_h = true
+
+[node name="on" parent="nextButton" index="3"]
+texture = ExtResource("5_4cqhx")
+flip_h = true
+
+[node name="disabled" parent="nextButton" index="4"]
+visible = false
+flip_h = true
+
+[node name="backButton" parent="." instance=ExtResource("2_gm7v4")]
+position = Vector2(-250, 0)
+
+[node name="off" parent="backButton" index="1"]
+texture = ExtResource("4_q7cc7")
+
+[node name="hovered" parent="backButton" index="2"]
+visible = false
+
+[node name="on" parent="backButton" index="3"]
+texture = ExtResource("5_4cqhx")
+
+[node name="disabled" parent="backButton" index="4"]
+visible = false
+
+[node name="options" type="Sprite2D" parent="."]
+clip_children = 1
+material = SubResource("ShaderMaterial_fb7gw")
+texture = SubResource("PlaceholderTexture2D_icbh0")
+
+[node name="BerryBlast" type="AnimatedSprite2D" parent="options"]
+modulate = Color(1, 1, 1, 0.696)
+sprite_frames = SubResource("SpriteFrames_q7cc7")
+autoplay = "default"
+frame_progress = 0.4566
+
+[node name="option2" type="AnimatedSprite2D" parent="options"]
+modulate = Color(1, 1, 1, 0.7)
+sprite_frames = SubResource("SpriteFrames_x7mmd")
+autoplay = "default"
+frame_progress = 0.674557
+
+[node name="option3" type="AnimatedSprite2D" parent="options"]
+modulate = Color(1, 1, 1, 0.7)
+sprite_frames = SubResource("SpriteFrames_srh42")
+autoplay = "default"
+frame_progress = 0.959525
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_lft8l")
+}
+autoplay = "idle"
+speed_scale = 0.5
+
+[connection signal="pressed" from="nextButton" to="." method="_on_next_button_pressed"]
+[connection signal="pressed" from="backButton" to="." method="_on_back_button_pressed"]
+
+[editable path="nextButton"]
+[editable path="backButton"]

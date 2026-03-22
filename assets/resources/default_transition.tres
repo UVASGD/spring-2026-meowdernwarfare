@@ -1,13 +1,16 @@
 [gd_resource type="Resource" script_class="TransitionSettings" load_steps=3 format=3 uid="uid://dlees1yds0kov"]
 
-[ext_resource type="Texture2D" uid="uid://bbicprcmibvuj" path="res://assets/sprites/blog-kitten-nursery-operation-kindness.jpg" id="1_n4j68"]
 [ext_resource type="Script" uid="uid://b17kfrmnv7vwn" path="res://scripts/globals/transition_settings.gd" id="2_bhpqg"]
+[ext_resource type="Texture2D" uid="uid://qc52arvq0152" path="res://assets/ui/chubbs-sheet.png" id="3_sheet"]
 
 [resource]
 script = ExtResource("2_bhpqg")
 direction = 0
 feather = 0.0
 duration = 0.5
-custom_texture = ExtResource("1_n4j68")
 use_texture = true
+sheet_texture = ExtResource("3_sheet")
+frame_size = Vector2i(1920, 1080)
+frame_count = 16
+fps = 32.0
 metadata/_custom_type_script = "uid://b17kfrmnv7vwn"

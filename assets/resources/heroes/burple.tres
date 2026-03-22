@@ -1,16 +1,19 @@
 [gd_resource type="Resource" script_class="HeroInfo" load_steps=3 format=3 uid="uid://db7hhf51j3ekv"]
 
+[ext_resource type="Texture2D" uid="uid://c6gqosmx6oywy" path="res://assets/sprites/burple/burple_portrait_normal.png" id="1_22vfk"]
 [ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="1_script"]
-[ext_resource type="Texture2D" uid="uid://dsw1x4irpnyi8" path="res://assets/ui/titlescreen/new/burple_main_menu_portrait.png" id="2_portrait"]
 
 [resource]
 script = ExtResource("1_script")
 id = "Burple"
 desc = "def"
-portrait = ExtResource("2_portrait")
+portrait = ExtResource("1_22vfk")
+portrait_outline_color = Color(0.705749, 0.260121, 1, 1)
 shoot_name = "Shoot"
 shoot_desc = "Basic ranged attack."
 ability1_name = "Ability 1"
 ability1_desc = "Special ability. (Coming soon)"
+ability2_name = ""
+ability2_desc = ""
 ult_name = "Ultimate"
 ult_desc = "Powerful ultimate ability. (Coming soon)"

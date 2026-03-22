@@ -1,14 +1,30 @@
-[gd_scene load_steps=34 format=3 uid="uid://bmq5l1vihuc5d"]
+[gd_scene load_steps=35 format=3 uid="uid://bmq5l1vihuc5d"]
 
 [ext_resource type="Script" uid="uid://ffhwp6btwq2k" path="res://scripts/player.gd" id="1_onrkg"]
 [ext_resource type="Texture2D" uid="uid://d4dfsjrtf3ya7" path="res://assets/ui/player/profile_placeholder.png" id="2_g2els"]
 [ext_resource type="FontFile" uid="uid://dt2nbaox60w53" path="res://assets/ui/fonts/BATTLESANSSERIF.OTF" id="3_qhqgy"]
 [ext_resource type="Texture2D" uid="uid://d0kdrsiknvaaw" path="res://assets/ui/player/ability_icon_temp1.png" id="4_dqkch"]
 [ext_resource type="Texture2D" uid="uid://cyhotyp75ff0t" path="res://assets/ui/player/ability_icon_temp2.png" id="5_qlg0r"]
+[ext_resource type="Texture2D" uid="uid://cdmsalqy06w63" path="res://assets/sprites/loanshark/marked icon/mark_frame_1.png" id="6_mark_icon"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hqtel"]
 radius = 15.0
 height = 40.0
+
+[sub_resource type="Animation" id="Animation_tuyoq"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1e-05, 1e-05)]
+}
 
 [sub_resource type="Animation" id="Animation_qlg0r"]
 resource_name = "appear"
@@ -25,21 +41,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(0.138696, 1, 1, 1, 1),
 "update": 1,
 "values": [Vector2(1e-05, 1e-05), Vector2(0.2, 0.8), Vector2(1.1, 0.9), Vector2(0.9, 1.1), Vector2(1, 1)]
-}
-
-[sub_resource type="Animation" id="Animation_tuyoq"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1e-05, 1e-05)]
 }
 
 [sub_resource type="Animation" id="Animation_fjrip"]
@@ -65,6 +66,21 @@ _data = {
 &"disappear": SubResource("Animation_fjrip")
 }
 
+[sub_resource type="Animation" id="Animation_ur7pv"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0.882353)]
+}
+
 [sub_resource type="Animation" id="Animation_smehm"]
 resource_name = "default"
 loop_mode = 2
@@ -79,21 +95,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Color(1, 1, 1, 0.882353), Color(1, 1, 1, 0.490196)]
-}
-
-[sub_resource type="Animation" id="Animation_ur7pv"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 0.882353)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ur7pv"]
@@ -116,10 +117,8 @@ corner_radius_top_left = 685
 corner_radius_bottom_right = 470
 corner_detail = 1
 
-[sub_resource type="Animation" id="Animation_y4r1p"]
-resource_name = "appear"
-length = 0.375004
-step = 0.0416667
+[sub_resource type="Animation" id="Animation_d2wvv"]
+length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -127,10 +126,10 @@ tracks/0/path = NodePath(".:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.0416667, 0.0833333, 0.166667, 0.25),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 1,
-"values": [Vector2(1e-05, 1e-05), Vector2(0.1, 0.8), Vector2(1.5, 0.9), Vector2(0.9, 1.1), Vector2(1, 1)]
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1e-05, 1e-05)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -158,8 +157,10 @@ tracks/2/keys = {
 "values": [Vector2(1, 1)]
 }
 
-[sub_resource type="Animation" id="Animation_d2wvv"]
-length = 0.001
+[sub_resource type="Animation" id="Animation_y4r1p"]
+resource_name = "appear"
+length = 0.375004
+step = 0.0416667
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -167,10 +168,10 @@ tracks/0/path = NodePath(".:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(1e-05, 1e-05)]
+"times": PackedFloat32Array(0, 0.0416667, 0.0833333, 0.166667, 0.25),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2(1e-05, 1e-05), Vector2(0.1, 0.8), Vector2(1.5, 0.9), Vector2(0.9, 1.1), Vector2(1, 1)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -247,6 +248,21 @@ _data = {
 &"finish": SubResource("Animation_a8ls1")
 }
 
+[sub_resource type="Animation" id="Animation_jej6c"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
 [sub_resource type="Animation" id="Animation_3v2ag"]
 resource_name = "finish"
 length = 0.333337
@@ -264,25 +280,37 @@ tracks/0/keys = {
 "values": [Color(0, 1, 0, 1), Color(1, 1, 1, 1)]
 }
 
-[sub_resource type="Animation" id="Animation_jej6c"]
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_f1ej7"]
+_data = {
+&"RESET": SubResource("Animation_jej6c"),
+&"finish": SubResource("Animation_3v2ag")
+}
+
+[sub_resource type="Animation" id="Animation_oprun"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:modulate")
+tracks/0/path = NodePath(".:scale")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Color(1, 1, 1, 1)]
+"values": [Vector2(0.552074, 0.552074)]
 }
-
-[sub_resource type="AnimationLibrary" id="AnimationLibrary_f1ej7"]
-_data = {
-&"RESET": SubResource("Animation_jej6c"),
-&"finish": SubResource("Animation_3v2ag")
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0.207843)]
 }
 
 [sub_resource type="Animation" id="Animation_f1ej7"]
@@ -312,33 +340,6 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
 "values": [Color(1, 1, 1, 0.745098), Color(1, 1, 1, 0.745098), Color(1, 1, 1, 0.207843)]
-}
-
-[sub_resource type="Animation" id="Animation_oprun"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Vector2(0.552074, 0.552074)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 0.207843)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_a8ls1"]
@@ -385,35 +386,6 @@ corner_detail = 1
 expand_margin_left = 22.0
 expand_margin_top = 6.0
 
-[sub_resource type="Animation" id="Animation_qfm1y"]
-resource_name = "use"
-length = 0.500004
-step = 0.0416667
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.0416667, 0.0833333, 0.166667, 0.25),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
-"update": 1,
-"values": [Vector2(1.5, 0.2), Vector2(0.8, 1.4), Vector2(0.75, 1.45), Vector2(1.1, 0.9), Vector2(1, 1)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath(".:modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0.166667, 0.416667),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.321569)]
-}
-
 [sub_resource type="Animation" id="Animation_fulsm"]
 length = 0.001
 tracks/0/type = "value"
@@ -458,6 +430,35 @@ tracks/0/keys = {
 "values": [Vector2(1.5, 0.2), Vector2(0.8, 1.4), Vector2(0.75, 1.45), Vector2(1.1, 0.9), Vector2(1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_qfm1y"]
+resource_name = "use"
+length = 0.500004
+step = 0.0416667
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.0416667, 0.0833333, 0.166667, 0.25),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2(1.5, 0.2), Vector2(0.8, 1.4), Vector2(0.75, 1.45), Vector2(1.1, 0.9), Vector2(1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.166667, 0.416667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.321569)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_fulsm"]
 _data = {
 &"RESET": SubResource("Animation_fulsm"),
@@ -497,6 +498,19 @@ layout_mode = 0
 offset_right = 50.0
 offset_bottom = 10.0
 color = Color(0.2, 0.8, 0.2, 1)
+
+[node name="MarkIndicator" type="TextureRect" parent="HealthBar"]
+visible = false
+z_index = 1
+layout_mode = 0
+offset_left = 5.0
+offset_top = -42.0
+offset_right = 45.0
+offset_bottom = -22.0
+mouse_filter = 2
+texture = ExtResource("6_mark_icon")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Nametag" type="Label" parent="HealthBar"]
 layout_mode = 0
@@ -584,6 +598,7 @@ libraries = {
 
 [node name="AmmoLeft" type="Label" parent="HealthBar"]
 modulate = Color(1, 1, 1, 0.207843)
+layout_mode = 0
 offset_left = -89.0
 offset_top = 91.0
 offset_right = 139.0
@@ -599,6 +614,7 @@ horizontal_alignment = 1
 libraries = {
 &"": SubResource("AnimationLibrary_a8ls1")
 }
+
 [node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="CooldownUI" type="CanvasLayer" parent="."]

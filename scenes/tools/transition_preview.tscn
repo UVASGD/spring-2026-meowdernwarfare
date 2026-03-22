@@ -9,8 +9,11 @@ script = ExtResource("2_om1pb")
 direction = 0
 feather = 0.0
 duration = 0.5
-custom_texture = ExtResource("2_64r5c")
 use_texture = true
+sheet_texture = ExtResource("2_64r5c")
+frame_size = Vector2i(1920, 1080)
+frame_count = 1
+fps = 30.0
 metadata/_custom_type_script = "uid://b17kfrmnv7vwn"
 
 [node name="TransitionPreview" type="Control"]
@@ -22,4 +25,3 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1")
 settings = SubResource("Resource_64r5c")
-preview_progress = -0.2

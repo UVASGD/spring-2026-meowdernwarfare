@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="HeroInfo" load_steps=2 format=3 uid="uid://bssvfmihxql8u"]
+
+[ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="1_tfks1"]
+
+[resource]
+script = ExtResource("1_tfks1")
+id = "Elon. Musk."
+desc = "def"
+shoot_name = "Shoot"
+shoot_desc = "Basic ranged attack."
+ability1_name = "Ability 1"
+ability1_desc = "Special ability. (Coming soon)"
+ability2_name = ""
+ability2_desc = ""
+ult_name = "Ultimate"
+ult_desc = "Powerful ultimate ability. (Coming soon)"

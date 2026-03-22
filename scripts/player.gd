@@ -31,6 +31,9 @@ var cooldown_ui: CanvasLayer = null
 var shoot_cd_bar: ProgressBar = null
 var ability1_cd_bar: ProgressBar = null
 var ability2_cd_bar: ProgressBar = null
+var ability2_charge_bar_1: ProgressBar = null
+var ability2_charge_bar_2: ProgressBar = null
+var loan_shark_charge_row: Control = null
 var reload_cd_bar: ProgressBar = null
 var dash_cd_bar: ProgressBar = null
 var ammo_label: Label = null
@@ -39,6 +42,10 @@ var ult_label: Label = null
 var tooltip_layer: CanvasLayer = null
 var tooltip_label: RichTextLabel = null
 var nametag: Label = null
+var mark_indicator: CanvasItem = null
+
+const MarkProjectileHitFxScene = preload("res://scenes/heroes/loanshark/mark_projectile_hit_fx.tscn")
+const _ULT_BANNER_PORTRAIT_SHADER = preload("res://assets/shaders/electric_wrap.gdshader")
 
 @onready var local_health_bar = $CooldownUI/HealthBar
 var target_health_bar_value : float;
@@ -54,6 +61,9 @@ var target_health_bar_color : Color = Color.WHITE;;
 
 @onready var character_profile = $CooldownUI/Profile
 @onready var ult_percent_label = $CooldownUI/Profile/Label
+var _profile_base_pos: Vector2 = Vector2.ZERO
+var _ult_ready_mat: ShaderMaterial
+var _ui_bound_hero: Hero = null
 
 @onready var reload_bar = $HealthBar/ReloadBar
 @onready var reload_bar_animation = $HealthBar/ReloadBar/AnimationPlayer
@@ -118,6 +128,7 @@ var respawn_countdown: float = 0.0
 var _death_ui: CanvasLayer = null
 var _death_timer_label: Label = null
 var is_invulnerable: bool = false
+var _suppress_shoot_until_release := false
 const FARM_RADIUS := 600.0
 var last_attacker: Player = null
 
@@ -129,19 +140,40 @@ signal dashed
 
 var reasonable_timer = 0.0
 var reasonable_timer_max = 1.0
-# Hero name -> Hero scene mapping
-const HERO_SCENES = {
-	"Dealer": preload("res://scenes/heroes/dealer/dealer.tscn"),
-	"Burple": preload("res://scenes/heroes/burple.tscn"),
-	"Alien": preload("res://scenes/heroes/alien.tscn"),
-	"Xyler": preload("res://scenes/heroes/xyler.tscn"),
-	"Fergus": preload("res://scenes/heroes/fergus.tscn"),
-	"LoanShark": preload("res://scenes/heroes/loanshark.tscn"),
-	"Gooblin": preload("res://scenes/heroes/gooblin/gooblin.tscn"),
-	"Garebare": preload("res://scenes/heroes/garebare.tscn"),
+# Hero name -> Hero scene path mapping
+const HERO_SCENE_PATHS = {
+	"Dealer": "res://scenes/heroes/dealer/dealer.tscn",
+	"Burple": "res://scenes/heroes/burple/burple.tscn",
+	"LoanShark": "res://scenes/heroes/loanshark/loanshark.tscn",
+	"Gooblin": "res://scenes/heroes/gooblin/gooblin.tscn",
+	"Garebare": "res://scenes/heroes/garebare/garebare.tscn",
+	"AnimeGirl": "res://scenes/heroes/animegirl/animegirl.tscn",
+	"XylerFergus": "res://scenes/heroes/xylerfergus/xylerfergus.tscn",
+	"ElonMusk": "res://scenes/heroes/elonmusk/elonmusk.tscn",
+
+	# Backward-compat names
+	"Anime Girl": "res://scenes/heroes/animegirl/animegirl.tscn",
+	"Xyler and Fergus": "res://scenes/heroes/xylerfergus/xylerfergus.tscn",
+	"Elon. Musk.": "res://scenes/heroes/elonmusk/elonmusk.tscn",
+	"Alien": "res://scenes/heroes/animegirl/animegirl.tscn",
+	"Xyler": "res://scenes/heroes/xylerfergus/xylerfergus.tscn",
+	"Fergus": "res://scenes/heroes/xylerfergus/xylerfergus.tscn",
 }
 
 func _ready() -> void:
+	_profile_base_pos = character_profile.position
+	_ult_ready_mat = ShaderMaterial.new()
+	_ult_ready_mat.shader = _ULT_BANNER_PORTRAIT_SHADER
+	_ult_ready_mat.set_shader_parameter("edge_px", 2.2)
+	_ult_ready_mat.set_shader_parameter("glow_strength", 1.4)
+	_ult_ready_mat.set_shader_parameter("speed", 1.5)
+	_ult_ready_mat.set_shader_parameter("noise_scale", 48.0)
+	_ult_ready_mat.set_shader_parameter("pulse", 0.35)
+	_ult_ready_mat.set_shader_parameter("progress", 1.0)
+	_ult_ready_mat.set_shader_parameter("edge_width", 0.05)
+	_ult_ready_mat.set_shader_parameter("edge_color", Color(1.0, 0.5, 0.1, 1.0))
+	_ult_ready_mat.set_shader_parameter("edge_color_inner", Color(1.0, 0.9, 0.3, 1.0))
+	_ult_ready_mat.set_shader_parameter("alpha_cutoff", 0.01)
 	add_to_group("players")
 	
 	# Default input for testing
@@ -154,6 +186,7 @@ func _ready() -> void:
 	if health_bar:
 		health_bar.top_level = true
 		health_bar_fill = health_bar.get_node_or_null("Fill")
+		mark_indicator = health_bar.get_node_or_null("MarkIndicator")
 	
 	# Camera follows only local players
 	camera = get_node_or_null("Camera2D")
@@ -166,6 +199,9 @@ func _ready() -> void:
 			shoot_cd_bar = container.get_node_or_null("ShootCD/Bar")
 			ability1_cd_bar = container.get_node_or_null("Ability1CD/Bar")
 			ability2_cd_bar = container.get_node_or_null("Ability2CD/Bar")
+			loan_shark_charge_row = container.get_node_or_null("Ability2CD/LoanSharkCharges")
+			ability2_charge_bar_1 = container.get_node_or_null("Ability2CD/LoanSharkCharges/Charge1")
+			ability2_charge_bar_2 = container.get_node_or_null("Ability2CD/LoanSharkCharges/Charge2")
 			reload_cd_bar = container.get_node_or_null("ReloadCD/Bar")
 			dash_cd_bar = container.get_node_or_null("DashCD/Bar")
 			ammo_label = container.get_node_or_null("Ammo/Count")
@@ -182,16 +218,32 @@ func _ready() -> void:
 	_setup_nametag()
 
 func set_hero(hero_name: String) -> void:
+	var prev = hero
 	if hero:
+		_unbind_hero_ui_signals(hero)
 		hero.queue_free()
 		hero = null
 	
-	var hero_scene = HERO_SCENES.get(hero_name)
+	var hero_scene := _load_hero_scene(hero_name)
 	if hero_scene == null:
 		push_warning("Unknown hero: ", hero_name, ", defaulting to Dealer")
-		hero_scene = HERO_SCENES["Dealer"]
-	
-	hero = hero_scene.instantiate()
+		hero_scene = _load_hero_scene("Dealer")
+		if hero_scene == null:
+			push_error("Failed to load fallback hero scene Dealer")
+			return
+
+	var inst = hero_scene.instantiate()
+	if inst == null or not (inst is Hero):
+		push_error("Failed to instantiate hero '%s', defaulting to Dealer" % hero_name)
+		if hero_name != "Dealer":
+			var dealer_scene := _load_hero_scene("Dealer")
+			if dealer_scene:
+				inst = dealer_scene.instantiate()
+		if inst == null or not (inst is Hero):
+			push_error("Failed to instantiate fallback hero Dealer")
+			return
+
+	hero = inst as Hero
 	hero.player = self
 	add_child(hero)
 	
@@ -204,8 +256,88 @@ func set_hero(hero_name: String) -> void:
 	var hitbox = get_node_or_null("CollisionShape2D")
 	if hitbox:
 		hitbox.shape = hero.get_hitbox_shape()
+
+	if prev == _ui_bound_hero:
+		_ui_bound_hero = null
+	if _should_show_local_ui():
+		_bind_hero_ui_signals(hero)
+		_refresh_hero_ui()
 	
-	#print("Player ", player_id, " set hero to ", hero.get_hero_name())
+	_refresh_ability2_charge_ui_visibility()
+	_refresh_movement_dash_ui_visibility()
+	_refresh_gun_ui_visibility()
+
+func _load_hero_scene(hero_name: String) -> PackedScene:
+	var path := String(HERO_SCENE_PATHS.get(hero_name, ""))
+	if path.is_empty():
+		return null
+	var res := load(path)
+	if res == null:
+		push_error("Failed to load hero scene path '%s' for hero '%s'" % [path, hero_name])
+		return null
+	if not (res is PackedScene):
+		push_error("Hero scene path '%s' is not a PackedScene for hero '%s'" % [path, hero_name])
+		return null
+	return res as PackedScene
+
+func _refresh_gun_ui_visibility() -> void:
+	if hero == null:
+		return
+	var gun := hero.uses_gun_ammo()
+	if cooldown_ui:
+		var c := cooldown_ui.get_node_or_null("Container")
+		if c:
+			var rc := c.get_node_or_null("ReloadCD")
+			if rc:
+				rc.visible = gun and _show_aux_ui
+			var am := c.get_node_or_null("Ammo")
+			if am:
+				am.visible = gun and _show_aux_ui
+	if reload_bar:
+		reload_bar.visible = gun and _show_aux_ui
+	if reload_prompt:
+		reload_prompt.visible = gun and _show_aux_ui
+	if ammo_left:
+		ammo_left.visible = gun and _show_aux_ui
+	if not gun:
+		if reload_bar_animation and reload_bar_animation.is_playing():
+			reload_bar_animation.stop()
+		if reload_prompt_animation and reload_prompt_animation.is_playing():
+			reload_prompt_animation.stop()
+		if ammo_left_animation and ammo_left_animation.is_playing():
+			ammo_left_animation.stop()
+
+func _refresh_ability2_charge_ui_visibility() -> void:
+	if ability2_cd_bar == null:
+		return
+	var a2_parent := ability2_cd_bar.get_parent()
+	if a2_parent == null:
+		return
+	if hero is HeroLoanShark:
+		a2_parent.visible = hero.ability2_cooldown > 0
+		ability2_cd_bar.visible = false
+		if loan_shark_charge_row:
+			loan_shark_charge_row.visible = true
+	elif hero != null:
+		a2_parent.visible = hero.ability2_cooldown > 0
+		ability2_cd_bar.visible = hero.ability2_cooldown > 0
+		if loan_shark_charge_row:
+			loan_shark_charge_row.visible = false
+	else:
+		a2_parent.visible = false
+		if loan_shark_charge_row:
+			loan_shark_charge_row.visible = false
+
+func _refresh_movement_dash_ui_visibility() -> void:
+	if dash_cd_bar == null:
+		return
+	var dash_parent := dash_cd_bar.get_parent()
+	if dash_parent == null:
+		return
+	if hero and not hero.allows_movement_dash():
+		dash_parent.visible = false
+	else:
+		dash_parent.visible = _show_aux_ui
 
 func _setup_local_ui() -> void:
 	var show_ui = false
@@ -219,9 +351,6 @@ func _setup_local_ui() -> void:
 	else:
 		show_aux = false
 	
-	ammo_left.visible = show_aux
-	reload_bar.visible = show_aux
-	reload_prompt.visible = show_aux
 	_show_aux_ui = show_aux
 	
 	if camera:
@@ -234,26 +363,89 @@ func _setup_local_ui() -> void:
 	if show_ui:
 		_create_tooltip()
 		if hero:
-			var health_amount : int = int(hero.get_health());
-			target_health_bar_value = hero.get_health_percent() * 100
-			target_health_bar_color = Color.WHITE;
-			local_health_bar_label.text = str(health_amount);
-			
-			character_profile.texture = hero.get_hero_default_profile();
-			
-			ability_1_icon.texture = hero.get_hero_ability1_icon();
-			ability_2_icon.texture = hero.get_hero_ability2_icon();
-			ability_1_bar.modulate = hero.get_hero_ui_color();
-			ability_2_bar.modulate = hero.get_hero_ui_color();
-			
-			hero.used_ability_1.connect(ability_1_use_animation);
-			hero.ability_1_refreshed.connect(ability_1_refresh_animation);
-			
-			hero.ran_out_of_ammo.connect(prompt_reload);
-			hero.started_reload.connect(show_reload_bar);
-			hero.finished_reload.connect(hide_reload_bar);
-			hero.finished_reload.connect(update_ammo_left);
-			hero.shot.connect(update_ammo_left);
+			_bind_hero_ui_signals(hero)
+			_refresh_hero_ui()
+
+func _should_show_local_ui() -> bool:
+	if input is LocalInput:
+		return player_id == 0
+	if input is NetworkInput:
+		return input.is_local
+	return false
+
+func _bind_hero_ui_signals(h: Hero) -> void:
+	if h == null:
+		return
+	if _ui_bound_hero != null and _ui_bound_hero != h:
+		_unbind_hero_ui_signals(_ui_bound_hero)
+	_ui_bound_hero = h
+
+	var cb_a1_use := Callable(self, "ability_1_use_animation")
+	if not h.used_ability_1.is_connected(cb_a1_use):
+		h.used_ability_1.connect(cb_a1_use)
+	var cb_a1_ref := Callable(self, "ability_1_refresh_animation")
+	if not h.ability_1_refreshed.is_connected(cb_a1_ref):
+		h.ability_1_refreshed.connect(cb_a1_ref)
+	if h.uses_gun_ammo():
+		var cb_out := Callable(self, "prompt_reload")
+		if not h.ran_out_of_ammo.is_connected(cb_out):
+			h.ran_out_of_ammo.connect(cb_out)
+		var cb_start := Callable(self, "show_reload_bar")
+		if not h.started_reload.is_connected(cb_start):
+			h.started_reload.connect(cb_start)
+		var cb_fin := Callable(self, "hide_reload_bar")
+		if not h.finished_reload.is_connected(cb_fin):
+			h.finished_reload.connect(cb_fin)
+		var cb_upd := Callable(self, "update_ammo_left")
+		if not h.finished_reload.is_connected(cb_upd):
+			h.finished_reload.connect(cb_upd)
+		if not h.shot.is_connected(cb_upd):
+			h.shot.connect(cb_upd)
+
+func _unbind_hero_ui_signals(h: Hero) -> void:
+	if h == null:
+		return
+	var cb_a1_use := Callable(self, "ability_1_use_animation")
+	if h.used_ability_1.is_connected(cb_a1_use):
+		h.used_ability_1.disconnect(cb_a1_use)
+	var cb_a1_ref := Callable(self, "ability_1_refresh_animation")
+	if h.ability_1_refreshed.is_connected(cb_a1_ref):
+		h.ability_1_refreshed.disconnect(cb_a1_ref)
+	var cb_out := Callable(self, "prompt_reload")
+	if h.ran_out_of_ammo.is_connected(cb_out):
+		h.ran_out_of_ammo.disconnect(cb_out)
+	var cb_start := Callable(self, "show_reload_bar")
+	if h.started_reload.is_connected(cb_start):
+		h.started_reload.disconnect(cb_start)
+	var cb_fin := Callable(self, "hide_reload_bar")
+	if h.finished_reload.is_connected(cb_fin):
+		h.finished_reload.disconnect(cb_fin)
+	var cb_upd := Callable(self, "update_ammo_left")
+	if h.finished_reload.is_connected(cb_upd):
+		h.finished_reload.disconnect(cb_upd)
+	if h.shot.is_connected(cb_upd):
+		h.shot.disconnect(cb_upd)
+
+func _refresh_hero_ui() -> void:
+	if hero == null:
+		return
+	var health_amount : int = int(hero.get_health())
+	target_health_bar_value = hero.get_health_percent() * 100
+	target_health_bar_color = Color.WHITE
+	local_health_bar_label.text = str(health_amount)
+	character_profile.texture = hero.get_hero_default_profile()
+	character_profile.material = null
+	character_profile.position = _profile_base_pos + hero.get_hero_portrait_offset()
+	ability_1_icon.texture = hero.get_hero_ability1_icon()
+	ability_2_icon.texture = hero.get_hero_ability2_icon()
+	ability_1_bar.modulate = hero.get_hero_ui_color()
+	ability_2_bar.modulate = hero.get_hero_ui_color()
+	if hero.uses_gun_ammo():
+		update_ammo_left()
+
+	_refresh_movement_dash_ui_visibility()
+	_refresh_ability2_charge_ui_visibility()
+	_refresh_gun_ui_visibility()
 
 func _setup_nametag() -> void:
 	nametag = health_bar.get_node_or_null("Nametag") if health_bar else null
@@ -282,6 +474,12 @@ func _refresh_world_health_bar() -> void:
 		bg.visible = show_enemy
 	if nametag:
 		nametag.visible = show_enemy
+	_refresh_mark_indicator_visibility()
+
+func _refresh_mark_indicator_visibility() -> void:
+	if mark_indicator == null or health_bar == null:
+		return
+	mark_indicator.visible = is_marked and health_bar.visible
 
 func _physics_process(delta: float) -> void:
 	if input == null:
@@ -319,8 +517,8 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 	
 	_handle_rotation(delta)
-	_handle_actions()
-	_handle_crops(delta)
+	var consumed_shoot := _handle_crops(delta)
+	_handle_actions(consumed_shoot)
 	
 	if health_bar:
 		health_bar.global_position = global_position + Vector2(-25, -60)
@@ -363,6 +561,12 @@ func _update_timers(delta: float) -> void:
 		if blind_timer <= 0:
 			_end_blind_effect()
 
+	# Marked effect (Loan Shark)
+	if marked_timer > 0:
+		marked_timer -= delta
+		if marked_timer <= 0:
+			_end_marked_effect()
+
 	# Stun timer
 	if stun_timer > 0:
 		stun_timer -= delta
@@ -401,7 +605,14 @@ func _handle_rotation(delta: float) -> void:
 	rotation = lerp_angle(rotation, target_rot, rotation_speed * delta)
 	
 
-func _handle_actions() -> void:
+func _handle_actions(consumed_shoot := false) -> void:
+	if consumed_shoot:
+		_suppress_shoot_until_release = true
+	if _suppress_shoot_until_release:
+		if not input.shoot:
+			_suppress_shoot_until_release = false
+		else:
+			consumed_shoot = true
 	if is_stunned:
 		if hero and input.ult_just:
 			hero.ult(aim_dir, get_aim_position())
@@ -410,15 +621,16 @@ func _handle_actions() -> void:
 	if is_dying or is_dead():
 		return
 
-	# Dash
+	# Dash (disabled for heroes that only use ability-based dashes, e.g. Loan Shark)
 	if input.dash_just and dash_cd_timer <= 0 and not is_dashing and not is_dead():
-		_start_dash()
+		if hero == null or hero.allows_movement_dash():
+			_start_dash()
 	
 	if hero == null:
 		return
 	
 	# Delegate to hero
-	if input.shoot:
+	if input.shoot and not consumed_shoot:
 		hero.shoot(aim_dir, get_aim_position())
 	if input.ability1_just:
 		hero.ability1(aim_dir, get_aim_position())
@@ -426,7 +638,7 @@ func _handle_actions() -> void:
 		hero.ability2(aim_dir, get_aim_position())
 	if input.ult_just:
 		hero.ult(aim_dir, get_aim_position())
-	if input.reload_just:
+	if input.reload_just and hero.uses_gun_ammo():
 		hero.reload()
 
 func _start_dash() -> void:
@@ -437,6 +649,7 @@ func _start_dash() -> void:
 	dashed.emit()
 
 func _on_hero_died() -> void:
+	clear_mark_effect()
 	print("[PLAYER] _on_hero_died: pid=", player_id, " crop_count=", crop_count, " is_local=", _is_local_player())
 	died.emit()
 	is_dying = true
@@ -483,11 +696,13 @@ func get_aim_position() -> Vector2:
 func is_moving() -> bool:
 	return input != null and input.move_input.length() > 0.1
 
-func take_damage(amount: float, attacker: Player = null) -> void:
-	if is_dead() or in_spectate_mode or is_awaiting_respawn or is_invulnerable: return
+## Returns whether damage was applied (false if dead, invulnerable, dashing with i-frames, etc.).
+func take_damage(amount: float, attacker: Player = null) -> bool:
+	if is_dead() or in_spectate_mode or is_awaiting_respawn or is_invulnerable:
+		return false
 	if is_dashing:
 		on_bullet_dodged()
-		return
+		return false
 	
 	if hero:
 		if attacker:
@@ -496,6 +711,8 @@ func take_damage(amount: float, attacker: Player = null) -> void:
 		took_damage.emit(amount)
 		if attacker and attacker.hero:
 			attacker.hero.add_ult_points(attacker.hero.ult_points_on_hit)
+		return true
+	return false
 
 func on_bullet_dodged() -> void:
 	if hero:
@@ -557,31 +774,61 @@ func _update_cooldown_ui() -> void:
 	
 	
 	if ability2_cd_bar:
-		if hero.ability2_cooldown > 0:
+		if hero is HeroLoanShark:
+			var ls := hero as HeroLoanShark
+			ability2_cd_bar.get_parent().visible = hero.ability2_cooldown > 0
+			ability2_cd_bar.visible = false
+			if loan_shark_charge_row:
+				loan_shark_charge_row.visible = true
+			if ability2_charge_bar_1:
+				ability2_charge_bar_1.value = clamp(ls.get_ability2_charge_slot_recharge_progress(0), 0.0, 1.0)
+			if ability2_charge_bar_2:
+				ability2_charge_bar_2.value = clamp(ls.get_ability2_charge_slot_recharge_progress(1), 0.0, 1.0)
+		elif hero.ability2_cooldown > 0:
+			ability2_cd_bar.visible = true
 			var a2_pct = 1.0 - (hero.ability2_cd / hero.ability2_cooldown)
 			ability2_cd_bar.value = clamp(a2_pct, 0.0, 1.0)
 			ability2_cd_bar.get_parent().visible = true
+			if loan_shark_charge_row:
+				loan_shark_charge_row.visible = false
 		else:
 			ability2_cd_bar.get_parent().visible = false
+			if loan_shark_charge_row:
+				loan_shark_charge_row.visible = false
 	
-	if reload_cd_bar:
+	if ability_2_bar:
+		if hero is HeroLoanShark:
+			var ls2 := hero as HeroLoanShark
+			ability_2_bar.value = float(ls2.ability2_charges) / 2.0
+			ability_2_bar.modulate.a = 0.35 if ls2.ability2_charges <= 0 else 1.0
+		elif hero and hero.ability2_cooldown > 0:
+			var a2_pct2 = 1.0 - (hero.ability2_cd / hero.ability2_cooldown)
+			ability_2_bar.modulate.a = 0.35 if a2_pct2 < 1.0 else 1.0
+	
+	if reload_cd_bar and hero.uses_gun_ammo():
 		var reload_pct = 1.0 - (hero.reload_cd / hero.reload_time) if hero.reload_time > 0 else 1.0
 		reload_cd_bar.value = clamp(reload_pct, 0.0, 1.0)
 		reload_bar.value = clamp(reload_pct, 0.15, 1.0);
 		
-	if dash_cd_bar:
+	if dash_cd_bar and hero and hero.allows_movement_dash():
 		var dash_pct = 1.0 - (dash_cd_timer / dash_cooldown) if dash_cooldown > 0 else 1.0
 		dash_cd_bar.value = clamp(dash_pct, 0.0, 1.0)
 	
-	if ammo_label:
+	if ammo_label and hero.uses_gun_ammo():
 		ammo_label.text = "%d/%d" % [hero.ammo, hero.mag_size]
 	
-	ult_percent_label.text = str(int(hero.get_ult_percent() * 100));
-	if(hero.get_ult_percent() >= 1):
-		ult_percent_label.text = "c";
-		character_profile.texture = hero.get_hero_ult_profile();
+	var ult_full := hero.get_ult_percent() >= 1.0
+	ult_percent_label.text = "c" if ult_full else str(int(hero.get_ult_percent() * 100))
+	if ult_full:
+		character_profile.texture = hero.get_hero_ult_profile()
+		var c := hero.get_hero_ui_color()
+		_ult_ready_mat.set_shader_parameter("color_a", c.lerp(Color.WHITE, 0.2))
+		_ult_ready_mat.set_shader_parameter("color_b", c.lerp(Color.BLACK, 0.35))
+		character_profile.material = _ult_ready_mat
 	else:
-		character_profile.texture = hero.get_hero_default_profile();
+		character_profile.texture = hero.get_hero_default_profile()
+		character_profile.material = null
+	character_profile.position = _profile_base_pos + hero.get_hero_portrait_offset()
 	
 	if ult_bar:
 		ult_bar.value = hero.get_ult_percent()
@@ -671,29 +918,31 @@ func _on_crop_area_entered(area: Area2D) -> void:
 	if area is Crop and held_crop == null and drop_cd <= 0 and not area.is_planted:
 		pickup_world_crop(area)
 
-func _handle_crops(_delta: float) -> void:
+func _handle_crops(_delta: float) -> bool:
 	if input == null:
-		return
+		return false
+	var consumed_shoot := false
 	
 	# Drop held crop
 	if input.drop_just and held_crop != null:
 		drop_held_crop()
-		return
+		return false
 	
 	# Plant held crop (LMB click while holding)
 	if input.shoot_just and held_crop != null:
-		_try_plant()
-		return
+		consumed_shoot = _try_plant()
+		return consumed_shoot
 	
 	# Pick up planted crop (LMB click on planted crop, not holding anything)
 	if input.shoot_just and held_crop == null:
-		_try_uproot()
+		consumed_shoot = _try_uproot()
 	
 	if held_sprite and held_crop:
 		var behind = -aim_dir.normalized() * 40.0
 		held_sprite.global_position = global_position + behind
 	if _remote_held_sprite and _remote_held_sprite.visible:
 		_remote_held_sprite.position = Vector2(0, 40).rotated(-rotation_offset)
+	return consumed_shoot
 
 func pickup_world_crop(crop: Crop) -> void:
 	var crop_pos = crop.global_position
@@ -741,18 +990,18 @@ func _tile_at_cursor(tiles: Array) -> Node:
 			return tile
 	return null
 
-func _try_plant() -> void:
+func _try_plant() -> bool:
 	if farm == null or held_crop == null:
-		return
+		return false
 	if not farm.has_space():
-		return
+		return false
 	
 	var tiles = _get_plantable_tiles(farm)
 	var tile = _tile_at_cursor(tiles)
 	if tile == null or tile.planted_crop != null:
-		return
+		return false
 	if tile.global_position.distance_to(global_position) > INTERACT_RANGE:
-		return
+		return false
 	
 	var crop = held_crop
 	var crop_type = crop.get_type_id()
@@ -769,8 +1018,9 @@ func _try_plant() -> void:
 	if gm and not gm.is_local():
 		var tile_idx = tiles.find(tile)
 		gm.send_crop_planted(player_id, tile_idx, crop_type, stg)
+	return true
 
-func _try_uproot() -> void:
+func _try_uproot() -> bool:
 	var farms_list = get_tree().get_nodes_in_group("farms")
 	for f in farms_list:
 		var tiles = _get_plantable_tiles(f)
@@ -789,7 +1039,9 @@ func _try_uproot() -> void:
 			var gm = GameManager.instance
 			if gm and not gm.is_local() and victim:
 				gm.send_crop_uproot(victim.player_id, tile_idx, crop.get_type_id(), crop.stage)
-		return
+			return true
+		return false
+	return false
 
 func _get_plantable_tiles(f) -> Array:
 	var tiles: Array = []
@@ -853,13 +1105,10 @@ func ability_1_refresh_animation() -> void:
 const DrugShader = preload("res://assets/shaders/drug.gdshader")
 
 func apply_drug_effect(duration: float) -> void:
-	# Only show effect for local player
-	var is_local = (input is LocalInput and player_id == 0) or (input is NetworkInput and input.is_local)
-	
 	is_drugged = true
 	drug_timer = duration
 	
-	if is_local:
+	if _should_show_local_ui():
 		_create_drug_effect_layer()
 
 func _create_drug_effect_layer() -> void:
@@ -892,6 +1141,31 @@ func _end_drug_effect() -> void:
 		drug_effect_layer.queue_free()
 		drug_effect_layer = null
 		drug_effect_rect = null
+
+# --- MARKED EFFECT (LOAN SHARK) ---
+
+func apply_mark_effect(duration: float) -> void:
+	is_marked = true
+	marked_timer = duration
+	_refresh_mark_indicator_visibility()
+
+func _end_marked_effect() -> void:
+	clear_mark_effect()
+
+## Clears Loan Shark mark (timer, UI). Safe to call when not marked.
+func clear_mark_effect() -> void:
+	if not is_marked:
+		return
+	is_marked = false
+	marked_timer = 0.0
+	_refresh_mark_indicator_visibility()
+
+## World-space pop when Loan Shark's mark projectile connects (visible to all players).
+func spawn_mark_projectile_hit_fx() -> void:
+	var fx: Node2D = MarkProjectileHitFxScene.instantiate()
+	add_child(fx)
+	fx.global_position = global_position + Vector2(0, -72)
+
 
 # --- BLIND EFFECT ---
 

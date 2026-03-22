@@ -6,7 +6,7 @@ extends Control
 		settings = v
 		_apply_settings()
 
-@export_range(-0.2, 1.2) var preview_progress: float = 0.0:
+@export_range(0.0, 1.0) var preview_progress: float = 0.0:
 	set(v):
 		preview_progress = v
 		_update_progress()
@@ -55,8 +55,10 @@ func _apply_settings() -> void:
 	mat.set_shader_parameter("direction", settings.direction)
 	mat.set_shader_parameter("feather", settings.feather)
 	mat.set_shader_parameter("use_texture", settings.use_texture)
-	if settings.custom_texture:
-		mat.set_shader_parameter("custom_texture", settings.custom_texture)
+	mat.set_shader_parameter("custom_texture", settings.sheet_texture)
+	mat.set_shader_parameter("frame_size", Vector2(settings.frame_size))
+	mat.set_shader_parameter("frame_count", settings.frame_count)
+	mat.set_shader_parameter("frame_index", 0)
 
 func _update_progress() -> void:
 	if not _overlay or not _overlay.material:
@@ -64,6 +66,9 @@ func _update_progress() -> void:
 	var mat = _overlay.material as ShaderMaterial
 	if mat:
 		mat.set_shader_parameter("progress", preview_progress)
+		if settings:
+			var f := int(floor(preview_progress * settings.duration * settings.fps))
+			mat.set_shader_parameter("frame_index", mini(f, settings.frame_count - 1))
 
 func _play_preview() -> void:
 	if _tween:
@@ -72,5 +77,5 @@ func _play_preview() -> void:
 	var dur = settings.duration if settings else 0.5
 	
 	_tween = create_tween()
-	_tween.tween_property(self, "preview_progress", 1.2, dur).from(-0.2)
-	_tween.tween_property(self, "preview_progress", -0.2, dur)
+	_tween.tween_property(self, "preview_progress", 1.0, dur).from(0.0)
+	_tween.tween_property(self, "preview_progress", 0.0, dur)

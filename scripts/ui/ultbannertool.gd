@@ -11,10 +11,12 @@ var mats: Array[ShaderMaterial] = []
 @onready var portrait: Sprite2D = $banner/Sprite
 @onready var username: Label = $banner/username
 @onready var anim: AnimationPlayer = $AnimationPlayer
+var _portrait_base_pos: Vector2 = Vector2.ZERO
 var _fading: bool = false
 var _fade_tw: Tween = null
 
 func _ready() -> void:
+	_portrait_base_pos = portrait.position
 	_collect(self)
 	_apply()
 	visible = false
@@ -83,6 +85,7 @@ func _set_content(player: Player, player_name: String) -> void:
 		tex = player.hero.get_hero_default_profile()
 	if tex:
 		portrait.texture = tex
+	portrait.position = _portrait_base_pos + player.hero.get_hero_ult_banner_portrait_offset()
 	var c = player.hero.get_hero_ui_color()
 	var m = portrait.material as ShaderMaterial
 	if m:

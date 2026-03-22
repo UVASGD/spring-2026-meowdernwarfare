@@ -103,6 +103,7 @@ fill_to = Vector2(0.780488, 0.307927)
 collision_layer = 4
 collision_mask = 3
 script = ExtResource("1_script")
+speed = 600.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(1.19209e-07, -0.999998)

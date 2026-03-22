@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://dr56yqn6pplyu"]
+
+[ext_resource type="Script" uid="uid://dpebk3try815y" path="res://scripts/heroes/burple.gd" id="1_rythq"]
+[ext_resource type="Texture2D" uid="uid://c6gqosmx6oywy" path="res://assets/sprites/burple/burple_portrait_normal.png" id="2_3facu"]
+
+[node name="Burple" type="Node2D"]
+script = ExtResource("1_rythq")
+max_health = 120.0
+move_speed_mult = 0.9
+shoot_cooldown = 0.4
+ability1_cooldown = 8.0
+reload_time = 1.8
+mag_size = 12
+portrait_outline_color = Color(0.705749, 0.260121, 1, 1)
+normal_portrait = ExtResource("2_3facu")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.35, 0.35)
