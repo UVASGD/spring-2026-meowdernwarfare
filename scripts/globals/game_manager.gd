@@ -152,6 +152,7 @@ func clear_players() -> void:
 	players.clear()
 	eliminated.clear()
 	stats.clear()
+	_remote_targets.clear()
 	sudden_death = false
 	game_over = false
 
@@ -181,6 +182,7 @@ const POSITION_SNAP_THRESHOLD: float = 200.0  # Teleport if too far off
 const POSITION_LERP_SPEED: float = 15.0  # Smooth correction speed
 var sync_timer: float = 0.0
 var pending_corrections: Dictionary = {}  # player_id -> {pos, rot, health, etc}
+var _remote_targets: Dictionary = {}  # pid -> { pos, rot, vel } for smooth interpolation
 
 const POS_REPORT_INTERVAL: float = 2.0
 var pos_report_timer: float = 0.0
@@ -200,6 +202,8 @@ func _process(delta: float) -> void:
 	
 	if mode == Mode.ONLINE_CLIENT:
 		_apply_corrections(delta)
+	
+	_interpolate_remotes(delta)
 	
 	pos_report_timer += delta
 	if pos_report_timer >= POS_REPORT_INTERVAL:
@@ -273,6 +277,7 @@ func _on_player_left(player_id: int) -> void:
 		players.erase(player)
 		player.queue_free()
 	net_inputs.erase(player_id)
+	_remote_targets.erase(player_id)
 
 func _on_message(from_id: int, data: Dictionary) -> void:
 	var msg_type = data.get("type", "")
@@ -380,7 +385,6 @@ func _broadcast_state() -> void:
 	})
 
 func _receive_state_sync(data: Dictionary) -> void:
-	# Only clients receive state sync
 	if mode != Mode.ONLINE_CLIENT:
 		return
 	
@@ -388,9 +392,14 @@ func _receive_state_sync(data: Dictionary) -> void:
 	for state in states:
 		var pid = int(state.get("id", -1))
 		pending_corrections[pid] = state
+		if pid != local_player_id:
+			_remote_targets[pid] = {
+				"pos": Vector2(state.get("x", 0), state.get("y", 0)),
+				"rot": float(state.get("r", 0)),
+				"vel": Vector2(state.get("vx", 0), state.get("vy", 0)),
+			}
 
 func _receive_client_state(from_id: int, data: Dictionary) -> void:
-	# Only host receives client state updates
 	if mode != Mode.ONLINE_HOST:
 		return
 	
@@ -400,10 +409,11 @@ func _receive_client_state(from_id: int, data: Dictionary) -> void:
 	if player == null or not is_instance_valid(player):
 		return
 	
-	var client_pos = Vector2(data.get("x", 0), data.get("y", 0))
-	player.global_position = client_pos
-	player.rotation = data.get("r", player.rotation)
-	player.velocity = Vector2(data.get("vx", 0), data.get("vy", 0))
+	_remote_targets[pid] = {
+		"pos": Vector2(data.get("x", 0), data.get("y", 0)),
+		"rot": data.get("r", player.rotation),
+		"vel": Vector2(data.get("vx", 0), data.get("vy", 0)),
+	}
 	player.is_dashing = data.get("dash", false)
 	
 	if player.hero and data.has("hp"):
@@ -426,27 +436,9 @@ func _apply_corrections(delta: float) -> void:
 		# Don't correct local player's position (they are authoritative for their own movement)
 		# But DO apply other state like health
 		var is_local_player = (pid == local_player_id)
-		
 		var target_pos = Vector2(state.get("x", 0), state.get("y", 0))
-		var target_rot = state.get("r", 0)
 		
 		if not is_local_player:
-			# Correct remote player positions
-			var dist = player.global_position.distance_to(target_pos)
-			
-			if dist > POSITION_SNAP_THRESHOLD:
-				# Teleport if too far off
-				player.global_position = target_pos
-				player.rotation = target_rot
-			else:
-				# Smooth interpolation
-				player.global_position = player.global_position.lerp(target_pos, POSITION_LERP_SPEED * delta)
-				player.rotation = lerp_angle(player.rotation, target_rot, POSITION_LERP_SPEED * delta)
-			
-			# Apply velocity for prediction
-			player.velocity = Vector2(state.get("vx", 0), state.get("vy", 0))
-			
-			# Sync dash/drug/stun state
 			player.is_dashing = state.get("dash", false)
 			if state.get("drug", false) and not player.is_drugged:
 				player.is_drugged = true
@@ -461,9 +453,13 @@ func _apply_corrections(delta: float) -> void:
 		if player.hero:
 			if not is_local_player:
 				var hp = state.get("hp", player.hero.health)
-				if abs(player.hero.health - hp) > 1:
-					player.hero.health = hp
-					player.hero.health_changed.emit(hp, player.hero.max_health)
+				var hp_diff = hp - player.hero.health
+				if abs(hp_diff) > 1:
+					if hp_diff > 0 and hp_diff < player.hero.max_health * 0.25:
+						player.hero.health = lerpf(player.hero.health, hp, 0.4)
+					else:
+						player.hero.health = hp
+					player.hero.health_changed.emit(player.hero.health, player.hero.max_health)
 			
 			player.hero.ult_points = int(state.get("ult", player.hero.ult_points))
 			player.hero.ammo = int(state.get("ammo", player.hero.ammo))
@@ -502,6 +498,24 @@ func _apply_corrections(delta: float) -> void:
 	
 	pending_corrections.clear()
 
+func _interpolate_remotes(delta: float) -> void:
+	for pid in _remote_targets:
+		var player = get_player(pid)
+		if player == null or not is_instance_valid(player):
+			continue
+		if player.in_spectate_mode or player.is_awaiting_respawn or player.is_dying:
+			continue
+		
+		var t = _remote_targets[pid]
+		player.velocity = t["vel"]
+		t["pos"] += t["vel"] * delta
+		
+		var dist = player.global_position.distance_to(t["pos"])
+		if dist > POSITION_SNAP_THRESHOLD:
+			player.global_position = t["pos"]
+		else:
+			player.global_position = player.global_position.lerp(t["pos"], POSITION_LERP_SPEED * delta)
+
 func _spawn_net_player(id: int, local: bool) -> Player:
 	if player_scene == null:
 		return null
@@ -532,6 +546,7 @@ func disconnect_online() -> void:
 	Network.disconnect_from_server()
 	clear_players()
 	net_inputs.clear()
+	_remote_targets.clear()
 	player_data.clear()
 	game_settings.clear()
 	local_player_id = -1
