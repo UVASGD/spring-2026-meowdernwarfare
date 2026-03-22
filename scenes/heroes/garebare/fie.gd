@@ -6,6 +6,7 @@ extends StaticBody2D
 var owner_player: Player = null
 
 @onready var suppress_zone: Area2D = $SuppressionZone
+@onready var aoe: Sprite2D = $aoe
 
 signal destroyed
 
@@ -13,6 +14,7 @@ const COLOR_FRIENDLY := Color(0.3, 0.8, 1.0)
 const COLOR_ENEMY := Color(1.0, 0.25, 0.2)
 
 func _ready() -> void:
+
 	var zone_shape = suppress_zone.get_node("Shape") as CollisionShape2D
 	if zone_shape and zone_shape.shape is CircleShape2D:
 		zone_shape.shape.radius = suppress_radius
@@ -21,8 +23,10 @@ func _ready() -> void:
 	suppress_zone.body_exited.connect(_on_zone_exited)
 
 	var c = COLOR_FRIENDLY if _is_local_owner() else COLOR_ENEMY
-	$Sprite.modulate = Color(c.r, c.g, c.b, 0.8)
-	add_child(_create_ring(c))
+	$Sprite.modulate = Color(c.r, c.g, c.b, 1)
+	aoe.material.set_shader_parameter("color", Color(c.r, c.g, c.b, 1))
+	$PointLight2D.color = Color(c.r, c.g, c.b, 1)
+
 
 func _is_local_owner() -> bool:
 	if owner_player == null:
@@ -56,17 +60,3 @@ func _on_zone_entered(body: Node) -> void:
 func _on_zone_exited(body: Node) -> void:
 	if body is Player and body != owner_player:
 		body.fie_suppress_count = max(0, body.fie_suppress_count - 1)
-
-func _create_ring(c: Color) -> Node2D:
-	var ring = Node2D.new()
-	var pts = 48
-	for i in range(pts):
-		var seg = Line2D.new()
-		var a1 = TAU * i / pts
-		var a2 = TAU * (i + 1) / pts
-		seg.add_point(Vector2(cos(a1), sin(a1)) * suppress_radius)
-		seg.add_point(Vector2(cos(a2), sin(a2)) * suppress_radius)
-		seg.width = 1.5
-		seg.default_color = Color(c.r, c.g, c.b, 0.35)
-		ring.add_child(seg)
-	return ring
