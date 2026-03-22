@@ -45,6 +45,7 @@ var nametag: Label = null
 var mark_indicator: CanvasItem = null
 
 const MarkProjectileHitFxScene = preload("res://scenes/heroes/loanshark/mark_projectile_hit_fx.tscn")
+const _ULT_BANNER_PORTRAIT_SHADER = preload("res://assets/shaders/electric_wrap.gdshader")
 
 @onready var local_health_bar = $CooldownUI/HealthBar
 var target_health_bar_value : float;
@@ -61,6 +62,7 @@ var target_health_bar_color : Color = Color.WHITE;;
 @onready var character_profile = $CooldownUI/Profile
 @onready var ult_percent_label = $CooldownUI/Profile/Label
 var _profile_base_pos: Vector2 = Vector2.ZERO
+var _ult_ready_mat: ShaderMaterial
 var _ui_bound_hero: Hero = null
 
 @onready var reload_bar = $HealthBar/ReloadBar
@@ -160,6 +162,18 @@ const HERO_SCENE_PATHS = {
 
 func _ready() -> void:
 	_profile_base_pos = character_profile.position
+	_ult_ready_mat = ShaderMaterial.new()
+	_ult_ready_mat.shader = _ULT_BANNER_PORTRAIT_SHADER
+	_ult_ready_mat.set_shader_parameter("edge_px", 2.2)
+	_ult_ready_mat.set_shader_parameter("glow_strength", 1.4)
+	_ult_ready_mat.set_shader_parameter("speed", 1.5)
+	_ult_ready_mat.set_shader_parameter("noise_scale", 48.0)
+	_ult_ready_mat.set_shader_parameter("pulse", 0.35)
+	_ult_ready_mat.set_shader_parameter("progress", 1.0)
+	_ult_ready_mat.set_shader_parameter("edge_width", 0.05)
+	_ult_ready_mat.set_shader_parameter("edge_color", Color(1.0, 0.5, 0.1, 1.0))
+	_ult_ready_mat.set_shader_parameter("edge_color_inner", Color(1.0, 0.9, 0.3, 1.0))
+	_ult_ready_mat.set_shader_parameter("alpha_cutoff", 0.01)
 	add_to_group("players")
 	
 	# Default input for testing
@@ -412,6 +426,7 @@ func _refresh_hero_ui() -> void:
 	target_health_bar_color = Color.WHITE
 	local_health_bar_label.text = str(health_amount)
 	character_profile.texture = hero.get_hero_default_profile()
+	character_profile.material = null
 	character_profile.position = _profile_base_pos + hero.get_hero_portrait_offset()
 	ability_1_icon.texture = hero.get_hero_ability1_icon()
 	ability_2_icon.texture = hero.get_hero_ability2_icon()
@@ -793,12 +808,17 @@ func _update_cooldown_ui() -> void:
 	if ammo_label and hero.uses_gun_ammo():
 		ammo_label.text = "%d/%d" % [hero.ammo, hero.mag_size]
 	
-	ult_percent_label.text = str(int(hero.get_ult_percent() * 100));
-	if(hero.get_ult_percent() >= 1):
-		ult_percent_label.text = "c";
-		character_profile.texture = hero.get_hero_ult_profile();
+	var ult_full := hero.get_ult_percent() >= 1.0
+	ult_percent_label.text = "c" if ult_full else str(int(hero.get_ult_percent() * 100))
+	if ult_full:
+		character_profile.texture = hero.get_hero_ult_profile()
+		var c := hero.get_hero_ui_color()
+		_ult_ready_mat.set_shader_parameter("color_a", c.lerp(Color.WHITE, 0.2))
+		_ult_ready_mat.set_shader_parameter("color_b", c.lerp(Color.BLACK, 0.35))
+		character_profile.material = _ult_ready_mat
 	else:
-		character_profile.texture = hero.get_hero_default_profile();
+		character_profile.texture = hero.get_hero_default_profile()
+		character_profile.material = null
 	character_profile.position = _profile_base_pos + hero.get_hero_portrait_offset()
 	
 	if ult_bar:
@@ -1076,13 +1096,10 @@ func ability_1_refresh_animation() -> void:
 const DrugShader = preload("res://assets/shaders/drug.gdshader")
 
 func apply_drug_effect(duration: float) -> void:
-	# Only show effect for local player
-	var is_local = (input is LocalInput and player_id == 0) or (input is NetworkInput and input.is_local)
-	
 	is_drugged = true
 	drug_timer = duration
 	
-	if is_local:
+	if _should_show_local_ui():
 		_create_drug_effect_layer()
 
 func _create_drug_effect_layer() -> void:
