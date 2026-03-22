@@ -2,6 +2,9 @@ class_name SpriteButton extends Node2D
 
 signal pressed()
 
+const IDLE_MOD := Color(1, 1, 1, 1.0)
+const HOVER_MOD := Color(0.55, 0.55, 0.55, 1.0)
+
 @export var toggleable := false
 @export var start_disabled := false
 @export var custom_hover := false
@@ -16,14 +19,13 @@ var is_disabled := false
 var is_on := false
 
 func _ready() -> void:
-	print("[SpriteButton] _ready: ", name, " area=", $Area2D, " shape=", $Area2D/CollisionShape2D.shape if $Area2D/CollisionShape2D else "null")
+	_fix_state_textures()
 	if start_disabled:
 		disable()
 	else:
 		_show_off_state()
 
 func _on_area_2d_mouse_entered() -> void:
-	print("[SpriteButton] mouse_entered: ", name)
 	if is_disabled:
 		return
 	hovered = true
@@ -42,14 +44,12 @@ func _on_area_2d_mouse_exited() -> void:
 		_show_off_state()
 
 func _on_area_2d_input_event(_viewport: Node, event: InputEvent, _shape_idx: int) -> void:
-	print("[SpriteButton] input_event: ", name, " type=", event.get_class(), " hovered=", hovered, " disabled=", is_disabled)
 	if not hovered or is_disabled:
 		return
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		_confirm()
 
 func _confirm() -> void:
-	print("[SpriteButton] _confirm: ", name)
 	if toggleable:
 		is_on = not is_on
 	if is_on:
@@ -84,11 +84,13 @@ func _show_on_state() -> void:
 	_hide_all()
 	if on_sprite:
 		on_sprite.visible = true
+		on_sprite.modulate = Color.WHITE
 
 func _show_off_state() -> void:
 	_hide_all()
 	if off_sprite:
 		off_sprite.visible = true
+		off_sprite.modulate = IDLE_MOD
 
 func _hide_all() -> void:
 	_remove_hover()
@@ -105,12 +107,32 @@ func _apply_hover() -> void:
 		if hovered_sprite:
 			hovered_sprite.visible = true
 	else:
-		if off_sprite:
-			off_sprite.modulate = Color(0.7, 0.7, 0.7)
+		if off_sprite and off_sprite.visible:
+			off_sprite.modulate = HOVER_MOD
 
 func _remove_hover() -> void:
 	if custom_hover:
-		hovered_sprite.visible = false
-	else:
-		if off_sprite:
-			off_sprite.modulate = Color.WHITE
+		if hovered_sprite:
+			hovered_sprite.visible = false
+
+func _fix_state_textures() -> void:
+	var ref_tex: Texture2D = null
+	if off_sprite and not _is_missing_tex(off_sprite):
+		ref_tex = off_sprite.texture
+	elif on_sprite and not _is_missing_tex(on_sprite):
+		ref_tex = on_sprite.texture
+	if ref_tex == null:
+		return
+	if on_sprite and _is_missing_tex(on_sprite):
+		on_sprite.texture = ref_tex
+	if off_sprite and _is_missing_tex(off_sprite):
+		off_sprite.texture = ref_tex
+	if hovered_sprite and _is_missing_tex(hovered_sprite):
+		hovered_sprite.texture = ref_tex
+	if disabled_sprite and _is_missing_tex(disabled_sprite):
+		disabled_sprite.texture = ref_tex
+
+func _is_missing_tex(s: Sprite2D) -> bool:
+	if s == null or s.texture == null:
+		return true
+	return s.texture is PlaceholderTexture2D

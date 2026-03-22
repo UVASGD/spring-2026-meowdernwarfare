@@ -36,6 +36,7 @@ var _transition_duration: float = 0.5
 var _transitioning: bool = false
 var _transition_settings: TransitionSettings = null
 var _menu_theme: AudioStreamPlayer = null
+const MAX_TEX_SIZE := 16384
 
 func _ready() -> void:
 	_create_transition_overlay()
@@ -72,12 +73,23 @@ func _create_transition_overlay() -> void:
 func _apply_transition_settings(mat: ShaderMaterial) -> void:
 	if not _transition_settings:
 		return
-	var tex = _transition_settings.sheet_texture
+	var tex: Texture2D = _transition_settings.sheet_texture
 	if tex == null:
-		tex = load("res://assets/ui/chubbs-sheet.png")
-	var fsize = Vector2(_transition_settings.frame_size)
+		var loaded = load("res://assets/ui/chubbs-sheet.png")
+		if loaded is Texture2D:
+			tex = loaded
+	var fsize: Vector2 = Vector2(_transition_settings.frame_size)
 	if fsize.x <= 0.0 or fsize.y <= 0.0:
 		fsize = Vector2(1920.0, 1080.0)
+	var safe: Dictionary = _safe_transition_sheet(tex, fsize)
+	var st: Variant = safe.get("tex", null)
+	if st is Texture2D:
+		tex = st
+	else:
+		tex = null
+	var new_frame: Variant = safe.get("frame", fsize)
+	if new_frame is Vector2:
+		fsize = new_frame
 	var fcount = maxi(1, int(_transition_settings.frame_count))
 	mat.set_shader_parameter("feather", _transition_settings.feather)
 	mat.set_shader_parameter("direction", _transition_settings.direction)
@@ -86,6 +98,35 @@ func _apply_transition_settings(mat: ShaderMaterial) -> void:
 	mat.set_shader_parameter("frame_size", fsize)
 	mat.set_shader_parameter("frame_count", fcount)
 	mat.set_shader_parameter("frame_index", 0)
+
+func _safe_transition_sheet(tex: Variant, frame: Vector2) -> Dictionary:
+	if tex == null or not (tex is Texture2D):
+		return {"tex": null, "frame": frame}
+	var src_tex: Texture2D = tex as Texture2D
+	var tw: int = src_tex.get_width()
+	var th: int = src_tex.get_height()
+	if tw > 0 and th > 0 and tw <= MAX_TEX_SIZE and th <= MAX_TEX_SIZE:
+		return {"tex": src_tex, "frame": frame}
+	var src: String = src_tex.resource_path
+	if src.is_empty():
+		return {"tex": null, "frame": frame}
+	var img := Image.new()
+	if img.load(src) != OK:
+		return {"tex": null, "frame": frame}
+	tw = img.get_width()
+	th = img.get_height()
+	if tw <= 0 or th <= 0:
+		return {"tex": null, "frame": frame}
+	var scale: float = minf(1.0, minf(float(MAX_TEX_SIZE) / float(tw), float(MAX_TEX_SIZE) / float(th)))
+	if scale < 1.0:
+		var nw: int = maxi(1, int(roundf(float(tw) * scale)))
+		var nh: int = maxi(1, int(roundf(float(th) * scale)))
+		img.resize(nw, nh, Image.INTERPOLATE_LANCZOS)
+	var out: ImageTexture = ImageTexture.create_from_image(img)
+	var out_frame: Vector2 = frame * scale
+	out_frame.x = maxf(1.0, roundf(out_frame.x))
+	out_frame.y = maxf(1.0, roundf(out_frame.y))
+	return {"tex": out, "frame": out_frame}
 
 func _set_transition_cover_t(t: float) -> void:
 	if _transition_mat:

@@ -138,24 +138,24 @@ signal dashed
 
 var reasonable_timer = 0.0
 var reasonable_timer_max = 1.0
-# Hero name -> Hero scene mapping
-const HERO_SCENES = {
-	"Dealer": preload("res://scenes/heroes/dealer/dealer.tscn"),
-	"Burple": preload("res://scenes/heroes/burple/burple.tscn"),
-	"LoanShark": preload("res://scenes/heroes/loanshark/loanshark.tscn"),
-	"Gooblin": preload("res://scenes/heroes/gooblin/gooblin.tscn"),
-	"Garebare": preload("res://scenes/heroes/garebare/garebare.tscn"),
-	"AnimeGirl": preload("res://scenes/heroes/animegirl/animegirl.tscn"),
-	"XylerFergus": preload("res://scenes/heroes/xylerfergus/xylerfergus.tscn"),
-	"ElonMusk": preload("res://scenes/heroes/elonmusk/elonmusk.tscn"),
+# Hero name -> Hero scene path mapping
+const HERO_SCENE_PATHS = {
+	"Dealer": "res://scenes/heroes/dealer/dealer.tscn",
+	"Burple": "res://scenes/heroes/burple/burple.tscn",
+	"LoanShark": "res://scenes/heroes/loanshark/loanshark.tscn",
+	"Gooblin": "res://scenes/heroes/gooblin/gooblin.tscn",
+	"Garebare": "res://scenes/heroes/garebare/garebare.tscn",
+	"AnimeGirl": "res://scenes/heroes/animegirl/animegirl.tscn",
+	"XylerFergus": "res://scenes/heroes/xylerfergus/xylerfergus.tscn",
+	"ElonMusk": "res://scenes/heroes/elonmusk/elonmusk.tscn",
 
 	# Backward-compat names
-	"Anime Girl": preload("res://scenes/heroes/animegirl/animegirl.tscn"),
-	"Xyler and Fergus": preload("res://scenes/heroes/xylerfergus/xylerfergus.tscn"),
-	"Elon. Musk.": preload("res://scenes/heroes/elonmusk/elonmusk.tscn"),
-	"Alien": preload("res://scenes/heroes/animegirl/animegirl.tscn"),
-	"Xyler": preload("res://scenes/heroes/xylerfergus/xylerfergus.tscn"),
-	"Fergus": preload("res://scenes/heroes/xylerfergus/xylerfergus.tscn"),
+	"Anime Girl": "res://scenes/heroes/animegirl/animegirl.tscn",
+	"Xyler and Fergus": "res://scenes/heroes/xylerfergus/xylerfergus.tscn",
+	"Elon. Musk.": "res://scenes/heroes/elonmusk/elonmusk.tscn",
+	"Alien": "res://scenes/heroes/animegirl/animegirl.tscn",
+	"Xyler": "res://scenes/heroes/xylerfergus/xylerfergus.tscn",
+	"Fergus": "res://scenes/heroes/xylerfergus/xylerfergus.tscn",
 }
 
 func _ready() -> void:
@@ -210,16 +210,19 @@ func set_hero(hero_name: String) -> void:
 		hero.queue_free()
 		hero = null
 	
-	var hero_scene = HERO_SCENES.get(hero_name)
+	var hero_scene := _load_hero_scene(hero_name)
 	if hero_scene == null:
 		push_warning("Unknown hero: ", hero_name, ", defaulting to Dealer")
-		hero_scene = HERO_SCENES["Dealer"]
+		hero_scene = _load_hero_scene("Dealer")
+		if hero_scene == null:
+			push_error("Failed to load fallback hero scene Dealer")
+			return
 
 	var inst = hero_scene.instantiate()
 	if inst == null or not (inst is Hero):
 		push_error("Failed to instantiate hero '%s', defaulting to Dealer" % hero_name)
 		if hero_name != "Dealer":
-			var dealer_scene = HERO_SCENES.get("Dealer")
+			var dealer_scene := _load_hero_scene("Dealer")
 			if dealer_scene:
 				inst = dealer_scene.instantiate()
 		if inst == null or not (inst is Hero):
@@ -249,6 +252,19 @@ func set_hero(hero_name: String) -> void:
 	_refresh_ability2_charge_ui_visibility()
 	_refresh_movement_dash_ui_visibility()
 	_refresh_gun_ui_visibility()
+
+func _load_hero_scene(hero_name: String) -> PackedScene:
+	var path := String(HERO_SCENE_PATHS.get(hero_name, ""))
+	if path.is_empty():
+		return null
+	var res := load(path)
+	if res == null:
+		push_error("Failed to load hero scene path '%s' for hero '%s'" % [path, hero_name])
+		return null
+	if not (res is PackedScene):
+		push_error("Hero scene path '%s' is not a PackedScene for hero '%s'" % [path, hero_name])
+		return null
+	return res as PackedScene
 
 func _refresh_gun_ui_visibility() -> void:
 	if hero == null:

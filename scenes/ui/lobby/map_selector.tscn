@@ -169,6 +169,7 @@ flip_h = true
 
 [node name="hovered" parent="nextButton" index="2"]
 visible = false
+flip_h = true
 
 [node name="on" parent="nextButton" index="3"]
 texture = ExtResource("6_sxpp3")
@@ -176,6 +177,7 @@ flip_h = true
 
 [node name="disabled" parent="nextButton" index="4"]
 visible = false
+flip_h = true
 
 [node name="backButton" parent="." instance=ExtResource("3_kpivp")]
 position = Vector2(-250, 0)
