@@ -8,6 +8,7 @@ script = ExtResource("1_script")
 id = "Garebare"
 desc = "def"
 portrait = ExtResource("1_t2as0")
+portrait_outline_color = Color(1, 0, 0.32549, 1)
 shoot_name = "Soundwave"
 shoot_desc = "0.4s cooldown."
 ability1_name = "Sonic Burst"

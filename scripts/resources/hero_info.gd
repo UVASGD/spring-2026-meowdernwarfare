@@ -4,6 +4,7 @@ extends Resource
 @export var id: String = ""
 @export_multiline var desc: String = ""
 @export var portrait: Texture2D = null
+@export var portrait_outline_color: Color = Color(1, 1, 1, 1)
 
 @export_group("Shoot")
 @export var shoot_name: String = "Shoot"

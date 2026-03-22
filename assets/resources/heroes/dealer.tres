@@ -8,6 +8,7 @@ script = ExtResource("1_script")
 id = "Dealer"
 desc = "def"
 portrait = ExtResource("1_arhhi")
+portrait_outline_color = Color(0.542343, 0.0411495, 0.523819, 1)
 shoot_name = "Catnip Shot"
 shoot_desc = "Fire a bullet in the aim direction. Cooldown: 0.3s, Magazine: 15"
 ability1_name = "Invisibility"
