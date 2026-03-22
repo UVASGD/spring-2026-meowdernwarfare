@@ -18,9 +18,11 @@ func _on_char_pressed(str_name: String) -> void:
 		return
 	if current_hero == str_name:
 		current_hero = ""
+		_sync_char_btns("")
 		hero_selected.emit("")
 	else:
 		current_hero = str_name
+		_sync_char_btns(str_name)
 		hero_selected.emit(str_name)
 
 func _on_char_hovered(str_name: String) -> void:
@@ -47,6 +49,7 @@ func reset() -> void:
 	hovered_hero = ""
 	is_ready = false
 	ready_btn.set_off()
+	_sync_char_btns("")
 	_set_chars_interactive(true)
 
 func _set_chars_interactive(enabled: bool) -> void:
@@ -55,3 +58,14 @@ func _set_chars_interactive(enabled: bool) -> void:
 			btn.enable()
 		else:
 			btn.disable()
+
+func _sync_char_btns(hero_name: String) -> void:
+	for btn in char_buttons.get_children():
+		if not btn is CharSelectSpriteButton:
+			continue
+		if hero_name.is_empty():
+			btn.set_off()
+		elif btn.charName == hero_name:
+			btn.set_on()
+		else:
+			btn.set_off()

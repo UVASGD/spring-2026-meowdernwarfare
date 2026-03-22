@@ -45,7 +45,9 @@ func turn_off() -> void:
 	off_sprite.show()
 	hero_portrait.texture = null
 	kick_btn.visible = false
+	kick_btn.disable()
 	username_label.text = ""
+	set_ready(false)
 	pid = -1
 	screenlight.energy = 0
 
@@ -65,6 +67,10 @@ func set_ready(ready: bool) -> void:
 
 func show_kick(vis: bool) -> void:
 	kick_btn.visible = vis
+	if vis:
+		kick_btn.enable()
+	else:
+		kick_btn.disable()
 
 func _get_portrait(hero_name: String) -> Texture2D:
 	if hero_name in _portrait_cache:
