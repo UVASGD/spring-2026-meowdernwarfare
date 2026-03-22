@@ -299,6 +299,13 @@ func _refresh_gun_ui_visibility() -> void:
 		reload_prompt.visible = gun and _show_aux_ui
 	if ammo_left:
 		ammo_left.visible = gun and _show_aux_ui
+	if not gun:
+		if reload_bar_animation and reload_bar_animation.is_playing():
+			reload_bar_animation.stop()
+		if reload_prompt_animation and reload_prompt_animation.is_playing():
+			reload_prompt_animation.stop()
+		if ammo_left_animation and ammo_left_animation.is_playing():
+			ammo_left_animation.stop()
 
 func _refresh_ability2_charge_ui_visibility() -> void:
 	if ability2_cd_bar == null:
@@ -379,20 +386,21 @@ func _bind_hero_ui_signals(h: Hero) -> void:
 	var cb_a1_ref := Callable(self, "ability_1_refresh_animation")
 	if not h.ability_1_refreshed.is_connected(cb_a1_ref):
 		h.ability_1_refreshed.connect(cb_a1_ref)
-	var cb_out := Callable(self, "prompt_reload")
-	if not h.ran_out_of_ammo.is_connected(cb_out):
-		h.ran_out_of_ammo.connect(cb_out)
-	var cb_start := Callable(self, "show_reload_bar")
-	if not h.started_reload.is_connected(cb_start):
-		h.started_reload.connect(cb_start)
-	var cb_fin := Callable(self, "hide_reload_bar")
-	if not h.finished_reload.is_connected(cb_fin):
-		h.finished_reload.connect(cb_fin)
-	var cb_upd := Callable(self, "update_ammo_left")
-	if not h.finished_reload.is_connected(cb_upd):
-		h.finished_reload.connect(cb_upd)
-	if not h.shot.is_connected(cb_upd):
-		h.shot.connect(cb_upd)
+	if h.uses_gun_ammo():
+		var cb_out := Callable(self, "prompt_reload")
+		if not h.ran_out_of_ammo.is_connected(cb_out):
+			h.ran_out_of_ammo.connect(cb_out)
+		var cb_start := Callable(self, "show_reload_bar")
+		if not h.started_reload.is_connected(cb_start):
+			h.started_reload.connect(cb_start)
+		var cb_fin := Callable(self, "hide_reload_bar")
+		if not h.finished_reload.is_connected(cb_fin):
+			h.finished_reload.connect(cb_fin)
+		var cb_upd := Callable(self, "update_ammo_left")
+		if not h.finished_reload.is_connected(cb_upd):
+			h.finished_reload.connect(cb_upd)
+		if not h.shot.is_connected(cb_upd):
+			h.shot.connect(cb_upd)
 
 func _unbind_hero_ui_signals(h: Hero) -> void:
 	if h == null:
@@ -432,7 +440,8 @@ func _refresh_hero_ui() -> void:
 	ability_2_icon.texture = hero.get_hero_ability2_icon()
 	ability_1_bar.modulate = hero.get_hero_ui_color()
 	ability_2_bar.modulate = hero.get_hero_ui_color()
-	update_ammo_left()
+	if hero.uses_gun_ammo():
+		update_ammo_left()
 
 	_refresh_movement_dash_ui_visibility()
 	_refresh_ability2_charge_ui_visibility()
