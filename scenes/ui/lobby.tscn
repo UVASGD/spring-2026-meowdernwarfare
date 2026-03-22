@@ -1,4 +1,4 @@
-[gd_scene load_steps=103 format=3 uid="uid://da0gtoq418ax3"]
+[gd_scene load_steps=105 format=3 uid="uid://da0gtoq418ax3"]
 
 [ext_resource type="PackedScene" uid="uid://dkimxn5xobtmk" path="res://scenes/ui/lobby/characterSelectTV.tscn" id="1_5t5el"]
 [ext_resource type="Script" uid="uid://rr74n2xal6bc" path="res://scripts/ui/lobby.gd" id="1_bthuv"]
@@ -9,6 +9,7 @@
 [ext_resource type="Shader" uid="uid://c3emtticjkhg4" path="res://scenes/ui/lobby/crt.gdshader" id="3_bnidf"]
 [ext_resource type="Texture2D" uid="uid://ckdsd0gcgyvq1" path="res://assets/ui/lobby/dither_it_Video_Animation_Generation_sprite.png" id="3_vfpwc"]
 [ext_resource type="PackedScene" uid="uid://dyjsukavayr35" path="res://scenes/ui/lobby/map_selector.tscn" id="5_rqagm"]
+[ext_resource type="Texture2D" uid="uid://dwnbplt235ivv" path="res://assets/ui/lobby/tv_lightmap.png" id="6_24obi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7vhxf"]
 atlas = ExtResource("2_vfpwc")
@@ -1444,7 +1445,18 @@ animations = [{
 "speed": 15.0
 }]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_kghoh"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cyxd6"]
+resource_local_to_scene = true
+shader = ExtResource("3_bnidf")
+shader_parameter/wiggle = 0.09
+shader_parameter/wiggle_speed = 2.0
+shader_parameter/smear = 0.213
+shader_parameter/blur_samples = 15
+shader_parameter/scanline_intensity = 0.15
+shader_parameter/scanline_count = 50.0
+shader_parameter/scanline_speed = 0.05
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7vhxf"]
 resource_local_to_scene = true
 shader = ExtResource("3_bnidf")
 shader_parameter/wiggle = 0.09
@@ -1496,11 +1508,36 @@ autoplay = "new_animation_1"
 [node name="HostTV" parent="tvs" instance=ExtResource("1_5t5el")]
 position = Vector2(250, 250)
 
-[node name="crtoverlay" parent="tvs/HostTV/on" index="4"]
-material = SubResource("ShaderMaterial_kghoh")
+[node name="on" parent="tvs/HostTV" index="2"]
+material = SubResource("ShaderMaterial_cyxd6")
+
+[node name="onScreen" parent="tvs/HostTV/on" index="0"]
+position = Vector2(-0.500002, 1.00002)
+scale = Vector2(0.935714, 0.942857)
+
+[node name="screenlight" parent="tvs/HostTV" index="3"]
+position = Vector2(0.500001, -17.5)
+scale = Vector2(1.03968, 0.939153)
+energy = 6.96
+texture = ExtResource("6_24obi")
+texture_scale = 0.9
 
 [node name="P2TV" parent="tvs" instance=ExtResource("1_5t5el")]
 position = Vector2(1670, 250)
+
+[node name="on" parent="tvs/P2TV" index="2"]
+material = SubResource("ShaderMaterial_7vhxf")
+
+[node name="onScreen" parent="tvs/P2TV/on" index="0"]
+position = Vector2(-0.500002, 1.00002)
+scale = Vector2(0.935714, 0.942857)
+
+[node name="screenlight" parent="tvs/P2TV" index="3"]
+position = Vector2(0.500001, -17.5)
+scale = Vector2(1.03968, 0.939153)
+energy = 6.96
+texture = ExtResource("6_24obi")
+texture_scale = 0.9
 
 [node name="P3TV" parent="tvs" instance=ExtResource("1_5t5el")]
 position = Vector2(250, 830)
@@ -1539,3 +1576,5 @@ scale = Vector2(0.5, 0.5)
 
 [editable path="tvs/HostTV"]
 [editable path="tvs/HostTV/kickButton"]
+[editable path="tvs/P2TV"]
+[editable path="tvs/P2TV/kickButton"]

@@ -15,10 +15,10 @@
 [ext_resource type="Texture2D" uid="uid://cb247jtkwuept" path="res://assets/ui/lobby/off_button_on.png" id="12_2dd56"]
 [ext_resource type="Texture2D" uid="uid://cmdqfxf315skv" path="res://assets/ui/lobby/off_button_disabled.png" id="13_s05de"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_fwmds"]
-
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_efll3"]
 size = Vector2(50, 50)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fwmds"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kkelg"]
 shader = ExtResource("2_g8lt1")
@@ -54,28 +54,33 @@ modulate = Color(0.111197, 0.111197, 0.111197, 1)
 clip_children = 2
 texture = ExtResource("2_fwmds")
 
+[node name="HostIndicator" type="Sprite2D" parent="."]
+modulate = Color(0.470588, 1, 1, 1)
+position = Vector2(-162, -162)
+texture = SubResource("PlaceholderTexture2D_efll3")
+
 [node name="on" type="Node2D" parent="."]
 
 [node name="onScreen" type="Sprite2D" parent="on"]
 modulate = Color(0.489622, 0.489622, 0.489622, 1)
 clip_children = 2
 material = SubResource("ShaderMaterial_fwmds")
+position = Vector2(-0.500002, 1.00002)
+scale = Vector2(0.935714, 0.942857)
 texture = ExtResource("3_p3l7j")
 
 [node name="HeroPortrait" type="Sprite2D" parent="on"]
 modulate = Color(0.588235, 1, 1, 0.509804)
 scale = Vector2(0.8, 0.8)
 
-[node name="HostIndicator" type="Sprite2D" parent="on"]
-modulate = Color(0.470588, 1, 1, 1)
-position = Vector2(-162, -162)
-texture = SubResource("PlaceholderTexture2D_efll3")
-
 [node name="staticoverlay" type="Sprite2D" parent="on"]
 visible = false
 material = SubResource("ShaderMaterial_kkelg")
 scale = Vector2(0.21, 0.37)
 texture = ExtResource("6_g6oc2")
+
+[node name="bbc" type="BackBufferCopy" parent="on"]
+copy_mode = 2
 
 [node name="crtoverlay" type="Sprite2D" parent="on"]
 material = SubResource("ShaderMaterial_g6oc2")
