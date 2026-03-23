@@ -1,4 +1,4 @@
-extends StaticBody2D
+class_name FIE extends StaticBody2D
 
 @export var hp: float = 30.0
 @export var suppress_radius: float = 150.0
@@ -7,11 +7,13 @@ var owner_player: Player = null
 
 @onready var suppress_zone: Area2D = $SuppressionZone
 @onready var aoe: Sprite2D = $aoe
+@onready var sprite: AnimatedSprite2D = $Sprite
 
 signal destroyed
 
 const COLOR_FRIENDLY := Color(0.3, 0.8, 1.0)
 const COLOR_ENEMY := Color(1.0, 0.25, 0.2)
+const GAREBARE_EXPLOSION = preload("res://scenes/heroes/garebare/garebare_explosion.tscn")
 
 func _ready() -> void:
 
@@ -60,3 +62,14 @@ func _on_zone_entered(body: Node) -> void:
 func _on_zone_exited(body: Node) -> void:
 	if body is Player and body != owner_player:
 		body.fie_suppress_count = max(0, body.fie_suppress_count - 1)
+
+func ult_explode():
+	var exp = GAREBARE_EXPLOSION.instantiate()
+	exp._set_owner(owner_player)
+	add_child(exp)
+	await get_tree().create_timer(0.5).timeout
+	aoe.hide()
+	sprite.hide()
+	$PointLight2D.hide()
+	await exp.finished
+	queue_free()

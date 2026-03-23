@@ -4,6 +4,7 @@ extends Hero
 const SOUNDWAVE_SCENE := "res://scenes/heroes/garebare/soundwave.tscn"
 const SONIC_BURST_SCENE := "res://scenes/heroes/garebare/sonic_burst.tscn"
 const FIE_SCENE := "res://scenes/heroes/garebare/fie.tscn"
+const GAREBARE_EXPLOSION = preload("res://scenes/heroes/garebare/garebare_explosion.tscn")
 
 @export var pellet_count: int = 3
 @export var spread_angle: float = 30.0
@@ -145,18 +146,14 @@ func _create_fie() -> StaticBody2D:
 
 @warning_ignore("unused_parameter")
 func _do_ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
-	# AOE damage around caster
-	var all_players = get_tree().get_nodes_in_group("players")
-	if all_players.is_empty() and GameManager.instance:
-		all_players = GameManager.instance.players
-	for p in all_players:
-		if p is Player and p != player:
-			if p.global_position.distance_to(player.global_position) <= ult_radius:
-				p.take_damage(ult_damage, player)
+	var exp = GAREBARE_EXPLOSION.instantiate()
+	exp._set_owner(self.player)
+	add_child(exp)
+
 
 	# Detonate all existing FIEs (damage in their areas, then destroy)
 	for i in range(fies.size()):
 		if fies[i] != null and is_instance_valid(fies[i]):
-			fies[i].detonate(fie_detonate_damage)
+			fies[i].ult_explode()
 			fies[i] = null
 			fie_cds[i] = 0.0  # Refresh cooldowns after ult

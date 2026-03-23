@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://cuepcvxuh6hce"]
+[gd_scene load_steps=65 format=3 uid="uid://cuepcvxuh6hce"]
 
 [ext_resource type="Script" uid="uid://11gltq4dspur" path="res://scripts/heroes/garebare.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://c8xu4kfogucot" path="res://assets/sprites/garebare/garebare_portrait_normal.png" id="2_0r88g"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://dtukkn6fdafnw" path="res://assets/sprites/garebare/GB_WALK-Sheet.png" id="3_0r88g"]
 [ext_resource type="Texture2D" uid="uid://bvcmm7bin3ds3" path="res://assets/sprites/garebare/GB_IDLE_SHOOT-Sheet.png" id="4_mdltq"]
 [ext_resource type="Texture2D" uid="uid://7c3qmk7qg6va" path="res://assets/sprites/garebare/GB_WALK_SHOOT-Sheet.png" id="5_mqrmh"]
+[ext_resource type="Texture2D" uid="uid://cxen333er5u1b" path="res://assets/sprites/garebare/gareb4re_idle_ultimate-Sheet.png" id="7_3swo4"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jj18k"]
 atlas = ExtResource("2_se2ev")
@@ -163,6 +164,74 @@ region = Rect2(3072, 0, 512, 512)
 atlas = ExtResource("5_mqrmh")
 region = Rect2(3584, 0, 512, 512)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_p0gjl"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(0, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_flcfr"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(512, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tx381"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(1024, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_03w23"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(1536, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hf1ne"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(2048, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eiou4"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(2560, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_83067"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(3072, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oepde"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(3584, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l5fq7"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(4096, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_elpaa"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(4608, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xwt7p"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(5120, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5tsy6"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(5632, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tsk2w"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(6144, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r6bpe"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(6656, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ux4w"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(7168, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0ic4m"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(7680, 0, 512, 512)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gh5pi"]
+atlas = ExtResource("7_3swo4")
+region = Rect2(8192, 0, 512, 512)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_kkeq4"]
 animations = [{
 "frames": [{
@@ -301,6 +370,62 @@ animations = [{
 "loop": false,
 "name": &"shoot_run",
 "speed": 15.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p0gjl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_flcfr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tx381")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_03w23")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hf1ne")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eiou4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_83067")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oepde")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l5fq7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_elpaa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xwt7p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5tsy6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tsk2w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r6bpe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2ux4w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0ic4m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gh5pi")
+}],
+"loop": false,
+"name": &"ult_idle",
+"speed": 16.0
 }]
 
 [node name="Garebare" type="Node2D"]
@@ -318,8 +443,10 @@ ult_banner_portrait_offset = Vector2(60, 0)
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.2, 0.2)
 sprite_frames = SubResource("SpriteFrames_kkeq4")
-animation = &"shoot_run"
+animation = &"ult_idle"
 autoplay = "idle"
+frame = 16
+frame_progress = 1.0
 
 [node name="bulletSpawnPoint" type="Marker2D" parent="."]
 position = Vector2(0, 62)
