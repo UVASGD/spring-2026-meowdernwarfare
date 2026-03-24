@@ -1,8 +1,9 @@
-[gd_scene load_steps=52 format=3 uid="uid://bvwst8w4gqsjj"]
+[gd_scene load_steps=53 format=3 uid="uid://bvwst8w4gqsjj"]
 
 [ext_resource type="PackedScene" uid="uid://bw2et0odpc4ii" path="res://scenes/ui/menu_hero_card.tscn" id="1_1g8jr"]
 [ext_resource type="Script" uid="uid://b1a1ksgkshlog" path="res://scenes/ui/main_menu.gd" id="1_qilvv"]
 [ext_resource type="Texture2D" uid="uid://cn8dgmjfg5gnn" path="res://assets/ui/titlescreen/new/background_lowest_layer2.png" id="2_877pj"]
+[ext_resource type="PackedScene" uid="uid://ccdcdptun37ou" path="res://scenes/ui/cursor.tscn" id="2_e0hcc"]
 [ext_resource type="Shader" uid="uid://bh4rp8fhlog86" path="res://assets/shaders/3deffect.gdshader" id="2_jbte4"]
 [ext_resource type="Shader" uid="uid://cpng23u3yom2" path="res://assets/shaders/burn_reveal.gdshader" id="2_qilvv"]
 [ext_resource type="Texture2D" uid="uid://cfpeirwkv3snv" path="res://assets/ui/titlescreen/new/background_highest_layer.png" id="3_ayp64"]
@@ -814,6 +815,8 @@ autoplay = "intro"
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="introgroup1"]
 stream = ExtResource("20_5dct7")
 volume_db = -12.0
+
+[node name="Node2D" parent="." instance=ExtResource("2_e0hcc")]
 
 [node name="BurnOverlay" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_qch7b")

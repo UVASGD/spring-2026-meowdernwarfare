@@ -80,7 +80,7 @@ func _ready() -> void:
 
 func _setup_pause_menu() -> void:
 	_pause_layer = CanvasLayer.new()
-	_pause_layer.layer = 120
+	_pause_layer.layer = 50
 	_pause_layer.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(_pause_layer)
 	_pause_menu = PauseMenuScene.instantiate()

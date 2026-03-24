@@ -66,6 +66,7 @@ func _skip_intro() -> void:
 	GameData.ensure_menu_theme()
 	# Ensure hover areas are enabled (animation keyframes at -0.1 won't apply)
 	_enable_hover_areas()
+	Cursor.enable()
 
 func _enable_hover_areas() -> void:
 	for card in [dealer, burple, garebare]:
@@ -147,6 +148,7 @@ func _on_unhover_timeout() -> void:
 func _on_intro_finish():
 	$introgroup1/AnimationPlayer.play("idle2")
 	skippable = false
+	Cursor.enable()
 
 # --- Quick Test (K key) ---
 

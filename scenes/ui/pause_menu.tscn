@@ -1,6 +1,6 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=10 format=3 uid="uid://c011lwwa81jf6"]
 
-[ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="1"]
+[ext_resource type="Script" uid="uid://clnn0try5wama" path="res://scripts/ui/pause_menu.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://wijbpgs0wox4" path="res://assets/ui/lobby/tv_on.png" id="2"]
 [ext_resource type="Shader" uid="uid://c3emtticjkhg4" path="res://scenes/ui/lobby/crt.gdshader" id="3"]
 [ext_resource type="Texture2D" uid="uid://bioxmyo1gynkx" path="res://assets/ui/lobby/tv_frame.png" id="4"]
