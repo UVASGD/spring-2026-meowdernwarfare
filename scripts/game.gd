@@ -77,6 +77,7 @@ func _ready() -> void:
 	_create_timer_hud()
 	game_timer = 0.0
 	game_active = true
+	Cursor.switch_mode("BATTLE")
 
 func _setup_pause_menu() -> void:
 	_pause_layer = CanvasLayer.new()
@@ -331,6 +332,7 @@ func _pause_uses_tree_freeze() -> bool:
 	return gm.mode == GameManager.Mode.LOCAL
 
 func _open_pause_menu() -> void:
+	Cursor.switch_mode("MENU")
 	if _pause_uses_tree_freeze():
 		get_tree().paused = true
 	else:
@@ -342,10 +344,15 @@ func _close_pause_menu() -> void:
 	get_tree().paused = false
 	if _pause_menu:
 		_pause_menu.close_menu()
+	if game_active:
+		Cursor.switch_mode("BATTLE")
+	else:
+		Cursor.switch_mode("MENU")
 
 func _pause_back_to_menu() -> void:
 	GameData.menu_pause_local = false
 	get_tree().paused = false
+	Cursor.switch_mode("MENU")
 	_back_to_menu()
 
 func _back_to_menu() -> void:

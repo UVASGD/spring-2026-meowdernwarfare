@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://ccdcdptun37ou"]
+[gd_scene load_steps=11 format=3 uid="uid://ccdcdptun37ou"]
 
 [ext_resource type="Script" uid="uid://dueqyj6w704wk" path="res://scripts/ui/cursor.gd" id="1_gbfun"]
 [ext_resource type="Texture2D" uid="uid://cmqcjnpk2m1bi" path="res://assets/ui/general/cursor_idle-sheet.png" id="2_afrh5"]
@@ -26,19 +26,58 @@ animations = [{
 "speed": 2.0
 }]
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_gbfun"]
+atlas = ExtResource("2_afrh5")
+region = Rect2(0, 0, 50, 50)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_afrh5"]
+atlas = ExtResource("2_afrh5")
+region = Rect2(50, 0, 50, 50)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ea65e"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gbfun")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_afrh5")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_qjntj"]
+size = Vector2(50, 50)
+
 [node name="Node2D" type="CanvasLayer"]
 layer = 100
 visible = false
 script = ExtResource("1_gbfun")
 
-[node name="default" type="AnimatedSprite2D" parent="."]
+[node name="MENU" type="Node2D" parent="."]
+
+[node name="default" type="AnimatedSprite2D" parent="MENU"]
 visible = false
 position = Vector2(25, 25)
 sprite_frames = SubResource("SpriteFrames_orbwo")
 autoplay = "default"
-frame_progress = 0.110207
+frame_progress = 0.272952
 
-[node name="click" type="Sprite2D" parent="."]
+[node name="click" type="Sprite2D" parent="MENU"]
 visible = false
 texture = ExtResource("3_ea65e")
+offset = Vector2(25, 25)
+
+[node name="BATTLE" type="Node2D" parent="."]
+
+[node name="default" type="AnimatedSprite2D" parent="BATTLE"]
+visible = false
+modulate = Color(0.14902, 1, 1, 1)
+sprite_frames = SubResource("SpriteFrames_ea65e")
+
+[node name="click" type="Sprite2D" parent="BATTLE"]
+visible = false
+texture = SubResource("PlaceholderTexture2D_qjntj")
 offset = Vector2(25, 25)
