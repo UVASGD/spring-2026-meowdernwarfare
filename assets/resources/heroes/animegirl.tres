@@ -1,11 +1,14 @@
-[gd_resource type="Resource" script_class="HeroInfo" load_steps=2 format=3 uid="uid://of40nyaxkx6l"]
+[gd_resource type="Resource" script_class="HeroInfo" load_steps=3 format=3 uid="uid://of40nyaxkx6l"]
 
+[ext_resource type="Texture2D" uid="uid://bk2n2xc5lr0uu" path="res://assets/sprites/animegirl/thronePlaceholder.png" id="1_evbrl"]
 [ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="2_3vee4"]
 
 [resource]
 script = ExtResource("2_3vee4")
 id = "Anime Girl"
 desc = "def"
+portrait = ExtResource("1_evbrl")
+portrait_outline_color = Color(1, 1, 1, 1)
 shoot_name = "Shoot"
 shoot_desc = "Basic ranged attack."
 ability1_name = "Ability 1"
