@@ -211,6 +211,18 @@ func can_ability2() -> bool:
 func can_ult() -> bool:
 	return ult_points >= max_ult_points and not _is_fie_suppressed() and not _is_action_blocked()
 
+func uses_ability1_targeting() -> bool:
+	return false
+
+func get_ability1_range() -> float:
+	return 0.0
+
+func uses_ult_targeting() -> bool:
+	return false
+
+func get_ult_range() -> float:
+	return 0.0
+
 ## If false, the player cannot use the default movement dash (space). Ability-based dashes still work.
 func allows_movement_dash() -> bool:
 	return true

@@ -45,6 +45,7 @@ var nametag: Label = null
 var mark_indicator: CanvasItem = null
 
 const MarkProjectileHitFxScene = preload("res://scenes/heroes/loanshark/mark_projectile_hit_fx.tscn")
+const BurpleTargetScene = preload("res://scenes/heroes/burple/grenade_target.tscn")
 const _ULT_BANNER_PORTRAIT_SHADER = preload("res://assets/shaders/electric_wrap.gdshader")
 
 @onready var local_health_bar = $CooldownUI/HealthBar
@@ -81,6 +82,11 @@ var _ui_bound_hero: Hero = null
 
 # State
 var aim_dir: Vector2 = Vector2.RIGHT
+const TARGET_NONE := ""
+const TARGET_A1 := "a1"
+const TARGET_ULT := "ult"
+var _target_mode := TARGET_NONE
+var _target_marker: Sprite2D = null
 var is_dashing: bool = false
 var dash_timer: float = 0.0
 var dash_cd_timer: float = 0.0
@@ -219,6 +225,7 @@ func _ready() -> void:
 
 func set_hero(hero_name: String) -> void:
 	var prev = hero
+	_set_target_mode(TARGET_NONE)
 	if hero:
 		_unbind_hero_ui_signals(hero)
 		hero.queue_free()
@@ -517,6 +524,7 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 	
 	_handle_rotation(delta)
+	_update_target_marker()
 	var consumed_shoot := _handle_crops(delta)
 	_handle_actions(consumed_shoot)
 	
@@ -613,9 +621,37 @@ func _handle_actions(consumed_shoot := false) -> void:
 			_suppress_shoot_until_release = false
 		else:
 			consumed_shoot = true
+
+	if hero and _target_mode != TARGET_NONE:
+		if input.shoot_just:
+			var pos := _get_target_pos()
+			var dir := pos - global_position
+			if dir.length_squared() > 0.01:
+				aim_dir = dir.normalized()
+			var mode := _target_mode
+			_set_target_mode(TARGET_NONE)
+			if mode == TARGET_A1:
+				hero.ability1(aim_dir, pos)
+			elif mode == TARGET_ULT:
+				hero.ult(aim_dir, pos)
+			_suppress_shoot_until_release = true
+			return
+		if input.reload_just or input.drop_just:
+			_set_target_mode(TARGET_NONE)
+			return
+		if _target_mode == TARGET_A1 and input.ability1_just:
+			_set_target_mode(TARGET_NONE)
+			return
+		if _target_mode == TARGET_ULT and input.ult_just:
+			_set_target_mode(TARGET_NONE)
+			return
+
 	if is_stunned:
 		if hero and input.ult_just:
-			hero.ult(aim_dir, get_aim_position())
+			if hero.uses_ult_targeting():
+				_set_target_mode(TARGET_ULT if hero.can_ult() else TARGET_NONE)
+			else:
+				hero.ult(aim_dir, get_aim_position())
 		return
 
 	if is_dying or is_dead():
@@ -627,6 +663,13 @@ func _handle_actions(consumed_shoot := false) -> void:
 			_start_dash()
 	
 	if hero == null:
+		return
+
+	if hero.uses_ability1_targeting() and input.ability1_just:
+		_set_target_mode(TARGET_NONE if _target_mode == TARGET_A1 else (TARGET_A1 if hero.can_ability1() else TARGET_NONE))
+		return
+	if hero.uses_ult_targeting() and input.ult_just:
+		_set_target_mode(TARGET_NONE if _target_mode == TARGET_ULT else (TARGET_ULT if hero.can_ult() else TARGET_NONE))
 		return
 	
 	# Delegate to hero
@@ -649,6 +692,7 @@ func _start_dash() -> void:
 	dashed.emit()
 
 func _on_hero_died() -> void:
+	_set_target_mode(TARGET_NONE)
 	clear_mark_effect()
 	print("[PLAYER] _on_hero_died: pid=", player_id, " crop_count=", crop_count, " is_local=", _is_local_player())
 	died.emit()
@@ -921,6 +965,8 @@ func _on_crop_area_entered(area: Area2D) -> void:
 func _handle_crops(_delta: float) -> bool:
 	if input == null:
 		return false
+	if _target_mode != TARGET_NONE:
+		return false
 	var consumed_shoot := false
 	
 	# Drop held crop
@@ -943,6 +989,64 @@ func _handle_crops(_delta: float) -> bool:
 	if _remote_held_sprite and _remote_held_sprite.visible:
 		_remote_held_sprite.position = Vector2(0, 40).rotated(-rotation_offset)
 	return consumed_shoot
+
+func _get_target_pos() -> Vector2:
+	if hero == null:
+		return get_aim_position()
+	var pos := get_aim_position()
+	var range := _get_target_range()
+	if range <= 0:
+		return pos
+	var off := pos - global_position
+	if off.length() <= range:
+		return pos
+	return global_position + off.normalized() * range
+
+func _get_target_range() -> float:
+	if hero == null:
+		return 0.0
+	if _target_mode == TARGET_A1:
+		return hero.get_ability1_range()
+	if _target_mode == TARGET_ULT:
+		return hero.get_ult_range()
+	return 0.0
+
+func _set_target_mode(mode: String) -> void:
+	if _target_mode == mode:
+		return
+	_target_mode = mode
+	if not _is_local_player():
+		return
+	if _target_mode != TARGET_NONE:
+		_ensure_target_marker()
+		Cursor.switch_mode("GRENADE")
+		Cursor.enable()
+		_update_target_marker()
+	else:
+		if _target_marker:
+			_target_marker.visible = false
+		Cursor.switch_mode("BATTLE")
+
+func _ensure_target_marker() -> void:
+	if _target_marker:
+		return
+	_target_marker = BurpleTargetScene.instantiate() as Sprite2D
+	if _target_marker == null:
+		return
+	_target_marker.top_level = true
+	_target_marker.visible = false
+	add_child(_target_marker)
+
+func _update_target_marker() -> void:
+	if _target_mode == TARGET_NONE or not _is_local_player():
+		if _target_marker:
+			_target_marker.visible = false
+		return
+	_ensure_target_marker()
+	if _target_marker == null:
+		return
+	_target_marker.visible = true
+	_target_marker.global_position = _get_target_pos()
 
 func pickup_world_crop(crop: Crop) -> void:
 	var crop_pos = crop.global_position
@@ -1220,6 +1324,7 @@ func apply_stun(duration: float) -> void:
 # ---------- Death / Respawn ----------
 
 func _enter_death_state() -> void:
+	_set_target_mode(TARGET_NONE)
 	is_awaiting_respawn = true
 	respawn_countdown = 10.0
 	
@@ -1320,6 +1425,7 @@ func enter_spectate_mode() -> void:
 	print("[PLAYER] enter_spectate_mode: pid=", player_id, " already=", in_spectate_mode, " is_local=", _is_local_player(), " game_over=", GameManager.instance.game_over if GameManager.instance else "no_gm")
 	if in_spectate_mode:
 		return
+	_set_target_mode(TARGET_NONE)
 	is_dying = false
 	in_spectate_mode = true
 	

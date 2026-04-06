@@ -21,6 +21,9 @@ signal sudden_death_received
 signal farm_spawns_received(assignments: Array)
 signal ult_used_received(player_id: int)
 
+const BurpleGrenadeScene = preload("res://scenes/heroes/burple/grenade.tscn")
+const BurpleStrikeScene = preload("res://scenes/heroes/burple/missile_strike.tscn")
+
 static var instance: GameManager = null
 
 func _ready() -> void:
@@ -149,10 +152,18 @@ func clear_players() -> void:
 	for p in players:
 		if is_instance_valid(p):
 			p.queue_free()
+	for grenade in _burple_grenades.values():
+		if is_instance_valid(grenade):
+			grenade.queue_free()
+	for strike in _burple_strikes.values():
+		if is_instance_valid(strike):
+			strike.queue_free()
 	players.clear()
 	eliminated.clear()
 	stats.clear()
 	_remote_targets.clear()
+	_burple_grenades.clear()
+	_burple_strikes.clear()
 	sudden_death = false
 	game_over = false
 
@@ -183,6 +194,8 @@ const POSITION_LERP_SPEED: float = 15.0  # Smooth correction speed
 var sync_timer: float = 0.0
 var pending_corrections: Dictionary = {}  # player_id -> {pos, rot, health, etc}
 var _remote_targets: Dictionary = {}  # pid -> { pos, rot, vel } for smooth interpolation
+var _burple_grenades: Dictionary = {}
+var _burple_strikes: Dictionary = {}
 
 const POS_REPORT_INTERVAL: float = 2.0
 var pos_report_timer: float = 0.0
@@ -337,6 +350,27 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 
 	elif msg_type == "ult_used":
 		_handle_ult_used(data)
+
+	elif msg_type == "burple_grenade_req":
+		_handle_burple_grenade_req(from_id, data)
+
+	elif msg_type == "burple_grenade_spawn":
+		_handle_burple_grenade_spawn(data)
+
+	elif msg_type == "burple_grenade_boom":
+		_handle_burple_grenade_boom(data)
+
+	elif msg_type == "burple_strike_req":
+		_handle_burple_strike_req(from_id, data)
+
+	elif msg_type == "burple_strike_spawn":
+		_handle_burple_strike_spawn(data)
+
+	elif msg_type == "burple_strike_pulse":
+		_handle_burple_strike_pulse(data)
+
+	elif msg_type == "burple_strike_end":
+		_handle_burple_strike_end(data)
 
 func _broadcast_state() -> void:
 	if not Network.is_online():
@@ -617,6 +651,218 @@ func _handle_ult_used(data: Dictionary) -> void:
 	var pid = int(data.get("pid", -1))
 	if pid >= 0:
 		ult_used_received.emit(pid)
+
+func cast_burple_grenade(owner_id: int, aim_pos: Vector2, gid: String) -> void:
+	if gid.is_empty():
+		return
+	if mode == Mode.ONLINE_CLIENT:
+		Network.send_to_host({
+			"type": "burple_grenade_req",
+			"pid": owner_id,
+			"gid": gid,
+			"tx": aim_pos.x,
+			"ty": aim_pos.y
+		})
+		return
+	var msg := _make_burple_grenade_spawn(owner_id, aim_pos, gid)
+	if msg.is_empty():
+		return
+	_spawn_burple_grenade(msg, true)
+	if mode == Mode.ONLINE_HOST and Network.is_online():
+		var out := msg.duplicate()
+		out["type"] = "burple_grenade_spawn"
+		Network.broadcast(out)
+
+func report_burple_grenade_boom(gid: String, pos: Vector2) -> void:
+	if mode != Mode.ONLINE_HOST or not Network.is_online():
+		return
+	Network.broadcast({
+		"type": "burple_grenade_boom",
+		"gid": gid,
+		"x": pos.x,
+		"y": pos.y
+	})
+
+func _handle_burple_grenade_req(from_id: int, data: Dictionary) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	var gid := str(data.get("gid", ""))
+	if gid.is_empty():
+		return
+	cast_burple_grenade(from_id, Vector2(data.get("tx", 0.0), data.get("ty", 0.0)), gid)
+
+func _handle_burple_grenade_spawn(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	_spawn_burple_grenade(data, false)
+
+func _handle_burple_grenade_boom(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	var gid := str(data.get("gid", ""))
+	var grenade: BurpleGrenade = _burple_grenades.get(gid) as BurpleGrenade
+	if grenade == null or not is_instance_valid(grenade):
+		return
+	grenade.force_boom(Vector2(data.get("x", 0.0), data.get("y", 0.0)))
+
+func _make_burple_grenade_spawn(owner_id: int, aim_pos: Vector2, gid: String) -> Dictionary:
+	var player := get_player(owner_id)
+	if player == null or not is_instance_valid(player) or player.hero == null:
+		return {}
+	var land := aim_pos
+	var range := player.hero.get_ability1_range()
+	if range > 0.0:
+		var off := land - player.global_position
+		if off.length() > range:
+			land = player.global_position + off.normalized() * range
+	var dir := land - player.global_position
+	if dir.length_squared() < 0.01:
+		dir = player.get_aim_direction()
+	else:
+		dir = dir.normalized()
+	var start := player.global_position + dir * 36.0
+	return {
+		"pid": owner_id,
+		"gid": gid,
+		"sx": start.x,
+		"sy": start.y,
+		"tx": land.x,
+		"ty": land.y
+	}
+
+func _spawn_burple_grenade(data: Dictionary, authoritative: bool) -> void:
+	var gid := str(data.get("gid", ""))
+	if gid.is_empty():
+		return
+	var prev: BurpleGrenade = _burple_grenades.get(gid) as BurpleGrenade
+	if prev != null and is_instance_valid(prev):
+		return
+	var owner_id := int(data.get("pid", -1))
+	var owner := get_player(owner_id)
+	if owner == null or not is_instance_valid(owner):
+		return
+	var grenade: BurpleGrenade = BurpleGrenadeScene.instantiate() as BurpleGrenade
+	grenade.owner_player = owner
+	grenade.grenade_id = gid
+	grenade.authoritative = authoritative
+	grenade.global_position = Vector2(data.get("sx", owner.global_position.x), data.get("sy", owner.global_position.y))
+	grenade.landing_point = Vector2(data.get("tx", owner.global_position.x), data.get("ty", owner.global_position.y))
+	var parent: Node = entity_parent if entity_parent else self
+	parent.add_child(grenade)
+	_burple_grenades[gid] = grenade
+	grenade.tree_exited.connect(func():
+		if _burple_grenades.get(gid) == grenade:
+			_burple_grenades.erase(gid)
+	)
+
+func cast_burple_strike(owner_id: int, aim_pos: Vector2, sid: String) -> void:
+	if sid.is_empty():
+		return
+	if mode == Mode.ONLINE_CLIENT:
+		Network.send_to_host({
+			"type": "burple_strike_req",
+			"pid": owner_id,
+			"sid": sid,
+			"tx": aim_pos.x,
+			"ty": aim_pos.y
+		})
+		return
+	var msg := _make_burple_strike_spawn(owner_id, aim_pos, sid)
+	if msg.is_empty():
+		return
+	_spawn_burple_strike(msg, true)
+	if mode == Mode.ONLINE_HOST and Network.is_online():
+		var out := msg.duplicate()
+		out["type"] = "burple_strike_spawn"
+		Network.broadcast(out)
+
+func report_burple_strike_pulse(sid: String) -> void:
+	if mode != Mode.ONLINE_HOST or not Network.is_online():
+		return
+	Network.broadcast({
+		"type": "burple_strike_pulse",
+		"sid": sid
+	})
+
+func report_burple_strike_end(sid: String) -> void:
+	if mode != Mode.ONLINE_HOST or not Network.is_online():
+		return
+	Network.broadcast({
+		"type": "burple_strike_end",
+		"sid": sid
+	})
+
+func _handle_burple_strike_req(from_id: int, data: Dictionary) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	var sid := str(data.get("sid", ""))
+	if sid.is_empty():
+		return
+	cast_burple_strike(from_id, Vector2(data.get("tx", 0.0), data.get("ty", 0.0)), sid)
+
+func _handle_burple_strike_spawn(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	_spawn_burple_strike(data, false)
+
+func _handle_burple_strike_pulse(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	var sid := str(data.get("sid", ""))
+	var strike: BurpleMissileStrike = _burple_strikes.get(sid) as BurpleMissileStrike
+	if strike == null or not is_instance_valid(strike):
+		return
+	strike.play_pulse()
+
+func _handle_burple_strike_end(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	var sid := str(data.get("sid", ""))
+	var strike: BurpleMissileStrike = _burple_strikes.get(sid) as BurpleMissileStrike
+	if strike == null or not is_instance_valid(strike):
+		return
+	strike.force_end()
+
+func _make_burple_strike_spawn(owner_id: int, aim_pos: Vector2, sid: String) -> Dictionary:
+	var player := get_player(owner_id)
+	if player == null or not is_instance_valid(player) or player.hero == null:
+		return {}
+	var target := aim_pos
+	var range := player.hero.get_ult_range()
+	if range > 0.0:
+		var off := target - player.global_position
+		if off.length() > range:
+			target = player.global_position + off.normalized() * range
+	return {
+		"pid": owner_id,
+		"sid": sid,
+		"x": target.x,
+		"y": target.y
+	}
+
+func _spawn_burple_strike(data: Dictionary, authoritative: bool) -> void:
+	var sid := str(data.get("sid", ""))
+	if sid.is_empty():
+		return
+	var prev: BurpleMissileStrike = _burple_strikes.get(sid) as BurpleMissileStrike
+	if prev != null and is_instance_valid(prev):
+		return
+	var owner_id := int(data.get("pid", -1))
+	var owner := get_player(owner_id)
+	if owner == null or not is_instance_valid(owner):
+		return
+	var strike: BurpleMissileStrike = BurpleStrikeScene.instantiate() as BurpleMissileStrike
+	strike.owner_player = owner
+	strike.strike_id = sid
+	strike.authoritative = authoritative
+	strike.global_position = Vector2(data.get("x", owner.global_position.x), data.get("y", owner.global_position.y))
+	var parent: Node = entity_parent if entity_parent else self
+	parent.add_child(strike)
+	_burple_strikes[sid] = strike
+	strike.tree_exited.connect(func():
+		if _burple_strikes.get(sid) == strike:
+			_burple_strikes.erase(sid)
+	)
 
 # --- TELEPORTER SYNC ---
 
