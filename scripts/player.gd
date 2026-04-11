@@ -122,6 +122,7 @@ const DROP_CD_TIME := 0.5
 var held_sprite: Sprite2D = null
 var _remote_held_sprite: Sprite2D = null
 var _remote_held_type: String = ""
+var _remote_held_stage: int = 1
 var farm = null
 
 # Meta states
@@ -1052,21 +1053,55 @@ func pickup_world_crop(crop: Crop) -> void:
 	var crop_pos = crop.global_position
 	var type_id = crop.get_type_id()
 	var stg = crop.stage
+	_attach_held_crop(crop)
+	
+	var gm = GameManager.instance
+	if gm and not gm.is_local():
+		gm.send_crop_pickup(player_id, crop_pos, type_id, stg)
+
+func _attach_held_crop(crop: Crop) -> void:
 	held_crop = crop
 	crop.picked_up.emit()
 	if crop.get_parent():
 		crop.get_parent().remove_child(crop)
-	
+	if held_sprite:
+		held_sprite.queue_free()
 	held_sprite = Sprite2D.new()
 	held_sprite.texture = crop.icon if crop.icon else _make_placeholder_tex(crop)
 	held_sprite.scale = Vector2(0.5, 0.5)
 	held_sprite.z_index = 10
 	get_parent().add_child(held_sprite)
 	held_sprite.global_position = global_position + (-aim_dir.normalized() * 40.0)
-	
-	var gm = GameManager.instance
-	if gm and not gm.is_local():
-		gm.send_crop_pickup(player_id, crop_pos, type_id, stg)
+
+func can_receive_held_crop() -> bool:
+	return held_crop == null and drop_cd <= 0.0 and not in_spectate_mode and not is_awaiting_respawn and not is_dying
+
+func get_any_held_crop_data() -> Dictionary:
+	if held_crop != null:
+		return {"type": held_crop.get_type_id(), "stage": held_crop.stage}
+	if _remote_held_type != "":
+		return {"type": _remote_held_type, "stage": _remote_held_stage}
+	return {}
+
+func force_clear_held_crop_local() -> void:
+	if held_crop:
+		held_crop.queue_free()
+		held_crop = null
+	if held_sprite:
+		held_sprite.queue_free()
+		held_sprite = null
+	clear_remote_held_crop()
+
+func receive_stolen_crop(type_id: String, stg: int) -> void:
+	if not can_receive_held_crop():
+		return
+	var scene = GameManager.CROP_SCENES.get(type_id)
+	if scene == null:
+		return
+	var crop = scene.instantiate() as Crop
+	crop.stage = stg
+	crop._setup()
+	_attach_held_crop(crop)
 
 func drop_held_crop() -> void:
 	if held_crop == null:
@@ -1085,6 +1120,7 @@ func drop_held_crop() -> void:
 		gm.send_crop_dropped(player_id, global_position, type_id, stg)
 
 const INTERACT_RANGE := 400.0
+const UPROOT_RANGE := INTERACT_RANGE / 3.0
 const TILE_HALF := 80.0
 
 func _tile_at_cursor(tiles: Array) -> Node:
@@ -1131,7 +1167,7 @@ func _try_uproot() -> bool:
 		var tile = _tile_at_cursor(tiles)
 		if tile == null or tile.planted_crop == null:
 			continue
-		if tile.global_position.distance_to(global_position) > INTERACT_RANGE:
+		if tile.global_position.distance_to(global_position) > UPROOT_RANGE:
 			continue
 		var tile_idx = tiles.find(tile)
 		var crop = f.remove_crop(tile.planted_crop)
@@ -1163,9 +1199,10 @@ func _make_placeholder_tex(crop: Crop) -> Texture2D:
 	return ImageTexture.create_from_image(img)
 
 func set_remote_held_crop(type_id: String, stg: int) -> void:
-	if type_id == _remote_held_type and _remote_held_sprite != null:
+	if type_id == _remote_held_type and stg == _remote_held_stage and _remote_held_sprite != null:
 		return
 	_remote_held_type = type_id
+	_remote_held_stage = stg
 	if _remote_held_sprite == null:
 		_remote_held_sprite = Sprite2D.new()
 		_remote_held_sprite.scale = Vector2(0.5, 0.5)
@@ -1179,6 +1216,7 @@ func set_remote_held_crop(type_id: String, stg: int) -> void:
 
 func clear_remote_held_crop() -> void:
 	_remote_held_type = ""
+	_remote_held_stage = 1
 	if _remote_held_sprite:
 		_remote_held_sprite.visible = false
 

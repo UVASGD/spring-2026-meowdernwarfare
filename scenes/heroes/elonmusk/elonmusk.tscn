@@ -1,14 +1,22 @@
 [gd_scene load_steps=2 format=3 uid="uid://1jqtfmfs27nq"]
 
-[ext_resource type="Script" uid="uid://blu0gxdbmr4db" path="res://scripts/heroes/alien.gd" id="1_20r1c"]
+[ext_resource type="Script" path="res://scripts/heroes/elonmusk.gd" id="1"]
 
 [node name="ElonMusk" type="Node2D"]
-script = ExtResource("1_20r1c")
+script = ExtResource("1")
 max_health = 80.0
 move_speed_mult = 1.2
-shoot_cooldown = 0.15
+shoot_cooldown = 0.08
+ability1_cooldown = 40.0
 reload_time = 1.2
-mag_size = 20
+mag_size = 40
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.25, 0.25)
+
+[node name="MagnetRing" type="Line2D" parent="."]
+visible = false
+default_color = Color(0.25, 0.95, 0.95, 0.3)
+width = 7.0
+closed = true
+points = PackedVector2Array(64, 0, 59.1283, 24.4917, 45.2548, 45.2548, 24.4917, 59.1283, 0, 64, -24.4917, 59.1283, -45.2548, 45.2548, -59.1283, 24.4917, -64, 0, -59.1283, -24.4917, -45.2548, -45.2548, -24.4917, -59.1283, 0, -64, 24.4917, -59.1283, 45.2548, -45.2548, 59.1283, -24.4917, 64, 0)

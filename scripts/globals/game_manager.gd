@@ -23,6 +23,7 @@ signal ult_used_received(player_id: int)
 
 const BurpleGrenadeScene = preload("res://scenes/heroes/burple/grenade.tscn")
 const BurpleStrikeScene = preload("res://scenes/heroes/burple/missile_strike.tscn")
+const MuskratUltScene = preload("res://scenes/heroes/elonmusk/cybertruck_ult.tscn")
 
 static var instance: GameManager = null
 
@@ -158,12 +159,16 @@ func clear_players() -> void:
 	for strike in _burple_strikes.values():
 		if is_instance_valid(strike):
 			strike.queue_free()
+	for ult in _muskrat_ults.values():
+		if is_instance_valid(ult):
+			ult.queue_free()
 	players.clear()
 	eliminated.clear()
 	stats.clear()
 	_remote_targets.clear()
 	_burple_grenades.clear()
 	_burple_strikes.clear()
+	_muskrat_ults.clear()
 	_xf_mark_counts.clear()
 	sudden_death = false
 	game_over = false
@@ -197,6 +202,7 @@ var pending_corrections: Dictionary = {}  # player_id -> {pos, rot, health, etc}
 var _remote_targets: Dictionary = {}  # pid -> { pos, rot, vel } for smooth interpolation
 var _burple_grenades: Dictionary = {}
 var _burple_strikes: Dictionary = {}
+var _muskrat_ults: Dictionary = {}
 
 const XF_MARKS_FOR_SLASH_DEFAULT: int = 10
 const XF_SLASH_DAMAGE: float = 26.0
@@ -289,6 +295,10 @@ func _on_player_left(player_id: int) -> void:
 	if player:
 		players.erase(player)
 		player.queue_free()
+	for uid in _muskrat_ults.keys():
+		var ult = _muskrat_ults.get(uid)
+		if ult and is_instance_valid(ult) and ult.owner_player and ult.owner_player.player_id == player_id:
+			ult.queue_free()
 	net_inputs.erase(player_id)
 	_remote_targets.erase(player_id)
 
@@ -383,6 +393,27 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 
 	elif msg_type == "xf_slash":
 		_handle_xf_slash(data)
+
+	elif msg_type == "muskrat_ult_req":
+		_handle_muskrat_ult_req(from_id, data)
+
+	elif msg_type == "muskrat_ult_spawn":
+		_handle_muskrat_ult_spawn(data)
+
+	elif msg_type == "muskrat_ult_tp_req":
+		_handle_muskrat_ult_tp_req(from_id, data)
+
+	elif msg_type == "muskrat_ult_tp":
+		_handle_muskrat_ult_tp(data)
+
+	elif msg_type == "muskrat_ult_end":
+		_handle_muskrat_ult_end(data)
+
+	elif msg_type == "muskrat_hold_steal_req":
+		_handle_muskrat_hold_steal_req(from_id, data)
+
+	elif msg_type == "muskrat_hold_steal":
+		_handle_muskrat_hold_steal(data)
 
 func _broadcast_state() -> void:
 	if not Network.is_online():
@@ -878,6 +909,218 @@ func _spawn_burple_strike(data: Dictionary, authoritative: bool) -> void:
 		if _burple_strikes.get(sid) == strike:
 			_burple_strikes.erase(sid)
 	)
+
+# --- ELONGATED MUSKRAT SYNC ---
+
+func has_muskrat_ult_for_owner(owner_id: int) -> bool:
+	for ult in _muskrat_ults.values():
+		if ult and is_instance_valid(ult) and ult.owner_player and ult.owner_player.player_id == owner_id:
+			return true
+	return false
+
+func cast_muskrat_ult(owner_id: int, center: Vector2, uid: String, cfg: Dictionary) -> void:
+	if uid.is_empty():
+		return
+	if mode == Mode.ONLINE_CLIENT:
+		Network.send_to_host({
+			"type": "muskrat_ult_req",
+			"pid": owner_id,
+			"uid": uid,
+			"x": center.x,
+			"y": center.y,
+			"cfg": cfg,
+		})
+		return
+	var msg := _make_muskrat_ult_spawn(owner_id, center, uid, cfg)
+	if msg.is_empty():
+		return
+	_spawn_muskrat_ult(msg, true)
+	if mode == Mode.ONLINE_HOST and Network.is_online():
+		var out := msg.duplicate(true)
+		out["type"] = "muskrat_ult_spawn"
+		Network.broadcast(out)
+
+func report_muskrat_ult_tp(uid: String, a: Vector2, b: Vector2) -> void:
+	if mode != Mode.ONLINE_HOST or not Network.is_online():
+		return
+	Network.broadcast({
+		"type": "muskrat_ult_tp",
+		"uid": uid,
+		"ax": a.x,
+		"ay": a.y,
+		"bx": b.x,
+		"by": b.y,
+	})
+
+func report_muskrat_ult_end(uid: String) -> void:
+	if mode != Mode.ONLINE_HOST or not Network.is_online():
+		return
+	Network.broadcast({
+		"type": "muskrat_ult_end",
+		"uid": uid,
+	})
+
+func request_muskrat_held_steal(thief_id: int, victim_id: int, crop_type: String, stg: int) -> void:
+	if crop_type.is_empty():
+		return
+	if mode == Mode.ONLINE_CLIENT:
+		Network.send_to_host({
+			"type": "muskrat_hold_steal_req",
+			"th": thief_id,
+			"vi": victim_id,
+			"ct": crop_type,
+			"cs": stg,
+		})
+		return
+	_apply_muskrat_hold_steal(thief_id, victim_id, crop_type, stg, true)
+
+func _handle_muskrat_ult_req(from_id: int, data: Dictionary) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	var pid := int(data.get("pid", -1))
+	if pid != from_id:
+		return
+	cast_muskrat_ult(pid, Vector2(data.get("x", 0.0), data.get("y", 0.0)), str(data.get("uid", "")), data.get("cfg", {}))
+
+func _handle_muskrat_ult_spawn(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	_spawn_muskrat_ult(data, false)
+
+func _handle_muskrat_ult_tp_req(from_id: int, data: Dictionary) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	var uid := str(data.get("uid", ""))
+	var ult = _muskrat_ults.get(uid)
+	if ult == null or not is_instance_valid(ult) or ult.owner_player == null:
+		return
+	if ult.owner_player.player_id != from_id:
+		return
+	ult.request_tp(Vector2(data.get("x", 0.0), data.get("y", 0.0)))
+
+func _handle_muskrat_ult_tp(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	var uid := str(data.get("uid", ""))
+	var ult = _muskrat_ults.get(uid)
+	if ult == null or not is_instance_valid(ult):
+		return
+	ult.play_remote_tp(Vector2(data.get("ax", 0.0), data.get("ay", 0.0)), Vector2(data.get("bx", 0.0), data.get("by", 0.0)))
+
+func _handle_muskrat_ult_end(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	var uid := str(data.get("uid", ""))
+	var ult = _muskrat_ults.get(uid)
+	if ult == null or not is_instance_valid(ult):
+		return
+	ult.force_end_remote()
+
+func _handle_muskrat_hold_steal_req(from_id: int, data: Dictionary) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	var thief := int(data.get("th", -1))
+	if thief != from_id:
+		return
+	_apply_muskrat_hold_steal(thief, int(data.get("vi", -1)), str(data.get("ct", "")), int(data.get("cs", 1)), true)
+
+func _handle_muskrat_hold_steal(data: Dictionary) -> void:
+	_apply_muskrat_hold_steal(int(data.get("th", -1)), int(data.get("vi", -1)), str(data.get("ct", "")), int(data.get("cs", 1)), false)
+
+func _make_muskrat_ult_spawn(owner_id: int, center: Vector2, uid: String, cfg: Dictionary) -> Dictionary:
+	var p := get_player(owner_id)
+	if p == null or not is_instance_valid(p):
+		return {}
+	return {
+		"uid": uid,
+		"pid": owner_id,
+		"x": center.x,
+		"y": center.y,
+		"cfg": cfg.duplicate(true),
+	}
+
+func _spawn_muskrat_ult(data: Dictionary, authoritative: bool) -> void:
+	var uid := str(data.get("uid", ""))
+	if uid.is_empty():
+		return
+	var old = _muskrat_ults.get(uid)
+	if old != null and is_instance_valid(old):
+		return
+	var owner_id := int(data.get("pid", -1))
+	var owner_player := get_player(owner_id)
+	if owner_player == null or not is_instance_valid(owner_player):
+		return
+	var ult = MuskratUltScene.instantiate()
+	ult.owner_player = owner_player
+	ult.ult_id = uid
+	ult.authoritative = authoritative
+	var cfg: Dictionary = data.get("cfg", {})
+	if cfg.has("radius"):
+		ult.zone_radius = float(cfg.get("radius", ult.zone_radius))
+	if cfg.has("dur"):
+		ult.duration = float(cfg.get("dur", ult.duration))
+	if cfg.has("tp"):
+		ult.teleport_cd = float(cfg.get("tp", ult.teleport_cd))
+	if cfg.has("ldmg"):
+		ult.line_damage = float(cfg.get("ldmg", ult.line_damage))
+	if cfg.has("llife"):
+		ult.line_life = float(cfg.get("llife", ult.line_life))
+	if cfg.has("edmg"):
+		ult.explosion_damage = float(cfg.get("edmg", ult.explosion_damage))
+	ult.global_position = Vector2(data.get("x", owner_player.global_position.x), data.get("y", owner_player.global_position.y))
+	var parent: Node = entity_parent if entity_parent else self
+	parent.add_child(ult)
+	_muskrat_ults[uid] = ult
+	ult.tree_exited.connect(func():
+		if _muskrat_ults.get(uid) == ult:
+			_muskrat_ults.erase(uid)
+	)
+
+func _apply_muskrat_hold_steal(thief_id: int, victim_id: int, crop_type: String, stg: int, should_broadcast: bool) -> void:
+	if crop_type.is_empty():
+		return
+	var thief := get_player(thief_id)
+	var victim := get_player(victim_id)
+	if thief == null or victim == null or not is_instance_valid(thief) or not is_instance_valid(victim):
+		return
+	if not thief.can_receive_held_crop():
+		return
+	if not thief.get_any_held_crop_data().is_empty():
+		return
+	var available: Dictionary = victim.get_any_held_crop_data()
+	if available.is_empty():
+		return
+	var real_type := str(available.get("type", crop_type))
+	var real_stage := int(available.get("stage", stg))
+	if _is_player_local_instance(victim):
+		victim.force_clear_held_crop_local()
+	else:
+		victim.clear_remote_held_crop()
+	if _is_player_local_instance(thief):
+		thief.receive_stolen_crop(real_type, real_stage)
+	else:
+		thief.set_remote_held_crop(real_type, real_stage)
+	_host_held_crops.erase(victim_id)
+	_host_held_crops[thief_id] = {"t": real_type, "s": real_stage}
+	if should_broadcast and mode == Mode.ONLINE_HOST and Network.is_online():
+		Network.broadcast({
+			"type": "muskrat_hold_steal",
+			"th": thief_id,
+			"vi": victim_id,
+			"ct": real_type,
+			"cs": real_stage,
+		})
+
+func _is_player_local_instance(p: Player) -> bool:
+	if p == null or not is_instance_valid(p):
+		return false
+	if mode == Mode.LOCAL:
+		return true
+	if p.input is NetworkInput:
+		return p.input.is_local
+	if p.input is LocalInput:
+		return p.player_id == 0
+	return false
 
 # --- XYLER / FERGUS SYNC ---
 

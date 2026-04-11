@@ -77,6 +77,7 @@ func _ready() -> void:
 	_create_timer_hud()
 	game_timer = 0.0
 	game_active = true
+	Cursor.enable()
 	Cursor.switch_mode("BATTLE")
 
 func _setup_pause_menu() -> void:

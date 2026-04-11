@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scenes/heroes/elonmusk/muskrat_flame.gd" id="1"]
+
+[sub_resource type="CircleShape2D" id="1"]
+radius = 6.0
+
+[sub_resource type="Gradient" id="2"]
+colors = PackedColorArray(1, 0.45, 0.05, 0.95, 1, 0.85, 0.25, 0.6, 0.2, 0.2, 0.2, 0)
+
+[sub_resource type="GradientTexture2D" id="3"]
+gradient = SubResource("2")
+width = 96
+height = 96
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[node name="MuskratFlame" type="Area2D"]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.3, 0.14)
+texture = SubResource("3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("1")
