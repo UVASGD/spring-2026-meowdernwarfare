@@ -164,6 +164,7 @@ func clear_players() -> void:
 	_remote_targets.clear()
 	_burple_grenades.clear()
 	_burple_strikes.clear()
+	_xf_mark_counts.clear()
 	sudden_death = false
 	game_over = false
 
@@ -196,6 +197,10 @@ var pending_corrections: Dictionary = {}  # player_id -> {pos, rot, health, etc}
 var _remote_targets: Dictionary = {}  # pid -> { pos, rot, vel } for smooth interpolation
 var _burple_grenades: Dictionary = {}
 var _burple_strikes: Dictionary = {}
+
+const XF_MARKS_FOR_SLASH_DEFAULT: int = 10
+const XF_SLASH_DAMAGE: float = 26.0
+var _xf_mark_counts: Dictionary = {}
 
 const POS_REPORT_INTERVAL: float = 2.0
 var pos_report_timer: float = 0.0
@@ -238,11 +243,6 @@ func _send_local_state() -> void:
 		"vy": player.velocity.y,
 		"dash": player.is_dashing
 	}
-	
-	if player.hero:
-		state["hp"] = player.hero.health
-		state["ult"] = player.hero.ult_points
-		state["ammo"] = player.hero.ammo
 	
 	state["cc"] = player.crop_count
 	if player.held_crop:
@@ -372,6 +372,18 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 	elif msg_type == "burple_strike_end":
 		_handle_burple_strike_end(data)
 
+	elif msg_type == "xf_stance_req":
+		_handle_xf_stance_req(from_id, data)
+
+	elif msg_type == "xf_stance":
+		_handle_xf_stance(data)
+
+	elif msg_type == "xf_mark_hit":
+		_handle_xf_mark_hit(from_id, data)
+
+	elif msg_type == "xf_slash":
+		_handle_xf_slash(data)
+
 func _broadcast_state() -> void:
 	if not Network.is_online():
 		return
@@ -449,15 +461,26 @@ func _receive_client_state(from_id: int, data: Dictionary) -> void:
 		"vel": Vector2(data.get("vx", 0), data.get("vy", 0)),
 	}
 	player.is_dashing = data.get("dash", false)
-	
-	if player.hero and data.has("hp"):
-		player.hero.health = data["hp"]
+	# HP is host-authoritative (damage/heal on host). Do not overwrite from client reports.
 	
 	var hc = data.get("hc", "")
 	if hc != "":
 		_host_held_crops[pid] = {"t": hc, "s": int(data.get("hs", 1))}
 	else:
 		_host_held_crops.erase(pid)
+
+func _apply_state_sync_hp(player: Player, state: Dictionary) -> void:
+	if player.hero == null:
+		return
+	var hp: float = float(state.get("hp", player.hero.health))
+	var hp_diff := hp - player.hero.health
+	if abs(hp_diff) <= 1.0:
+		return
+	if hp_diff > 0.0 and hp_diff < player.hero.max_health * 0.25:
+		player.hero.health = lerpf(player.hero.health, hp, 0.4)
+	else:
+		player.hero.health = hp
+	player.hero.health_changed.emit(player.hero.health, player.hero.max_health)
 
 func _apply_corrections(delta: float) -> void:
 	for pid in pending_corrections:
@@ -468,7 +491,7 @@ func _apply_corrections(delta: float) -> void:
 			continue
 		
 		# Don't correct local player's position (they are authoritative for their own movement)
-		# But DO apply other state like health
+		# Apply host HP/ult/ammo to everyone (including local) so host-only damage matches all clients.
 		var is_local_player = (pid == local_player_id)
 		var target_pos = Vector2(state.get("x", 0), state.get("y", 0))
 		
@@ -485,15 +508,7 @@ func _apply_corrections(delta: float) -> void:
 				player.stun_timer = 0.0
 		
 		if player.hero:
-			if not is_local_player:
-				var hp = state.get("hp", player.hero.health)
-				var hp_diff = hp - player.hero.health
-				if abs(hp_diff) > 1:
-					if hp_diff > 0 and hp_diff < player.hero.max_health * 0.25:
-						player.hero.health = lerpf(player.hero.health, hp, 0.4)
-					else:
-						player.hero.health = hp
-					player.hero.health_changed.emit(player.hero.health, player.hero.max_health)
+			_apply_state_sync_hp(player, state)
 			
 			player.hero.ult_points = int(state.get("ult", player.hero.ult_points))
 			player.hero.ammo = int(state.get("ammo", player.hero.ammo))
@@ -863,6 +878,86 @@ func _spawn_burple_strike(data: Dictionary, authoritative: bool) -> void:
 		if _burple_strikes.get(sid) == strike:
 			_burple_strikes.erase(sid)
 	)
+
+# --- XYLER / FERGUS SYNC ---
+
+func sync_xf_stance(pid: int, st: int) -> void:
+	if not Network.is_online():
+		return
+	var msg := {"type": "xf_stance", "pid": pid, "st": st}
+	if mode == Mode.ONLINE_HOST:
+		Network.broadcast(msg)
+	else:
+		Network.send_to_host({"type": "xf_stance_req", "pid": pid, "st": st})
+
+func xf_fergus_mark_hit(attacker_id: int, victim_id: int) -> void:
+	if not Network.is_online():
+		_xf_fergus_mark_impl(attacker_id, victim_id)
+		return
+	if mode == Mode.ONLINE_CLIENT:
+		Network.send_to_host({"type": "xf_mark_hit", "a": attacker_id, "v": victim_id})
+		return
+	_xf_fergus_mark_impl(attacker_id, victim_id)
+
+func _xf_fergus_mark_impl(attacker_id: int, victim_id: int) -> void:
+	var key := "%d:%d" % [attacker_id, victim_id]
+	var n: int = int(_xf_mark_counts.get(key, 0)) + 1
+	var need := _xf_marks_needed(attacker_id)
+	if n >= need:
+		_xf_mark_counts.erase(key)
+		_xf_do_xyler_slash(attacker_id, victim_id)
+	else:
+		_xf_mark_counts[key] = n
+
+func _xf_marks_needed(attacker_id: int) -> int:
+	var p := get_player(attacker_id)
+	if p and is_instance_valid(p) and p.hero is HeroXylerFergus:
+		return maxi(1, (p.hero as HeroXylerFergus).fergus_marks_for_slash)
+	return XF_MARKS_FOR_SLASH_DEFAULT
+
+func _xf_do_xyler_slash(attacker_id: int, victim_id: int) -> void:
+	var attacker := get_player(attacker_id)
+	var victim := get_player(victim_id)
+	if attacker == null or victim == null or not is_instance_valid(attacker) or not is_instance_valid(victim):
+		return
+	victim.take_damage(XF_SLASH_DAMAGE, attacker)
+	victim.spawn_mark_projectile_hit_fx()
+	if Network.is_online() and mode == Mode.ONLINE_HOST:
+		Network.broadcast({"type": "xf_slash", "a": attacker_id, "v": victim_id})
+
+func _handle_xf_stance_req(from_id: int, data: Dictionary) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	var pid := int(data.get("pid", -1))
+	if pid != from_id:
+		return
+	Network.broadcast({"type": "xf_stance", "pid": pid, "st": int(data.get("st", 0))})
+
+func _handle_xf_stance(data: Dictionary) -> void:
+	var pid := int(data.get("pid", -1))
+	var st := int(data.get("st", 0))
+	var p := get_player(pid)
+	if p == null or p.hero == null:
+		return
+	if p.hero is HeroXylerFergus:
+		(p.hero as HeroXylerFergus).apply_remote_stance(st)
+
+func _handle_xf_mark_hit(from_id: int, data: Dictionary) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	var aid := int(data.get("a", -1))
+	if aid != from_id:
+		return
+	var vid := int(data.get("v", -1))
+	_xf_fergus_mark_impl(aid, vid)
+
+func _handle_xf_slash(data: Dictionary) -> void:
+	if mode == Mode.ONLINE_HOST:
+		return
+	var vid := int(data.get("v", -1))
+	var victim := get_player(vid)
+	if victim and is_instance_valid(victim):
+		victim.spawn_mark_projectile_hit_fx()
 
 # --- TELEPORTER SYNC ---
 
