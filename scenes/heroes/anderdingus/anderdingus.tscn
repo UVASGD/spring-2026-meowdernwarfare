@@ -71,6 +71,14 @@ animations = [{
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_4bbo4")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4bbo4")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_igywj")
@@ -97,15 +105,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_6udlu")
 }],
 "loop": true,
-"name": &"default",
-"speed": 20.0
-}, {
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_4bbo4")
-}],
-"loop": true,
-"name": &"idle",
+"name": &"run",
 "speed": 20.0
 }, {
 "frames": [{
@@ -133,7 +133,10 @@ animations = [{
 }]
 
 [node name="AnderDingus" type="Node2D"]
+scale = Vector2(5, 5)
 script = ExtResource("1_xtle8")
+ult_strike_count = 60
+ult_spread_pad = 1000.0
 max_health = 1000.0
 max_ult_points = 1
 ult_anim_duration = 1.0
@@ -145,7 +148,5 @@ ult_portrait = ExtResource("3_4bbo4")
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.25, 0.25)
 sprite_frames = SubResource("SpriteFrames_fdvjl")
-animation = &"ult_idle"
+animation = &"run"
 autoplay = "idle"
-frame = 5
-frame_progress = 1.0

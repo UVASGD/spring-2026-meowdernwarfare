@@ -157,6 +157,7 @@ const HERO_SCENE_PATHS = {
 	"AnimeGirl": "res://scenes/heroes/animegirl/animegirl.tscn",
 	"XylerFergus": "res://scenes/heroes/xylerfergus/xylerfergus.tscn",
 	"ElonMusk": "res://scenes/heroes/elonmusk/elonmusk.tscn",
+	"AnderDingus": "res://scenes/heroes/anderdingus/anderdingus.tscn",
 
 	# Backward-compat names
 	"Anime Girl": "res://scenes/heroes/animegirl/animegirl.tscn",

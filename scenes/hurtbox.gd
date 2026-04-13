@@ -11,7 +11,8 @@ var _swing_mode: SwingMode = SwingMode.MELEE
 const CHOMP_EFFECT = preload("res://scenes/heroes/loanshark/chomp_effect.tscn")
 
 func _ready() -> void:
-	owner_player = get_parent().get_parent()
+	if owner_player == null:
+		owner_player = get_parent().get_parent()
 	set_physics_process(false)
 
 func start_swing(mode: SwingMode = SwingMode.MELEE) -> void:

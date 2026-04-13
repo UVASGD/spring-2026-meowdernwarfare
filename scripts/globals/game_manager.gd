@@ -24,6 +24,7 @@ signal ult_used_received(player_id: int)
 const BurpleGrenadeScene = preload("res://scenes/heroes/burple/grenade.tscn")
 const BurpleStrikeScene = preload("res://scenes/heroes/burple/missile_strike.tscn")
 const MuskratUltScene = preload("res://scenes/heroes/elonmusk/cybertruck_ult.tscn")
+const AnderOrbitalScene = preload("res://scenes/heroes/anderdingus/orbitalstrike.tscn")
 
 static var instance: GameManager = null
 
@@ -162,6 +163,9 @@ func clear_players() -> void:
 	for ult in _muskrat_ults.values():
 		if is_instance_valid(ult):
 			ult.queue_free()
+	for strike in _ander_orbitals.values():
+		if is_instance_valid(strike):
+			strike.queue_free()
 	players.clear()
 	eliminated.clear()
 	stats.clear()
@@ -169,6 +173,7 @@ func clear_players() -> void:
 	_burple_grenades.clear()
 	_burple_strikes.clear()
 	_muskrat_ults.clear()
+	_ander_orbitals.clear()
 	_xf_mark_counts.clear()
 	sudden_death = false
 	game_over = false
@@ -203,6 +208,7 @@ var _remote_targets: Dictionary = {}  # pid -> { pos, rot, vel } for smooth inte
 var _burple_grenades: Dictionary = {}
 var _burple_strikes: Dictionary = {}
 var _muskrat_ults: Dictionary = {}
+var _ander_orbitals: Dictionary = {}
 
 const XF_MARKS_FOR_SLASH_DEFAULT: int = 10
 const XF_SLASH_DAMAGE: float = 26.0
@@ -299,6 +305,10 @@ func _on_player_left(player_id: int) -> void:
 		var ult = _muskrat_ults.get(uid)
 		if ult and is_instance_valid(ult) and ult.owner_player and ult.owner_player.player_id == player_id:
 			ult.queue_free()
+	for oid in _ander_orbitals.keys():
+		var strike = _ander_orbitals.get(oid)
+		if strike and is_instance_valid(strike) and strike.owner_player and strike.owner_player.player_id == player_id:
+			strike.queue_free()
 	net_inputs.erase(player_id)
 	_remote_targets.erase(player_id)
 
@@ -414,6 +424,12 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 
 	elif msg_type == "muskrat_hold_steal":
 		_handle_muskrat_hold_steal(data)
+
+	elif msg_type == "dingus_orbital_req":
+		_handle_dingus_orbital_req(from_id, data)
+
+	elif msg_type == "dingus_orbital_spawn":
+		_handle_dingus_orbital_spawn(data)
 
 func _broadcast_state() -> void:
 	if not Network.is_online():
@@ -617,6 +633,7 @@ func _spawn_net_player(id: int, local: bool) -> Player:
 	stats[id] = {"kills": 0, "deaths": 0}
 	
 	var hero_name = get_player_hero(id)
+	hero_name = GameData.resolve_hero_for_username(get_player_username(id), hero_name)
 	if hero_name:
 		player.set_hero(hero_name)
 	
@@ -908,6 +925,75 @@ func _spawn_burple_strike(data: Dictionary, authoritative: bool) -> void:
 	strike.tree_exited.connect(func():
 		if _burple_strikes.get(sid) == strike:
 			_burple_strikes.erase(sid)
+	)
+
+func cast_dingus_orbital(owner_id: int, pos: Vector2, oid: String) -> void:
+	if oid.is_empty():
+		return
+	if mode == Mode.ONLINE_CLIENT:
+		Network.send_to_host({
+			"type": "dingus_orbital_req",
+			"pid": owner_id,
+			"oid": oid,
+			"x": pos.x,
+			"y": pos.y
+		})
+		return
+	var msg := _make_dingus_orbital_spawn(owner_id, pos, oid)
+	if msg.is_empty():
+		return
+	_spawn_dingus_orbital(msg, true)
+	if mode == Mode.ONLINE_HOST and Network.is_online():
+		var out := msg.duplicate()
+		out["type"] = "dingus_orbital_spawn"
+		Network.broadcast(out)
+
+func _handle_dingus_orbital_req(from_id: int, data: Dictionary) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	var pid := int(data.get("pid", -1))
+	if pid != from_id:
+		return
+	cast_dingus_orbital(pid, Vector2(data.get("x", 0.0), data.get("y", 0.0)), str(data.get("oid", "")))
+
+func _handle_dingus_orbital_spawn(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	_spawn_dingus_orbital(data, false)
+
+func _make_dingus_orbital_spawn(owner_id: int, pos: Vector2, oid: String) -> Dictionary:
+	var player := get_player(owner_id)
+	if player == null or not is_instance_valid(player):
+		return {}
+	return {
+		"pid": owner_id,
+		"oid": oid,
+		"x": pos.x,
+		"y": pos.y
+	}
+
+func _spawn_dingus_orbital(data: Dictionary, authoritative: bool) -> void:
+	var oid := str(data.get("oid", ""))
+	if oid.is_empty():
+		return
+	var prev = _ander_orbitals.get(oid)
+	if prev != null and is_instance_valid(prev):
+		return
+	var owner_id := int(data.get("pid", -1))
+	var owner := get_player(owner_id)
+	if owner == null or not is_instance_valid(owner):
+		return
+	var strike = AnderOrbitalScene.instantiate()
+	strike.owner_player = owner
+	strike.orbital_id = oid
+	strike.authoritative = authoritative
+	strike.global_position = Vector2(data.get("x", owner.global_position.x), data.get("y", owner.global_position.y))
+	var parent: Node = entity_parent if entity_parent else self
+	parent.add_child(strike)
+	_ander_orbitals[oid] = strike
+	strike.tree_exited.connect(func():
+		if _ander_orbitals.get(oid) == strike:
+			_ander_orbitals.erase(oid)
 	)
 
 # --- ELONGATED MUSKRAT SYNC ---

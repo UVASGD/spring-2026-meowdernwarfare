@@ -18,6 +18,8 @@ var starter_crops: Array[String] = []
 var pending_starter_crops: Array[String] = []
 
 var train_last_hero: String = ""
+const SECRET_USERNAME := "DINGUS"
+const SECRET_HERO := "AnderDingus"
 const TRAIN_HERO_ALIAS := {
 	"Anime Girl": "AnimeGirl",
 	"Xyler and Fergus": "XylerFergus",
@@ -210,12 +212,27 @@ func set_train_last_hero(game_id: String) -> void:
 	save_train_hero()
 
 func train_hero_for_game() -> String:
-	if train_last_hero.is_empty():
-		return TestConfig.DEFAULT_HERO
-	return _norm_train_hero(train_last_hero)
+	var hero := TestConfig.DEFAULT_HERO if train_last_hero.is_empty() else _norm_train_hero(train_last_hero)
+	return resolve_hero_for_username(get_local_username(), hero)
 
 func _norm_train_hero(hero_id: String) -> String:
 	return TRAIN_HERO_ALIAS.get(hero_id, hero_id)
+
+func resolve_hero_for_username(username: String, hero_id: String) -> String:
+	if is_secret_username(username):
+		return SECRET_HERO
+	if hero_id == SECRET_HERO:
+		return TestConfig.DEFAULT_HERO
+	return hero_id
+
+func is_secret_username(username: String) -> bool:
+	return username.strip_edges().to_upper() == SECRET_USERNAME
+
+func get_local_username() -> String:
+	var cfg := ConfigFile.new()
+	if cfg.load("user://settings.cfg") != OK:
+		return ""
+	return str(cfg.get_value("player", "username", ""))
 
 const DEFAULT_STARTERS: Array[String] = ["BlastBerry"]
 

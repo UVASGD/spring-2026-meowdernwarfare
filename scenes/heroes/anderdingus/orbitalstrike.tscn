@@ -288,26 +288,26 @@ animations = [{
 "speed": 15.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_pk4uq"]
-resource_local_to_scene = true
-size = Vector2(291, 88.8235)
+[sub_resource type="CircleShape2D" id="CircleShape2D_nby3x"]
+radius = 334.099
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_nby3x")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(2, -441)
+scale = Vector2(2, 3)
 sprite_frames = SubResource("SpriteFrames_kwny8")
 autoplay = "default"
 frame = 55
 frame_progress = 1.0
 
 [node name="hurtbox" parent="." instance=ExtResource("3_uke7d")]
-visible = false
 position = Vector2(2, 216)
 damage = 160
 
 [node name="CollisionShape2D" parent="hurtbox/Area2D" index="0"]
 position = Vector2(-0.5, 0)
-shape = SubResource("RectangleShape2D_pk4uq")
+shape = SubResource("CircleShape2D_nby3x")
 
 [editable path="hurtbox"]
