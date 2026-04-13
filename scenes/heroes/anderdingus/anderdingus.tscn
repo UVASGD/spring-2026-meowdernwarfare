@@ -1,0 +1,151 @@
+[gd_scene load_steps=22 format=3 uid="uid://bnvwapj5w2q5d"]
+
+[ext_resource type="Script" uid="uid://b02fdncjcevkf" path="res://scenes/heroes/anderdingus/anderdingus.gd" id="1_xtle8"]
+[ext_resource type="Texture2D" uid="uid://bmwlq8nswdgms" path="res://assets/sprites/anderdingus/anderdingus_portrait.png" id="2_3epnf"]
+[ext_resource type="Texture2D" uid="uid://5a444vecj7ey" path="res://assets/sprites/anderdingus/anderdingus_walk.png" id="2_vi1nm"]
+[ext_resource type="Texture2D" uid="uid://byq0vhqxjktq6" path="res://assets/sprites/anderdingus/anderdingus_ability1.png" id="3_3epnf"]
+[ext_resource type="Texture2D" uid="uid://dchv8oo7qaxd7" path="res://assets/sprites/anderdingus/anderdingus_portrait_ultt.png" id="3_4bbo4"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4bbo4"]
+atlas = ExtResource("2_vi1nm")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_igywj"]
+atlas = ExtResource("2_vi1nm")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_urdv0"]
+atlas = ExtResource("2_vi1nm")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w27jw"]
+atlas = ExtResource("2_vi1nm")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6q7ql"]
+atlas = ExtResource("2_vi1nm")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v17xm"]
+atlas = ExtResource("2_vi1nm")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x3wvw"]
+atlas = ExtResource("2_vi1nm")
+region = Rect2(384, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tcsav"]
+atlas = ExtResource("2_vi1nm")
+region = Rect2(448, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6udlu"]
+atlas = ExtResource("2_vi1nm")
+region = Rect2(512, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m2ewp"]
+atlas = ExtResource("3_3epnf")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jnl1h"]
+atlas = ExtResource("3_3epnf")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qcsoa"]
+atlas = ExtResource("3_3epnf")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mtr3e"]
+atlas = ExtResource("3_3epnf")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_frx1e"]
+atlas = ExtResource("3_3epnf")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_siirm"]
+atlas = ExtResource("3_3epnf")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fdvjl"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4bbo4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_igywj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_urdv0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w27jw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6q7ql")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v17xm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x3wvw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tcsav")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6udlu")
+}],
+"loop": true,
+"name": &"default",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4bbo4")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m2ewp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jnl1h")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qcsoa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mtr3e")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_frx1e")
+}, {
+"duration": 5.0,
+"texture": SubResource("AtlasTexture_siirm")
+}],
+"loop": false,
+"name": &"ult_idle",
+"speed": 10.0
+}]
+
+[node name="AnderDingus" type="Node2D"]
+script = ExtResource("1_xtle8")
+max_health = 1000.0
+max_ult_points = 1
+ult_anim_duration = 1.0
+ult_actionable = false
+portrait_outline_color = Color(0.0745098, 0.72549, 1, 1)
+normal_portrait = ExtResource("2_3epnf")
+ult_portrait = ExtResource("3_4bbo4")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.25, 0.25)
+sprite_frames = SubResource("SpriteFrames_fdvjl")
+animation = &"ult_idle"
+autoplay = "idle"
+frame = 5
+frame_progress = 1.0
