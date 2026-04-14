@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cs8wf5u526pgi"
-path="res://.godot/imported/iron_1.png-8701e5950c7f8f5b8d4f72f652cbdebf.ctex"
+uid="uid://prdu5b5v3whv"
+path="res://.godot/imported/catfountain 1_0005.png-2f878dddfbc90c094c20d0b1a69959c3.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spritesheetcombiner_in/iron_1.png"
-dest_files=["res://.godot/imported/iron_1.png-8701e5950c7f8f5b8d4f72f652cbdebf.ctex"]
+source_file="res://spritesheetcombiner_in/catfountain 1_0005.png"
+dest_files=["res://.godot/imported/catfountain 1_0005.png-2f878dddfbc90c094c20d0b1a69959c3.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://byqhfkxjq76cq"
-path="res://.godot/imported/berryblast_1.png-6527448d255c7b90c4a726867219919c.ctex"
+uid="uid://do20g07wjeioh"
+path="res://.godot/imported/grasstexture.png-fe1b61d2c272ed270d3e5b5a14845b9d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spritesheetcombiner_in/berryblast_1.png"
-dest_files=["res://.godot/imported/berryblast_1.png-6527448d255c7b90c4a726867219919c.ctex"]
+source_file="res://assets/maps/city/tiles/grasstexture.png"
+dest_files=["res://.godot/imported/grasstexture.png-fe1b61d2c272ed270d3e5b5a14845b9d.ctex"]
 
 [params]
 

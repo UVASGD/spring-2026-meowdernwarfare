@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bxqn73dbid8l3"
-path="res://.godot/imported/iron_2.png-cf7e289de2464413337f3bc07250c2e8.ctex"
+uid="uid://b8tl3pbjlluid"
+path="res://.godot/imported/nuclearplant.png-5a553979dadee14bcb249799d49c9f7a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spritesheetcombiner_in/iron_2.png"
-dest_files=["res://.godot/imported/iron_2.png-cf7e289de2464413337f3bc07250c2e8.ctex"]
+source_file="res://assets/maps/city/objs/nuclearplant.png"
+dest_files=["res://.godot/imported/nuclearplant.png-5a553979dadee14bcb249799d49c9f7a.ctex"]
 
 [params]
 

@@ -8,6 +8,7 @@ extends Node2D
 const MAP_SCENES := {
 	"testArena": "res://scenes/maps/maze_map.tscn",
 	"Moon": "res://scenes/maps/moon.tscn",
+	"City": "res://scenes/maps/city.tscn"
 }
 const CROP_SCENES := {
 	"SpeedCarrot": preload("res://scenes/crops/speed_carrot.tscn"),

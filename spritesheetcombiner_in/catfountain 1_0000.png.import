@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ct36g6sdm6q13"
-path="res://.godot/imported/speed_2.png-39875757a66cc93f3758d78a88e31eed.ctex"
+uid="uid://cwe7hl4jdgbjy"
+path="res://.godot/imported/catfountain 1_0000.png-bdb9462ff15da6ec8759cce8db7e12ee.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spritesheetcombiner_in/speed_2.png"
-dest_files=["res://.godot/imported/speed_2.png-39875757a66cc93f3758d78a88e31eed.ctex"]
+source_file="res://spritesheetcombiner_in/catfountain 1_0000.png"
+dest_files=["res://.godot/imported/catfountain 1_0000.png-bdb9462ff15da6ec8759cce8db7e12ee.ctex"]
 
 [params]
 

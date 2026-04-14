@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://csl1yfoshjqgl"
-path="res://.godot/imported/speed_1.png-247ca27c4398757afdb009abaffa21df.ctex"
+uid="uid://c8k3re4sfuics"
+path="res://.godot/imported/sidewalktexture.png-7f75e694198bdb95085e9ae3e43768da.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spritesheetcombiner_in/speed_1.png"
-dest_files=["res://.godot/imported/speed_1.png-247ca27c4398757afdb009abaffa21df.ctex"]
+source_file="res://assets/maps/city/tiles/sidewalktexture.png"
+dest_files=["res://.godot/imported/sidewalktexture.png-7f75e694198bdb95085e9ae3e43768da.ctex"]
 
 [params]
 
