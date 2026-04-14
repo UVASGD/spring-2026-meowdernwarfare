@@ -1,4 +1,4 @@
-[gd_scene load_steps=56 format=4 uid="uid://dp2ttwbglhrhd"]
+[gd_scene load_steps=53 format=4 uid="uid://dp2ttwbglhrhd"]
 
 [ext_resource type="Texture2D" uid="uid://bra0cb7y8j5aj" path="res://assets/ui/titlescreen/burple_background_infinite.png" id="1_4sf6x"]
 [ext_resource type="Script" uid="uid://be3pnfxr2d7wk" path="res://scripts/spacebg.gd" id="2_4msuu"]
@@ -11,7 +11,6 @@
 [ext_resource type="Texture2D" uid="uid://ni0dog6rvg0e" path="res://assets/maps/moon/objs/Radiohut.png" id="9_5l2ys"]
 [ext_resource type="Texture2D" uid="uid://bomlsfawffdla" path="res://assets/maps/moon/objs/Squid house.png" id="10_rbha6"]
 [ext_resource type="Texture2D" uid="uid://cua3oasp2hwem" path="res://assets/maps/moon/objs/evil trees.png" id="11_45p84"]
-[ext_resource type="Texture2D" uid="uid://cdnb1lc4dp2b" path="res://assets/maps/moon/awesome image2.png" id="12_lnnvg"]
 [ext_resource type="Script" uid="uid://pdt7g4isc4pi" path="res://scripts/teleporter.gd" id="13_6jn65"]
 [ext_resource type="Texture2D" uid="uid://cv6mqks33jfhe" path="res://assets/maps/moon/objs/moon crater.png" id="14_dcwis"]
 [ext_resource type="Texture2D" uid="uid://8jsfcccmc784" path="res://assets/maps/moon/objs/moon crater_normal.png" id="15_ed5ae"]
@@ -71,23 +70,6 @@ sources/0 = SubResource("TileSetAtlasSource_gmvv7")
 sources/1 = SubResource("TileSetAtlasSource_e5wdl")
 sources/2 = SubResource("TileSetAtlasSource_1knbx")
 sources/3 = SubResource("TileSetAtlasSource_w077c")
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5lgu8"]
-texture = ExtResource("12_lnnvg")
-texture_region_size = Vector2i(320, 320)
-1:0/0 = 0
-1:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-157.669, 118.695, 161.212, 120.466, 159.441, 157.669, -155.897, 150.583)
-1:4/0 = 0
-1:4/0/physics_layer_0/polygon_0/points = PackedVector2Array(-132.867, 159.441, -134.639, -164.755, -161.212, -155.897, -159.44, 161.212)
-1:2/0 = 0
-1:2/0/physics_layer_0/polygon_0/points = PackedVector2Array(160, 160, 160, 120.466, -160, 125.781, -159.44, 161.212)
-1:1/0 = 0
-1:1/0/physics_layer_0/polygon_0/points = PackedVector2Array(-132.867, 159.441, -134.639, -164.755, -161.212, -155.897, -159.44, 161.212)
-
-[sub_resource type="TileSet" id="TileSet_t2jim"]
-tile_size = Vector2i(320, 320)
-physics_layer_0/collision_layer = 2
-sources/0 = SubResource("TileSetAtlasSource_5lgu8")
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_6kqtc"]
 radius = 89.0225
@@ -310,11 +292,6 @@ texture = ExtResource("11_45p84")
 
 [node name="TileMapLayer2" parent="map/objs/farms/eviltrees2" index="4"]
 tile_map_data = PackedByteArray("AADt//D/BQABAAAAAAAIAPD/BQABAAAAAAD2//D/BQABAAAAAADt/wkABQABAAAAAADt/wAABQABAAEAAADt//n/BQABAAEAAAARAPD/BQABAAAAAAAaAPf/BQABAAEAAAAaAAAABQABAAEAAAAaAAkABQABAAEAAAARAAkABQABAAAAAAAIAAkABQABAAAAAAD2/wkABQABAAAAAADt/wgABQABAAEAAAD//wkABQABAAAAAAA=")
-
-[node name="fences" type="TileMapLayer" parent="map/objs/farms"]
-visible = false
-tile_map_data = PackedByteArray("AAACAAAAAAABAAQAAAACAP//AAABAAIAAAD+/wAAAAABAAQAAAD+/wEAAAABAAQAAAD+////AAABAAQAAAACAP7/AAABAAIAAAAAAPv/AAABAAQAAAAAAPz/AAABAAQAAAAAAPr/AAABAAQAAAAAAP3/AAABAAQAAAAAAAUAAAABAAQAAAAAAAQAAAABAAQAAAAAAAMAAAABAAQAAAADAP7/AAABAAIAAAAEAP7/AAABAAIAAAADAAAAAAABAAIAAAAEAAAAAAABAAIAAAAGAAAAAAABAAIAAAD8//3/AAABAAIAAAD9//3/AAABAAIAAAD6//3/AAABAAIAAAD5//3/AAABAAIAAAD4/wAAAAABAAIAAAD5/wAAAAABAAIAAAD6/wAAAAABAAIAAAD6/wEAAAABAAEAABD6/wIAAAABAAEAABD9////AAABAAAAAAD8////AAABAAAAAAABAPr/AAABAAAAAAABAPv/AAABAAEAAAABAPz/AAABAAEAAAA=")
-tile_set = SubResource("TileSet_t2jim")
 
 [node name="teleporters" type="Node2D" parent="map/objs"]
 visible = false
