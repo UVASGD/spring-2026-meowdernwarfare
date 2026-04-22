@@ -67,9 +67,9 @@ func _do_shoot(aim_dir: Vector2, _aim_pos: Vector2) -> void:
 	b.damage = flame_damage
 	b.speed = flame_speed
 	b.life = flame_life
-	var spread := deg_to_rad(randf_range(-flame_spread_deg, flame_spread_deg))
+	var spread := deg_to_rad(randf_range(-flame_spread_deg, flame_spread_deg)) #TODO: sync this randomness
 	b.dir = aim_dir.rotated(spread).normalized()
-	b.global_position = player.global_position + aim_dir * 34.0
+	b.global_position = $Marker2D.global_position + aim_dir * 10.0
 	b.rotation = b.dir.angle()
 	get_tree().current_scene.add_child(b)
 

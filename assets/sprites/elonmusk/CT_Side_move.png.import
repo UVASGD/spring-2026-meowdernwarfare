@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://b0l5w8krxp856"
-path="res://.godot/imported/catfountain 1_0002.png-40f8dd2bcd0ce7820212b847f2d46a68.ctex"
+uid="uid://c45b05unhdcx5"
+path="res://.godot/imported/CT_Side_move.png-24cc110706ca10b46eb307fd25afbc12.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spritesheetcombiner_in/catfountain 1_0002.png"
-dest_files=["res://.godot/imported/catfountain 1_0002.png-40f8dd2bcd0ce7820212b847f2d46a68.ctex"]
+source_file="res://assets/sprites/elonmusk/CT_Side_move.png"
+dest_files=["res://.godot/imported/CT_Side_move.png-24cc110706ca10b46eb307fd25afbc12.ctex"]
 
 [params]
 

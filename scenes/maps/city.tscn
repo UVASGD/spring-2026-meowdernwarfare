@@ -354,7 +354,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/brokencars/Crashtruck3/StaticBody2D"]
 position = Vector2(35, 485)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_k6jlr")
 
 [node name="Crashtruck5" type="Sprite2D" parent="map/objs/brokencars"]
@@ -367,7 +366,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/brokencars/Crashtruck5/StaticBody2D"]
 position = Vector2(35, 485)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_k6jlr")
 
 [node name="Crashtruck6" type="Sprite2D" parent="map/objs/brokencars"]
@@ -380,7 +378,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/brokencars/Crashtruck6/StaticBody2D"]
 position = Vector2(35, 485)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_k6jlr")
 
 [node name="Crashtruck" type="Sprite2D" parent="map/objs/brokencars"]
@@ -393,7 +390,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/brokencars/Crashtruck/StaticBody2D"]
 position = Vector2(10, 530)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_0p0x4")
 
 [node name="Crashtruck2" type="Sprite2D" parent="map/objs/brokencars"]
@@ -406,7 +402,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/brokencars/Crashtruck2/StaticBody2D"]
 position = Vector2(10, 530)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_0p0x4")
 
 [node name="Crashtruck4" type="Sprite2D" parent="map/objs/brokencars"]
@@ -419,7 +414,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/brokencars/Crashtruck4/StaticBody2D"]
 position = Vector2(10, 530)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_0p0x4")
 
 [node name="trees" type="Node2D" parent="map/objs"]
@@ -568,7 +562,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/Nuclearplant/StaticBody2D"]
 position = Vector2(-38.6377, 176.721)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_q1nks")
 
 [node name="rubble" type="Node2D" parent="map/objs"]
@@ -583,7 +576,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Rubble1/StaticBody2D"]
 position = Vector2(-180, 280)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8bbtw")
 
 [node name="Rubble2" type="Sprite2D" parent="map/objs/rubble"]
@@ -596,7 +588,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Rubble2/StaticBody2D"]
 position = Vector2(-180, 280)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8bbtw")
 
 [node name="Brubble" type="Sprite2D" parent="map/objs/rubble"]
@@ -609,7 +600,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Brubble/StaticBody2D"]
 position = Vector2(-180, 280)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8bbtw")
 
 [node name="Brubble2" type="Sprite2D" parent="map/objs/rubble"]
@@ -622,7 +612,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Brubble2/StaticBody2D"]
 position = Vector2(-180, 280)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8bbtw")
 
 [node name="Brubble3" type="Sprite2D" parent="map/objs/rubble"]
@@ -635,7 +624,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Brubble3/StaticBody2D"]
 position = Vector2(-180, 280)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8bbtw")
 
 [node name="Brubble4" type="Sprite2D" parent="map/objs/rubble"]
@@ -648,7 +636,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Brubble4/StaticBody2D"]
 position = Vector2(-180, 280)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8bbtw")
 
 [node name="Brubble5" type="Sprite2D" parent="map/objs/rubble"]
@@ -661,7 +648,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Brubble5/StaticBody2D"]
 position = Vector2(-180, 280)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8bbtw")
 
 [node name="Brubble6" type="Sprite2D" parent="map/objs/rubble"]
@@ -674,7 +660,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Brubble6/StaticBody2D"]
 position = Vector2(-180, 280)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8bbtw")
 
 [node name="Brubble7" type="Sprite2D" parent="map/objs/rubble"]
@@ -687,7 +672,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Brubble7/StaticBody2D"]
 position = Vector2(-180, 280)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8bbtw")
 
 [node name="Brubble8" type="Sprite2D" parent="map/objs/rubble"]
@@ -700,7 +684,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Brubble8/StaticBody2D"]
 position = Vector2(-180, 280)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8bbtw")
 
 [node name="Brubble9" type="Sprite2D" parent="map/objs/rubble"]
@@ -713,7 +696,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Brubble9/StaticBody2D"]
 position = Vector2(-180, 280)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8bbtw")
 
 [node name="Mrubble" type="Sprite2D" parent="map/objs/rubble"]
@@ -726,7 +708,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Mrubble/StaticBody2D"]
 position = Vector2(25, 225)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_7kbtr")
 
 [node name="Mrubble2" type="Sprite2D" parent="map/objs/rubble"]
@@ -739,7 +720,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Mrubble2/StaticBody2D"]
 position = Vector2(25, 225)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_7kbtr")
 
 [node name="Mrubble10" type="Sprite2D" parent="map/objs/rubble"]
@@ -752,7 +732,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Mrubble10/StaticBody2D"]
 position = Vector2(25, 225)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_7kbtr")
 
 [node name="Mrubble11" type="Sprite2D" parent="map/objs/rubble"]
@@ -765,7 +744,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Mrubble11/StaticBody2D"]
 position = Vector2(25, 225)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_7kbtr")
 
 [node name="Mrubble3" type="Sprite2D" parent="map/objs/rubble"]
@@ -778,7 +756,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Mrubble3/StaticBody2D"]
 position = Vector2(25, 225)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_7kbtr")
 
 [node name="Mrubble4" type="Sprite2D" parent="map/objs/rubble"]
@@ -791,7 +768,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Mrubble4/StaticBody2D"]
 position = Vector2(25, 225)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_7kbtr")
 
 [node name="Mrubble5" type="Sprite2D" parent="map/objs/rubble"]
@@ -804,7 +780,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Mrubble5/StaticBody2D"]
 position = Vector2(25, 225)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_7kbtr")
 
 [node name="Mrubble6" type="Sprite2D" parent="map/objs/rubble"]
@@ -817,7 +792,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Mrubble6/StaticBody2D"]
 position = Vector2(25, 225)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_7kbtr")
 
 [node name="Mrubble7" type="Sprite2D" parent="map/objs/rubble"]
@@ -830,7 +804,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Mrubble7/StaticBody2D"]
 position = Vector2(25, 225)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_7kbtr")
 
 [node name="Mrubble8" type="Sprite2D" parent="map/objs/rubble"]
@@ -843,7 +816,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Mrubble8/StaticBody2D"]
 position = Vector2(25, 225)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_7kbtr")
 
 [node name="Mrubble9" type="Sprite2D" parent="map/objs/rubble"]
@@ -856,7 +828,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Mrubble9/StaticBody2D"]
 position = Vector2(25, 225)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_7kbtr")
 
 [node name="Srubble" type="Sprite2D" parent="map/objs/rubble"]
@@ -869,7 +840,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Srubble/StaticBody2D"]
 position = Vector2(80, 185)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8knl5")
 
 [node name="Srubble4" type="Sprite2D" parent="map/objs/rubble"]
@@ -882,7 +852,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Srubble4/StaticBody2D"]
 position = Vector2(80, 185)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8knl5")
 
 [node name="Srubble5" type="Sprite2D" parent="map/objs/rubble"]
@@ -895,7 +864,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Srubble5/StaticBody2D"]
 position = Vector2(80, 185)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8knl5")
 
 [node name="Srubble6" type="Sprite2D" parent="map/objs/rubble"]
@@ -908,7 +876,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Srubble6/StaticBody2D"]
 position = Vector2(80, 185)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8knl5")
 
 [node name="Srubble2" type="Sprite2D" parent="map/objs/rubble"]
@@ -921,7 +888,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Srubble2/StaticBody2D"]
 position = Vector2(80, 185)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8knl5")
 
 [node name="Srubble3" type="Sprite2D" parent="map/objs/rubble"]
@@ -934,7 +900,6 @@ collision_layer = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/rubble/Srubble3/StaticBody2D"]
 position = Vector2(80, 185)
-scale = Vector2(1, 1)
 shape = SubResource("RectangleShape2D_8knl5")
 
 [node name="deco" type="Node2D" parent="map"]

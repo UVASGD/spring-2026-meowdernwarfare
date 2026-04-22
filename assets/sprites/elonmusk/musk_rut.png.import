@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://5fklfertpo3c"
-path="res://.godot/imported/spritesheet_20260319_173527.png-6717972e6f0f81250c4a86b272b2d61d.ctex"
+uid="uid://dv7d1o70y32j"
+path="res://.godot/imported/musk_rut.png-c49c3a04e23d0ced287eb630cac14791.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spritesheetcombiner_out/spritesheet_20260319_173527.png"
-dest_files=["res://.godot/imported/spritesheet_20260319_173527.png-6717972e6f0f81250c4a86b272b2d61d.ctex"]
+source_file="res://assets/sprites/elonmusk/musk_rut.png"
+dest_files=["res://.godot/imported/musk_rut.png-c49c3a04e23d0ced287eb630cac14791.ctex"]
 
 [params]
 

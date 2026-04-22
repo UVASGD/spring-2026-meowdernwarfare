@@ -83,7 +83,7 @@ def _edge_bg_to_alpha(img: Image.Image, tolerance: int = 15) -> Image.Image:
             px[x, y] = tuple(p)
     return img
 
-def combine(remove_white: bool = False, smart_bg: bool = False, use_rembg: bool = False):
+def combine(remove_white: bool = False, smart_bg: bool = False, use_rembg: bool = False, output: str | None = None):
     if not os.path.isdir(IN_DIR):
         print("Input folder not found:", IN_DIR)
         return
@@ -131,8 +131,16 @@ def combine(remove_white: bool = False, smart_bg: bool = False, use_rembg: bool 
         sheet.paste(img, (x, y))
 
     os.makedirs(OUT_DIR, exist_ok=True)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_path = os.path.join(OUT_DIR, f"spritesheet_{timestamp}.png")
+    if output:
+        out_path = output
+        if not os.path.splitext(out_path)[1]:
+            out_path += ".png"
+        if not os.path.isabs(out_path) and os.path.dirname(out_path) == "":
+            out_path = os.path.join(OUT_DIR, out_path)
+    else:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        out_path = os.path.join(OUT_DIR, f"spritesheet_{timestamp}.png")
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
     sheet.save(out_path)
     print(f"Saved {cols}x{rows} sheet ({cols*w}x{rows*h}px, {n} frames) -> {out_path}")
 
@@ -144,6 +152,8 @@ if __name__ == "__main__":
                         help="remove only edge-connected background (keeps white details)")
         ap.add_argument("-r", "--rembg", action="store_true",
                         help="AI background removal (pip install rembg)")
+        ap.add_argument("-o", "--output", default=None,
+                        help="output name or path (default: timestamped name in spritesheetcombiner_out)")
         args = ap.parse_args()
         if args.rembg:
             try:
@@ -152,7 +162,7 @@ if __name__ == "__main__":
                 print("rembg is not installed.")
                 print("Install with: python -m pip install rembg")
                 sys.exit(1)
-        combine(remove_white=args.t, smart_bg=args.smart_bg, use_rembg=args.rembg)
+        combine(remove_white=args.t, smart_bg=args.smart_bg, use_rembg=args.rembg, output=args.output)
     except Exception:
         print("Spritesheet combine failed:")
         traceback.print_exc()

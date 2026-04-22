@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cwe7hl4jdgbjy"
-path="res://.godot/imported/catfountain 1_0000.png-bdb9462ff15da6ec8759cce8db7e12ee.ctex"
+uid="uid://bqmbr6xg05hbn"
+path="res://.godot/imported/musk_ab1_run.png-170bd0e62a0682ea73fda7281ec7db2d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spritesheetcombiner_in/catfountain 1_0000.png"
-dest_files=["res://.godot/imported/catfountain 1_0000.png-bdb9462ff15da6ec8759cce8db7e12ee.ctex"]
+source_file="res://assets/sprites/elonmusk/musk_ab1_run.png"
+dest_files=["res://.godot/imported/musk_ab1_run.png-170bd0e62a0682ea73fda7281ec7db2d.ctex"]
 
 [params]
 

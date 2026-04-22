@@ -25,7 +25,7 @@ var _can_control := false
 
 @onready var _zone: Line2D = $Zone
 @onready var _truck_node: Node2D = $Truck
-@onready var _truck_body: ColorRect = $Truck/Body
+@onready var _truck_body: AnimatedSprite2D = $Truck/Body
 @onready var _truck_glow: PointLight2D = $Truck/Glow
 @onready var _boom: ColorRect = $Boom
 

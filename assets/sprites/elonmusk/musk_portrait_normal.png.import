@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://tm0v1lrft1n6"
-path="res://.godot/imported/catfountain 1_0001.png-d0ad4a445d3b3802a56276f2aa58ca4d.ctex"
+uid="uid://gxrb3fmyw46u"
+path="res://.godot/imported/musk_portrait_normal.png-effe01ae2a8704d76284e80c98d68055.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://spritesheetcombiner_in/catfountain 1_0001.png"
-dest_files=["res://.godot/imported/catfountain 1_0001.png-d0ad4a445d3b3802a56276f2aa58ca4d.ctex"]
+source_file="res://assets/sprites/elonmusk/musk_portrait_normal.png"
+dest_files=["res://.godot/imported/musk_portrait_normal.png-effe01ae2a8704d76284e80c98d68055.ctex"]
 
 [params]
 
