@@ -88,21 +88,13 @@ func _process(delta: float) -> void:
 func _update_bg_3d_mouse(delta: float) -> void:
 	if _bg_bottom_mat == null or _bg_top_mat == null:
 		return
-	var vp := get_viewport().get_visible_rect().size
-	if vp.x <= 0.0 or vp.y <= 0.0:
+	var norm := MenuParallax.mouse_norm(get_viewport())
+	if norm == Vector2.INF:
 		return
-	var m := get_viewport().get_mouse_position()
-	var nx := (m.x / vp.x) * 2.0 - 1.0
-	var ny := (m.y / vp.y) * 2.0 - 1.0
-	var tb := Vector2(nx * bg_rot_bottom.x, -ny * bg_rot_bottom.y)
-	var tt := Vector2(nx * bg_rot_top.x, -ny * bg_rot_top.y)
-	var zb := Vector2(nx * text_rot_bottom.x, -ny * text_rot_bottom.y)
-	var zt := Vector2(nx * text_rot_top.x, -ny * text_rot_top.y)
-	var k := 1.0 - exp(-delta * bg_rot_smooth)
-	_bg_rot_b = _bg_rot_b.lerp(tb, k)
-	_bg_rot_t = _bg_rot_t.lerp(tt, k)
-	_text_rot_b = _text_rot_b.lerp(zb, k)
-	_text_rot_t = _text_rot_t.lerp(zt, k)
+	_bg_rot_b = MenuParallax.step(_bg_rot_b, norm, bg_rot_bottom, delta, bg_rot_smooth)
+	_bg_rot_t = MenuParallax.step(_bg_rot_t, norm, bg_rot_top, delta, bg_rot_smooth)
+	_text_rot_b = MenuParallax.step(_text_rot_b, norm, text_rot_bottom, delta, bg_rot_smooth)
+	_text_rot_t = MenuParallax.step(_text_rot_t, norm, text_rot_top, delta, bg_rot_smooth)
 	_bg_bottom_mat.set_shader_parameter("y_rot", _bg_rot_b.x)
 	_bg_bottom_mat.set_shader_parameter("x_rot", _bg_rot_b.y)
 	_bg_top_mat.set_shader_parameter("y_rot", _bg_rot_t.x)

@@ -64,6 +64,11 @@ var target_health_bar_color : Color = Color.WHITE;;
 @onready var ult_percent_label = $CooldownUI/Profile/Label
 var _profile_base_pos: Vector2 = Vector2.ZERO
 var _ult_ready_mat: ShaderMaterial
+# Cached UI labels to skip setting identical strings every frame.
+var _last_ammo_text: String = ""
+var _last_ult_text: String = ""
+var _last_ult_pct_text: String = ""
+var _last_ult_full: int = -1
 var _ui_bound_hero: Hero = null
 
 @onready var reload_bar = $HealthBar/ReloadBar
@@ -118,6 +123,7 @@ var fie_suppress_count: int = 0
 var crop_count: int = 0
 var held_crop: Crop = null
 var drop_cd: float = 0.0
+var _drop_seq: int = 0
 const DROP_CD_TIME := 0.5
 var held_sprite: Sprite2D = null
 var _remote_held_sprite: Sprite2D = null
@@ -143,30 +149,6 @@ signal took_damage(amount: float)
 signal died
 signal dashed
 
-#debug 
-
-var reasonable_timer = 0.0
-var reasonable_timer_max = 1.0
-# Hero name -> Hero scene path mapping
-const HERO_SCENE_PATHS = {
-	"Dealer": "res://scenes/heroes/dealer/dealer.tscn",
-	"Burple": "res://scenes/heroes/burple/burple.tscn",
-	"LoanShark": "res://scenes/heroes/loanshark/loanshark.tscn",
-	"Gooblin": "res://scenes/heroes/gooblin/gooblin.tscn",
-	"Garebare": "res://scenes/heroes/garebare/garebare.tscn",
-	"AnimeGirl": "res://scenes/heroes/animegirl/animegirl.tscn",
-	"XylerFergus": "res://scenes/heroes/xylerfergus/xylerfergus.tscn",
-	"ElonMusk": "res://scenes/heroes/elonmusk/elonmusk.tscn",
-	"AnderDingus": "res://scenes/heroes/anderdingus/anderdingus.tscn",
-
-	# Backward-compat names
-	"Anime Girl": "res://scenes/heroes/animegirl/animegirl.tscn",
-	"Xyler and Fergus": "res://scenes/heroes/xylerfergus/xylerfergus.tscn",
-	"Elon. Musk.": "res://scenes/heroes/elonmusk/elonmusk.tscn",
-	"Alien": "res://scenes/heroes/animegirl/animegirl.tscn",
-	"Xyler": "res://scenes/heroes/xylerfergus/xylerfergus.tscn",
-	"Fergus": "res://scenes/heroes/xylerfergus/xylerfergus.tscn",
-}
 
 func _ready() -> void:
 	_profile_base_pos = character_profile.position
@@ -277,15 +259,9 @@ func set_hero(hero_name: String) -> void:
 	_refresh_gun_ui_visibility()
 
 func _load_hero_scene(hero_name: String) -> PackedScene:
-	var path := String(HERO_SCENE_PATHS.get(hero_name, ""))
-	if path.is_empty():
-		return null
-	var res := load(path)
+	var res := HeroRegistry.load_scene(hero_name)
 	if res == null:
-		push_error("Failed to load hero scene path '%s' for hero '%s'" % [path, hero_name])
-		return null
-	if not (res is PackedScene):
-		push_error("Hero scene path '%s' is not a PackedScene for hero '%s'" % [path, hero_name])
+		push_error("Failed to load hero scene for hero '%s'" % hero_name)
 		return null
 	return res as PackedScene
 
@@ -495,6 +471,7 @@ func _physics_process(delta: float) -> void:
 		return
 	
 	var is_local = _is_local_player()
+	var physics_owner = _is_physics_owner()
 	
 	input.update(delta)
 	
@@ -521,7 +498,7 @@ func _physics_process(delta: float) -> void:
 	
 	_update_timers(delta)
 	
-	if is_local:
+	if physics_owner:
 		_handle_movement(delta)
 		move_and_slide()
 	
@@ -696,7 +673,6 @@ func _start_dash() -> void:
 func _on_hero_died() -> void:
 	_set_target_mode(TARGET_NONE)
 	clear_mark_effect()
-	print("[PLAYER] _on_hero_died: pid=", player_id, " crop_count=", crop_count, " is_local=", _is_local_player())
 	died.emit()
 	is_dying = true
 	velocity = Vector2.ZERO
@@ -742,25 +718,38 @@ func get_aim_position() -> Vector2:
 func is_moving() -> bool:
 	return input != null and input.move_input.length() > 0.1
 
-## Returns whether damage was applied (false if dead, invulnerable, dashing with i-frames, etc.).
+## Returns whether the hit was host-authoritatively applied.
+## Non-host callers emit a local flinch but return `false` so downstream side effects (mark clear,
+## cooldown refresh, chomp VFX for Loan Shark's dash) don't fire on peers that can't confirm the hit.
+## Those side effects are replayed on clients via host-driven broadcasts.
 func take_damage(amount: float, attacker: Player = null) -> bool:
 	if is_dead() or in_spectate_mode or is_awaiting_respawn or is_invulnerable:
 		return false
 	if is_dashing:
 		on_bullet_dodged()
 		return false
+	if hero == null:
+		return false
 	
-	if hero:
-		if attacker:
-			last_attacker = attacker
-		hero.take_damage(amount)
+	var gm = GameManager.instance
+	var host_auth = gm == null or gm.is_host()
+	
+	if not host_auth:
 		took_damage.emit(amount)
-		if attacker and attacker.hero:
-			attacker.hero.add_ult_points(attacker.hero.ult_points_on_hit)
-		return true
-	return false
+		return false
+	
+	if attacker:
+		last_attacker = attacker
+	hero.take_damage(amount)
+	took_damage.emit(amount)
+	if attacker and attacker.hero:
+		attacker.hero.add_ult_points(attacker.hero.ult_points_on_hit)
+	return true
 
 func on_bullet_dodged() -> void:
+	var gm = GameManager.instance
+	if gm != null and not gm.is_host():
+		return
 	if hero:
 		hero.add_ult_points(hero.ult_points_on_dodge)
 
@@ -861,26 +850,43 @@ func _update_cooldown_ui() -> void:
 		dash_cd_bar.value = clamp(dash_pct, 0.0, 1.0)
 	
 	if ammo_label and hero.uses_gun_ammo():
-		ammo_label.text = "%d/%d" % [hero.ammo, hero.mag_size]
+		var ammo_text = "%d/%d" % [hero.ammo, hero.mag_size]
+		if ammo_text != _last_ammo_text:
+			ammo_label.text = ammo_text
+			_last_ammo_text = ammo_text
 	
-	var ult_full := hero.get_ult_percent() >= 1.0
-	ult_percent_label.text = "c" if ult_full else str(int(hero.get_ult_percent() * 100))
-	if ult_full:
-		character_profile.texture = hero.get_hero_ult_profile()
-		var c := hero.get_hero_ui_color()
-		_ult_ready_mat.set_shader_parameter("color_a", c.lerp(Color.WHITE, 0.2))
-		_ult_ready_mat.set_shader_parameter("color_b", c.lerp(Color.BLACK, 0.35))
-		character_profile.material = _ult_ready_mat
-	else:
-		character_profile.texture = hero.get_hero_default_profile()
-		character_profile.material = null
-	character_profile.position = _profile_base_pos + hero.get_hero_portrait_offset()
+	var ult_pct := hero.get_ult_percent()
+	var ult_full := ult_pct >= 1.0
+	var pct_text := "c" if ult_full else str(int(ult_pct * 100))
+	if pct_text != _last_ult_pct_text:
+		ult_percent_label.text = pct_text
+		_last_ult_pct_text = pct_text
+	var full_flag := 1 if ult_full else 0
+	if full_flag != _last_ult_full:
+		_last_ult_full = full_flag
+		if ult_full:
+			character_profile.texture = hero.get_hero_ult_profile()
+			var c := hero.get_hero_ui_color()
+			_ult_ready_mat.set_shader_parameter("color_a", c.lerp(Color.WHITE, 0.2))
+			_ult_ready_mat.set_shader_parameter("color_b", c.lerp(Color.BLACK, 0.35))
+			character_profile.material = _ult_ready_mat
+		else:
+			character_profile.texture = hero.get_hero_default_profile()
+			character_profile.material = null
+		character_profile.position = _profile_base_pos + hero.get_hero_portrait_offset()
 	
 	if ult_bar:
-		ult_bar.value = hero.get_ult_percent()
+		ult_bar.value = ult_pct
 		
 	if ult_label:
-		ult_label.text = "%d/%d" % [hero.ult_points, hero.max_ult_points]
+		var ult_text: String
+		if hero.ult_mode == Hero.UltMode.COOLDOWN:
+			ult_text = "READY" if hero.ult_cd <= 0.0 else "%.1fs" % hero.ult_cd
+		else:
+			ult_text = "%d/%d" % [hero.ult_points, hero.max_ult_points]
+		if ult_text != _last_ult_text:
+			ult_label.text = ult_text
+			_last_ult_text = ult_text
 
 # --- TOOLTIP ---
 
@@ -932,8 +938,9 @@ func _find_crop_at(world_pos: Vector2) -> Crop:
 		if result.collider is Crop:
 			return result.collider
 	
-	# Also check planted crops by proximity
-	for f in get_tree().get_nodes_in_group("farms"):
+	var gm = GameManager.instance
+	var farms = gm.get_farms() if gm else get_tree().get_nodes_in_group("farms")
+	for f in farms:
 		for c in f.crops:
 			if is_instance_valid(c) and c.global_position.distance_to(world_pos) < 30.0:
 				return c
@@ -967,24 +974,19 @@ func _on_crop_area_entered(area: Area2D) -> void:
 func _handle_crops(_delta: float) -> bool:
 	if input == null:
 		return false
-	if _target_mode != TARGET_NONE:
-		return false
 	var consumed_shoot := false
-	
-	# Drop held crop
-	if input.drop_just and held_crop != null:
-		drop_held_crop()
-		return false
-	
-	# Plant held crop (LMB click while holding)
-	if input.shoot_just and held_crop != null:
-		consumed_shoot = _try_plant()
-		return consumed_shoot
-	
-	# Pick up planted crop (LMB click on planted crop, not holding anything)
-	if input.shoot_just and held_crop == null:
-		consumed_shoot = _try_uproot()
-	
+
+	# Gameplay branches (drop/plant/uproot) mutate shared state + send network traffic,
+	# so only the local-owner peer may run them. The host's remote-player sim must NOT.
+	if _is_local_player() and _target_mode == TARGET_NONE:
+		if input.drop_just and held_crop != null:
+			drop_held_crop()
+		elif input.shoot_just and held_crop != null:
+			consumed_shoot = _try_plant()
+		elif input.shoot_just and held_crop == null:
+			consumed_shoot = _try_uproot()
+
+	# Visuals run on every peer (local owner's held crop + remote-mirror sprite).
 	if held_sprite and held_crop:
 		var behind = -aim_dir.normalized() * 40.0
 		held_sprite.global_position = global_position + behind
@@ -1014,11 +1016,14 @@ func _get_target_range() -> float:
 	return 0.0
 
 func _set_target_mode(mode: String) -> void:
+	# Target mode is a purely local decision (aim-reticle UX). Remote sims must never enter it,
+	# otherwise the host re-fires hero.ability1 / hero.ult when shoot_just arrives, on top of
+	# the owning client's own request -> duplicate casts. See sync_bugs #1/#2.
+	if not _is_local_player():
+		return
 	if _target_mode == mode:
 		return
 	_target_mode = mode
-	if not _is_local_player():
-		return
 	if _target_mode != TARGET_NONE:
 		_ensure_target_marker()
 		Cursor.switch_mode("GRENADE")
@@ -1054,11 +1059,12 @@ func pickup_world_crop(crop: Crop) -> void:
 	var crop_pos = crop.global_position
 	var type_id = crop.get_type_id()
 	var stg = crop.stage
+	var cid := crop.crop_id
 	_attach_held_crop(crop)
 	
 	var gm = GameManager.instance
 	if gm and not gm.is_local():
-		gm.send_crop_pickup(player_id, crop_pos, type_id, stg)
+		gm.send_crop_pickup(player_id, crop_pos, type_id, stg, cid)
 
 func _attach_held_crop(crop: Crop) -> void:
 	held_crop = crop
@@ -1109,16 +1115,21 @@ func drop_held_crop() -> void:
 		return
 	var type_id = held_crop.get_type_id()
 	var stg = held_crop.stage
+	_drop_seq += 1
+	var cid := "dr:%d:%d" % [player_id, _drop_seq]
+	held_crop.crop_id = cid
 	held_crop.global_position = global_position
 	get_parent().add_child(held_crop)
+	var gm = GameManager.instance
+	if gm:
+		gm.register_world_crop(held_crop)
 	held_crop = null
 	drop_cd = DROP_CD_TIME
 	if held_sprite:
 		held_sprite.queue_free()
 		held_sprite = null
-	var gm = GameManager.instance
 	if gm and not gm.is_local():
-		gm.send_crop_dropped(player_id, global_position, type_id, stg)
+		gm.send_crop_dropped(player_id, global_position, type_id, stg, cid)
 
 const INTERACT_RANGE := 400.0
 const UPROOT_RANGE := INTERACT_RANGE / 3.0
@@ -1162,7 +1173,8 @@ func _try_plant() -> bool:
 	return true
 
 func _try_uproot() -> bool:
-	var farms_list = get_tree().get_nodes_in_group("farms")
+	var gm = GameManager.instance
+	var farms_list = gm.get_farms() if gm else get_tree().get_nodes_in_group("farms")
 	for f in farms_list:
 		var tiles = _get_plantable_tiles(f)
 		var tile = _tile_at_cursor(tiles)
@@ -1177,7 +1189,6 @@ func _try_uproot() -> bool:
 			if victim:
 				victim.crop_count -= 1
 			pickup_world_crop(crop)
-			var gm = GameManager.instance
 			if gm and not gm.is_local() and victim:
 				gm.send_crop_uproot(victim.player_id, tile_idx, crop.get_type_id(), crop.stage)
 			return true
@@ -1461,7 +1472,6 @@ func _handle_spectate_movement(delta: float) -> void:
 		velocity = velocity.move_toward(Vector2.ZERO, friction * delta)
 
 func enter_spectate_mode() -> void:
-	print("[PLAYER] enter_spectate_mode: pid=", player_id, " already=", in_spectate_mode, " is_local=", _is_local_player(), " game_over=", GameManager.instance.game_over if GameManager.instance else "no_gm")
 	if in_spectate_mode:
 		return
 	_set_target_mode(TARGET_NONE)
@@ -1503,6 +1513,17 @@ func _is_local_player() -> bool:
 	elif input is NetworkInput:
 		return input.is_local
 	return false
+
+## True on peers that own this body's physics. In LOCAL mode every player runs locally; in
+## ONLINE_HOST the host simulates all players from streamed inputs; in ONLINE_CLIENT only the
+## local player is simulated and remotes are interpolated from state_sync.
+func _is_physics_owner() -> bool:
+	var gm = GameManager.instance
+	if gm == null:
+		return _is_local_player()
+	if gm.mode == GameManager.Mode.ONLINE_HOST:
+		return true
+	return _is_local_player()
 
 # --- Elimination UI ---
 

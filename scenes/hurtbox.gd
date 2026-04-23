@@ -66,12 +66,18 @@ func _try_hit(body: Node2D) -> void:
 			return
 		match _swing_mode:
 			SwingMode.DASH:
-				if was_marked:
-					if owner_player and owner_player.hero:
-						owner_player.hero.refresh_ability1_cooldown()
-					p.clear_mark_effect()
-				_spawn_chomp_visual(body)
+				_apply_dash_hit_fx(p, was_marked)
+				var gm := GameManager.instance
+				if gm and owner_player:
+					gm.broadcast_loan_dash_hit(owner_player.player_id, p.player_id, was_marked)
 			SwingMode.MELEE:
 				pass
 	elif body.has_method("take_damage"):
 		body.take_damage(damage)
+
+func _apply_dash_hit_fx(victim: Player, was_marked: bool) -> void:
+	if was_marked:
+		if owner_player and owner_player.hero:
+			owner_player.hero.refresh_ability1_cooldown()
+		victim.clear_mark_effect()
+	_spawn_chomp_visual(victim)

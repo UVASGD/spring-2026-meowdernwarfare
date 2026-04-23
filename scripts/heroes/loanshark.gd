@@ -15,11 +15,6 @@ const ABILITY2_CHARGE_MAX := 2
 @export var mark_projectile_explosion_radius: float = 140.0
 @export var ability2_charge_cooldown: float = 6.0
 
-var meleeDamage = 20 #maybe for a melee character, we'd have a higher base damage 
-var paymentPlanCooldown = 7
-var paymentPlanAbilityCount = 2
-var reapoCooldown = 8
-
 ## Contract projectile charges (max 2, independent recharge per slot).
 var ability2_charges: int = ABILITY2_CHARGE_MAX
 var _ability2_slot_cds: Array[float] = [0.0, 0.0]

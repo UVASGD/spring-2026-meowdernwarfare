@@ -405,7 +405,7 @@ func _process(delta: float) -> void:
 	game_timer += delta
 	_update_timer_hud()
 	
-	if not gm.sudden_death and game_timer >= GAME_DURATION:
+	if gm.is_host() and not gm.sudden_death and game_timer >= GAME_DURATION:
 		_trigger_sudden_death()
 
 func _trigger_sudden_death() -> void:
@@ -432,19 +432,15 @@ func _spawn_killzone() -> void:
 	parent.add_child(killzone_node)
 
 func _on_player_eliminated(elim_player: Player) -> void:
-	print("[GAME] _on_player_eliminated: pid=", elim_player.player_id, " game_over=", gm.game_over)
 	if gm.game_over:
 		return
 	var alive = gm.get_alive_players()
 	alive.erase(elim_player)
-	print("[GAME] alive after erase: ", alive.size(), " players")
 	if alive.size() <= 1:
 		_end_game(alive[0] if alive.size() == 1 else null)
 
 func _end_game(winner: Player) -> void:
-	print("[GAME] _end_game called. winner=", winner.player_id if winner else "null", " game_over=", gm.game_over)
 	if gm.game_over:
-		print("[GAME] _end_game: already game_over, returning")
 		return
 	gm.game_over = true
 	game_active = false
@@ -456,14 +452,11 @@ func _end_game(winner: Player) -> void:
 	if winner == null:
 		winner = _resolve_tie()
 	
-	print("[GAME] _end_game: broadcasting game_over, showing winner screen for pid=", winner.player_id if winner else -1)
 	gm.broadcast_game_over(winner.player_id if winner else -1)
 	_show_winner_screen(winner)
 
 func _on_game_over_received(winner_id: int) -> void:
-	print("[GAME] _on_game_over_received: winner_id=", winner_id, " game_over=", gm.game_over)
 	if gm.game_over:
-		print("[GAME] _on_game_over_received: already game_over, returning")
 		return
 	gm.game_over = true
 	game_active = false
@@ -473,12 +466,12 @@ func _on_game_over_received(winner_id: int) -> void:
 		killzone_node = null
 	
 	var winner = gm.get_player(winner_id)
-	print("[GAME] _on_game_over_received: showing winner screen for ", winner.player_id if winner else "null")
 	for p in gm.players:
 		p.clear_elimination_ui()
 	_show_winner_screen(winner)
 
 func _resolve_tie() -> Player:
+	# Deterministic so host + clients agree without syncing RNG: (crops desc, kills desc, pid asc).
 	var best: Player = null
 	var best_crops := -1
 	var best_kills := -1
@@ -488,15 +481,13 @@ func _resolve_tie() -> Player:
 		var s = gm.get_stats(p.player_id)
 		var crops = p.crop_count
 		var kills = s["kills"]
-		if crops > best_crops or (crops == best_crops and kills > best_kills):
+		if best == null \
+		or crops > best_crops \
+		or (crops == best_crops and kills > best_kills) \
+		or (crops == best_crops and kills == best_kills and p.player_id < best.player_id):
 			best = p
 			best_crops = crops
 			best_kills = kills
-		elif crops == best_crops and kills == best_kills:
-			if randi() % 2 == 0:
-				best = p
-				best_crops = crops
-				best_kills = kills
 	return best
 
 # ---------- Timer HUD ----------
@@ -549,7 +540,6 @@ func _update_timer_hud() -> void:
 # ---------- Winner Screen ----------
 
 func _show_winner_screen(winner: Player) -> void:
-	print("[GAME] _show_winner_screen: winner=", winner.player_id if winner else "null")
 	var layer = CanvasLayer.new()
 	layer.layer = 95
 	add_child(layer)

@@ -23,11 +23,10 @@ func _physics_process(delta: float) -> void:
 	var t = clampf(elapsed / duration, 0.0, 1.0)
 	current_radius = lerpf(start_radius, end_radius, t)
 	
-	var dps = lerpf(dps_base, dps_max, t)
 	var center = global_position
-	
 	var gm = GameManager.instance
-	if gm:
+	if gm and gm.is_host():
+		var dps = lerpf(dps_base, dps_max, t)
 		for p in gm.players:
 			if not is_instance_valid(p) or p.is_dead() or p.in_spectate_mode or p.is_awaiting_respawn:
 				continue

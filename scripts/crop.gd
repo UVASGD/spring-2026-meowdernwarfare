@@ -23,6 +23,10 @@ var _buff_callable: Callable
 var is_planted: bool = false
 var owner_farm = null  # Farm ref when planted
 
+# Stable ID used by host arbitration for pickup/drop. Empty for planted/starter crops that
+# never need cross-peer identity (they're keyed by farm + tile_idx instead).
+var crop_id: String = ""
+
 @export var bob_amplitude: float = 4.0
 @export var bob_speed: float = 3.0
 var _bob_time: float = 0.0

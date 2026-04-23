@@ -15,6 +15,8 @@ signal used_ability_1
 signal ability_1_refreshed
 signal used_ult
 
+enum UltMode { CHARGE, COOLDOWN }
+
 # Stats 
 @export_category("Hero Stats")
 @export var max_health: float = 100.0
@@ -24,7 +26,9 @@ signal used_ult
 @export var ability1_cooldown: float = 5.0
 @export var ability2_cooldown: float = 0.0
 
-# Ult charge
+# Ult. CHARGE heroes fill ult_points on hit/dodge; COOLDOWN heroes (e.g. Dingus) use ult_cd.
+@export var ult_mode: UltMode = UltMode.CHARGE
+@export var ult_cooldown: float = 0.0
 @export var max_ult_points: int = 50
 @export var ult_points_on_hit: int = 2
 @export var ult_points_on_dodge: int = 1
@@ -59,6 +63,7 @@ var reload_cd: float = 0.0
 var is_dead: bool = false
 var ammo: int = 15
 var ult_points: int = 0
+var ult_cd: float = 0.0
 
 # Animation state
 var ability1_anim_timer: float = 0.0
@@ -113,6 +118,9 @@ func _update_cooldowns(delta: float) -> void:
 	if was_reloading and reload_cd <= 0:
 		ammo = mag_size
 		finished_reload.emit();
+	
+	if ult_mode == UltMode.COOLDOWN:
+		ult_cd = max(0, ult_cd - delta)
 	
 	ability1_anim_timer = max(0, ability1_anim_timer - delta)
 	ability2_anim_timer = max(0, ability2_anim_timer - delta)
@@ -209,7 +217,11 @@ func can_ability2() -> bool:
 	return ability2_cd <= 0 and ability2_cooldown > 0 and not _is_fie_suppressed() and not _is_action_blocked()
 
 func can_ult() -> bool:
-	return ult_points >= max_ult_points and not _is_fie_suppressed() and not _is_action_blocked()
+	if _is_fie_suppressed() or _is_action_blocked() or is_dead:
+		return false
+	if ult_mode == UltMode.COOLDOWN:
+		return ult_cd <= 0.0
+	return ult_points >= max_ult_points
 
 func uses_ability1_targeting() -> bool:
 	return false
@@ -278,7 +290,10 @@ func ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
 func ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	if not can_ult() or is_dead:
 		return
-	ult_points = 0
+	if ult_mode == UltMode.COOLDOWN:
+		ult_cd = ult_cooldown
+	else:
+		ult_points = 0
 	ult_changed.emit(ult_points, max_ult_points)
 	ult_anim_timer = ult_anim_duration
 	_begin_skill("ult")
@@ -305,12 +320,18 @@ func _do_reload() -> void:
 # ULT
 
 func add_ult_points(amount: int) -> void:
+	if ult_mode != UltMode.CHARGE:
+		return
 	var old = ult_points
 	ult_points = min(max_ult_points, ult_points + amount)
 	if ult_points != old:
 		ult_changed.emit(ult_points, max_ult_points)
 
 func get_ult_percent() -> float:
+	if ult_mode == UltMode.COOLDOWN:
+		if ult_cooldown <= 0.0:
+			return 1.0
+		return 1.0 - (ult_cd / ult_cooldown)
 	return float(ult_points) / float(max_ult_points) if max_ult_points > 0 else 0.0
 
 ## Sets ability 1 cooldown to ready and emits ability_1_refreshed if it was on cooldown.
@@ -392,7 +413,7 @@ func _warn_missing_anim(req: String, cands: PackedStringArray) -> void:
 	if missing_anim_warn.has(key):
 		return
 	missing_anim_warn[key] = true
-	print("Hero anim missing for ", get_hero_name(), " request=", req, " candidates=", ",".join(cands))
+	push_warning("Hero anim missing for ", get_hero_name(), " request=", req, " candidates=", ",".join(cands))
 
 func _capture_skill_anim() -> void:
 	if sprite == null:

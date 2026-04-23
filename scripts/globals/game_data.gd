@@ -20,14 +20,6 @@ var pending_starter_crops: Array[String] = []
 var train_last_hero: String = ""
 const SECRET_USERNAME := "DINGUS"
 const SECRET_HERO := "AnderDingus"
-const TRAIN_HERO_ALIAS := {
-	"Anime Girl": "AnimeGirl",
-	"Xyler and Fergus": "XylerFergus",
-	"Elon. Musk.": "ElonMusk",
-	"Alien": "AnimeGirl",
-	"Xyler": "XylerFergus",
-	"Fergus": "XylerFergus",
-}
 
 # Scene transition tracking
 var is_first_load: bool = true
@@ -216,7 +208,7 @@ func train_hero_for_game() -> String:
 	return resolve_hero_for_username(get_local_username(), hero)
 
 func _norm_train_hero(hero_id: String) -> String:
-	return TRAIN_HERO_ALIAS.get(hero_id, hero_id)
+	return HeroRegistry.canonical(hero_id)
 
 func resolve_hero_for_username(username: String, hero_id: String) -> String:
 	if is_secret_username(username):
