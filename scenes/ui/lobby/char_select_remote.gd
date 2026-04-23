@@ -5,6 +5,9 @@ signal hero_hovered(hero_name: String)
 signal ready_toggled(is_ready: bool)
 signal leave_requested
 
+const SfxEvent = preload("res://scripts/audio/sfx_event.gd")
+const SfxBus = preload("res://scripts/audio/sfx_bus.gd")
+
 @onready var char_buttons = $charButtons
 @onready var ready_btn = $controlbuttons/readyUp
 @onready var leave_btn = $controlbuttons/Leave
@@ -38,10 +41,12 @@ func _on_ready_up_pressed() -> void:
 		ready_btn.set_off()
 		return
 	is_ready = ready_btn.is_on
+	SfxBus.play_ui(SfxEvent.UI_READY_ON if is_ready else SfxEvent.UI_READY_OFF)
 	ready_toggled.emit(is_ready)
 	_set_chars_interactive(not is_ready)
 
 func _on_leave_pressed() -> void:
+	SfxBus.play_ui(SfxEvent.UI_BACK)
 	leave_requested.emit()
 
 func reset() -> void:

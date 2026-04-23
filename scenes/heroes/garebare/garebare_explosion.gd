@@ -2,8 +2,12 @@ extends Node2D
 var owner_player:Player = null
 signal finished
 @export var damage:int = 200
+@export var sfx_db_offset: float = 0.0
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	var sfx = get_node_or_null("/root/Sfx")
+	if sfx and sfx.has_method("play_world_db"):
+		sfx.call("play_world_db", &"fx.explosion", global_position, sfx_db_offset)
 	pass # Replace with function body.
 
 func _set_owner(player:Player):

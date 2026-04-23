@@ -1,0 +1,204 @@
+[gd_resource type="Resource" script_class="SfxBank" load_steps=52 format=3 uid="uid://bv8fhf0xj6r8e"]
+
+[ext_resource type="Script" path="res://scripts/audio/sfx_bank.gd" id="1_mwu6f"]
+[ext_resource type="Script" path="res://scripts/audio/sfx_slot.gd" id="2_1e13q"]
+
+[sub_resource type="Resource" id="SfxSlot_ui_hover"]
+script = ExtResource("2_1e13q")
+id = &"ui.hover"
+
+[sub_resource type="Resource" id="SfxSlot_ui_click"]
+script = ExtResource("2_1e13q")
+id = &"ui.click"
+
+[sub_resource type="Resource" id="SfxSlot_ui_back"]
+script = ExtResource("2_1e13q")
+id = &"ui.back"
+
+[sub_resource type="Resource" id="SfxSlot_ui_ready_on"]
+script = ExtResource("2_1e13q")
+id = &"ui.ready_on"
+
+[sub_resource type="Resource" id="SfxSlot_ui_ready_off"]
+script = ExtResource("2_1e13q")
+id = &"ui.ready_off"
+
+[sub_resource type="Resource" id="SfxSlot_ui_match_start"]
+script = ExtResource("2_1e13q")
+id = &"ui.match_start"
+
+[sub_resource type="Resource" id="SfxSlot_ui_pause_open"]
+script = ExtResource("2_1e13q")
+id = &"ui.pause_open"
+
+[sub_resource type="Resource" id="SfxSlot_ui_pause_close"]
+script = ExtResource("2_1e13q")
+id = &"ui.pause_close"
+
+[sub_resource type="Resource" id="SfxSlot_ui_skill_on_cd"]
+script = ExtResource("2_1e13q")
+id = &"ui.skill_on_cd"
+
+[sub_resource type="Resource" id="SfxSlot_player_dash"]
+script = ExtResource("2_1e13q")
+id = &"player.dash"
+
+[sub_resource type="Resource" id="SfxSlot_player_hurt"]
+script = ExtResource("2_1e13q")
+id = &"player.hurt"
+
+[sub_resource type="Resource" id="SfxSlot_player_death"]
+script = ExtResource("2_1e13q")
+id = &"player.death"
+
+[sub_resource type="Resource" id="SfxSlot_player_respawn"]
+script = ExtResource("2_1e13q")
+id = &"player.respawn"
+
+[sub_resource type="Resource" id="SfxSlot_player_melee_swipe"]
+script = ExtResource("2_1e13q")
+id = &"player.melee_swipe"
+
+[sub_resource type="Resource" id="SfxSlot_player_cd_ready"]
+script = ExtResource("2_1e13q")
+id = &"player.cd_ready"
+
+[sub_resource type="Resource" id="SfxSlot_player_ult_ready"]
+script = ExtResource("2_1e13q")
+id = &"player.ult_ready"
+
+[sub_resource type="Resource" id="SfxSlot_player_crop_pickup"]
+script = ExtResource("2_1e13q")
+id = &"player.crop_pickup"
+
+[sub_resource type="Resource" id="SfxSlot_player_crop_drop"]
+script = ExtResource("2_1e13q")
+id = &"player.crop_drop"
+
+[sub_resource type="Resource" id="SfxSlot_player_crop_plant"]
+script = ExtResource("2_1e13q")
+id = &"player.crop_plant"
+
+[sub_resource type="Resource" id="SfxSlot_player_crop_uproot"]
+script = ExtResource("2_1e13q")
+id = &"player.crop_uproot"
+
+[sub_resource type="Resource" id="SfxSlot_weapon_shoot"]
+script = ExtResource("2_1e13q")
+id = &"weapon.shoot"
+
+[sub_resource type="Resource" id="SfxSlot_weapon_reload_start"]
+script = ExtResource("2_1e13q")
+id = &"weapon.reload_start"
+
+[sub_resource type="Resource" id="SfxSlot_weapon_reload_done"]
+script = ExtResource("2_1e13q")
+id = &"weapon.reload_done"
+
+[sub_resource type="Resource" id="SfxSlot_ability_1"]
+script = ExtResource("2_1e13q")
+id = &"ability.1"
+
+[sub_resource type="Resource" id="SfxSlot_ability_2"]
+script = ExtResource("2_1e13q")
+id = &"ability.2"
+
+[sub_resource type="Resource" id="SfxSlot_ability_ult"]
+script = ExtResource("2_1e13q")
+id = &"ability.ult"
+
+[sub_resource type="Resource" id="SfxSlot_hero_dealer_ability1"]
+script = ExtResource("2_1e13q")
+id = &"hero.dealer.ability1"
+
+[sub_resource type="Resource" id="SfxSlot_hero_dealer_ability2"]
+script = ExtResource("2_1e13q")
+id = &"hero.dealer.ability2"
+
+[sub_resource type="Resource" id="SfxSlot_hero_dealer_ult"]
+script = ExtResource("2_1e13q")
+id = &"hero.dealer.ult"
+
+[sub_resource type="Resource" id="SfxSlot_hero_burple_ability1"]
+script = ExtResource("2_1e13q")
+id = &"hero.burple.ability1"
+
+[sub_resource type="Resource" id="SfxSlot_hero_burple_ult"]
+script = ExtResource("2_1e13q")
+id = &"hero.burple.ult"
+
+[sub_resource type="Resource" id="SfxSlot_hero_loanshark_melee"]
+script = ExtResource("2_1e13q")
+id = &"hero.loanshark.melee"
+
+[sub_resource type="Resource" id="SfxSlot_hero_loanshark_ability1"]
+script = ExtResource("2_1e13q")
+id = &"hero.loanshark.ability1"
+
+[sub_resource type="Resource" id="SfxSlot_hero_loanshark_ability2"]
+script = ExtResource("2_1e13q")
+id = &"hero.loanshark.ability2"
+
+[sub_resource type="Resource" id="SfxSlot_hero_loanshark_ult"]
+script = ExtResource("2_1e13q")
+id = &"hero.loanshark.ult"
+
+[sub_resource type="Resource" id="SfxSlot_hero_gooblin_ability1"]
+script = ExtResource("2_1e13q")
+id = &"hero.gooblin.ability1"
+
+[sub_resource type="Resource" id="SfxSlot_hero_gooblin_ability2"]
+script = ExtResource("2_1e13q")
+id = &"hero.gooblin.ability2"
+
+[sub_resource type="Resource" id="SfxSlot_hero_gooblin_ult"]
+script = ExtResource("2_1e13q")
+id = &"hero.gooblin.ult"
+
+[sub_resource type="Resource" id="SfxSlot_hero_garebare_ability1"]
+script = ExtResource("2_1e13q")
+id = &"hero.garebare.ability1"
+
+[sub_resource type="Resource" id="SfxSlot_hero_garebare_ability2"]
+script = ExtResource("2_1e13q")
+id = &"hero.garebare.ability2"
+
+[sub_resource type="Resource" id="SfxSlot_hero_garebare_ult"]
+script = ExtResource("2_1e13q")
+id = &"hero.garebare.ult"
+
+[sub_resource type="Resource" id="SfxSlot_hero_garebare_fie_destroy"]
+script = ExtResource("2_1e13q")
+id = &"hero.garebare.fie_destroy"
+
+[sub_resource type="Resource" id="SfxSlot_hero_xylerfergus_swap"]
+script = ExtResource("2_1e13q")
+id = &"hero.xylerfergus.swap"
+
+[sub_resource type="Resource" id="SfxSlot_hero_xylerfergus_ult"]
+script = ExtResource("2_1e13q")
+id = &"hero.xylerfergus.ult"
+
+[sub_resource type="Resource" id="SfxSlot_hero_elonmusk_ability1"]
+script = ExtResource("2_1e13q")
+id = &"hero.elonmusk.ability1"
+
+[sub_resource type="Resource" id="SfxSlot_hero_elonmusk_ult"]
+script = ExtResource("2_1e13q")
+id = &"hero.elonmusk.ult"
+
+[sub_resource type="Resource" id="SfxSlot_hero_elonmusk_ult_move"]
+script = ExtResource("2_1e13q")
+id = &"hero.elonmusk.ult_move"
+
+[sub_resource type="Resource" id="SfxSlot_hero_anderdingus_ult"]
+script = ExtResource("2_1e13q")
+id = &"hero.anderdingus.ult"
+
+[sub_resource type="Resource" id="SfxSlot_fx_explosion"]
+script = ExtResource("2_1e13q")
+id = &"fx.explosion"
+
+[resource]
+script = ExtResource("1_mwu6f")
+slots = Array[ExtResource("2_1e13q")]([SubResource("SfxSlot_ui_hover"), SubResource("SfxSlot_ui_click"), SubResource("SfxSlot_ui_back"), SubResource("SfxSlot_ui_ready_on"), SubResource("SfxSlot_ui_ready_off"), SubResource("SfxSlot_ui_match_start"), SubResource("SfxSlot_ui_pause_open"), SubResource("SfxSlot_ui_pause_close"), SubResource("SfxSlot_ui_skill_on_cd"), SubResource("SfxSlot_player_dash"), SubResource("SfxSlot_player_hurt"), SubResource("SfxSlot_player_death"), SubResource("SfxSlot_player_respawn"), SubResource("SfxSlot_player_melee_swipe"), SubResource("SfxSlot_player_cd_ready"), SubResource("SfxSlot_player_ult_ready"), SubResource("SfxSlot_player_crop_pickup"), SubResource("SfxSlot_player_crop_drop"), SubResource("SfxSlot_player_crop_plant"), SubResource("SfxSlot_player_crop_uproot"), SubResource("SfxSlot_weapon_shoot"), SubResource("SfxSlot_weapon_reload_start"), SubResource("SfxSlot_weapon_reload_done"), SubResource("SfxSlot_ability_1"), SubResource("SfxSlot_ability_2"), SubResource("SfxSlot_ability_ult"), SubResource("SfxSlot_hero_dealer_ability1"), SubResource("SfxSlot_hero_dealer_ability2"), SubResource("SfxSlot_hero_dealer_ult"), SubResource("SfxSlot_hero_burple_ability1"), SubResource("SfxSlot_hero_burple_ult"), SubResource("SfxSlot_hero_loanshark_melee"), SubResource("SfxSlot_hero_loanshark_ability1"), SubResource("SfxSlot_hero_loanshark_ability2"), SubResource("SfxSlot_hero_loanshark_ult"), SubResource("SfxSlot_hero_gooblin_ability1"), SubResource("SfxSlot_hero_gooblin_ability2"), SubResource("SfxSlot_hero_gooblin_ult"), SubResource("SfxSlot_hero_garebare_ability1"), SubResource("SfxSlot_hero_garebare_ability2"), SubResource("SfxSlot_hero_garebare_ult"), SubResource("SfxSlot_hero_garebare_fie_destroy"), SubResource("SfxSlot_hero_xylerfergus_swap"), SubResource("SfxSlot_hero_xylerfergus_ult"), SubResource("SfxSlot_hero_elonmusk_ability1"), SubResource("SfxSlot_hero_elonmusk_ult"), SubResource("SfxSlot_hero_elonmusk_ult_move"), SubResource("SfxSlot_hero_anderdingus_ult"), SubResource("SfxSlot_fx_explosion")])

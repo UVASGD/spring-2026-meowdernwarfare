@@ -100,6 +100,7 @@ func shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 		current_anim = "melee"
 		sprite.play("melee")
 		_capture_skill_anim()
+		SfxBus.play_world(&"player.melee_swipe", player.global_position if player else global_position)
 		_do_shoot(aim_dir, aim_pos)
 		return
 	super.shoot(aim_dir, aim_pos)

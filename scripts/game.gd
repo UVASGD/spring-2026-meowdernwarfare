@@ -21,6 +21,8 @@ const DebugMenu = preload("res://scripts/ui/debug_menu.gd")
 const Killzone = preload("res://scripts/killzone.gd")
 const UltBannerScene = preload("res://scenes/ui/ultbanner.tscn")
 const PauseMenuScene = preload("res://scenes/ui/pause_menu.tscn")
+const SfxEvent = preload("res://scripts/audio/sfx_event.gd")
+const SfxBus = preload("res://scripts/audio/sfx_bus.gd")
 
 const GAME_DURATION := 300.0
 const SUDDEN_DEATH_DURATION := 120.0
@@ -78,6 +80,7 @@ func _ready() -> void:
 	_create_timer_hud()
 	game_timer = 0.0
 	game_active = true
+	SfxBus.play_ui(SfxEvent.UI_MATCH_START)
 	Cursor.enable()
 	Cursor.switch_mode("BATTLE")
 
@@ -335,6 +338,7 @@ func _pause_uses_tree_freeze() -> bool:
 
 func _open_pause_menu() -> void:
 	Cursor.switch_mode("MENU")
+	SfxBus.play_ui(SfxEvent.UI_PAUSE_OPEN)
 	if _pause_uses_tree_freeze():
 		get_tree().paused = true
 	else:
@@ -342,6 +346,7 @@ func _open_pause_menu() -> void:
 	_pause_menu.open_menu()
 
 func _close_pause_menu() -> void:
+	SfxBus.play_ui(SfxEvent.UI_PAUSE_CLOSE)
 	GameData.menu_pause_local = false
 	get_tree().paused = false
 	if _pause_menu:

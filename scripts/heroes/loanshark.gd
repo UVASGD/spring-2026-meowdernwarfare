@@ -99,6 +99,9 @@ func shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	current_anim = "melee"
 	loanshark_animation.play("melee")
 	_capture_skill_anim()
+	SfxBus.play_world(SfxEvent.WEAPON_SHOOT, player.global_position if player else global_position)
+	SfxBus.play_world(&"player.melee_swipe", player.global_position if player else global_position)
+	SfxBus.play_world(SfxEvent.LOANSHARK_MELEE, player.global_position if player else global_position)
 	_do_shoot(aim_dir, aim_pos)
 
 func _do_shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:

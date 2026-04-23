@@ -15,6 +15,9 @@ signal used_ability_1
 signal ability_1_refreshed
 signal used_ult
 
+const SfxEvent = preload("res://scripts/audio/sfx_event.gd")
+const SfxBus = preload("res://scripts/audio/sfx_bus.gd")
+
 enum UltMode { CHARGE, COOLDOWN }
 
 # Stats 
@@ -64,6 +67,11 @@ var is_dead: bool = false
 var ammo: int = 15
 var ult_points: int = 0
 var ult_cd: float = 0.0
+var _prev_shoot_cd_active: bool = false
+var _prev_ability1_cd_active: bool = false
+var _prev_ability2_cd_active: bool = false
+var _prev_reload_cd_active: bool = false
+var _prev_ult_ready: bool = false
 
 # Animation state
 var ability1_anim_timer: float = 0.0
@@ -90,6 +98,11 @@ const PROFILE_PLACEHOLDER = preload("res://assets/ui/player/profile_placeholder.
 func _ready() -> void:
 	health = max_health
 	ammo = mag_size
+	_prev_shoot_cd_active = shoot_cd > 0.0
+	_prev_ability1_cd_active = ability1_cd > 0.0
+	_prev_ability2_cd_active = ability2_cd > 0.0
+	_prev_reload_cd_active = reload_cd > 0.0
+	_prev_ult_ready = can_ult()
 	
 	# Auto-find sprite if it exists as child
 	sprite = get_node_or_null("Sprite")
@@ -105,6 +118,7 @@ func _process(delta: float) -> void:
 	_update_animation(delta)
 
 func _update_cooldowns(delta: float) -> void:
+	var shoot_was_on_cd := shoot_cd > 0.0
 	shoot_cd = max(0, shoot_cd - delta)
 	
 	var ability1_was_on_cooldown = ability1_cd > 0;
@@ -118,6 +132,7 @@ func _update_cooldowns(delta: float) -> void:
 	if was_reloading and reload_cd <= 0:
 		ammo = mag_size
 		finished_reload.emit();
+		SfxBus.play_world(SfxEvent.WEAPON_RELOAD_DONE, player.global_position if player else global_position)
 	
 	if ult_mode == UltMode.COOLDOWN:
 		ult_cd = max(0, ult_cd - delta)
@@ -125,6 +140,8 @@ func _update_cooldowns(delta: float) -> void:
 	ability1_anim_timer = max(0, ability1_anim_timer - delta)
 	ability2_anim_timer = max(0, ability2_anim_timer - delta)
 	ult_anim_timer = max(0, ult_anim_timer - delta)
+
+	_emit_cd_feedback(shoot_was_on_cd)
 
 func _update_animation(delta: float) -> void:
 	if sprite == null or player == null:
@@ -194,6 +211,7 @@ func _die() -> void:
 	_begin_skill("death")
 	_play_action_anim("death")
 	_capture_skill_anim()
+	SfxBus.play_world(SfxEvent.PLAYER_DEATH, player.global_position if player else global_position)
 	died.emit()
 
 func get_health_percent() -> float:
@@ -254,6 +272,8 @@ func shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	if ammo == 0:
 		ran_out_of_ammo.emit()
 	shot.emit();
+	SfxBus.play_world(SfxEvent.WEAPON_SHOOT, player.global_position if player else global_position)
+	_play_hero_sfx(&"shoot")
 	_do_shoot(aim_dir, aim_pos)
 
 func reload() -> void:
@@ -264,6 +284,7 @@ func reload() -> void:
 	_play_action_anim("reload")
 	_capture_skill_anim()
 	started_reload.emit();
+	SfxBus.play_world(SfxEvent.WEAPON_RELOAD_START, player.global_position if player else global_position)
 	_do_reload()
 
 func ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
@@ -275,6 +296,8 @@ func ability1(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	_play_action_anim("ability1")
 	_capture_skill_anim()
 	used_ability_1.emit();
+	SfxBus.play_world(SfxEvent.ABILITY_1, player.global_position if player else global_position)
+	_play_hero_sfx(&"ability1")
 	_do_ability1(aim_dir, aim_pos)
 
 func ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
@@ -285,6 +308,8 @@ func ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	_begin_skill("ability2")
 	_play_action_anim("ability2")
 	_capture_skill_anim()
+	SfxBus.play_world(SfxEvent.ABILITY_2, player.global_position if player else global_position)
+	_play_hero_sfx(&"ability2")
 	_do_ability2(aim_dir, aim_pos)
 
 func ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
@@ -300,6 +325,8 @@ func ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	_play_action_anim("ult")
 	_capture_skill_anim()
 	used_ult.emit()
+	SfxBus.play_world(SfxEvent.ABILITY_ULT, player.global_position if player else global_position)
+	_play_hero_sfx(&"ult")
 	_do_ult(aim_dir, aim_pos)
 
 func _do_shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
@@ -317,6 +344,61 @@ func _do_ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
 func _do_reload() -> void:
 	pass
 
+func _play_hero_sfx(kind: StringName) -> void:
+	var ev: StringName = &""
+	var hero_name := get_hero_name()
+	match hero_name:
+		"Dealer":
+			if kind == &"ability1":
+				ev = SfxEvent.DEALER_ABILITY_1
+			elif kind == &"ability2":
+				ev = SfxEvent.DEALER_ABILITY_2
+			elif kind == &"ult":
+				ev = SfxEvent.DEALER_ULT
+		"Burple":
+			if kind == &"ability1":
+				ev = SfxEvent.BURPLE_ABILITY_1
+			elif kind == &"ult":
+				ev = SfxEvent.BURPLE_ULT
+		"LoanShark":
+			if kind == &"ability1":
+				ev = SfxEvent.LOANSHARK_ABILITY_1
+			elif kind == &"ability2":
+				ev = SfxEvent.LOANSHARK_ABILITY_2
+			elif kind == &"ult":
+				ev = SfxEvent.LOANSHARK_ULT
+		"Gooblin":
+			if kind == &"ability1":
+				ev = SfxEvent.GOOBLIN_ABILITY_1
+			elif kind == &"ability2":
+				ev = SfxEvent.GOOBLIN_ABILITY_2
+			elif kind == &"ult":
+				ev = SfxEvent.GOOBLIN_ULT
+		"Garebare":
+			if kind == &"ability1":
+				ev = SfxEvent.GAREBARE_ABILITY_1
+			elif kind == &"ability2":
+				ev = SfxEvent.GAREBARE_ABILITY_2
+			elif kind == &"ult":
+				ev = SfxEvent.GAREBARE_ULT
+		"ElonMusk":
+			if kind == &"ability1":
+				ev = SfxEvent.ELONMUSK_ABILITY_1
+			elif kind == &"ult":
+				ev = SfxEvent.ELONMUSK_ULT
+		"AnderDingus":
+			if kind == &"ult":
+				ev = SfxEvent.ANDERDINGUS_ULT
+		"XylerFergus":
+			if kind == &"ability1":
+				ev = SfxEvent.XYLER_FERGUS_SWAP
+			elif kind == &"ult":
+				ev = SfxEvent.XYLER_FERGUS_ULT
+		_:
+			pass
+	if ev != &"":
+		SfxBus.play_world(ev, player.global_position if player else global_position)
+
 # ULT
 
 func add_ult_points(amount: int) -> void:
@@ -326,6 +408,8 @@ func add_ult_points(amount: int) -> void:
 	ult_points = min(max_ult_points, ult_points + amount)
 	if ult_points != old:
 		ult_changed.emit(ult_points, max_ult_points)
+		if _is_local_feedback() and old < max_ult_points and ult_points >= max_ult_points:
+			SfxBus.play_ui(SfxEvent.PLAYER_ULT_READY)
 
 func get_ult_percent() -> float:
 	if ult_mode == UltMode.COOLDOWN:
@@ -496,3 +580,41 @@ func get_hero_ability2_icon() -> Texture2D:
 
 func get_hero_ui_color() -> Color:
 	return DEFAULT_HERO_UI_COLOR;
+
+func _emit_cd_feedback(shoot_was_on_cd: bool) -> void:
+	if not _is_local_feedback():
+		_prev_shoot_cd_active = shoot_cd > 0.0
+		_prev_ability1_cd_active = ability1_cd > 0.0
+		_prev_ability2_cd_active = ability2_cd > 0.0
+		_prev_reload_cd_active = reload_cd > 0.0
+		_prev_ult_ready = can_ult()
+		return
+	var shoot_on_cd := shoot_cd > 0.0
+	var a1_on_cd := ability1_cd > 0.0
+	var a2_on_cd := ability2_cd > 0.0
+	var reload_on_cd := reload_cd > 0.0
+	var ult_ready := can_ult()
+	if shoot_was_on_cd and not shoot_on_cd:
+		SfxBus.play_ui(SfxEvent.PLAYER_CD_READY)
+	elif _prev_ability1_cd_active and not a1_on_cd:
+		SfxBus.play_ui(SfxEvent.PLAYER_CD_READY)
+	elif _prev_ability2_cd_active and not a2_on_cd:
+		SfxBus.play_ui(SfxEvent.PLAYER_CD_READY)
+	elif _prev_reload_cd_active and not reload_on_cd:
+		SfxBus.play_ui(SfxEvent.PLAYER_CD_READY)
+	if not _prev_ult_ready and ult_ready:
+		SfxBus.play_ui(SfxEvent.PLAYER_ULT_READY)
+	_prev_shoot_cd_active = shoot_on_cd
+	_prev_ability1_cd_active = a1_on_cd
+	_prev_ability2_cd_active = a2_on_cd
+	_prev_reload_cd_active = reload_on_cd
+	_prev_ult_ready = ult_ready
+
+func _is_local_feedback() -> bool:
+	if player == null or player.input == null:
+		return false
+	if player.input is LocalInput:
+		return player.player_id == 0
+	if player.input is NetworkInput:
+		return player.input.is_local
+	return false

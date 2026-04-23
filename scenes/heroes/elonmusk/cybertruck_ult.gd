@@ -70,6 +70,7 @@ func play_remote_tp(a: Vector2, b: Vector2) -> void:
 	_spawn_line(a, b, false)
 	_truck = b
 	_tp_left = teleport_cd
+	SfxBus.play_world(&"hero.elonmusk.ult_move", _truck)
 
 func force_end_remote() -> void:
 	if _ended:
@@ -113,6 +114,7 @@ func _do_tp(next: Vector2, notify: bool) -> void:
 	_truck = next
 	_tp_left = teleport_cd
 	_spawn_line(start, next, authoritative)
+	SfxBus.play_world(&"hero.elonmusk.ult_move", _truck)
 	if notify:
 		var gm := GameManager.instance
 		if gm and gm.mode == GameManager.Mode.ONLINE_HOST:

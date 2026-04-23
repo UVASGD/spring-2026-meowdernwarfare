@@ -101,7 +101,7 @@ func _do_ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	fie.global_position = place_pos
 	get_tree().current_scene.add_child(fie)
 	fies[slot] = fie
-	fie.destroyed.connect(_on_fie_destroyed.bind(slot))
+	fie.destroyed.connect(_on_fie_destroyed.bind(slot, fie))
 
 	# Broadcast FIE placement for network sync
 	if GameManager.instance:
@@ -120,7 +120,7 @@ func _place_fie_remote(slot: int, pos: Vector2) -> void:
 	fie.global_position = pos
 	get_tree().current_scene.add_child(fie)
 	fies[slot] = fie
-	fie.destroyed.connect(_on_fie_destroyed.bind(slot))
+	fie.destroyed.connect(_on_fie_destroyed.bind(slot, fie))
 	_fie_remote_op = false
 
 func _get_free_fie_slot() -> int:
@@ -129,9 +129,11 @@ func _get_free_fie_slot() -> int:
 			return i
 	return -1
 
-func _on_fie_destroyed(slot: int) -> void:
+func _on_fie_destroyed(slot: int, fie: Node2D) -> void:
 	fies[slot] = null
 	fie_cds[slot] = fie_respawn_cd
+	if fie and is_instance_valid(fie):
+		SfxBus.play_world(&"hero.garebare.fie_destroy", fie.global_position)
 	if not _fie_remote_op and GameManager.instance:
 		GameManager.instance.send_fie_destroyed(player.player_id, slot)
 

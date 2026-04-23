@@ -47,6 +47,8 @@ var mark_indicator: CanvasItem = null
 const MarkProjectileHitFxScene = preload("res://scenes/heroes/loanshark/mark_projectile_hit_fx.tscn")
 const BurpleTargetScene = preload("res://scenes/heroes/burple/grenade_target.tscn")
 const _ULT_BANNER_PORTRAIT_SHADER = preload("res://assets/shaders/electric_wrap.gdshader")
+const SfxEvent = preload("res://scripts/audio/sfx_event.gd")
+const SfxBus = preload("res://scripts/audio/sfx_bus.gd")
 
 @onready var local_health_bar = $CooldownUI/HealthBar
 var target_health_bar_value : float;
@@ -637,9 +639,12 @@ func _handle_actions(consumed_shoot := false) -> void:
 		return
 
 	# Dash (disabled for heroes that only use ability-based dashes, e.g. Loan Shark)
-	if input.dash_just and dash_cd_timer <= 0 and not is_dashing and not is_dead():
-		if hero == null or hero.allows_movement_dash():
-			_start_dash()
+	if input.dash_just:
+		if dash_cd_timer <= 0 and not is_dashing and not is_dead():
+			if hero == null or hero.allows_movement_dash():
+				_start_dash()
+		elif _is_local_player():
+			_play_skill_cd_blocked()
 	
 	if hero == null:
 		return
@@ -650,6 +655,18 @@ func _handle_actions(consumed_shoot := false) -> void:
 	if hero.uses_ult_targeting() and input.ult_just:
 		_set_target_mode(TARGET_NONE if _target_mode == TARGET_ULT else (TARGET_ULT if hero.can_ult() else TARGET_NONE))
 		return
+
+	if _is_local_player():
+		if input.shoot_just and not consumed_shoot and not hero.can_shoot():
+			_play_skill_cd_blocked()
+		if input.ability1_just and not hero.can_ability1():
+			_play_skill_cd_blocked()
+		if input.ability2_just and not hero.can_ability2():
+			_play_skill_cd_blocked()
+		if input.ult_just and not hero.can_ult():
+			_play_skill_cd_blocked()
+		if input.reload_just and hero.uses_gun_ammo() and (hero.reload_cd > 0.0 or hero.ammo >= hero.mag_size):
+			_play_skill_cd_blocked()
 	
 	# Delegate to hero
 	if input.shoot and not consumed_shoot:
@@ -663,11 +680,15 @@ func _handle_actions(consumed_shoot := false) -> void:
 	if input.reload_just and hero.uses_gun_ammo():
 		hero.reload()
 
+func _play_skill_cd_blocked() -> void:
+	SfxBus.play_ui(SfxEvent.UI_SKILL_ON_CD)
+
 func _start_dash() -> void:
 	is_dashing = true
 	dash_timer = dash_duration
 	dash_cd_timer = dash_cooldown
 	dash_dir = aim_dir if input.move_input.length() < 0.1 else input.move_input.normalized()
+	SfxBus.play_world(SfxEvent.PLAYER_DASH, global_position)
 	dashed.emit()
 
 func _on_hero_died() -> void:
@@ -736,12 +757,14 @@ func take_damage(amount: float, attacker: Player = null) -> bool:
 	
 	if not host_auth:
 		took_damage.emit(amount)
+		SfxBus.play_world(SfxEvent.PLAYER_HURT, global_position)
 		return false
 	
 	if attacker:
 		last_attacker = attacker
 	hero.take_damage(amount)
 	took_damage.emit(amount)
+	SfxBus.play_world(SfxEvent.PLAYER_HURT, global_position)
 	if attacker and attacker.hero:
 		attacker.hero.add_ult_points(attacker.hero.ult_points_on_hit)
 	return true
@@ -1079,6 +1102,7 @@ func _attach_held_crop(crop: Crop) -> void:
 	held_sprite.z_index = 10
 	get_parent().add_child(held_sprite)
 	held_sprite.global_position = global_position + (-aim_dir.normalized() * 40.0)
+	SfxBus.play_world(SfxEvent.PLAYER_CROP_PICKUP, global_position)
 
 func can_receive_held_crop() -> bool:
 	return held_crop == null and drop_cd <= 0.0 and not in_spectate_mode and not is_awaiting_respawn and not is_dying
@@ -1130,6 +1154,7 @@ func drop_held_crop() -> void:
 		held_sprite = null
 	if gm and not gm.is_local():
 		gm.send_crop_dropped(player_id, global_position, type_id, stg, cid)
+	SfxBus.play_world(SfxEvent.PLAYER_CROP_DROP, global_position)
 
 const INTERACT_RANGE := 400.0
 const UPROOT_RANGE := INTERACT_RANGE / 3.0
@@ -1165,6 +1190,7 @@ func _try_plant() -> bool:
 	
 	farm.plant_crop(crop, tile)
 	crop_count += 1
+	SfxBus.play_world(SfxEvent.PLAYER_CROP_PLANT, global_position)
 	
 	var gm = GameManager.instance
 	if gm and not gm.is_local():
@@ -1191,6 +1217,7 @@ func _try_uproot() -> bool:
 			pickup_world_crop(crop)
 			if gm and not gm.is_local() and victim:
 				gm.send_crop_uproot(victim.player_id, tile_idx, crop.get_type_id(), crop.stage)
+			SfxBus.play_world(SfxEvent.PLAYER_CROP_UPROOT, global_position)
 			return true
 		return false
 	return false
@@ -1451,6 +1478,7 @@ func respawn_at(pos: Vector2) -> void:
 	
 	is_invulnerable = true
 	_update_health_bar()
+	SfxBus.play_world(SfxEvent.PLAYER_RESPAWN, global_position)
 
 func _check_farm_invulnerability() -> void:
 	if farm == null:
