@@ -69,7 +69,6 @@ var is_dead: bool = false
 var ammo: int = 15
 var ult_points: int = 0
 var ult_cd: float = 0.0
-var _prev_shoot_cd_active: bool = false
 var _prev_ability1_cd_active: bool = false
 var _prev_ability2_cd_active: bool = false
 var _prev_reload_cd_active: bool = false
@@ -119,7 +118,6 @@ const PROFILE_PLACEHOLDER = preload("res://assets/ui/player/profile_placeholder.
 func _ready() -> void:
 	health = max_health
 	ammo = mag_size
-	_prev_shoot_cd_active = shoot_cd > 0.0
 	_prev_ability1_cd_active = ability1_cd > 0.0
 	_prev_ability2_cd_active = ability2_cd > 0.0
 	_prev_reload_cd_active = reload_cd > 0.0
@@ -139,7 +137,6 @@ func _process(delta: float) -> void:
 	_update_animation(delta)
 
 func _update_cooldowns(delta: float) -> void:
-	var shoot_was_on_cd := shoot_cd > 0.0
 	shoot_cd = max(0, shoot_cd - delta)
 	
 	var ability1_was_on_cooldown = ability1_cd > 0;
@@ -162,7 +159,7 @@ func _update_cooldowns(delta: float) -> void:
 	ability2_anim_timer = max(0, ability2_anim_timer - delta)
 	ult_anim_timer = max(0, ult_anim_timer - delta)
 
-	_emit_cd_feedback(shoot_was_on_cd)
+	_emit_cd_feedback()
 
 func _update_animation(delta: float) -> void:
 	if sprite == null or player == null:
@@ -632,22 +629,18 @@ func get_hero_ability2_icon() -> Texture2D:
 func get_hero_ui_color() -> Color:
 	return DEFAULT_HERO_UI_COLOR;
 
-func _emit_cd_feedback(shoot_was_on_cd: bool) -> void:
+func _emit_cd_feedback() -> void:
 	if not _is_local_feedback():
-		_prev_shoot_cd_active = shoot_cd > 0.0
 		_prev_ability1_cd_active = ability1_cd > 0.0
 		_prev_ability2_cd_active = ability2_cd > 0.0
 		_prev_reload_cd_active = reload_cd > 0.0
 		_prev_ult_ready = can_ult()
 		return
-	var shoot_on_cd := shoot_cd > 0.0
 	var a1_on_cd := ability1_cd > 0.0
 	var a2_on_cd := ability2_cd > 0.0
 	var reload_on_cd := reload_cd > 0.0
 	var ult_ready := can_ult()
-	if shoot_was_on_cd and not shoot_on_cd:
-		SfxBus.play_ui(SfxEvent.PLAYER_CD_READY)
-	elif _prev_ability1_cd_active and not a1_on_cd:
+	if _prev_ability1_cd_active and not a1_on_cd:
 		SfxBus.play_ui(SfxEvent.PLAYER_CD_READY)
 	elif _prev_ability2_cd_active and not a2_on_cd:
 		SfxBus.play_ui(SfxEvent.PLAYER_CD_READY)
@@ -655,7 +648,6 @@ func _emit_cd_feedback(shoot_was_on_cd: bool) -> void:
 		SfxBus.play_ui(SfxEvent.PLAYER_CD_READY)
 	if not _prev_ult_ready and ult_ready:
 		SfxBus.play_ui(SfxEvent.PLAYER_ULT_READY)
-	_prev_shoot_cd_active = shoot_on_cd
 	_prev_ability1_cd_active = a1_on_cd
 	_prev_ability2_cd_active = a2_on_cd
 	_prev_reload_cd_active = reload_on_cd

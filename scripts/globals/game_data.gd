@@ -2,6 +2,20 @@ extends Node
 
 const TransitionSettings = preload("res://scripts/globals/transition_settings.gd")
 const MENU_THEME = preload("res://assets/sound/mainthemev2.wav")
+const STARTUP_SHADER_PATHS := [
+	"res://assets/shaders/scene_wipe.gdshader",
+	"res://assets/shaders/3deffect.gdshader",
+	"res://assets/shaders/burn_reveal.gdshader",
+	"res://scenes/ui/squiggle.gdshader",
+]
+const STARTUP_RESOURCE_PATHS := [
+	"res://scenes/ui/main_menu.tscn",
+	"res://scenes/ui/intro.tscn",
+	"res://scenes/game.tscn",
+	"res://scenes/ui/lobby.tscn",
+	"res://assets/resources/audio/sfx_bank.tres",
+	"res://assets/resources/default_transition.tres",
+]
 
 # Autoload for passing data between lobby and game scenes
 
@@ -34,7 +48,10 @@ var _transition_settings: TransitionSettings = null
 var _menu_theme: AudioStreamPlayer = null
 var _heroes_warming: bool = false
 var _heroes_warmed: bool = false
+var _startup_warming: bool = false
+var _startup_warmed: bool = false
 const MAX_TEX_SIZE := 16384
+signal startup_step(step: String)
 
 func _ready() -> void:
 	_load_intro_flag()
@@ -42,7 +59,7 @@ func _ready() -> void:
 	_load_starter_crops()
 	_load_train_hero()
 	_create_menu_theme_player()
-	call_deferred("_warm_heroes_async")
+	call_deferred("_warm_startup_async")
 
 func _create_transition_overlay() -> void:
 	_transition_settings = load("res://assets/resources/default_transition.tres")
@@ -305,8 +322,36 @@ func change_scene(path: String, duration: float = -1.0) -> void:
 func _needs_hero_warm(path: String) -> bool:
 	return path == "res://scenes/ui/lobby.tscn" or path == "res://scenes/game.tscn"
 
-func _warm_heroes_async() -> void:
+func _warm_startup_async() -> void:
+	await ensure_startup_warmed()
+
+func ensure_startup_warmed() -> void:
+	if _startup_warmed:
+		return
+	if _startup_warming:
+		while _startup_warming:
+			await get_tree().process_frame
+		return
+	_startup_warming = true
+	startup_step.emit("loading players")
 	await ensure_heroes_warmed()
+	startup_step.emit("loading shaders")
+	_warm_shaders()
+	await get_tree().process_frame
+	startup_step.emit("loading resources")
+	_warm_resources()
+	await get_tree().process_frame
+	startup_step.emit("finishing up")
+	_startup_warming = false
+	_startup_warmed = true
+
+func _warm_shaders() -> void:
+	for path in STARTUP_SHADER_PATHS:
+		load(path)
+
+func _warm_resources() -> void:
+	for path in STARTUP_RESOURCE_PATHS:
+		load(path)
 
 func ensure_heroes_warmed() -> void:
 	if _heroes_warmed:

@@ -156,6 +156,7 @@ func _end_ult(notify := true) -> void:
 	_set_owner_hidden(false)
 	_is_exploding = true
 	_set_truck_anim(&"top_explode")
+	SfxBus.play_world(SfxEvent.FX_EXPLOSION, center)
 	_apply_explosion()
 	if notify:
 		var gm := GameManager.instance

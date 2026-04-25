@@ -1,6 +1,8 @@
 extends Area2D
 
 const MarkExplosionFxScene = preload("res://scenes/heroes/loanshark/mark_explosion_fx.tscn")
+const SfxEvent = preload("res://scripts/audio/sfx_event.gd")
+const SfxBus = preload("res://scripts/audio/sfx_bus.gd")
 
 @export var damage: float = 8.0
 @export var speed: float = 2200.0
@@ -82,6 +84,7 @@ func _explode() -> void:
 	_exploded = true
 	set_physics_process(false)
 	var pos := global_position
+	SfxBus.play_world(SfxEvent.FX_EXPLOSION, pos)
 	if _proj_sprite:
 		_proj_sprite.visible = false
 	_spawn_explosion_visual(pos)

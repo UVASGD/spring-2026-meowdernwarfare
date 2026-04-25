@@ -1,5 +1,8 @@
 extends Area2D
 
+const SfxEvent = preload("res://scripts/audio/sfx_event.gd")
+const SfxBus = preload("res://scripts/audio/sfx_bus.gd")
+
 @export var damage: int = 10
 @export var speed: float = 350.0
 @export var lifetime: float = 3.0
@@ -8,6 +11,7 @@ extends Area2D
 
 var direction: Vector2 = Vector2.RIGHT
 var owner_player: Player = null
+var _exploded: bool = false
 
 func _ready() -> void:
 	get_tree().create_timer(lifetime).timeout.connect(_explode)
@@ -37,8 +41,12 @@ func _on_body_entered(body: Node) -> void:
 	_explode()
 
 func _explode() -> void:
+	if _exploded:
+		return
+	_exploded = true
 	if not is_inside_tree():
 		return
+	SfxBus.play_world(SfxEvent.FX_EXPLOSION, global_position)
 
 	var all_players = get_tree().get_nodes_in_group("players")
 	for p in all_players:

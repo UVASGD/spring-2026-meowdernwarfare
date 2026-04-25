@@ -3,9 +3,6 @@ extends Control
 signal continue_pressed
 signal back_to_menu_pressed
 
-const SfxEvent = preload("res://scripts/audio/sfx_event.gd")
-const SfxBus = preload("res://scripts/audio/sfx_bus.gd")
-
 @onready var continue_btn: Button = $MainVBox/ContinueBtn
 @onready var settings_btn: Button = $MainVBox/SettingsBtn
 @onready var back_btn: Button = $MainVBox/BackBtn
@@ -14,11 +11,9 @@ const SfxBus = preload("res://scripts/audio/sfx_bus.gd")
 
 func _ready() -> void:
 	continue_btn.pressed.connect(func():
-		SfxBus.play_ui(SfxEvent.UI_CLICK)
 		continue_pressed.emit()
 	)
 	back_btn.pressed.connect(func():
-		SfxBus.play_ui(SfxEvent.UI_BACK)
 		back_to_menu_pressed.emit()
 	)
 	settings_btn.pressed.connect(_open_settings)
@@ -35,13 +30,11 @@ func close_menu() -> void:
 	hide()
 
 func _open_settings() -> void:
-	SfxBus.play_ui(SfxEvent.UI_CLICK)
 	_set_main(false)
 	settings_view.show()
 	settings_back_btn.grab_focus()
 
 func _close_settings() -> void:
-	SfxBus.play_ui(SfxEvent.UI_BACK)
 	_set_main(true)
 	settings_view.hide()
 

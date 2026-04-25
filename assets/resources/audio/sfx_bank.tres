@@ -1,110 +1,153 @@
-[gd_resource type="Resource" script_class="SfxBank" load_steps=52 format=3 uid="uid://bv8fhf0xj6r8e"]
+[gd_resource type="Resource" script_class="SfxBank" load_steps=83 format=3 uid="uid://bv8fhf0xj6r8e"]
 
 [ext_resource type="Script" uid="uid://di1eyic2b48pg" path="res://scripts/audio/sfx_bank.gd" id="1_mwu6f"]
 [ext_resource type="Script" uid="uid://b71v8ig0ctel6" path="res://scripts/audio/sfx_slot.gd" id="2_1e13q"]
+[ext_resource type="AudioStream" uid="uid://btjmw3kwtag6k" path="res://assets/sound/sfx/ui/ui_hover.wav" id="3_dnd38"]
+[ext_resource type="AudioStream" uid="uid://bhsf1vhwj3kjd" path="res://assets/sound/sfx/ui/ui_click.wav" id="4_evreu"]
+[ext_resource type="AudioStream" uid="uid://rxil35hkt4dk" path="res://assets/sound/sfx/ui/ui_back.wav" id="5_adsgk"]
+[ext_resource type="AudioStream" uid="uid://diusv62d1t11d" path="res://assets/sound/sfx/ui/ui_ready_on.wav" id="6_m35s4"]
+[ext_resource type="AudioStream" uid="uid://dolcu5dc45d1a" path="res://assets/sound/sfx/ui/ui_ready_off.wav" id="7_x801t"]
+[ext_resource type="AudioStream" uid="uid://d0kefpog4y77f" path="res://assets/sound/sfx/ui/ui_match_start.wav" id="8_fdigc"]
+[ext_resource type="AudioStream" uid="uid://iyugf8kv06v5" path="res://assets/sound/sfx/ui/ui_pause_open.wav" id="9_nvn28"]
+[ext_resource type="AudioStream" uid="uid://cs7ecmhb0qtt5" path="res://assets/sound/sfx/ui/ui_pause_close.wav" id="10_nscok"]
+[ext_resource type="AudioStream" uid="uid://cgkubqp7yojf" path="res://assets/sound/sfx/ui/ui_skill_on_cd.wav" id="11_vly2j"]
+[ext_resource type="AudioStream" uid="uid://ddgbcysxc07jk" path="res://assets/sound/sfx/combat/player_dash.wav" id="12_1gr57"]
+[ext_resource type="AudioStream" uid="uid://c27vhhjr7aah7" path="res://assets/sound/sfx/combat/player_hurt.wav" id="13_5coo0"]
+[ext_resource type="AudioStream" uid="uid://df2rsprf3pumr" path="res://assets/sound/sfx/combat/player_death.wav" id="14_l03ck"]
+[ext_resource type="AudioStream" uid="uid://dq73cj1hfim3y" path="res://assets/sound/sfx/combat/player_respawn.wav" id="15_jd3sr"]
+[ext_resource type="AudioStream" uid="uid://b8mi6sdxgo0oy" path="res://assets/sound/sfx/ui/player_cd_ready.wav" id="16_eijdq"]
+[ext_resource type="AudioStream" uid="uid://fg5yj5l07hlg" path="res://assets/sound/sfx/ui/player_ult_ready.wav" id="17_opiw3"]
+[ext_resource type="AudioStream" uid="uid://m8os214om5p4" path="res://assets/sound/sfx/farming/player_crop_pickup.wav" id="18_xe1rw"]
+[ext_resource type="AudioStream" uid="uid://dgwlrwuck8l1c" path="res://assets/sound/sfx/farming/player_crop_drop.wav" id="19_a8dft"]
+[ext_resource type="AudioStream" uid="uid://cw7u1msmu1ktf" path="res://assets/sound/sfx/farming/player_crop_plant.wav" id="20_2wnhh"]
+[ext_resource type="AudioStream" uid="uid://qg3tpqk6qgh6" path="res://assets/sound/sfx/farming/player_crop_uproot.wav" id="21_iej88"]
+[ext_resource type="AudioStream" uid="uid://cl08k08yu5rlt" path="res://assets/sound/sfx/combat/weapon_shoot.wav" id="22_ppnxk"]
+[ext_resource type="AudioStream" uid="uid://c7no1jcylk38g" path="res://assets/sound/sfx/combat/weapon_reload_start.wav" id="23_pnbf8"]
+[ext_resource type="AudioStream" uid="uid://ce2humfgri8n" path="res://assets/sound/sfx/heroes/generic/ability_1.wav" id="24_8xvip"]
+[ext_resource type="AudioStream" uid="uid://cgcg63x3qx8nu" path="res://assets/sound/sfx/heroes/generic/ability_2.wav" id="25_hm1su"]
+[ext_resource type="AudioStream" uid="uid://e1ek44e4b2kg" path="res://assets/sound/sfx/heroes/generic/ability_ult.wav" id="26_2g70o"]
+[ext_resource type="AudioStream" uid="uid://1vop66v34w5l" path="res://assets/sound/sfx/heroes/dealer/hero_dealer_ult.wav" id="27_ktkh6"]
+[ext_resource type="AudioStream" uid="uid://bvde7g417wnra" path="res://assets/sound/sfx/heroes/burple/hero_burple_ability1.wav" id="28_6gwf1"]
+[ext_resource type="AudioStream" uid="uid://bioasr2rpa1xp" path="res://assets/sound/sfx/heroes/burple/hero_burple_ult.wav" id="29_p2mfy"]
+[ext_resource type="AudioStream" uid="uid://otn7d38c0gnr" path="res://assets/sound/sfx/heroes/gooblin/hero_gooblin_ability1.wav" id="30_7wqyi"]
+[ext_resource type="AudioStream" uid="uid://bonpwrk2avgjt" path="res://assets/sound/sfx/heroes/elonmusk/hero_elonmusk_ult.wav" id="31_27tdv"]
+[ext_resource type="AudioStream" uid="uid://d1kduu8w5jxwj" path="res://assets/sound/sfx/heroes/elonmusk/hero_elonmusk_truckmove.wav" id="32_amm1f"]
+[ext_resource type="AudioStream" uid="uid://dmucdcn0ichnu" path="res://assets/sound/sfx/combat/boom.mp3" id="33_evreu"]
 
 [sub_resource type="Resource" id="SfxSlot_ui_hover"]
 script = ExtResource("2_1e13q")
 id = &"ui.hover"
+stream = ExtResource("3_dnd38")
 bus = &"Master"
-volume_db = 0.0
+volume_db = -17.5
 pitch = 1.0
-pitch_rand = 0.0
-world = true
+pitch_rand = 0.1
+world = false
 
 [sub_resource type="Resource" id="SfxSlot_ui_click"]
 script = ExtResource("2_1e13q")
 id = &"ui.click"
+stream = ExtResource("4_evreu")
 bus = &"Master"
-volume_db = 0.0
+volume_db = -20.5
 pitch = 1.0
-pitch_rand = 0.0
-world = true
+pitch_rand = 0.07
+world = false
 
 [sub_resource type="Resource" id="SfxSlot_ui_back"]
 script = ExtResource("2_1e13q")
 id = &"ui.back"
+stream = ExtResource("5_adsgk")
 bus = &"Master"
-volume_db = 0.0
+volume_db = -6.4
 pitch = 1.0
 pitch_rand = 0.0
-world = true
+world = false
 
 [sub_resource type="Resource" id="SfxSlot_ui_ready_on"]
 script = ExtResource("2_1e13q")
 id = &"ui.ready_on"
+stream = ExtResource("6_m35s4")
 bus = &"Master"
-volume_db = 0.0
+volume_db = -7.9
 pitch = 1.0
 pitch_rand = 0.0
-world = true
+world = false
 
 [sub_resource type="Resource" id="SfxSlot_ui_ready_off"]
 script = ExtResource("2_1e13q")
 id = &"ui.ready_off"
+stream = ExtResource("7_x801t")
 bus = &"Master"
-volume_db = 0.0
+volume_db = -8.3
 pitch = 1.0
 pitch_rand = 0.0
-world = true
+world = false
 
 [sub_resource type="Resource" id="SfxSlot_ui_match_start"]
 script = ExtResource("2_1e13q")
 id = &"ui.match_start"
+stream = ExtResource("8_fdigc")
 bus = &"Master"
-volume_db = 0.0
+volume_db = -18.3
 pitch = 1.0
 pitch_rand = 0.0
-world = true
+world = false
 
 [sub_resource type="Resource" id="SfxSlot_ui_pause_open"]
 script = ExtResource("2_1e13q")
 id = &"ui.pause_open"
+stream = ExtResource("9_nvn28")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
 pitch_rand = 0.0
-world = true
+world = false
 
 [sub_resource type="Resource" id="SfxSlot_ui_pause_close"]
 script = ExtResource("2_1e13q")
 id = &"ui.pause_close"
+stream = ExtResource("10_nscok")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
 pitch_rand = 0.0
-world = true
+world = false
 
 [sub_resource type="Resource" id="SfxSlot_ui_skill_on_cd"]
 script = ExtResource("2_1e13q")
 id = &"ui.skill_on_cd"
+stream = ExtResource("11_vly2j")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
 pitch_rand = 0.0
-world = true
+world = false
 
 [sub_resource type="Resource" id="SfxSlot_player_dash"]
 script = ExtResource("2_1e13q")
 id = &"player.dash"
+stream = ExtResource("12_1gr57")
 bus = &"Master"
-volume_db = 0.0
+volume_db = -10.1
 pitch = 1.0
-pitch_rand = 0.0
+pitch_rand = 0.27
 world = true
 
 [sub_resource type="Resource" id="SfxSlot_player_hurt"]
 script = ExtResource("2_1e13q")
 id = &"player.hurt"
+stream = ExtResource("13_5coo0")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
-pitch_rand = 0.0
+pitch_rand = 0.11
 world = true
 
 [sub_resource type="Resource" id="SfxSlot_player_death"]
 script = ExtResource("2_1e13q")
 id = &"player.death"
+stream = ExtResource("14_l03ck")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -114,6 +157,7 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_player_respawn"]
 script = ExtResource("2_1e13q")
 id = &"player.respawn"
+stream = ExtResource("15_jd3sr")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -132,24 +176,27 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_player_cd_ready"]
 script = ExtResource("2_1e13q")
 id = &"player.cd_ready"
+stream = ExtResource("16_eijdq")
 bus = &"Master"
-volume_db = 0.0
+volume_db = -11.2
 pitch = 1.0
 pitch_rand = 0.0
-world = true
+world = false
 
 [sub_resource type="Resource" id="SfxSlot_player_ult_ready"]
 script = ExtResource("2_1e13q")
 id = &"player.ult_ready"
+stream = ExtResource("17_opiw3")
 bus = &"Master"
-volume_db = 0.0
+volume_db = -9.5
 pitch = 1.0
 pitch_rand = 0.0
-world = true
+world = false
 
 [sub_resource type="Resource" id="SfxSlot_player_crop_pickup"]
 script = ExtResource("2_1e13q")
 id = &"player.crop_pickup"
+stream = ExtResource("18_xe1rw")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -159,6 +206,7 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_player_crop_drop"]
 script = ExtResource("2_1e13q")
 id = &"player.crop_drop"
+stream = ExtResource("19_a8dft")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -168,6 +216,7 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_player_crop_plant"]
 script = ExtResource("2_1e13q")
 id = &"player.crop_plant"
+stream = ExtResource("20_2wnhh")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -177,6 +226,7 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_player_crop_uproot"]
 script = ExtResource("2_1e13q")
 id = &"player.crop_uproot"
+stream = ExtResource("21_iej88")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -186,15 +236,17 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_weapon_shoot"]
 script = ExtResource("2_1e13q")
 id = &"weapon.shoot"
+stream = ExtResource("22_ppnxk")
 bus = &"Master"
-volume_db = 0.0
+volume_db = -15.5
 pitch = 1.0
-pitch_rand = 0.0
+pitch_rand = 0.15
 world = true
 
 [sub_resource type="Resource" id="SfxSlot_weapon_reload_start"]
 script = ExtResource("2_1e13q")
 id = &"weapon.reload_start"
+stream = ExtResource("23_pnbf8")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -213,6 +265,7 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_ability_1"]
 script = ExtResource("2_1e13q")
 id = &"ability.1"
+stream = ExtResource("24_8xvip")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -222,6 +275,7 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_ability_2"]
 script = ExtResource("2_1e13q")
 id = &"ability.2"
+stream = ExtResource("25_hm1su")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -231,6 +285,7 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_ability_ult"]
 script = ExtResource("2_1e13q")
 id = &"ability.ult"
+stream = ExtResource("26_2g70o")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -258,6 +313,7 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_hero_dealer_ult"]
 script = ExtResource("2_1e13q")
 id = &"hero.dealer.ult"
+stream = ExtResource("27_ktkh6")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -267,6 +323,7 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_hero_burple_ability1"]
 script = ExtResource("2_1e13q")
 id = &"hero.burple.ability1"
+stream = ExtResource("28_6gwf1")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -276,6 +333,7 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_hero_burple_ult"]
 script = ExtResource("2_1e13q")
 id = &"hero.burple.ult"
+stream = ExtResource("29_p2mfy")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -321,6 +379,7 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_hero_gooblin_ability1"]
 script = ExtResource("2_1e13q")
 id = &"hero.gooblin.ability1"
+stream = ExtResource("30_7wqyi")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -411,6 +470,7 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_hero_elonmusk_ult"]
 script = ExtResource("2_1e13q")
 id = &"hero.elonmusk.ult"
+stream = ExtResource("31_27tdv")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -420,6 +480,7 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_hero_elonmusk_ult_move"]
 script = ExtResource("2_1e13q")
 id = &"hero.elonmusk.ult_move"
+stream = ExtResource("32_amm1f")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0
@@ -438,6 +499,7 @@ world = true
 [sub_resource type="Resource" id="SfxSlot_fx_explosion"]
 script = ExtResource("2_1e13q")
 id = &"fx.explosion"
+stream = ExtResource("33_evreu")
 bus = &"Master"
 volume_db = 0.0
 pitch = 1.0

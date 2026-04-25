@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dyh7pn3fnqkfc"]
 
-[ext_resource type="Script" path="res://scripts/globals/sfx.gd" id="1_8b6n6"]
-[ext_resource type="Resource" path="res://assets/resources/audio/sfx_bank.tres" id="2_4c4rn"]
+[ext_resource type="Script" uid="uid://2od8h5m5i62d" path="res://scripts/globals/sfx.gd" id="1_8b6n6"]
+[ext_resource type="Resource" uid="uid://bv8fhf0xj6r8e" path="res://assets/resources/audio/sfx_bank.tres" id="2_4c4rn"]
 
 [node name="Sfx" type="Node"]
 script = ExtResource("1_8b6n6")
