@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=4 uid="uid://dp2ttwbglhrhd"]
+[gd_scene load_steps=45 format=4 uid="uid://dp2ttwbglhrhd"]
 
 [ext_resource type="Texture2D" uid="uid://bra0cb7y8j5aj" path="res://assets/ui/titlescreen/burple_background_infinite.png" id="1_4sf6x"]
 [ext_resource type="Script" uid="uid://be3pnfxr2d7wk" path="res://scripts/spacebg.gd" id="2_4msuu"]
@@ -7,21 +7,21 @@
 [ext_resource type="Texture2D" uid="uid://do20g07wjeioh" path="res://assets/maps/city/tiles/grasstexture.png" id="5_o2qbc"]
 [ext_resource type="Texture2D" uid="uid://c8k3re4sfuics" path="res://assets/maps/city/tiles/sidewalktexture.png" id="6_unprm"]
 [ext_resource type="PackedScene" uid="uid://cq266dyabpgab" path="res://scenes/farm.tscn" id="7_o2qbc"]
-[ext_resource type="Texture2D" uid="uid://bsag3dr3hyybg" path="res://assets/maps/moon/objs/Evil Eye House.png" id="8_unprm"]
-[ext_resource type="Texture2D" uid="uid://ni0dog6rvg0e" path="res://assets/maps/moon/objs/Radiohut.png" id="9_5l2ys"]
-[ext_resource type="Texture2D" uid="uid://bomlsfawffdla" path="res://assets/maps/moon/objs/Squid house.png" id="10_rbha6"]
-[ext_resource type="Texture2D" uid="uid://cua3oasp2hwem" path="res://assets/maps/moon/objs/evil trees.png" id="11_45p84"]
+[ext_resource type="Texture2D" uid="uid://dcfeffg13qucb" path="res://assets/maps/city/anderdingus2.png" id="8_rhw3e"]
+[ext_resource type="Texture2D" uid="uid://xvxc5rmlko2v" path="res://assets/maps/city/sourblue.png" id="9_rhw3e"]
+[ext_resource type="Texture2D" uid="uid://clwqwmard8q6v" path="res://assets/maps/city/sourorange.png" id="10_rhw3e"]
+[ext_resource type="Texture2D" uid="uid://bmp5kv73gx0b3" path="res://assets/maps/city/sourpurple.png" id="11_4sf6x"]
+[ext_resource type="PackedScene" uid="uid://rmxata4ac7s" path="res://scenes/nuclearplant.tscn" id="16_rhw3e"]
 [ext_resource type="Texture2D" uid="uid://1n01bhkdmox1" path="res://assets/maps/city/objs/crashtruck3.png" id="18_5l2ys"]
 [ext_resource type="Texture2D" uid="uid://c8l46s1hcmj7i" path="res://assets/maps/city/objs/crashtruck.png" id="19_rbha6"]
 [ext_resource type="Texture2D" uid="uid://75krytsq6qje" path="res://assets/maps/city/objs/treecat.png" id="20_45p84"]
 [ext_resource type="PackedScene" uid="uid://dfnrmqfkj1p64" path="res://scenes/heroes/dealer/dealer.tscn" id="21_gmvv7"]
 [ext_resource type="PackedScene" uid="uid://cbbhkl15cimnl" path="res://scenes/acidpuddle.tscn" id="21_lnnvg"]
-[ext_resource type="Texture2D" uid="uid://b8tl3pbjlluid" path="res://assets/maps/city/objs/nuclearplant.png" id="22_6jn65"]
 [ext_resource type="PackedScene" uid="uid://cih7402ccv0gh" path="res://scenes/sd_lights.tscn" id="22_e5wdl"]
+[ext_resource type="AudioStream" uid="uid://c2rft6q411cba" path="res://assets/sound/music/city_2.mp3" id="22_rhw3e"]
 [ext_resource type="Texture2D" uid="uid://1qwlktiojics" path="res://assets/maps/city/objs/rubble1.png" id="23_dcwis"]
 [ext_resource type="Texture2D" uid="uid://ckatwycutn13n" path="res://assets/maps/city/objs/rubble2.png" id="24_ed5ae"]
 [ext_resource type="PackedScene" uid="uid://bpigoxrqnhcu1" path="res://city_crop_spawner.tscn" id="24_rhw3e"]
-[ext_resource type="AudioStream" uid="uid://ccd465ueq1ado" path="res://assets/sound/music/Moon Map Catpitalist 2.ogg" id="24_w077c"]
 [ext_resource type="Texture2D" uid="uid://ctq1trilbmdii" path="res://assets/maps/city/objs/rubble3.png" id="25_4d304"]
 [ext_resource type="AudioStream" uid="uid://dl2weybrdbc1h" path="res://assets/sound/music/Pokémon Black & White - Critical Health Music (HQ).mp3" id="25_gedhm"]
 
@@ -75,9 +75,6 @@ size = Vector2(4160, 1000)
 [sub_resource type="CircleShape2D" id="CircleShape2D_f8c8a"]
 radius = 680.955
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_q1nks"]
-size = Vector2(3863.77, 877.514)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_8bbtw"]
 size = Vector2(2160, 580)
 
@@ -113,7 +110,7 @@ gradient = SubResource("Gradient_5lgu8")
 y_sort_enabled = true
 
 [node name="spacebg" type="TextureRect" parent="map"]
-z_index = -10
+z_index = -100
 offset_left = -1612.0
 offset_top = -1574.0
 offset_right = 1625.0
@@ -208,13 +205,13 @@ texture = ExtResource("3_qfgfb")
 stretch_mode = 1
 
 [node name="TileMapLayer" type="TileMapLayer" parent="map"]
-z_index = -9
+z_index = -99
 scale = Vector2(0.2, 0.2)
 tile_map_data = PackedByteArray("AAABAAEAAwAAAAAAAAABAAAAAwAAAAAAAAABAP//AwAAAAAAAAABAP7/AwAAAAAAAAABAPz/AwAAAAAAAAABAPv/AwAAAAAAAAABAPr/AwAAAAAAAAD8/wMAAwAAAAAAAAD8/wIAAwAAAAAAAAD8/wEAAwAAAAAAAAD8/wAAAwAAAAAAAAD8////AwAAAAAAAAD8//7/AwAAAAAAAAD8//z/AwAAAAAAAAD8//v/AgAAAAAAAAD8//r/AgAAAAAAAAD9//r/AgAAAAAAAAD9//v/AgAAAAAAAAD9//z/AwAAAAAAAAD9//7/AwAAAAAAAAD9////AwAAAAAAAAD9/wAAAwAAAAAAAAD9/wEAAwAAAAAAAAD9/wIAAwAAAAAAAAD9/wMAAwAAAAAAAAD+/wMAAwAAAAAAAAD+/wIAAwAAAAAAAAD+/wEAAwAAAAAAAAD+/wAAAwAAAAAAAAD+////AwAAAAAAAAD+//7/AwAAAAAAAAD+//z/AwAAAAAAAAD+//v/AwAAAAAAAAD+//r/AwAAAAAAAAD///r/AwAAAAAAAAD///v/AwAAAAAAAAD///z/AwAAAAAAAAD///7/AwAAAAAAAAD/////AwAAAAAAAAD//wAAAwAAAAAAAAD//wEAAwAAAAAAAAD//wIAAwAAAAAAAAD//wMAAwAAAAAAAAAAAAMAAwAAAAAAAAAAAAIAAwAAAAAAAAAAAAEAAwAAAAAAAAAAAAAAAwAAAAAAAAAAAP//AwAAAAAAAAAAAP7/AwAAAAAAAAAAAPz/AwAAAAAAAAAAAPv/AwAAAAAAAAAAAPr/AwAAAAAAAAABAAIAAwAAAAAAAAABAAMAAwAAAAAAAAACAAMAAwAAAAAAAAACAAIAAwAAAAAAAAACAAEAAwAAAAAAAAACAAAAAwAAAAAAAAACAP//AwAAAAAAAAACAP7/AwAAAAAAAAACAPz/AwAAAAAAAAACAPv/AgAAAAAAAAACAPr/AgAAAAAAAAADAPr/AgAAAAAAAAADAPv/AgAAAAAAAAADAPz/AwAAAAAAAAADAP7/AwAAAAAAAAADAP//AwAAAAAAAAADAAAAAwAAAAAAAAADAAEAAwAAAAAAAAADAAIAAwAAAAAAAAADAAMAAwAAAAAAAAAEAAMAAwAAAAAAAAAEAAIAAwAAAAAAAAAEAAEAAwAAAAAAAAAEAAAAAwAAAAAAAAAEAP//AwAAAAAAAAAEAP7/AwAAAAAAAAAEAPz/AwAAAAAAAAAEAPv/AgAAAAAAAAAEAPr/AgAAAAAAAAD7//r/AgAAAAAAAAD7//v/AgAAAAAAAAD7//z/AwAAAAAAAAD7//7/AwAAAAAAAAD7////AwAAAAAAAAD7/wAAAwAAAAAAAAD7/wEAAwAAAAAAAAD7/wIAAwAAAAAAAAD7/wMAAwAAAAAAAAD7/wQAAgAAAAAAAAD8/wQAAgAAAAAAAAD9/wQAAgAAAAAAAAD+/wQAAwAAAAAAAAD//wQAAwAAAAAAAAAAAAQAAwAAAAAAAAABAAQAAwAAAAAAAAACAAQAAgAAAAAAAAADAAQAAgAAAAAAAAAEAAQAAgAAAAAAAAAEAAUAAgAAAAAAAAADAAUAAgAAAAAAAAACAAUAAgAAAAAAAAABAAUAAwAAAAAAAAAAAAUAAwAAAAAAAAD//wUAAwAAAAAAAAD+/wUAAwAAAAAAAAD9/wUAAgAAAAAAAAD8/wUAAgAAAAAAAAD7/wUAAgAAAAAAAAD6//r/AgAAAAAAAAD6//v/AgAAAAAAAAD6//z/AwAAAAAAAAD6//7/AwAAAAAAAAD6////AwAAAAAAAAD6/wAAAwAAAAAAAAD6/wEAAwAAAAAAAAD6/wIAAwAAAAAAAAD6/wMAAwAAAAAAAAD6/wQAAgAAAAAAAAD6/wUAAgAAAAAAAAD6/wYAAgAAAAAAAAD7/wYAAgAAAAAAAAD8/wYAAgAAAAAAAAD9/wYAAgAAAAAAAAD+/wYAAwAAAAAAAAD//wYAAwAAAAAAAAAAAAYAAwAAAAAAAAABAAYAAwAAAAAAAAACAAYAAgAAAAAAAAADAAYAAgAAAAAAAAAEAAYAAgAAAAAAAAAFAAYAAgAAAAAAAAAFAAUAAgAAAAAAAAAFAAQAAgAAAAAAAAAFAAMAAwAAAAAAAAAFAAIAAwAAAAAAAAAFAAEAAwAAAAAAAAAFAAAAAwAAAAAAAAAFAP//AwAAAAAAAAAFAP7/AwAAAAAAAAAFAPz/AwAAAAAAAAAFAPv/AgAAAAAAAAAFAPr/AgAAAAAAAAAFAPn/AgAAAAAAAAAEAPn/AgAAAAAAAAADAPn/AgAAAAAAAAACAPn/AgAAAAAAAAABAPn/AwAAAAAAAAAAAPn/AwAAAAAAAAD///n/AwAAAAAAAAD+//n/AwAAAAAAAAD9//n/AgAAAAAAAAD8//n/AgAAAAAAAAD7//n/AgAAAAAAAAD6//n/AgAAAAAAAAD5//j/AwAAAAAAAAD5//n/AwAAAAAAAAD5//r/AwAAAAAAAAD5//v/AwAAAAAAAAD5//z/AwAAAAAAAAD5//7/AwAAAAAAAAD5////AwAAAAAAAAD5/wAAAwAAAAAAAAD5/wEAAwAAAAAAAAD5/wIAAwAAAAAAAAD5/wMAAwAAAAAAAAD5/wQAAwAAAAAAAAD5/wUAAwAAAAAAAAD5/wYAAwAAAAAAAAD5/wcAAwAAAAAAAAD6/wcAAwAAAAAAAAD7/wcAAwAAAAAAAAD8/wcAAwAAAAAAAAD9/wcAAwAAAAAAAAD+/wcAAwAAAAAAAAD//wcAAwAAAAAAAAAAAAcAAwAAAAAAAAABAAcAAwAAAAAAAAACAAcAAwAAAAAAAAAEAAcAAwAAAAAAAAAFAAcAAwAAAAAAAAAGAAcAAwAAAAAAAAAGAAYAAwAAAAAAAAADAAcAAwAAAAAAAAAGAAQAAwAAAAAAAAAGAAUAAwAAAAAAAAAGAAMAAwAAAAAAAAAGAAIAAwAAAAAAAAAGAAEAAwAAAAAAAAAGAAAAAwAAAAAAAAAGAP//AwAAAAAAAAAGAP7/AwAAAAAAAAAGAPz/AwAAAAAAAAAGAPv/AwAAAAAAAAAGAPr/AwAAAAAAAAAGAPn/AwAAAAAAAAAFAPj/AwAAAAAAAAAGAPj/AwAAAAAAAAAEAPj/AwAAAAAAAAADAPj/AwAAAAAAAAACAPj/AwAAAAAAAAABAPj/AwAAAAAAAAAAAPj/AwAAAAAAAAD///j/AwAAAAAAAAD+//j/AwAAAAAAAAD9//j/AwAAAAAAAAD8//j/AwAAAAAAAAD7//j/AwAAAAAAAAD6//j/AwAAAAAAAAD5//3/AwAAAAAAAAD6//3/AwAAAAAAAAD7//3/AwAAAAAAAAD8//3/AwAAAAAAAAD9//3/AwAAAAAAAAD+//3/AwAAAAAAAAD///3/AwAAAAAAAAAAAP3/AwAAAAAAAAABAP3/AwAAAAAAAAACAP3/AwAAAAAAAAADAP3/AwAAAAAAAAAEAP3/AwAAAAAAAAAFAP3/AwAAAAAAAAAGAP3/AwAAAAAAAAA=")
 tile_set = SubResource("TileSet_gedhm")
 
 [node name="streets" type="TileMapLayer" parent="map"]
-z_index = -9
+z_index = -98
 scale = Vector2(0.2, 0.2)
 tile_map_data = PackedByteArray("AAABAAEAAwAAAAAAAAABAAAAAwAAAAAAAAABAP//AwAAAAAAAAABAP7/AwAAAAAAAAABAPz/AwAAAAAAAAABAPv/AwAAAAAAAAABAPr/AwAAAAAAAAD8/wMAAwAAAAAAAAD8/wIAAwAAAAAAAAD8/wEAAwAAAAAAAAD8/wAAAwAAAAAAAAD8////AwAAAAAAAAD8//7/AQAAAAAAADD8//z/AwAAAAAAAAD8//v/AgAAAAAAAAD8//r/AgAAAAAAAAD9//r/AgAAAAAAAAD9//v/AgAAAAAAAAD9//z/AwAAAAAAAAD9//7/AQAAAAAAADD9////AwAAAAAAAAD9/wAAAwAAAAAAAAD9/wEAAwAAAAAAAAD9/wIAAwAAAAAAAAD9/wMAAwAAAAAAAAD+/wMAAwAAAAAAAAD+/wIAAwAAAAAAAAD+/wEAAwAAAAAAAAD+/wAAAwAAAAAAAAD+////AwAAAAAAAAD+//7/AQAAAAAAADD+//z/AwAAAAAAAAD+//v/AwAAAAAAAAD+//r/AwAAAAAAAAD///r/AQAAAAAAAFD///v/AQAAAAAAAFD///z/AQAAAAAAAFD///7/AQAAAAAAAFD/////AQAAAAAAAFD//wAAAQAAAAAAAFD//wEAAQAAAAAAAFD//wIAAQAAAAAAAFD//wMAAQAAAAAAAFAAAAMAAQAAAAAAAFAAAAIAAQAAAAAAAFAAAAEAAQAAAAAAAFAAAAAAAQAAAAAAAFAAAP//AQAAAAAAAFAAAP7/AQAAAAAAAFAAAPz/AQAAAAAAAFAAAPv/AQAAAAAAAFAAAPr/AQAAAAAAAFABAAIAAQAAAAAAADABAAMAAwAAAAAAAAACAAMAAwAAAAAAAAACAAIAAQAAAAAAADACAAEAAwAAAAAAAAACAAAAAwAAAAAAAAACAP//AwAAAAAAAAACAP7/AwAAAAAAAAACAPz/AwAAAAAAAAACAPv/AgAAAAAAAAACAPr/AgAAAAAAAAADAPr/AgAAAAAAAAADAPv/AgAAAAAAAAADAPz/AwAAAAAAAAADAP7/AwAAAAAAAAADAP//AwAAAAAAAAADAAAAAwAAAAAAAAADAAEAAwAAAAAAAAADAAIAAQAAAAAAADADAAMAAwAAAAAAAAAEAAMAAwAAAAAAAAAEAAIAAQAAAAAAADAEAAEAAwAAAAAAAAAEAAAAAwAAAAAAAAAEAP//AwAAAAAAAAAEAP7/AwAAAAAAAAAEAPz/AwAAAAAAAAAEAPv/AgAAAAAAAAAEAPr/AgAAAAAAAAD7//r/AgAAAAAAAAD7//v/AgAAAAAAAAD7//z/AwAAAAAAAAD7//7/AQAAAAAAADD7////AwAAAAAAAAD7/wAAAwAAAAAAAAD7/wEAAwAAAAAAAAD7/wIAAwAAAAAAAAD7/wMAAwAAAAAAAAD7/wQAAgAAAAAAAAD8/wQAAgAAAAAAAAD9/wQAAgAAAAAAAAD+/wQAAwAAAAAAAAD//wQAAQAAAAAAAFAAAAQAAQAAAAAAAFABAAQAAwAAAAAAAAACAAQAAgAAAAAAAAADAAQAAgAAAAAAAAAEAAQAAgAAAAAAAAAEAAUAAgAAAAAAAAADAAUAAgAAAAAAAAACAAUAAgAAAAAAAAABAAUAAwAAAAAAAAAAAAUAAQAAAAAAAFD//wUAAQAAAAAAAFD+/wUAAwAAAAAAAAD9/wUAAgAAAAAAAAD8/wUAAgAAAAAAAAD7/wUAAgAAAAAAAAD6//r/AgAAAAAAAAD6//v/AgAAAAAAAAD6//z/AwAAAAAAAAD6//7/AQAAAAAAADD6////AwAAAAAAAAD6/wAAAwAAAAAAAAD6/wEAAwAAAAAAAAD6/wIAAwAAAAAAAAD6/wMAAwAAAAAAAAD6/wQAAgAAAAAAAAD6/wUAAgAAAAAAAAD6/wYAAgAAAAAAAAD7/wYAAgAAAAAAAAD8/wYAAgAAAAAAAAD9/wYAAgAAAAAAAAD+/wYAAwAAAAAAAAD//wYAAQAAAAAAAFAAAAYAAQAAAAAAAFABAAYAAwAAAAAAAAACAAYAAgAAAAAAAAADAAYAAgAAAAAAAAAEAAYAAgAAAAAAAAAFAAYAAgAAAAAAAAAFAAUAAgAAAAAAAAAFAAQAAgAAAAAAAAAFAAMAAwAAAAAAAAAFAAIAAQAAAAAAADAFAAEAAwAAAAAAAAAFAAAAAwAAAAAAAAAFAP//AwAAAAAAAAAFAP7/AwAAAAAAAAAFAPz/AwAAAAAAAAAFAPv/AgAAAAAAAAAFAPr/AgAAAAAAAAAFAPn/AgAAAAAAAAAEAPn/AgAAAAAAAAADAPn/AgAAAAAAAAACAPn/AgAAAAAAAAABAPn/AwAAAAAAAAAAAPn/AQAAAAAAAFD///n/AQAAAAAAAFD+//n/AwAAAAAAAAD9//n/AgAAAAAAAAD8//n/AgAAAAAAAAD7//n/AgAAAAAAAAD6//n/AgAAAAAAAAD5//j/AwAAAAAAAAD5//n/AwAAAAAAAAD5//r/AwAAAAAAAAD5//v/AwAAAAAAAAD5//z/AwAAAAAAAAD5//7/AQAAAAAAADD5////AwAAAAAAAAD5/wAAAwAAAAAAAAD5/wEAAwAAAAAAAAD5/wIAAwAAAAAAAAD5/wMAAwAAAAAAAAD5/wQAAwAAAAAAAAD5/wUAAwAAAAAAAAD5/wYAAwAAAAAAAAD5/wcAAwAAAAAAAAD6/wcAAwAAAAAAAAD7/wcAAwAAAAAAAAD8/wcAAwAAAAAAAAD9/wcAAwAAAAAAAAD+/wcAAwAAAAAAAAD//wcAAQAAAAAAAFAAAAcAAQAAAAAAAFABAAcAAwAAAAAAAAACAAcAAwAAAAAAAAAEAAcAAwAAAAAAAAAFAAcAAwAAAAAAAAAGAAcAAwAAAAAAAAAGAAYAAwAAAAAAAAADAAcAAwAAAAAAAAAGAAQAAwAAAAAAAAAGAAUAAwAAAAAAAAAGAAMAAwAAAAAAAAAGAAIAAQAAAAAAADAGAAEAAwAAAAAAAAAGAAAAAwAAAAAAAAAGAP//AwAAAAAAAAAGAP7/AwAAAAAAAAAGAPz/AwAAAAAAAAAGAPv/AwAAAAAAAAAGAPr/AwAAAAAAAAAGAPn/AwAAAAAAAAAFAPj/AwAAAAAAAAAGAPj/AwAAAAAAAAAEAPj/AwAAAAAAAAADAPj/AwAAAAAAAAACAPj/AwAAAAAAAAABAPj/AwAAAAAAAAAAAPj/AQAAAAAAAFD///j/AQAAAAAAAFD+//j/AwAAAAAAAAD9//j/AwAAAAAAAAD8//j/AwAAAAAAAAD7//j/AwAAAAAAAAD6//j/AwAAAAAAAAD5//3/AwAAAAAAAAD6//3/AwAAAAAAAAD7//3/AwAAAAAAAAD8//3/AwAAAAAAAAD9//3/AwAAAAAAAAD+//3/AwAAAAAAAAD///3/AQAAAAAAAFAAAP3/AQAAAAAAAFABAP3/AwAAAAAAAAACAP3/AwAAAAAAAAADAP3/AwAAAAAAAAAEAP3/AwAAAAAAAAAFAP3/AwAAAAAAAAAGAP3/AwAAAAAAAAA=")
 tile_set = SubResource("TileSet_gedhm")
@@ -232,8 +229,15 @@ position = Vector2(-1600, -1548)
 position = Vector2(-3, 434)
 
 [node name="entranceSprite" parent="map/objs/farms/evileye2/spriteYsortOffset" index="0"]
-position = Vector2(-5, -68)
-texture = ExtResource("8_unprm")
+position = Vector2(176, -21)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("8_rhw3e")
+
+[node name="entranceSprite2" type="Sprite2D" parent="map/objs/farms/evileye2/spriteYsortOffset" index="1"]
+position = Vector2(-196, -18)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("8_rhw3e")
+flip_h = true
 
 [node name="radioHut2" parent="map/objs/farms" instance=ExtResource("7_o2qbc")]
 position = Vector2(1617, -1552)
@@ -242,8 +246,15 @@ position = Vector2(1617, -1552)
 position = Vector2(-1, 448)
 
 [node name="entranceSprite" parent="map/objs/farms/radioHut2/spriteYsortOffset" index="0"]
-position = Vector2(-5, -115)
-texture = ExtResource("9_5l2ys")
+position = Vector2(175, -38)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("9_rhw3e")
+
+[node name="entranceSprite2" type="Sprite2D" parent="map/objs/farms/radioHut2/spriteYsortOffset" index="1"]
+position = Vector2(-198, -38)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("9_rhw3e")
+flip_h = true
 
 [node name="squihouse" parent="map/objs/farms" instance=ExtResource("7_o2qbc")]
 position = Vector2(1617, 1448)
@@ -255,9 +266,15 @@ position = Vector2(0, -391)
 position = Vector2(430, -75)
 
 [node name="entranceSprite" parent="map/objs/farms/squihouse/spriteYsortOffset" index="0"]
-position = Vector2(-31, 282)
-scale = Vector2(0.335, 0.335)
-texture = ExtResource("10_rbha6")
+position = Vector2(-254, -428)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("10_rhw3e")
+
+[node name="entranceSprite2" type="Sprite2D" parent="map/objs/farms/squihouse/spriteYsortOffset" index="1"]
+position = Vector2(-629, -428)
+scale = Vector2(0.11, 0.11)
+texture = ExtResource("10_rhw3e")
+flip_h = true
 
 [node name="TileMapLayer2" parent="map/objs/farms/squihouse" index="4"]
 tile_map_data = PackedByteArray("AADt//D/BQABAAAAAAAIAPD/BQABAAAAAAD2//D/BQABAAAAAADt/wkABQABAAAAAADt/wAABQABAAEAAADt//n/BQABAAEAAAARAPD/BQABAAAAAAAaAPf/BQABAAEAAAAaAAAABQABAAEAAAAaAAkABQABAAEAAAARAAkABQABAAAAAAAIAAkABQABAAAAAAD2/wkABQABAAAAAADt/wgABQABAAEAAAD//wkABQABAAAAAAA=")
@@ -272,8 +289,15 @@ position = Vector2(0, -389)
 position = Vector2(11, -5)
 
 [node name="entranceSprite" parent="map/objs/farms/eviltrees2/spriteYsortOffset" index="0"]
-position = Vector2(-512, 180)
-texture = ExtResource("11_45p84")
+position = Vector2(169, -489)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("11_4sf6x")
+
+[node name="entranceSprite2" type="Sprite2D" parent="map/objs/farms/eviltrees2/spriteYsortOffset" index="1"]
+position = Vector2(-214, -489)
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("11_4sf6x")
+flip_h = true
 
 [node name="TileMapLayer2" parent="map/objs/farms/eviltrees2" index="4"]
 tile_map_data = PackedByteArray("AADt//D/BQABAAAAAAAIAPD/BQABAAAAAAD2//D/BQABAAAAAADt/wkABQABAAAAAADt/wAABQABAAEAAADt//n/BQABAAEAAAARAPD/BQABAAAAAAAaAPf/BQABAAEAAAAaAAAABQABAAEAAAAaAAkABQABAAEAAAARAAkABQABAAAAAAAIAAkABQABAAAAAAD2/wkABQABAAAAAADt/wgABQABAAEAAAD//wkABQABAAAAAAA=")
@@ -463,42 +487,100 @@ position = Vector2(-120, 850)
 shape = SubResource("CircleShape2D_f8c8a")
 
 [node name="puddles" type="Node2D" parent="map/objs"]
+z_index = 5
 
 [node name="Node2D" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
 position = Vector2(-417, 193)
 
+[node name="Node2D9" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
+position = Vector2(-1202, -396)
+
+[node name="Node2D10" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
+position = Vector2(-1453, -66)
+
+[node name="Node2D11" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
+position = Vector2(289, -317)
+
+[node name="Node2D12" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
+position = Vector2(-204, -810)
+
+[node name="Node2D13" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
+position = Vector2(899, -898)
+
+[node name="Node2D14" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
+position = Vector2(728, 364)
+
+[node name="Node2D15" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
+position = Vector2(-714, 888)
+
+[node name="Node2D16" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
+position = Vector2(-1584, 662)
+
+[node name="Node2D17" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
+position = Vector2(1884, 400)
+
+[node name="Node2D18" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
+position = Vector2(-2168, -839)
+
 [node name="Node2D2" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
 position = Vector2(1463, -246)
 
 [node name="Node2D3" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
 position = Vector2(-559, -1570)
 
 [node name="Node2D4" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
 position = Vector2(-2075, 128)
 
 [node name="Node2D5" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
 position = Vector2(432, 1154)
 
 [node name="Node2D6" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
 position = Vector2(2621, 1665)
 
 [node name="Node2D7" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
 position = Vector2(574, -1489)
 
 [node name="Node2D8" parent="map/objs/puddles" instance=ExtResource("21_lnnvg")]
+z_index = -30
+z_as_relative = false
 position = Vector2(2636, -908)
 
-[node name="Nuclearplant" type="Sprite2D" parent="map/objs"]
+[node name="Nuclearplant" parent="map/objs" instance=ExtResource("16_rhw3e")]
 position = Vector2(2298.25, -356.25)
-scale = Vector2(0.1747, 0.205125)
-texture = ExtResource("22_6jn65")
-
-[node name="StaticBody2D" type="StaticBody2D" parent="map/objs/Nuclearplant"]
-collision_layer = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/Nuclearplant/StaticBody2D"]
-position = Vector2(-38.6377, 176.721)
-shape = SubResource("RectangleShape2D_q1nks")
 
 [node name="rubble" type="Node2D" parent="map/objs"]
 
@@ -901,7 +983,7 @@ texture_scale = 50.0
 height = 596.0
 
 [node name="Theme" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("24_w077c")
+stream = ExtResource("22_rhw3e")
 volume_db = -4.0
 
 [node name="SDTheme" type="AudioStreamPlayer" parent="."]

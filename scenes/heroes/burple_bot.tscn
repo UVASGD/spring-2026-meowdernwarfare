@@ -1,0 +1,124 @@
+[gd_scene load_steps=19 format=3 uid="uid://bo4mi6hnnbri3"]
+
+[ext_resource type="Script" uid="uid://nfpda63paidk" path="res://scripts/heroes/burple_bot.gd" id="1_l2dwf"]
+[ext_resource type="Texture2D" uid="uid://bnraehpgygbjt" path="res://assets/sprites/BurpleBot/fnaf cat based.png" id="3_dprrm"]
+[ext_resource type="Texture2D" uid="uid://cgtlkrtxg8j6v" path="res://assets/sprites/BurpleBot/burple_walk.png" id="4_5n2rq"]
+[ext_resource type="Texture2D" uid="uid://cqhrt0lewma25" path="res://assets/sprites/BurpleBot/burple_shoot_idle.png" id="5_gd2eh"]
+[ext_resource type="Texture2D" uid="uid://7gl4gs5df7ej" path="res://assets/sprites/BurpleBot/burple_shoot_run.png" id="6_r65a1"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8g4od"]
+atlas = ExtResource("3_dprrm")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l2pkg"]
+atlas = ExtResource("4_5n2rq")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jb4vi"]
+atlas = ExtResource("4_5n2rq")
+region = Rect2(500, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1h6wc"]
+atlas = ExtResource("4_5n2rq")
+region = Rect2(1000, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jjn28"]
+atlas = ExtResource("4_5n2rq")
+region = Rect2(0, 500, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7d7y6"]
+atlas = ExtResource("4_5n2rq")
+region = Rect2(500, 500, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_huqr4"]
+atlas = ExtResource("5_gd2eh")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pdkuf"]
+atlas = ExtResource("5_gd2eh")
+region = Rect2(500, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nccf4"]
+atlas = ExtResource("5_gd2eh")
+region = Rect2(0, 500, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j4rh8"]
+atlas = ExtResource("6_r65a1")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5tshm"]
+atlas = ExtResource("6_r65a1")
+region = Rect2(500, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l4cqg"]
+atlas = ExtResource("6_r65a1")
+region = Rect2(0, 500, 500, 500)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6n8e3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8g4od")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 2.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l2pkg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jb4vi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1h6wc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jjn28")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7d7y6")
+}],
+"loop": true,
+"name": &"run",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_huqr4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pdkuf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nccf4")
+}],
+"loop": true,
+"name": &"shoot_idle",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j4rh8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5tshm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l4cqg")
+}],
+"loop": true,
+"name": &"shoot_run",
+"speed": 10.0
+}]
+
+[node name="Burple" type="Node2D"]
+script = ExtResource("1_l2dwf")
+
+[node name="Sprite" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.35, 0.35)
+sprite_frames = SubResource("SpriteFrames_6n8e3")
+animation = &"run"
+autoplay = "idle"
+frame_progress = 0.866192
