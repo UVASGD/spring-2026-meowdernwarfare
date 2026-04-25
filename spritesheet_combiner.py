@@ -83,23 +83,21 @@ def _edge_bg_to_alpha(img: Image.Image, tolerance: int = 15) -> Image.Image:
             px[x, y] = tuple(p)
     return img
 
-def combine(remove_white: bool = False, smart_bg: bool = False, use_rembg: bool = False):
-    if not os.path.isdir(IN_DIR):
-        print("Input folder not found:", IN_DIR)
-        return
-
-    files = sorted(
-        f for f in os.listdir(IN_DIR)
+def _image_names(folder: str):
+    return sorted(
+        f for f in os.listdir(folder)
         if os.path.splitext(f)[1].lower() in EXTS and not f.endswith(".import")
     )
+
+def _make_sheet(src_dir: str, out_path: str, remove_white: bool, smart_bg: bool, use_rembg: bool):
+    files = _image_names(src_dir)
     if not files:
-        print("No images found in", IN_DIR)
-        return
+        return False
 
     imgs = []
     used_files = []
     for f in files:
-        p = os.path.join(IN_DIR, f)
+        p = os.path.join(src_dir, f)
         try:
             with Image.open(p) as im:
                 img = im.convert("RGBA")
@@ -112,15 +110,13 @@ def combine(remove_white: bool = False, smart_bg: bool = False, use_rembg: bool 
                 imgs.append(img)
                 used_files.append(f)
         except Exception as e:
-            print(f"Skipping {f}: {e}")
+            print(f"Skipping {p}: {e}")
 
     if not imgs:
-        print("No readable images found in", IN_DIR)
-        return
+        return False
 
     w, h = imgs[0].size
     n = len(used_files)
-
     cols = math.ceil(math.sqrt(n))
     rows = math.ceil(n / cols)
 
@@ -130,11 +126,39 @@ def combine(remove_white: bool = False, smart_bg: bool = False, use_rembg: bool 
         y = (i // cols) * h
         sheet.paste(img, (x, y))
 
-    os.makedirs(OUT_DIR, exist_ok=True)
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_path = os.path.join(OUT_DIR, f"spritesheet_{timestamp}.png")
     sheet.save(out_path)
     print(f"Saved {cols}x{rows} sheet ({cols*w}x{rows*h}px, {n} frames) -> {out_path}")
+    return True
+
+def combine(remove_white: bool = False, smart_bg: bool = False, use_rembg: bool = False):
+    if not os.path.isdir(IN_DIR):
+        print("Input folder not found:", IN_DIR)
+        return
+
+    os.makedirs(OUT_DIR, exist_ok=True)
+    made_any = False
+
+    subdirs = sorted(
+        d for d in os.listdir(IN_DIR)
+        if os.path.isdir(os.path.join(IN_DIR, d))
+    )
+
+    for d in subdirs:
+        src_dir = os.path.join(IN_DIR, d)
+        out_path = os.path.join(OUT_DIR, f"{d}.png")
+        if _make_sheet(src_dir, out_path, remove_white, smart_bg, use_rembg):
+            made_any = True
+
+    if made_any:
+        return
+
+    files = _image_names(IN_DIR)
+    if not files:
+        print("No images found in", IN_DIR)
+        return
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    out_path = os.path.join(OUT_DIR, f"spritesheet_{timestamp}.png")
+    _make_sheet(IN_DIR, out_path, remove_white, smart_bg, use_rembg)
 
 if __name__ == "__main__":
     try:
