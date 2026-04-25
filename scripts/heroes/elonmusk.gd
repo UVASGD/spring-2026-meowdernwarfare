@@ -24,6 +24,8 @@ const FlameScene = preload("res://scenes/heroes/elonmusk/muskrat_flame.tscn")
 
 var _magnet_left := 0.0
 var _ult_seq := 0
+var _shot_seq: int = 0
+var _spread_rng := RandomNumberGenerator.new()
 
 @onready var _magnet_ring: Node2D = $MagnetRing
 
@@ -62,14 +64,18 @@ func can_shoot() -> bool:
 	return super.can_shoot()
 
 func _do_shoot(aim_dir: Vector2, _aim_pos: Vector2) -> void:
+	_shot_seq += 1
+	var pid = player.player_id if player else 0
+	# Deterministic seed: every peer computes the same spread for this shot.
+	_spread_rng.seed = (pid * 1_000_003) ^ _shot_seq
+	var spread := deg_to_rad(_spread_rng.randf_range(-flame_spread_deg, flame_spread_deg))
 	var b = FlameScene.instantiate()
 	b.owner_player = player
 	b.damage = flame_damage
 	b.speed = flame_speed
 	b.life = flame_life
-	var spread := deg_to_rad(randf_range(-flame_spread_deg, flame_spread_deg))
 	b.dir = aim_dir.rotated(spread).normalized()
-	b.global_position = player.global_position + aim_dir * 34.0
+	b.global_position = $Marker2D.global_position + aim_dir * 10.0
 	b.rotation = b.dir.angle()
 	get_tree().current_scene.add_child(b)
 

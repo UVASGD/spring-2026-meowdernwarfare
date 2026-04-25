@@ -1,31 +1,214 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=30 format=3 uid="uid://bfeft5kes0auv"]
 
-[ext_resource type="Script" path="res://scenes/heroes/elonmusk/cybertruck_ult.gd" id="1"]
+[ext_resource type="Script" uid="uid://djrqyvj6ekpsk" path="res://scenes/heroes/elonmusk/cybertruck_ult.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://c45b05unhdcx5" path="res://assets/sprites/elonmusk/CT_Side_move.png" id="2_brcio"]
+[ext_resource type="Texture2D" uid="uid://bouan0q5gd5tw" path="res://assets/sprites/elonmusk/CT_explode_top.png" id="3_7r6bi"]
+[ext_resource type="Texture2D" uid="uid://cy8e8fbion0nw" path="res://assets/sprites/elonmusk/CT_top_move.png" id="4_fgk6e"]
 
-[sub_resource type="Gradient" id="1"]
-colors = PackedColorArray(0.5, 0.65, 1, 0.8, 0.2, 0.28, 0.4, 0.2, 0.2, 0.2, 0.2, 0)
+[sub_resource type="AtlasTexture" id="AtlasTexture_t3xu2"]
+atlas = ExtResource("2_brcio")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vcva0"]
+atlas = ExtResource("2_brcio")
+region = Rect2(500, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ngucu"]
+atlas = ExtResource("2_brcio")
+region = Rect2(1000, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4cjxm"]
+atlas = ExtResource("2_brcio")
+region = Rect2(0, 500, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1x3bg"]
+atlas = ExtResource("2_brcio")
+region = Rect2(500, 500, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cbmmj"]
+atlas = ExtResource("2_brcio")
+region = Rect2(1000, 500, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_di32x"]
+atlas = ExtResource("3_7r6bi")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q6ugs"]
+atlas = ExtResource("3_7r6bi")
+region = Rect2(500, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0voa0"]
+atlas = ExtResource("3_7r6bi")
+region = Rect2(1500, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_i4eus"]
+atlas = ExtResource("3_7r6bi")
+region = Rect2(0, 500, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dhvx3"]
+atlas = ExtResource("3_7r6bi")
+region = Rect2(500, 500, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mr7fq"]
+atlas = ExtResource("3_7r6bi")
+region = Rect2(1000, 500, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eft3t"]
+atlas = ExtResource("3_7r6bi")
+region = Rect2(1500, 500, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k5p4q"]
+atlas = ExtResource("3_7r6bi")
+region = Rect2(0, 1000, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mbm1m"]
+atlas = ExtResource("3_7r6bi")
+region = Rect2(1000, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_15fgb"]
+atlas = ExtResource("3_7r6bi")
+region = Rect2(1000, 1000, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n2ly8"]
+atlas = ExtResource("3_7r6bi")
+region = Rect2(500, 1000, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_p6wx2"]
+atlas = ExtResource("3_7r6bi")
+region = Rect2(1500, 1000, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gkm5l"]
+atlas = ExtResource("4_fgk6e")
+region = Rect2(0, 0, 500, 500)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3fjlc"]
+atlas = ExtResource("4_fgk6e")
+region = Rect2(500, 0, 500, 500)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_h0jjf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t3xu2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vcva0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ngucu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4cjxm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1x3bg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cbmmj")
+}],
+"loop": true,
+"name": &"side_move",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_di32x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q6ugs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0voa0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_i4eus")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dhvx3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mr7fq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eft3t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k5p4q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mbm1m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_15fgb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n2ly8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_p6wx2")
+}],
+"loop": false,
+"name": &"top_explode",
+"speed": 11.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gkm5l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3fjlc")
+}],
+"loop": true,
+"name": &"top_move",
+"speed": 5.0
+}]
+
+[sub_resource type="Gradient" id="Gradient_e8ram"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_brcio"]
+gradient = SubResource("Gradient_e8ram")
+fill = 1
+fill_from = Vector2(0.545872, 0.472477)
+fill_to = Vector2(0.811927, 0.0917431)
+
+[sub_resource type="Gradient" id="Gradient_brcio"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_7r6bi"]
+gradient = SubResource("Gradient_brcio")
+fill = 1
+fill_from = Vector2(0.545872, 0.472477)
+fill_to = Vector2(0.811927, 0.0917431)
 
 [node name="CybertruckUlt" type="Node2D"]
 script = ExtResource("1")
+zone_radius = 700.0
 
 [node name="Zone" type="Line2D" parent="."]
-default_color = Color(0.45, 0.7, 1, 0.28)
-width = 8.0
 closed = true
+width = 8.0
+default_color = Color(0.45, 0.7, 1, 0.28)
 
 [node name="Truck" type="Node2D" parent="."]
 
-[node name="Body" type="ColorRect" parent="Truck"]
-offset_left = -28.0
-offset_top = -12.0
-offset_right = 28.0
-offset_bottom = 12.0
-color = Color(0.58, 0.62, 0.78, 0.95)
+[node name="Body" type="AnimatedSprite2D" parent="Truck"]
+light_mask = 2
+scale = Vector2(0.5, 0.5)
+sprite_frames = SubResource("SpriteFrames_h0jjf")
+animation = &"top_move"
 
 [node name="Glow" type="PointLight2D" parent="Truck"]
-texture_scale = 1.8
-energy = 1.0
 color = Color(0.6, 0.85, 1, 1)
+range_item_cull_mask = 3
+texture = SubResource("GradientTexture2D_brcio")
+texture_scale = 3.0
+
+[node name="PointLight2D" type="PointLight2D" parent="Truck"]
+scale = Vector2(2, 3)
+blend_mode = 1
+texture = SubResource("GradientTexture2D_7r6bi")
+height = 137.0
 
 [node name="Boom" type="ColorRect" parent="."]
 visible = false

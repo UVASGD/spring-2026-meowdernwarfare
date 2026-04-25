@@ -4,23 +4,17 @@ extends Hero
 const BulletScene = preload("res://scenes/heroes/dealer/bullet.tscn")
 const UltSfx = preload("res://assets/sound/music/anderdingus.mp3")
 
-@export var ult_cooldown: float = 10.0
 @export var ult_strike_count: int = 26
 @export var ult_spread_pad: float = 380.0
 
-var _ult_cd := 0.0
 var _orbital_seq := 0
 
-func _process(delta: float) -> void:
-	super._process(delta)
-	if _ult_cd > 0.0:
-		_ult_cd = maxf(0.0, _ult_cd - delta)
-	_update_ult_ui_points()
-
 func _ready() -> void:
+	ult_mode = UltMode.COOLDOWN
+	if ult_cooldown <= 0.0:
+		ult_cooldown = 10.0
 	super._ready()
 	ammo = mag_size
-	_update_ult_ui_points()
 
 func get_hero_name() -> String:
 	return "AnderDingus"
@@ -34,9 +28,6 @@ func can_ability2() -> bool:
 func can_shoot() -> bool:
 	return shoot_cd <= 0.0 and not is_dead and not _is_action_blocked()
 
-func can_ult() -> bool:
-	return _ult_cd <= 0.0 and not is_dead and not _is_fie_suppressed() and not _is_action_blocked()
-
 func uses_gun_ammo() -> bool:
 	return false
 
@@ -49,22 +40,6 @@ func shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	_capture_skill_anim()
 	shot.emit()
 	_do_shoot(aim_dir, aim_pos)
-
-func ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
-	if not can_ult() or is_dead:
-		return
-	_ult_cd = ult_cooldown
-	ult_anim_timer = ult_anim_duration
-	_begin_skill("ult")
-	_play_action_anim("ult")
-	_capture_skill_anim()
-	used_ult.emit()
-	_do_ult(aim_dir, aim_pos)
-
-func get_ult_percent() -> float:
-	if ult_cooldown <= 0.0:
-		return 1.0
-	return 1.0 - (_ult_cd / ult_cooldown)
 
 func _do_shoot(aim_dir: Vector2, _aim_pos: Vector2) -> void:
 	var bullet = BulletScene.instantiate()
@@ -80,13 +55,15 @@ func _do_ult(_aim_dir: Vector2, _aim_pos: Vector2) -> void:
 		return
 	if not gm.is_local() and player.player_id != gm.local_player_id:
 		return
-	_play_ult_sfx()
-	var area := _get_map_area()
-	for i in range(ult_strike_count):
-		var x := randf_range(area.position.x, area.end.x)
-		var y := randf_range(area.position.y, area.end.y)
-		_orbital_seq += 1
-		gm.cast_dingus_orbital(player.player_id, Vector2(x, y), "%s:%s" % [player.player_id, _orbital_seq])
+	_orbital_seq += 1
+	if gm.mode == GameManager.Mode.ONLINE_CLIENT:
+		Network.send_to_host({
+			"type": "dingus_ult_req",
+			"pid": player.player_id,
+			"seq": _orbital_seq
+		})
+		return
+	gm._roll_and_cast_dingus_ult(player, _orbital_seq)
 
 func _play_ult_sfx() -> void:
 	if UltSfx == null:
@@ -120,8 +97,3 @@ func _get_map_area() -> Rect2:
 	min_v -= Vector2.ONE * ult_spread_pad
 	max_v += Vector2.ONE * ult_spread_pad
 	return Rect2(min_v, max_v - min_v)
-
-func _update_ult_ui_points() -> void:
-	var pct := get_ult_percent()
-	ult_points = int(roundf(float(max_ult_points) * pct))
-	ult_changed.emit(ult_points, max_ult_points)

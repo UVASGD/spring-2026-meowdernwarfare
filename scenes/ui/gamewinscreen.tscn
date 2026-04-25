@@ -1,0 +1,247 @@
+[gd_scene load_steps=12 format=3 uid="uid://b4uu35bnhwpnc"]
+
+[ext_resource type="Script" uid="uid://dwyt1a8syvhnk" path="res://winscreen.gd" id="1_3q7u7"]
+[ext_resource type="FontFile" uid="uid://dt2nbaox60w53" path="res://assets/ui/fonts/BATTLESANSSERIF.OTF" id="2_jrvp5"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_yx11f"]
+size = Vector2(1920, 1080)
+
+[sub_resource type="LabelSettings" id="LabelSettings_5p6sp"]
+font = ExtResource("2_jrvp5")
+font_size = 32
+font_color = Color(1, 0.807843, 0.415686, 1)
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_2uumx"]
+font = ExtResource("2_jrvp5")
+font_size = 128
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_h4rjs"]
+font = ExtResource("2_jrvp5")
+font_size = 64
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="Animation" id="Animation_bdkd6"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("portraitBG:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("portraitshadow:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(651, 363)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("portrait:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(594, 332)]
+}
+
+[sub_resource type="Animation" id="Animation_q7cle"]
+resource_name = "default"
+length = 5.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("portraitBG:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("portraitshadow:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.5, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(651, 1085), Vector2(651, 363)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("portrait:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.5, 1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(594, 1082), Vector2(594, 332)]
+}
+tracks/3/type = "method"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath(".")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"show_leaderboard"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_kw33k"]
+_data = {
+&"RESET": SubResource("Animation_bdkd6"),
+&"default": SubResource("Animation_q7cle")
+}
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_nr72h"]
+size = Vector2(500, 500)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_t3tkm"]
+size = Vector2(500, 500)
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_3q7u7")
+
+[node name="blackBG" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="fallbackBG" type="ColorRect" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="portraitBG" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(960, 540)
+texture = SubResource("PlaceholderTexture2D_yx11f")
+
+[node name="Winner" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -900.0
+offset_top = 58.0
+offset_right = 900.0
+offset_bottom = 99.0
+grow_horizontal = 2
+text = "Winner"
+label_settings = SubResource("LabelSettings_5p6sp")
+horizontal_alignment = 1
+
+[node name="winnerusername" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -950.0
+offset_top = 128.0
+offset_right = 950.0
+offset_bottom = 250.0
+grow_horizontal = 2
+text = "testname"
+label_settings = SubResource("LabelSettings_2uumx")
+horizontal_alignment = 1
+
+[node name="winnerheroname" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -950.0
+offset_top = 264.0
+offset_right = 950.0
+offset_bottom = 386.0
+grow_horizontal = 2
+text = "heroname"
+label_settings = SubResource("LabelSettings_h4rjs")
+horizontal_alignment = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_kw33k")
+}
+
+[node name="portraitshadow" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -309.0
+offset_top = -717.0
+offset_right = 191.0
+offset_bottom = -217.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(1.5, 1.5)
+texture = SubResource("PlaceholderTexture2D_nr72h")
+
+[node name="portrait" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -366.0
+offset_top = -748.0
+offset_right = 134.0
+offset_bottom = -248.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(1.5, 1.5)
+texture = SubResource("PlaceholderTexture2D_t3tkm")

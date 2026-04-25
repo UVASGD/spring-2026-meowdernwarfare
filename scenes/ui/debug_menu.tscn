@@ -1,0 +1,78 @@
+[gd_scene load_steps=2 format=3 uid="uid://ccvpkha10pflu"]
+
+[ext_resource type="Script" uid="uid://85v2q1ppwipl" path="res://scripts/ui/debug_menu.gd" id="1"]
+
+[node name="DebugMenu" type="CanvasLayer"]
+layer = 90
+script = ExtResource("1")
+
+[node name="Panel" type="PanelContainer" parent="."]
+offset_left = 10.0
+offset_top = 200.0
+offset_right = 250.0
+offset_bottom = 640.0
+
+[node name="VBox" type="VBoxContainer" parent="Panel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+text = "Debug (TAB)"
+horizontal_alignment = 1
+
+[node name="SepA" type="HSeparator" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="KillBtn" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+text = "Kill Player"
+
+[node name="ClearFarmBtn" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+text = "Clear Farm"
+
+[node name="ChargeUltBtn" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+text = "Charge Ult"
+
+[node name="ResetCdBtn" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+text = "Reset Cooldowns"
+
+[node name="ClearAllBtn" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+text = "Clear All Farms"
+
+[node name="SuddenDeathBtn" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+text = "Trigger Sudden Death"
+
+[node name="SepB" type="HSeparator" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="CropLabel" type="Label" parent="Panel/VBox"]
+layout_mode = 2
+text = "Add Crop to World"
+
+[node name="CropPicker" type="OptionButton" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="StageRow" type="HBoxContainer" parent="Panel/VBox"]
+layout_mode = 2
+
+[node name="StageLabel" type="Label" parent="Panel/VBox/StageRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Stage:"
+
+[node name="CropStageSpin" type="SpinBox" parent="Panel/VBox/StageRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+min_value = 1.0
+max_value = 3.0
+value = 1.0
+
+[node name="SpawnCropBtn" type="Button" parent="Panel/VBox"]
+layout_mode = 2
+text = "Spawn Crop"

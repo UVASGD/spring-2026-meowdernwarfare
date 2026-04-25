@@ -1,29 +1,40 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3 uid="uid://cc61kmml3x68n"]
 
-[ext_resource type="Script" path="res://scenes/heroes/elonmusk/muskrat_flame.gd" id="1"]
+[ext_resource type="Script" uid="uid://dkof0isyf4scs" path="res://scenes/heroes/elonmusk/muskrat_flame.gd" id="1"]
+[ext_resource type="Texture2D" uid="uid://dbee68f23une5" path="res://assets/sprites/elonmusk/musk_projectile.png" id="2_33t64"]
 
 [sub_resource type="CircleShape2D" id="1"]
-radius = 6.0
+radius = 8.0
 
-[sub_resource type="Gradient" id="2"]
-colors = PackedColorArray(1, 0.45, 0.05, 0.95, 1, 0.85, 0.25, 0.6, 0.2, 0.2, 0.2, 0)
+[sub_resource type="Gradient" id="Gradient_e8ram"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
 
-[sub_resource type="GradientTexture2D" id="3"]
-gradient = SubResource("2")
-width = 96
-height = 96
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_71ar2"]
+gradient = SubResource("Gradient_e8ram")
 fill = 1
-fill_from = Vector2(0.5, 0.5)
-fill_to = Vector2(1, 0.5)
+fill_from = Vector2(0.545872, 0.472477)
+fill_to = Vector2(0.811927, 0.0917431)
 
 [node name="MuskratFlame" type="Area2D"]
 collision_layer = 4
 collision_mask = 3
 script = ExtResource("1")
+life = 3.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.3, 0.14)
-texture = SubResource("3")
+position = Vector2(-0.0867424, 0.119645)
+rotation = -1.53906
+scale = Vector2(0.5, 0.8)
+texture = ExtResource("2_33t64")
+offset = Vector2(24.6277, 9.9697)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("1")
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(0.5, -1.5)
+scale = Vector2(10.9375, 10.3125)
+color = Color(0.964706, 0.529412, 0, 1)
+texture = SubResource("GradientTexture2D_71ar2")
+texture_scale = 0.1
+height = 137.0

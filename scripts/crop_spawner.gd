@@ -14,6 +14,7 @@ var current_crop: Node = null
 var spawner_id: int = -1
 var is_bringing: bool = false
 var remote_bring_visual_only: bool = false
+var _spawn_seq: int = 0
 
 func _ready() -> void:
 	# Defer so game mode is set before we check host/client
@@ -48,20 +49,19 @@ func bring() -> void:
 	if remote_bring_visual_only:
 		remote_bring_visual_only = false
 		return
+	_spawn_seq += 1
 	var idx = randi() % crop_scenes.size()
-	var scene = crop_scenes[idx]
-	var crop = scene.instantiate() as Crop
-	crop.stage = stage
-	crop._setup()
-	spawn_point.add_child(crop)
-	crop.position = Vector2.ZERO
-	crop.z_index = 1
+	var cid := "sp:%d:%d" % [spawner_id, _spawn_seq]
+	var crop := _build_crop(idx, stage, cid)
+	if crop == null:
+		return
 	current_crop = crop
-	crop.picked_up.connect(func(): current_crop = null)
 	
 	var gm = GameManager.instance
-	if gm and not gm.is_local() and gm.is_host():
-		gm.send_crop_spawned(spawner_id, idx, stage)
+	if gm:
+		gm.register_world_crop(crop)
+		if not gm.is_local() and gm.is_host():
+			gm.send_crop_spawned(spawner_id, idx, stage, cid)
 	return
 
 func play_bring_remote() -> void:
@@ -76,22 +76,37 @@ func play_bring_remote() -> void:
 	if anim:
 		anim.play("bring")
 
-func spawn_crop_remote(crop_idx: int, stg: int) -> void:
+func spawn_crop_remote(crop_idx: int, stg: int, cid: String = "") -> void:
 	is_bringing = false
 	if crop_scenes.is_empty() or crop_idx < 0 or crop_idx >= crop_scenes.size():
 		return
 	if current_crop != null and is_instance_valid(current_crop):
 		return
 	
+	var crop := _build_crop(crop_idx, stg, cid)
+	if crop == null:
+		return
+	current_crop = crop
+	
+	var gm = GameManager.instance
+	if gm:
+		gm.register_world_crop(crop)
+
+func _build_crop(crop_idx: int, stg: int, cid: String) -> Crop:
+	if crop_scenes.is_empty() or crop_idx < 0 or crop_idx >= crop_scenes.size():
+		return null
 	var scene = crop_scenes[crop_idx]
-	var crop = scene.instantiate() as Crop
+	var crop := scene.instantiate() as Crop
+	if crop == null:
+		return null
 	crop.stage = stg
+	crop.crop_id = cid
 	crop._setup()
 	spawn_point.add_child(crop)
 	crop.position = Vector2.ZERO
 	crop.z_index = 1
-	current_crop = crop
 	crop.picked_up.connect(func(): current_crop = null)
+	return crop
 
 func _on_spawn_timer_timeout() -> void:
 	spawn_crop()

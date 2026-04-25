@@ -1,0 +1,345 @@
+[gd_scene load_steps=17 format=3 uid="uid://dtgiuvb35xupj"]
+
+[ext_resource type="Script" uid="uid://cxsj0vfpiut4r" path="res://credits.gd" id="1_y0bee"]
+[ext_resource type="FontFile" uid="uid://dt2nbaox60w53" path="res://assets/ui/fonts/BATTLESANSSERIF.OTF" id="2_gleon"]
+[ext_resource type="Shader" uid="uid://cpng23u3yom2" path="res://assets/shaders/burn_reveal.gdshader" id="3_um21f"]
+[ext_resource type="Texture2D" uid="uid://d3josjylfxki8" path="res://assets/ui/titlescreen/catpitalist_logo_old.png" id="4_5fsmw"]
+[ext_resource type="Shader" uid="uid://bwnlbf6bnmnyk" path="res://assets/shaders/electric_wrap_inner.gdshader" id="5_r2bcm"]
+[ext_resource type="AudioStream" uid="uid://dfmt3c8a62wnx" path="res://assets/sound/music/mwf.mp3" id="6_gleon"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_0h4vu"]
+font = ExtResource("2_gleon")
+font_size = 64
+font_color = Color(0.757588, 0.586943, 0.898716, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_jjkal"]
+font = ExtResource("2_gleon")
+font_size = 32
+font_color = Color(0.777502, 0.855717, 0.966718, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_egc5o"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_rapck"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_r40mi"]
+noise = SubResource("FastNoiseLite_rapck")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pl4t0"]
+shader = ExtResource("3_um21f")
+shader_parameter/progress = 1.0
+shader_parameter/edge_width = 0.027
+shader_parameter/edge_color = Color(0.128745, 0.721348, 0.920507, 1)
+shader_parameter/edge_color_inner = Color(0.975521, 0.841165, 1, 1)
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_r40mi")
+shader_parameter/noise_scale = 0.504
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ala0q"]
+shader = ExtResource("5_r2bcm")
+shader_parameter/edge_color_a = Color(0.164706, 1, 1, 1)
+shader_parameter/edge_color_b = Color(1, 0.215686, 1, 1)
+shader_parameter/inner_color_a = Color(0.176471, 1, 1, 1)
+shader_parameter/inner_color_b = Color(1, 0.270588, 1, 1)
+shader_parameter/edge_px = 0.5
+shader_parameter/edge_strength = 1.987
+shader_parameter/inner_strength = 0.775
+shader_parameter/speed = 0.619
+shader_parameter/edge_noise_scale = 48.0
+shader_parameter/inner_noise_scale = 1.0
+shader_parameter/pulse = 1.0
+shader_parameter/inner_threshold = 0.5
+shader_parameter/alpha_cutoff = 0.01
+
+[sub_resource type="Animation" id="Animation_nbgb8"]
+resource_name = "scroll"
+length = 30.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VBoxContainer:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 25.0333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 1043), Vector2(0, -2293)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VBoxContainer/titilemask/TextureRect:material:shader_parameter/progress")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(24.9667, 27.7333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VBoxContainer/titilemask/TextureRect2:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(26.2, 27.6533),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VBoxContainer/titilemask/TextureRect2:material:shader_parameter/pulse")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(27.5717, 29.8667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+
+[sub_resource type="Animation" id="Animation_j74tg"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VBoxContainer:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 1043)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VBoxContainer/titilemask/TextureRect:material:shader_parameter/progress")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VBoxContainer/titilemask/TextureRect2:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VBoxContainer/titilemask/TextureRect2:material:shader_parameter/pulse")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [1.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_b8fa8"]
+_data = {
+&"RESET": SubResource("Animation_j74tg"),
+&"scroll": SubResource("Animation_nbgb8")
+}
+
+[node name="Credits" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_y0bee")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(800, 0)
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -960.0
+offset_top = 1043.0
+offset_right = 960.0
+offset_bottom = 2945.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="directedby" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+text = "directed by"
+label_settings = SubResource("LabelSettings_0h4vu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="names" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "vincent martinez
+mike villanueva najarro"
+label_settings = SubResource("LabelSettings_jjkal")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="directedby2" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+text = "art"
+label_settings = SubResource("LabelSettings_0h4vu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="name3" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "mike villanueva najarro
+riley rk seewer
+Salma Meraj
+phoebe awan
+Quintin Levy
+rosa lombardo
+Kennedy gordon
+liam mullins
+vincent martinez
+
+"
+label_settings = SubResource("LabelSettings_jjkal")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="directedby3" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+text = "programming"
+label_settings = SubResource("LabelSettings_0h4vu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="name4" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "vincent martinez
+mike villanueva najarro
+
+"
+label_settings = SubResource("LabelSettings_jjkal")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="directedby4" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+text = "music"
+label_settings = SubResource("LabelSettings_0h4vu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="name5" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "vincent martinez
+magnus lie
+
+"
+label_settings = SubResource("LabelSettings_jjkal")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="directedby5" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+text = "sfx"
+label_settings = SubResource("LabelSettings_0h4vu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="name6" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "kennedy gordon
+vincent martinez
+
+"
+label_settings = SubResource("LabelSettings_jjkal")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="directedby6" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+text = "writing"
+label_settings = SubResource("LabelSettings_0h4vu")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="name7" type="Label" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+text = "sydney mclellan"
+label_settings = SubResource("LabelSettings_jjkal")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 400)
+layout_mode = 2
+
+[node name="titilemask" type="ColorRect" parent="VBoxContainer"]
+material = SubResource("ShaderMaterial_egc5o")
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/titilemask"]
+material = SubResource("ShaderMaterial_pl4t0")
+layout_mode = 2
+offset_top = 4.0
+offset_right = 1920.0
+offset_bottom = 364.0
+texture = ExtResource("4_5fsmw")
+
+[node name="TextureRect2" type="TextureRect" parent="VBoxContainer/titilemask"]
+visible = false
+material = SubResource("ShaderMaterial_ala0q")
+layout_mode = 2
+offset_top = 4.0
+offset_right = 1920.0
+offset_bottom = 364.0
+texture = ExtResource("4_5fsmw")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_b8fa8")
+}
+
+[node name="Mwf" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("6_gleon")
+autoplay = true
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+autoplay = true

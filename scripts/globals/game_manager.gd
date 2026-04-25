@@ -9,6 +9,7 @@ enum Mode { LOCAL, ONLINE_HOST, ONLINE_CLIENT }
 @export var mode: Mode = Mode.LOCAL
 
 var players: Array[Player] = []
+var _players_by_id: Dictionary = {}
 var eliminated: Array[Player] = []
 var entity_parent: Node = null
 var sudden_death: bool = false
@@ -21,10 +22,13 @@ signal sudden_death_received
 signal farm_spawns_received(assignments: Array)
 signal ult_used_received(player_id: int)
 
+const AI_HERO := "BurpleBot"
+
 const BurpleGrenadeScene = preload("res://scenes/heroes/burple/grenade.tscn")
 const BurpleStrikeScene = preload("res://scenes/heroes/burple/missile_strike.tscn")
 const MuskratUltScene = preload("res://scenes/heroes/elonmusk/cybertruck_ult.tscn")
 const AnderOrbitalScene = preload("res://scenes/heroes/anderdingus/orbitalstrike.tscn")
+const ChompEffectScene = preload("res://scenes/heroes/loanshark/chomp_effect.tscn")
 
 static var instance: GameManager = null
 
@@ -52,8 +56,6 @@ func start_local_game(player_count: int = 4) -> void:
 	for i in range(player_count):
 		spawn_local_player(i)
 	
-	print("Started local game with ", player_count, " players")
-	print("Controls: P1=WASD, P2=IJKL, P3=Arrows, P4=Numpad")
 
 func spawn_local_player(id: int) -> Player:
 	if player_scene == null:
@@ -70,12 +72,15 @@ func spawn_local_player(id: int) -> Player:
 	var spawn_pos = _get_fallback_position(id)
 	_add_entity(player)
 	player.global_position = spawn_pos
-	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
-	players.append(player)
+	_register_player(player)
 	player.died.connect(func(): _on_player_died(player))
 	stats[id] = {"kills": 0, "deaths": 0}
 	
 	return player
+
+func _register_player(p: Player) -> void:
+	players.append(p)
+	_players_by_id[p.player_id] = p
 
 func spawn_ai_player(id: int, target: Node2D = null) -> Player:
 	if player_scene == null:
@@ -90,12 +95,12 @@ func spawn_ai_player(id: int, target: Node2D = null) -> Player:
 	if target:
 		ai_input.set_target(target)
 	player.input = ai_input
+	player.set_hero(AI_HERO)
 	
 	var spawn_pos = _get_fallback_position(id)
 	_add_entity(player)
 	player.global_position = spawn_pos
-	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
-	players.append(player)
+	_register_player(player)
 	player.died.connect(func(): _on_player_died(player))
 	stats[id] = {"kills": 0, "deaths": 0}
 	
@@ -119,16 +124,15 @@ func respawn_player(player: Player) -> void:
 	player.respawn_at(pos)
 
 func _on_player_died(player: Player) -> void:
+	if not is_host():
+		return
 	_track_death(player)
 	
 	var should_elim = sudden_death or player.crop_count <= 0
-	print("[GAME] _on_player_died: pid=", player.player_id, " crop_count=", player.crop_count, " sudden_death=", sudden_death, " should_elim=", should_elim, " mode=", mode)
 	if should_elim:
 		eliminated.append(player)
-		print("[GAME] Player ", player.player_id, " eliminated (", "sudden death" if sudden_death else "0 crops", ")")
 		player_eliminated.emit(player)
 	else:
-		print("[GAME] Player ", player.player_id, " will respawn in ", RESPAWN_DELAY, "s")
 		get_tree().create_timer(RESPAWN_DELAY).timeout.connect(
 			func(): respawn_player(player)
 		)
@@ -146,6 +150,25 @@ func _track_death(player: Player) -> void:
 		stats[aid]["kills"] += 1
 	
 	player.last_attacker = null
+	_broadcast_stats()
+
+func _broadcast_stats() -> void:
+	if mode != Mode.ONLINE_HOST or not Network.is_online():
+		return
+	var compact := {}
+	for pid in stats:
+		var s = stats[pid]
+		compact[str(pid)] = {"k": int(s.get("kills", 0)), "d": int(s.get("deaths", 0))}
+	Network.broadcast({"type": "stats_sync", "s": compact})
+
+func _handle_stats_sync(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	var compact: Dictionary = data.get("s", {})
+	for key in compact:
+		var pid := int(str(key))
+		var s = compact[key]
+		stats[pid] = {"kills": int(s.get("k", 0)), "deaths": int(s.get("d", 0))}
 
 func get_stats(pid: int) -> Dictionary:
 	return stats.get(pid, {"kills": 0, "deaths": 0})
@@ -167,21 +190,43 @@ func clear_players() -> void:
 		if is_instance_valid(strike):
 			strike.queue_free()
 	players.clear()
+	_players_by_id.clear()
 	eliminated.clear()
 	stats.clear()
 	_remote_targets.clear()
+	pending_corrections.clear()
+	net_inputs.clear()
+	_host_held_crops.clear()
 	_burple_grenades.clear()
 	_burple_strikes.clear()
 	_muskrat_ults.clear()
 	_ander_orbitals.clear()
 	_xf_mark_counts.clear()
+	_spawners.clear()
+	_world_crops.clear()
+	sync_timer = 0.0
+	pos_report_timer = 0.0
 	sudden_death = false
 	game_over = false
 
+## Farms rarely change so we cache them per-frame to avoid repeated O(N) group scans
+## in hot paths like Player._update_tooltip. Callers must treat the returned array as read-only.
+var _cached_farms: Array = []
+var _cached_farms_frame: int = -1
+
+func get_farms() -> Array:
+	var f := Engine.get_process_frames()
+	if _cached_farms_frame != f:
+		_cached_farms_frame = f
+		_cached_farms = get_tree().get_nodes_in_group("farms")
+	return _cached_farms
+
 func get_player(id: int) -> Player:
-	for p in players:
-		if p.player_id == id:
-			return p
+	var p: Player = _players_by_id.get(id)
+	if p != null and is_instance_valid(p):
+		return p
+	if _players_by_id.has(id):
+		_players_by_id.erase(id)
 	return null
 
 func get_alive_players() -> Array[Player]:
@@ -199,9 +244,13 @@ var game_settings: Dictionary = {}
 var _signals_connected: bool = false
 
 # State sync
-const SYNC_INTERVAL: float = 0.1  # Sync 10 times per second
-const POSITION_SNAP_THRESHOLD: float = 200.0  # Teleport if too far off
-const POSITION_LERP_SPEED: float = 15.0  # Smooth correction speed
+const SYNC_INTERVAL: float = 0.05  # Sync 20 times per second (bumped from 10 Hz for tighter positional convergence).
+const POSITION_SNAP_THRESHOLD: float = 200.0  # Teleport remote players if too far off.
+const POSITION_LERP_SPEED: float = 22.0  # Smooth remote correction speed.
+# Local-player rubber-band against host state (clients only).
+const LOCAL_POS_IGNORE: float = 4.0      # ignore tiny drift to avoid jitter fighting local input
+const LOCAL_POS_LERP_FRAC: float = 0.5   # fraction of drift erased per state_sync tick
+const LOCAL_POS_SNAP: float = 160.0      # hard snap above this error (cheat/lag catch-up)
 var sync_timer: float = 0.0
 var pending_corrections: Dictionary = {}  # player_id -> {pos, rot, health, etc}
 var _remote_targets: Dictionary = {}  # pid -> { pos, rot, vel } for smooth interpolation
@@ -232,8 +281,7 @@ func _process(delta: float) -> void:
 	
 	if mode == Mode.ONLINE_CLIENT:
 		_apply_corrections(delta)
-	
-	_interpolate_remotes(delta)
+		_interpolate_remotes(delta)
 	
 	pos_report_timer += delta
 	if pos_report_timer >= POS_REPORT_INTERVAL:
@@ -243,6 +291,10 @@ func _process(delta: float) -> void:
 func _send_local_state() -> void:
 	var player = get_local_player()
 	if player == null or not is_instance_valid(player):
+		return
+	# Don't stream state while dead/respawning/spectating; otherwise we tell the host we're still
+	# holding a crop we dropped on death. Mirrors NetworkInput._player_uncontrollable().
+	if player.is_dead() or player.is_awaiting_respawn or player.in_spectate_mode:
 		return
 	
 	var state = {
@@ -273,7 +325,6 @@ func _setup_network_signals() -> void:
 
 func _on_became_host() -> void:
 	mode = Mode.ONLINE_HOST
-	print("GameManager: became host via migration")
 
 func start_online_game(players_info: Array, settings: Dictionary) -> void:
 	_setup_network_signals()
@@ -294,12 +345,12 @@ func start_online_game(players_info: Array, settings: Dictionary) -> void:
 		var is_local_player = (pid == local_player_id)
 		_spawn_net_player(pid, is_local_player)
 	
-	print("Game started with ", players_info.size(), " players")
 
 func _on_player_left(player_id: int) -> void:
 	var player = get_player(player_id)
 	if player:
 		players.erase(player)
+		_players_by_id.erase(player_id)
 		player.queue_free()
 	for uid in _muskrat_ults.keys():
 		var ult = _muskrat_ults.get(uid)
@@ -340,9 +391,15 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 	
 	elif msg_type == "crop_pickup":
 		_handle_crop_pickup(from_id, data)
+
+	elif msg_type == "crop_pickup_reject":
+		_handle_crop_pickup_reject(data)
 	
 	elif msg_type == "game_over":
 		_handle_game_over(data)
+	
+	elif msg_type == "stats_sync":
+		_handle_stats_sync(data)
 	
 	elif msg_type == "sudden_death":
 		_handle_sudden_death()
@@ -431,6 +488,12 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 	elif msg_type == "dingus_orbital_spawn":
 		_handle_dingus_orbital_spawn(data)
 
+	elif msg_type == "dingus_ult_req":
+		_handle_dingus_ult_req(from_id, data)
+
+	elif msg_type == "loan_dash_hit":
+		_handle_loan_dash_hit(data)
+
 func _broadcast_state() -> void:
 	if not Network.is_online():
 		return
@@ -453,7 +516,10 @@ func _broadcast_state() -> void:
 		
 		if p.hero:
 			state["hp"] = p.hero.health
-			state["ult"] = p.hero.ult_points
+			if p.hero.ult_mode == Hero.UltMode.COOLDOWN:
+				state["ucd"] = p.hero.ult_cd
+			else:
+				state["ult"] = p.hero.ult_points
 			state["ammo"] = p.hero.ammo
 			if p.hero.has_method("is_invisible"):
 				state["invis"] = p.hero.is_invisible()
@@ -463,6 +529,10 @@ func _broadcast_state() -> void:
 		state["spec"] = p.in_spectate_mode
 		state["dead"] = p.is_dead()
 		state["await_resp"] = p.is_awaiting_respawn
+		# Per-peer status-effect bits (Loan Shark mark, Gooblin boogie-bomb blind) converge on
+		# the next state_sync even if the originating *_just edge was dropped. See sync_bugs #3.
+		state["mk"] = p.is_marked
+		state["bl"] = p.is_blinded
 		if p.held_crop:
 			state["hc"] = p.held_crop.get_type_id()
 			state["hs"] = p.held_crop.stage
@@ -502,14 +572,8 @@ func _receive_client_state(from_id: int, data: Dictionary) -> void:
 	if player == null or not is_instance_valid(player):
 		return
 	
-	_remote_targets[pid] = {
-		"pos": Vector2(data.get("x", 0), data.get("y", 0)),
-		"rot": data.get("r", player.rotation),
-		"vel": Vector2(data.get("vx", 0), data.get("vy", 0)),
-	}
-	player.is_dashing = data.get("dash", false)
-	# HP is host-authoritative (damage/heal on host). Do not overwrite from client reports.
-	
+	# Host simulates remote players from streamed inputs; we don't trust reported position/velocity.
+	# Only held-crop info piggy-backs on client_state (crop_count is already host-authoritative).
 	var hc = data.get("hc", "")
 	if hc != "":
 		_host_held_crops[pid] = {"t": hc, "s": int(data.get("hs", 1))}
@@ -520,6 +584,10 @@ func _apply_state_sync_hp(player: Player, state: Dictionary) -> void:
 	if player.hero == null:
 		return
 	var hp: float = float(state.get("hp", player.hero.health))
+	# If we're dead locally but host sent a respawned HP, let the death/respawn branch in
+	# _apply_corrections handle the transition instead of stomping hp -> alive with is_dead still set.
+	if player.hero.is_dead and hp > 0.0:
+		return
 	var hp_diff := hp - player.hero.health
 	if abs(hp_diff) <= 1.0:
 		return
@@ -553,11 +621,32 @@ func _apply_corrections(delta: float) -> void:
 			elif not state.get("stun", false) and player.is_stunned:
 				player.is_stunned = false
 				player.stun_timer = 0.0
+
+		# Mark / blind apply symmetrically to local + remote so a dropped *_just edge converges on
+		# the next sync tick (hosts override clients either way).
+		var hs_mk := bool(state.get("mk", false))
+		if hs_mk and not player.is_marked:
+			player.apply_mark_effect(1.0)
+		elif not hs_mk and player.is_marked:
+			player.clear_mark_effect()
+		var hs_bl := bool(state.get("bl", false))
+		if hs_bl and not player.is_blinded:
+			player.apply_blind_effect(1.0)
+		elif not hs_bl and player.is_blinded:
+			player._end_blind_effect()
 		
 		if player.hero:
 			_apply_state_sync_hp(player, state)
 			
-			player.hero.ult_points = int(state.get("ult", player.hero.ult_points))
+			if player.hero.ult_mode == Hero.UltMode.COOLDOWN:
+				if state.has("ucd"):
+					player.hero.ult_cd = float(state["ucd"])
+			else:
+				if state.has("ult"):
+					var new_ult := int(state["ult"])
+					if new_ult != player.hero.ult_points:
+						player.hero.ult_points = new_ult
+						player.hero.ult_changed.emit(player.hero.ult_points, player.hero.max_ult_points)
 			player.hero.ammo = int(state.get("ammo", player.hero.ammo))
 			
 			if player.hero.has_method("is_invisible"):
@@ -588,11 +677,42 @@ func _apply_corrections(delta: float) -> void:
 				elif player.is_awaiting_respawn:
 					player.respawn_at(target_pos)
 		else:
-			if state.get("dead", false) and player.hero and not player.hero.is_dead:
-				print("[SYNC] Local player death catch-up: host says dead, forcing local death. hp=", player.hero.health)
+			# Local player on a client: host owns death + respawn now that _on_player_died is
+			# host-only, so we have to react to the state_sync here.
+			var host_dead: bool = state.get("dead", false)
+			var host_spec: bool = state.get("spec", false)
+			var host_await: bool = state.get("await_resp", false)
+			if host_dead and player.hero and not player.hero.is_dead:
 				player.hero.take_damage(player.hero.health + 1)
+			elif not host_dead and not host_spec and not host_await:
+				if player.is_awaiting_respawn or (player.hero and player.hero.is_dead):
+					player.respawn_at(target_pos)
+				else:
+					# Strict positional accuracy: rubber-band the local player to host state so
+					# FP drift, collision differences, or dropped input edges don't cascade into
+					# crop pickup / hurtbox / killzone desyncs. Pickup arbitration downstream
+					# depends on positions matching within the host's tolerance.
+					_reconcile_local_position(player, target_pos, state)
 	
 	pending_corrections.clear()
+
+func _reconcile_local_position(player: Player, host_pos: Vector2, state: Dictionary) -> void:
+	if player == null or not is_instance_valid(player):
+		return
+	# Skip transient states where host and client intentionally disagree; they reset on next tick.
+	if player.is_dashing or player.is_dying or player.in_spectate_mode or player.is_awaiting_respawn:
+		return
+	if player.hero and player.hero.is_dead:
+		return
+	var diff := host_pos - player.global_position
+	var d := diff.length()
+	if d <= LOCAL_POS_IGNORE:
+		return
+	if d >= LOCAL_POS_SNAP:
+		player.global_position = host_pos
+		player.velocity = Vector2(state.get("vx", player.velocity.x), state.get("vy", player.velocity.y))
+		return
+	player.global_position = player.global_position.lerp(host_pos, LOCAL_POS_LERP_FRAC)
 
 func _interpolate_remotes(delta: float) -> void:
 	for pid in _remote_targets:
@@ -627,8 +747,7 @@ func _spawn_net_player(id: int, local: bool) -> Player:
 	var spawn_pos = _get_fallback_position(id)
 	_add_entity(player)
 	player.global_position = spawn_pos
-	print("  Player ", id, " after add: global=", player.global_position, " (wanted ", spawn_pos, ")")
-	players.append(player)
+	_register_player(player)
 	player.died.connect(func(): _on_player_died(player))
 	stats[id] = {"kills": 0, "deaths": 0}
 	
@@ -662,7 +781,7 @@ func get_player_hero(player_id: int) -> String:
 func broadcast_game_over(winner_id: int) -> void:
 	if mode != Mode.ONLINE_HOST or not Network.is_online():
 		return
-	print("[NET] Host broadcasting game_over, winner_id=", winner_id)
+	_broadcast_stats()
 	Network.broadcast({
 		"type": "game_over",
 		"winner": winner_id
@@ -672,7 +791,6 @@ func _handle_game_over(data: Dictionary) -> void:
 	if mode != Mode.ONLINE_CLIENT:
 		return
 	var winner_id = int(data.get("winner", -1))
-	print("[NET] Received game_over from host, winner_id=", winner_id, " game_over_already=", game_over)
 	game_over_received.emit(winner_id)
 
 func broadcast_sudden_death() -> void:
@@ -971,6 +1089,67 @@ func _make_dingus_orbital_spawn(owner_id: int, pos: Vector2, oid: String) -> Dic
 		"x": pos.x,
 		"y": pos.y
 	}
+
+## Loan Shark dash-hit side effects (chomp visual + mark clear + ability1 cooldown refresh) are
+## host-authoritative. See sync_bugs #4: we route them through a dedicated broadcast so clients
+## only apply them when the host confirmed the hit.
+func broadcast_loan_dash_hit(attacker_id: int, victim_id: int, was_marked: bool) -> void:
+	if not is_host() or not Network.is_online():
+		return
+	Network.broadcast({
+		"type": "loan_dash_hit",
+		"a": attacker_id,
+		"v": victim_id,
+		"m": was_marked
+	})
+
+func _handle_loan_dash_hit(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	var aid := int(data.get("a", -1))
+	var vid := int(data.get("v", -1))
+	var was_marked := bool(data.get("m", false))
+	var attacker := get_player(aid)
+	var victim := get_player(vid)
+	if victim == null or not is_instance_valid(victim):
+		return
+	if was_marked and attacker and is_instance_valid(attacker) and attacker.hero:
+		attacker.hero.refresh_ability1_cooldown()
+		victim.clear_mark_effect()
+	var chomp := ChompEffectScene.instantiate()
+	victim.add_child(chomp)
+	chomp.global_position = victim.global_position
+	chomp.z_index = 5
+
+## Owner client asks the host to roll Dingus's ult strike pattern; only the host should pick the
+## RNG-driven strike coordinates (see sync_bugs #6) so malicious/broken clients can't aim
+## orbitals anywhere on the map.
+func _handle_dingus_ult_req(from_id: int, data: Dictionary) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	var pid := int(data.get("pid", -1))
+	if pid != from_id:
+		return
+	var seq := int(data.get("seq", 0))
+	var owner := get_player(pid)
+	if owner == null or not is_instance_valid(owner) or owner.hero == null:
+		return
+	if not (owner.hero is HeroAnderDingus):
+		return
+	_roll_and_cast_dingus_ult(owner, seq)
+
+func _roll_and_cast_dingus_ult(owner: Player, seq: int) -> void:
+	if owner == null or owner.hero == null or not (owner.hero is HeroAnderDingus):
+		return
+	var h := owner.hero as HeroAnderDingus
+	h._play_ult_sfx()
+	var area: Rect2 = h._get_map_area()
+	var rng := RandomNumberGenerator.new()
+	rng.seed = (owner.player_id * 1_000_003) ^ seq
+	for i in range(h.ult_strike_count):
+		var x := rng.randf_range(area.position.x, area.end.x)
+		var y := rng.randf_range(area.position.y, area.end.y)
+		cast_dingus_orbital(owner.player_id, Vector2(x, y), "%s:%s:%s" % [owner.player_id, seq, i])
 
 func _spawn_dingus_orbital(data: Dictionary, authoritative: bool) -> void:
 	var oid := str(data.get("oid", ""))
@@ -1313,9 +1492,47 @@ const CROP_SCENES := {
 	"SpeedCarrot": preload("res://scenes/crops/speed_carrot.tscn"),
 	"IronRoot": preload("res://scenes/crops/iron_root.tscn"),
 	"BlastBerry": preload("res://scenes/crops/blast_berry.tscn"),
+	"Dragonfruit": preload("res://scenes/crops/dragonfruit.tscn"),
+	"CoffeeBean": preload("res://scenes/crops/coffee_bean.tscn"),
+	"BulletBalloon": preload("res://scenes/crops/bullet_balloon.tscn"),
+	"Heartburst": preload("res://scenes/crops/heartburst.tscn"),
+	"RushRoom": preload("res://scenes/crops/rush_room.tscn"),
+	"Hypnoflower": preload("res://scenes/crops/hypnoflower.tscn"),
+	"Cloudberry": preload("res://scenes/crops/cloudberry.tscn"),
+	"SweetPatchChild": preload("res://scenes/crops/sweet_patch_child.tscn"),
+	"Star": preload("res://scenes/crops/star.tscn"),
 }
 
 var _host_held_crops: Dictionary = {}
+
+## Crops that exist in the world (spawner + dropped) keyed by stable host-authoritative crop_id.
+## Pickup arbitration uses this for exact identity (see sync_bugs #10 + position-desync cascade).
+## Position-based lookup stays as a fallback for any un-id'd crop (legacy or starter).
+var _world_crops: Dictionary = {}
+
+func register_world_crop(crop: Crop) -> void:
+	if crop == null or not is_instance_valid(crop):
+		return
+	if mode == Mode.LOCAL:
+		return
+	var cid := crop.crop_id
+	if cid.is_empty():
+		return
+	_world_crops[cid] = crop
+	crop.tree_exited.connect(func():
+		if _world_crops.get(cid) == crop:
+			_world_crops.erase(cid)
+	)
+
+func _find_world_crop_by_id(cid: String) -> Node:
+	if cid.is_empty():
+		return null
+	var c = _world_crops.get(cid)
+	if c != null and is_instance_valid(c) and c.is_inside_tree():
+		return c
+	if c != null:
+		_world_crops.erase(cid)
+	return null
 
 func make_crop_icon(type_id: String, stg: int) -> Texture2D:
 	var scene = CROP_SCENES.get(type_id)
@@ -1407,14 +1624,15 @@ func send_crop_uproot(victim_id: int, tile_idx: int, crop_type: String, stg: int
 			"cs": stg
 		})
 
-func send_crop_pickup(picker_id: int, pos: Vector2, crop_type: String, stg: int) -> void:
+func send_crop_pickup(picker_id: int, pos: Vector2, crop_type: String, stg: int, cid: String = "") -> void:
 	var msg = {
 		"type": "crop_pickup",
 		"pid": picker_id,
 		"x": pos.x,
 		"y": pos.y,
 		"ct": crop_type,
-		"cs": stg
+		"cs": stg,
+		"cid": cid
 	}
 	if mode == Mode.ONLINE_HOST:
 		_host_held_crops[picker_id] = {"t": crop_type, "s": stg}
@@ -1422,14 +1640,15 @@ func send_crop_pickup(picker_id: int, pos: Vector2, crop_type: String, stg: int)
 	else:
 		Network.send_to_host(msg)
 
-func send_crop_dropped(dropper_id: int, pos: Vector2, crop_type: String, stg: int) -> void:
+func send_crop_dropped(dropper_id: int, pos: Vector2, crop_type: String, stg: int, cid: String = "") -> void:
 	var msg = {
 		"type": "crop_dropped",
 		"pid": dropper_id,
 		"x": pos.x,
 		"y": pos.y,
 		"ct": crop_type,
-		"cs": stg
+		"cs": stg,
+		"cid": cid
 	}
 	if mode == Mode.ONLINE_HOST:
 		_host_held_crops.erase(dropper_id)
@@ -1497,33 +1716,74 @@ func _handle_crop_removed(data: Dictionary) -> void:
 
 func _handle_crop_pickup(from_id: int, data: Dictionary) -> void:
 	var picker_id = int(data.get("pid", from_id))
+	var pos = Vector2(data.get("x", 0), data.get("y", 0))
+	var cid := str(data.get("cid", ""))
+
+	# Host arbitrates first-arrival by stable crop_id (falls back to position for any legacy
+	# id-less crop). If the crop is already gone, reject the loser and force-clear their local
+	# held crop. See sync_bugs #10 + the spawner/pickup desync fix.
 	if mode == Mode.ONLINE_HOST:
+		var world_crop: Node = _find_world_crop_by_id(cid)
+		if world_crop == null:
+			world_crop = _find_world_crop_at(pos)
+		if world_crop == null:
+			if picker_id != local_player_id:
+				Network.send_to_player(picker_id, {
+					"type": "crop_pickup_reject",
+					"cid": cid,
+					"x": pos.x,
+					"y": pos.y
+				})
+			return
+		# Synchronously evict from registry so back-to-back pickup msgs in the same frame can't
+		# both succeed (queue_free is deferred; tree_exited fires later).
+		if cid != "":
+			_world_crops.erase(cid)
+		world_crop.queue_free()
 		_host_held_crops[picker_id] = {"t": data.get("ct", ""), "s": int(data.get("cs", 1))}
 		Network.broadcast(data)
 	if picker_id == local_player_id:
 		return
-	var pos = Vector2(data.get("x", 0), data.get("y", 0))
-	var found := false
-	for sid in _spawners:
-		var spawner = _spawners[sid]
-		if spawner and is_instance_valid(spawner) and spawner.current_crop and is_instance_valid(spawner.current_crop):
-			if spawner.current_crop.global_position.distance_to(pos) < 80.0:
-				spawner.current_crop.queue_free()
-				spawner.current_crop = null
-				found = true
-				break
-	if not found:
-		var parent = entity_parent if entity_parent else self
-		for child in parent.get_children():
-			if child is Crop and not child.is_planted and child.global_position.distance_to(pos) < 80.0:
-				child.queue_free()
-				break
+	# On non-host peers the broadcast arrival is the authoritative pickup: remove the visual crop.
+	if mode != Mode.ONLINE_HOST:
+		var c: Node = _find_world_crop_by_id(cid)
+		if c == null:
+			c = _find_world_crop_at(pos)
+		if c != null:
+			c.queue_free()
 	var picker = get_player(picker_id)
 	if picker and is_instance_valid(picker):
 		var ct = str(data.get("ct", ""))
 		var cs = int(data.get("cs", 1))
 		if ct != "":
 			picker.set_remote_held_crop(ct, cs)
+
+func _find_world_crop_at(pos: Vector2) -> Node:
+	var parent = entity_parent if entity_parent else self
+	for sid in _spawners:
+		var spawner = _spawners[sid]
+		if spawner and is_instance_valid(spawner) and spawner.current_crop and is_instance_valid(spawner.current_crop):
+			var sc = spawner.current_crop
+			# Skip if the crop was already picked up (parent is now a player, not the world layer).
+			if sc.get_parent() != parent:
+				continue
+			if sc.global_position.distance_to(pos) < 80.0:
+				spawner.current_crop = null
+				return sc
+	for child in parent.get_children():
+		if child is Crop and not child.is_planted and child.global_position.distance_to(pos) < 80.0:
+			return child
+	return null
+
+func _handle_crop_pickup_reject(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	var player = get_local_player()
+	if player == null or not is_instance_valid(player):
+		return
+	# Force the loser to drop what they locally picked up; the spawner crop they grabbed wasn't
+	# actually available on the host.
+	player.force_clear_held_crop_local()
 
 func _handle_crop_dropped(from_id: int, data: Dictionary) -> void:
 	var dropper_id = int(data.get("pid", from_id))
@@ -1539,15 +1799,18 @@ func _handle_crop_dropped(from_id: int, data: Dictionary) -> void:
 	var pos = Vector2(data.get("x", 0), data.get("y", 0))
 	var type_id = str(data.get("ct", ""))
 	var stg = int(data.get("cs", 1))
+	var cid := str(data.get("cid", ""))
 	var scene = CROP_SCENES.get(type_id)
 	if scene == null:
 		return
 	var crop = scene.instantiate() as Crop
 	crop.stage = stg
+	crop.crop_id = cid
 	crop._setup()
 	crop.global_position = pos
 	var parent = entity_parent if entity_parent else self
 	parent.add_child(crop)
+	register_world_crop(crop)
 
 # --- CROP SPAWNER SYNC ---
 
@@ -1558,10 +1821,10 @@ func register_spawner(spawner: Node) -> void:
 	spawner.spawner_id = id
 	_spawners[id] = spawner
 
-func send_crop_spawned(sid: int, crop_idx: int, stg: int) -> void:
+func send_crop_spawned(sid: int, crop_idx: int, stg: int, cid: String = "") -> void:
 	if mode != Mode.ONLINE_HOST:
 		return
-	Network.broadcast({"type": "crop_spawned", "sid": sid, "ci": crop_idx, "cs": stg})
+	Network.broadcast({"type": "crop_spawned", "sid": sid, "ci": crop_idx, "cs": stg, "cid": cid})
 
 func send_crop_bring(sid: int) -> void:
 	if mode != Mode.ONLINE_HOST:
@@ -1577,7 +1840,7 @@ func _handle_crop_spawned(data: Dictionary) -> void:
 	var sid = int(data.get("sid", -1))
 	var spawner = _spawners.get(sid)
 	if spawner and is_instance_valid(spawner):
-		spawner.spawn_crop_remote(int(data.get("ci", 0)), int(data.get("cs", 1)))
+		spawner.spawn_crop_remote(int(data.get("ci", 0)), int(data.get("cs", 1)), str(data.get("cid", "")))
 
 func _handle_crop_bring(data: Dictionary) -> void:
 	var sid = int(data.get("sid", -1))

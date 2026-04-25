@@ -14,13 +14,35 @@ const CROP_SCENES := {
 	"SpeedCarrot": preload("res://scenes/crops/speed_carrot.tscn"),
 	"IronRoot": preload("res://scenes/crops/iron_root.tscn"),
 	"BlastBerry": preload("res://scenes/crops/blast_berry.tscn"),
+	"Dragonfruit": preload("res://scenes/crops/dragonfruit.tscn"),
+	"CoffeeBean": preload("res://scenes/crops/coffee_bean.tscn"),
+	"BulletBalloon": preload("res://scenes/crops/bullet_balloon.tscn"),
+	"Heartburst": preload("res://scenes/crops/heartburst.tscn"),
+	"RushRoom": preload("res://scenes/crops/rush_room.tscn"),
+	"Hypnoflower": preload("res://scenes/crops/hypnoflower.tscn"),
+	"Cloudberry": preload("res://scenes/crops/cloudberry.tscn"),
+	"SweetPatchChild": preload("res://scenes/crops/sweet_patch_child.tscn"),
+	"Star": preload("res://scenes/crops/star.tscn"),
 }
+const CROP_POOL := [
+	"Dragonfruit",
+	"CoffeeBean",
+	"BulletBalloon",
+	"Heartburst",
+	"RushRoom",
+	"Hypnoflower",
+	"Cloudberry",
+	"Star",
+]
+const CITY_ONLY_CROP := "SweetPatchChild"
 @export var DEFAULT_MAP: String = "Moon"
 
-const DebugMenu = preload("res://scripts/ui/debug_menu.gd")
+const DebugMenuScene = preload("res://scenes/ui/debug_menu.tscn")
 const Killzone = preload("res://scripts/killzone.gd")
 const UltBannerScene = preload("res://scenes/ui/ultbanner.tscn")
 const PauseMenuScene = preload("res://scenes/ui/pause_menu.tscn")
+const SfxEvent = preload("res://scripts/audio/sfx_event.gd")
+const SfxBus = preload("res://scripts/audio/sfx_bus.gd")
 
 const GAME_DURATION := 300.0
 const SUDDEN_DEATH_DURATION := 120.0
@@ -45,12 +67,13 @@ var _pause_menu: Control = null
 
 func _ready() -> void:
 	GameData.stop_menu_theme()
-	var dbg = DebugMenu.new()
+	var dbg = DebugMenuScene.instantiate()
 	add_child(dbg)
 	
 	var map_name = GameData.pending_settings.get("map", DEFAULT_MAP)
 	var starters = GameData.get_active_starters()
 	_load_map(map_name)
+	_configure_crop_spawners(map_name)
 	_setup_entity_layer()
 	_collect_farms()
 	gm.farm_spawns_received.connect(_on_farm_spawns_received)
@@ -78,6 +101,7 @@ func _ready() -> void:
 	_create_timer_hud()
 	game_timer = 0.0
 	game_active = true
+	SfxBus.play_ui(SfxEvent.UI_MATCH_START)
 	Cursor.enable()
 	Cursor.switch_mode("BATTLE")
 
@@ -188,6 +212,30 @@ func _find_ysort_container(node: Node) -> Node2D:
 
 func _collect_farms() -> void:
 	farms = get_tree().get_nodes_in_group("farms")
+
+func _configure_crop_spawners(map_name: String) -> void:
+	if map_node == null:
+		return
+	var names := CROP_POOL.duplicate()
+	if map_name == "City":
+		names.append(CITY_ONLY_CROP)
+	var list: Array[PackedScene] = []
+	for n in names:
+		var scene = CROP_SCENES.get(n)
+		if scene != null:
+			list.append(scene)
+	for s in _find_crop_spawners(map_node):
+		s.crop_scenes = list.duplicate()
+
+func _find_crop_spawners(root: Node) -> Array:
+	var out: Array = []
+	if root == null:
+		return out
+	if root.has_method("spawn_crop") and root.get("crop_scenes") != null:
+		out.append(root)
+	for c in root.get_children():
+		out.append_array(_find_crop_spawners(c))
+	return out
 
 func _collect_farms_tiles() -> void:
 	#print("[CROP] _collect_farms_tiles (post-frame): re-checking tile counts")
@@ -335,6 +383,7 @@ func _pause_uses_tree_freeze() -> bool:
 
 func _open_pause_menu() -> void:
 	Cursor.switch_mode("MENU")
+	SfxBus.play_ui(SfxEvent.UI_PAUSE_OPEN)
 	if _pause_uses_tree_freeze():
 		get_tree().paused = true
 	else:
@@ -342,6 +391,7 @@ func _open_pause_menu() -> void:
 	_pause_menu.open_menu()
 
 func _close_pause_menu() -> void:
+	SfxBus.play_ui(SfxEvent.UI_PAUSE_CLOSE)
 	GameData.menu_pause_local = false
 	get_tree().paused = false
 	if _pause_menu:
@@ -405,7 +455,7 @@ func _process(delta: float) -> void:
 	game_timer += delta
 	_update_timer_hud()
 	
-	if not gm.sudden_death and game_timer >= GAME_DURATION:
+	if gm.is_host() and not gm.sudden_death and game_timer >= GAME_DURATION:
 		_trigger_sudden_death()
 
 func _trigger_sudden_death() -> void:
@@ -432,19 +482,15 @@ func _spawn_killzone() -> void:
 	parent.add_child(killzone_node)
 
 func _on_player_eliminated(elim_player: Player) -> void:
-	print("[GAME] _on_player_eliminated: pid=", elim_player.player_id, " game_over=", gm.game_over)
 	if gm.game_over:
 		return
 	var alive = gm.get_alive_players()
 	alive.erase(elim_player)
-	print("[GAME] alive after erase: ", alive.size(), " players")
 	if alive.size() <= 1:
 		_end_game(alive[0] if alive.size() == 1 else null)
 
 func _end_game(winner: Player) -> void:
-	print("[GAME] _end_game called. winner=", winner.player_id if winner else "null", " game_over=", gm.game_over)
 	if gm.game_over:
-		print("[GAME] _end_game: already game_over, returning")
 		return
 	gm.game_over = true
 	game_active = false
@@ -456,14 +502,11 @@ func _end_game(winner: Player) -> void:
 	if winner == null:
 		winner = _resolve_tie()
 	
-	print("[GAME] _end_game: broadcasting game_over, showing winner screen for pid=", winner.player_id if winner else -1)
 	gm.broadcast_game_over(winner.player_id if winner else -1)
 	_show_winner_screen(winner)
 
 func _on_game_over_received(winner_id: int) -> void:
-	print("[GAME] _on_game_over_received: winner_id=", winner_id, " game_over=", gm.game_over)
 	if gm.game_over:
-		print("[GAME] _on_game_over_received: already game_over, returning")
 		return
 	gm.game_over = true
 	game_active = false
@@ -473,12 +516,12 @@ func _on_game_over_received(winner_id: int) -> void:
 		killzone_node = null
 	
 	var winner = gm.get_player(winner_id)
-	print("[GAME] _on_game_over_received: showing winner screen for ", winner.player_id if winner else "null")
 	for p in gm.players:
 		p.clear_elimination_ui()
 	_show_winner_screen(winner)
 
 func _resolve_tie() -> Player:
+	# Deterministic so host + clients agree without syncing RNG: (crops desc, kills desc, pid asc).
 	var best: Player = null
 	var best_crops := -1
 	var best_kills := -1
@@ -488,15 +531,13 @@ func _resolve_tie() -> Player:
 		var s = gm.get_stats(p.player_id)
 		var crops = p.crop_count
 		var kills = s["kills"]
-		if crops > best_crops or (crops == best_crops and kills > best_kills):
+		if best == null \
+		or crops > best_crops \
+		or (crops == best_crops and kills > best_kills) \
+		or (crops == best_crops and kills == best_kills and p.player_id < best.player_id):
 			best = p
 			best_crops = crops
 			best_kills = kills
-		elif crops == best_crops and kills == best_kills:
-			if randi() % 2 == 0:
-				best = p
-				best_crops = crops
-				best_kills = kills
 	return best
 
 # ---------- Timer HUD ----------
@@ -549,45 +590,29 @@ func _update_timer_hud() -> void:
 # ---------- Winner Screen ----------
 
 func _show_winner_screen(winner: Player) -> void:
-	print("[GAME] _show_winner_screen: winner=", winner.player_id if winner else "null")
-	var layer = CanvasLayer.new()
-	layer.layer = 95
-	add_child(layer)
-	
-	var bg = ColorRect.new()
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color(0, 0, 0, 0.75)
-	bg.mouse_filter = Control.MOUSE_FILTER_STOP
-	layer.add_child(bg)
-	
-	var vbox = VBoxContainer.new()
-	vbox.set_anchors_preset(Control.PRESET_CENTER)
-	vbox.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	vbox.grow_vertical = Control.GROW_DIRECTION_BOTH
-	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	vbox.add_theme_constant_override("separation", 20)
-	bg.add_child(vbox)
-	
-	var crown = Label.new()
-	crown.text = "GAME WINNER"
-	crown.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	crown.add_theme_font_size_override("font_size", 28)
-	crown.add_theme_color_override("font_color", Color(1, 0.85, 0.3))
-	vbox.add_child(crown)
-	
-	var name_label = Label.new()
-	var winner_name = "Nobody"
-	if winner:
+	var winner_name := "Nobody"
+	var hero_name := "Hero"
+	var hero_color := Color.WHITE
+	var hero_portrait: Texture2D = null
+	var hero_bg: Texture2D = null
+	if winner == null:
+		pass
+	else:
 		winner_name = gm.get_player_username(winner.player_id)
-	name_label.text = winner_name
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.add_theme_font_size_override("font_size", 48)
-	name_label.add_theme_color_override("font_color", Color.WHITE)
-	vbox.add_child(name_label)
-	
-	await get_tree().create_timer(5.0).timeout
-	layer.queue_free()
-	_show_game_over_screen()
+		if winner.hero:
+			hero_name = winner.hero.get_hero_name()
+			hero_color = winner.hero.portrait_outline_color
+			hero_portrait = winner.hero.get_hero_default_profile()
+			hero_bg = winner.hero.tv_and_win_bg
+	GameData.set_end_screen_data({
+		"winner_name": winner_name,
+		"hero_name": hero_name,
+		"hero_color": hero_color,
+		"hero_portrait": hero_portrait,
+		"portrait_bg": hero_bg,
+		"leaderboard": _get_sorted_players()
+	})
+	GameData.change_scene("res://scenes/ui/gamewinscreen.tscn")
 
 # ---------- Game Over Screen ----------
 

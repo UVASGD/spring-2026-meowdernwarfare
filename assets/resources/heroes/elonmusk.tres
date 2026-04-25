@@ -1,12 +1,14 @@
-[gd_resource type="Resource" script_class="HeroInfo" load_steps=2 format=3 uid="uid://bssvfmihxql8u"]
+[gd_resource type="Resource" script_class="HeroInfo" load_steps=3 format=3 uid="uid://bssvfmihxql8u"]
 
+[ext_resource type="Texture2D" uid="uid://gxrb3fmyw46u" path="res://assets/sprites/elonmusk/musk_portrait_normal.png" id="1_i6viw"]
 [ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="1_tfks1"]
 
 [resource]
 script = ExtResource("1_tfks1")
 id = "Elon. Musk."
 desc = "def"
-portrait_outline_color = Color(1, 1, 1, 1)
+portrait = ExtResource("1_i6viw")
+portrait_outline_color = Color(0.411765, 0.654902, 0.796078, 1)
 shoot_name = "Flamethrower"
 shoot_desc = "def"
 ability1_name = "Crop Magnet"

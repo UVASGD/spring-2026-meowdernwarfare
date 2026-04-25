@@ -3,6 +3,7 @@ extends Crop
 const DMG := { 1: 15.0, 2: 25.0, 3: 40.0 }
 const RADIUS := { 1: 80.0, 2: 110.0, 3: 140.0 }
 const EXPLOSION_VISUAL_SCENE := preload("res://scenes/explosion_visual.tscn")
+@export var explosion_sfx_db_offset: float = -8.0
 
 func get_type_id() -> String: return "BlastBerry"
 
@@ -28,6 +29,7 @@ func _explode(player) -> void:
 			p.take_damage(dmg, player)
 
 	var fx = EXPLOSION_VISUAL_SCENE.instantiate()
+	fx.sfx_db_offset = explosion_sfx_db_offset
 	player.get_parent().add_child(fx)
 	fx.global_position = pos
 	fx.scale = Vector2.ONE * (rad / 250.0)

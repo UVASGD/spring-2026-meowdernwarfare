@@ -4,17 +4,34 @@ const CROP_SCENES := {
 	"SpeedCarrot": preload("res://scenes/crops/speed_carrot.tscn"),
 	"IronRoot": preload("res://scenes/crops/iron_root.tscn"),
 	"BlastBerry": preload("res://scenes/crops/blast_berry.tscn"),
+	"Dragonfruit": preload("res://scenes/crops/dragonfruit.tscn"),
+	"CoffeeBean": preload("res://scenes/crops/coffee_bean.tscn"),
+	"BulletBalloon": preload("res://scenes/crops/bullet_balloon.tscn"),
+	"Heartburst": preload("res://scenes/crops/heartburst.tscn"),
+	"RushRoom": preload("res://scenes/crops/rush_room.tscn"),
+	"Hypnoflower": preload("res://scenes/crops/hypnoflower.tscn"),
+	"Cloudberry": preload("res://scenes/crops/cloudberry.tscn"),
+	"SweetPatchChild": preload("res://scenes/crops/sweet_patch_child.tscn"),
+	"Star": preload("res://scenes/crops/star.tscn"),
 }
 
-var panel: PanelContainer
-var vbox: VBoxContainer
-var crop_stage_spin: SpinBox
-var crop_picker: OptionButton
+@onready var panel: PanelContainer = $Panel
+@onready var crop_picker: OptionButton = $Panel/VBox/CropPicker
+@onready var crop_stage_spin: SpinBox = $Panel/VBox/StageRow/CropStageSpin
 var visible_flag := false
 
 func _ready() -> void:
 	layer = 90
-	_build_ui()
+	$Panel/VBox/KillBtn.pressed.connect(_on_kill)
+	$Panel/VBox/ClearFarmBtn.pressed.connect(_on_clear_farm)
+	$Panel/VBox/ChargeUltBtn.pressed.connect(_on_charge_ult)
+	$Panel/VBox/ResetCdBtn.pressed.connect(_on_reset_cooldowns)
+	$Panel/VBox/ClearAllBtn.pressed.connect(_on_clear_all_farms)
+	$Panel/VBox/SuddenDeathBtn.pressed.connect(_on_sudden_death)
+	$Panel/VBox/SpawnCropBtn.pressed.connect(_on_spawn_crop)
+	crop_picker.clear()
+	for crop_name in CROP_SCENES.keys():
+		crop_picker.add_item(crop_name)
 	panel.visible = false
 
 func _input(event: InputEvent) -> void:
@@ -33,81 +50,6 @@ func _get_local_player() -> Player:
 		if p is Player and p.input is LocalInput:
 			return p
 	return null
-
-func _build_ui() -> void:
-	panel = PanelContainer.new()
-	panel.set_anchors_preset(Control.PRESET_CENTER_LEFT)
-	panel.position = Vector2(10, 200)
-	panel.custom_minimum_size = Vector2(240, 0)
-
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.1, 0.1, 0.1, 0.85)
-	style.corner_radius_top_left = 6
-	style.corner_radius_top_right = 6
-	style.corner_radius_bottom_left = 6
-	style.corner_radius_bottom_right = 6
-	style.content_margin_left = 10
-	style.content_margin_right = 10
-	style.content_margin_top = 10
-	style.content_margin_bottom = 10
-	panel.add_theme_stylebox_override("panel", style)
-
-	vbox = VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 6)
-	panel.add_child(vbox)
-
-	var title = Label.new()
-	title.text = "Debug (TAB)"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_color_override("font_color", Color(1, 0.8, 0.3))
-	vbox.add_child(title)
-
-	_add_separator()
-	_add_button("Kill Player", _on_kill)
-	_add_button("Clear Farm", _on_clear_farm)
-	_add_button("Charge Ult", _on_charge_ult)
-	_add_button("Reset Cooldowns", _on_reset_cooldowns)
-	_add_button("clear All Farms", _on_clear_all_farms)
-	_add_button("Trigger Sudden Death", _on_sudden_death)
-
-	_add_separator()
-	var crop_label = Label.new()
-	crop_label.text = "Add Crop to World"
-	crop_label.add_theme_color_override("font_color", Color(0.7, 0.9, 0.7))
-	vbox.add_child(crop_label)
-
-	crop_picker = OptionButton.new()
-	for crop_name in CROP_SCENES.keys():
-		crop_picker.add_item(crop_name)
-	vbox.add_child(crop_picker)
-
-	var stage_row = HBoxContainer.new()
-	var stage_label = Label.new()
-	stage_label.text = "Stage:"
-	stage_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	stage_row.add_child(stage_label)
-	crop_stage_spin = SpinBox.new()
-	crop_stage_spin.min_value = 1
-	crop_stage_spin.max_value = 3
-	crop_stage_spin.value = 1
-	crop_stage_spin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	stage_row.add_child(crop_stage_spin)
-	vbox.add_child(stage_row)
-
-	_add_button("Spawn Crop", _on_spawn_crop)
-
-	add_child(panel)
-
-func _add_button(text: String, callback: Callable) -> void:
-	var btn = Button.new()
-	btn.text = text
-	btn.pressed.connect(callback)
-	vbox.add_child(btn)
-
-func _add_separator() -> void:
-	var sep = HSeparator.new()
-	sep.add_theme_constant_override("separation", 4)
-	vbox.add_child(sep)
 
 func _on_kill() -> void:
 	var p = _get_local_player()

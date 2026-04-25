@@ -23,6 +23,10 @@ var _buff_callable: Callable
 var is_planted: bool = false
 var owner_farm = null  # Farm ref when planted
 
+# Stable ID used by host arbitration for pickup/drop. Empty for planted/starter crops that
+# never need cross-peer identity (they're keyed by farm + tile_idx instead).
+var crop_id: String = ""
+
 @export var bob_amplitude: float = 4.0
 @export var bob_speed: float = 3.0
 var _bob_time: float = 0.0
@@ -87,6 +91,9 @@ func _apply_stat(player, value: float) -> void:
 		"shoot_cooldown":
 			if player.hero:
 				player.hero.shoot_cooldown += value
+		"shoot_cd_pct", "ability1_cd_pct", "ult_req_pct", "mag_pct", "heal_on_hit", "rush_pts_per_300", "rush_px_per_point", "hypno_dps", "hypno_radius", "acid_resist", "star_slow_pct", "star_radius":
+			if player.has_method("mod_crop_stat"):
+				player.mod_crop_stat(buff_stat, value)
 
 # Subclasses override for signal-based buffs
 func _make_buff_callable(_player) -> Callable:

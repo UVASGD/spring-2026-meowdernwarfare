@@ -67,17 +67,11 @@ func _process(delta: float) -> void:
 	_update_bg_parallax(delta)
 
 func _update_bg_parallax(delta: float) -> void:
-	var vp := get_viewport().get_visible_rect().size
-	if vp.x <= 0.0 or vp.y <= 0.0:
+	var norm := MenuParallax.mouse_norm(get_viewport())
+	if norm == Vector2.INF:
 		return
-	var m := get_viewport().get_mouse_position()
-	var nx := (m.x / vp.x) * 2.0 - 1.0
-	var ny := (m.y / vp.y) * 2.0 - 1.0
-	var tp := Vector2(nx * parallax_purple.x, -ny * parallax_purple.y)
-	var tb := Vector2(nx * parallax_blue.x, -ny * parallax_blue.y)
-	var k := 1.0 - exp(-delta * parallax_smooth)
-	_purple_off = _purple_off.lerp(tp, k)
-	_blue_off = _blue_off.lerp(tb, k)
+	_purple_off = MenuParallax.step(_purple_off, norm, parallax_purple, delta, parallax_smooth)
+	_blue_off = MenuParallax.step(_blue_off, norm, parallax_blue, delta, parallax_smooth)
 	bg_purple.position = _purple_base + _purple_off
 	bg_blue.position = _blue_base + _blue_off
 

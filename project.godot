@@ -21,11 +21,7 @@ Network="*res://scripts/globals/network.gd"
 GameData="*res://scripts/globals/game_data.gd"
 TestConfig="*res://scripts/globals/test_config.gd"
 Cursor="*res://scenes/ui/cursor.tscn"
-
-[debug]
-
-gdscript/warnings/unused_variable=0
-gdscript/warnings/unused_parameter=0
+Sfx="*res://scenes/globals/sfx.tscn"
 
 [display]
 

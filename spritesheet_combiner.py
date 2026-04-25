@@ -168,6 +168,8 @@ if __name__ == "__main__":
                         help="remove only edge-connected background (keeps white details)")
         ap.add_argument("-r", "--rembg", action="store_true",
                         help="AI background removal (pip install rembg)")
+        ap.add_argument("-o", "--output", default=None,
+                        help="output name or path (default: timestamped name in spritesheetcombiner_out)")
         args = ap.parse_args()
         if args.rembg:
             try:
@@ -176,7 +178,7 @@ if __name__ == "__main__":
                 print("rembg is not installed.")
                 print("Install with: python -m pip install rembg")
                 sys.exit(1)
-        combine(remove_white=args.t, smart_bg=args.smart_bg, use_rembg=args.rembg)
+        combine(remove_white=args.t, smart_bg=args.smart_bg, use_rembg=args.rembg, output=args.output)
     except Exception:
         print("Spritesheet combine failed:")
         traceback.print_exc()

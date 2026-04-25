@@ -4,6 +4,8 @@ signal pressed()
 
 const IDLE_MOD := Color(1, 1, 1, 1.0)
 const HOVER_MOD := Color(0.55, 0.55, 0.55, 1.0)
+const SfxEvent = preload("res://scripts/audio/sfx_event.gd")
+const SfxBus = preload("res://scripts/audio/sfx_bus.gd")
 
 @export var toggleable := false
 @export var start_disabled := false
@@ -29,6 +31,7 @@ func _on_area_2d_mouse_entered() -> void:
 	if is_disabled:
 		return
 	hovered = true
+	SfxBus.play_ui(SfxEvent.UI_HOVER)
 	if toggleable and is_on:
 		return
 	_apply_hover()
@@ -56,6 +59,7 @@ func _confirm() -> void:
 		_show_on_state()
 	else:
 		_show_off_state()
+	SfxBus.play_ui(SfxEvent.UI_CLICK)
 	pressed.emit()
 
 func enable() -> void:

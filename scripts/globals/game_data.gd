@@ -12,6 +12,7 @@ var pending_players: Array = []
 var pending_settings: Dictionary = {}
 var is_online_game: bool = false
 var menu_pause_local: bool = false
+var end_screen_data: Dictionary = {}
 
 # Starter crop selection (persisted)
 var starter_crops: Array[String] = []
@@ -20,14 +21,6 @@ var pending_starter_crops: Array[String] = []
 var train_last_hero: String = ""
 const SECRET_USERNAME := "DINGUS"
 const SECRET_HERO := "AnderDingus"
-const TRAIN_HERO_ALIAS := {
-	"Anime Girl": "AnimeGirl",
-	"Xyler and Fergus": "XylerFergus",
-	"Elon. Musk.": "ElonMusk",
-	"Alien": "AnimeGirl",
-	"Xyler": "XylerFergus",
-	"Fergus": "XylerFergus",
-}
 
 # Scene transition tracking
 var is_first_load: bool = true
@@ -183,6 +176,15 @@ func clear() -> void:
 	is_online_game = false
 	menu_pause_local = false
 	game_mode = GameMode.NONE
+	end_screen_data.clear()
+
+func set_end_screen_data(data: Dictionary) -> void:
+	end_screen_data = data.duplicate(true)
+
+func consume_end_screen_data() -> Dictionary:
+	var data := end_screen_data.duplicate(true)
+	end_screen_data.clear()
+	return data
 
 func _load_starter_crops() -> void:
 	var config = ConfigFile.new()
@@ -216,7 +218,7 @@ func train_hero_for_game() -> String:
 	return resolve_hero_for_username(get_local_username(), hero)
 
 func _norm_train_hero(hero_id: String) -> String:
-	return TRAIN_HERO_ALIAS.get(hero_id, hero_id)
+	return HeroRegistry.canonical(hero_id)
 
 func resolve_hero_for_username(username: String, hero_id: String) -> String:
 	if is_secret_username(username):

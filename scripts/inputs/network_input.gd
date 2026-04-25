@@ -26,19 +26,33 @@ func set_player_node(node: Node2D) -> void:
 	if local_source:
 		local_source.set_player_node(node)
 
+const SEND_INTERVAL: float = 1.0 / 30.0
+var _send_timer: float = 0.0
+var _last_sent: Dictionary = {}
+
 func update(delta: float) -> void:
 	clear_just_pressed()
 	
 	if is_local:
 		local_source.update(delta)
 		_copy_from(local_source)
-		if GameData.menu_pause_local:
+		if GameData.menu_pause_local or _player_uncontrollable():
 			_strip_for_menu_pause()
-		_send_to_network()
+		_send_timer += delta
+		_maybe_send()
 		local_source.end_frame()
 	else:
 		# Apply buffered input from network
 		_apply_buffered_input()
+
+## True while the local player can't act (dead / awaiting respawn / spectating / dying).
+## The host will still simulate the body from streamed inputs, so we must stop streaming
+## them in those states or the host "sees" a dead player walking around.
+func _player_uncontrollable() -> bool:
+	if player_node == null or not (player_node is Player):
+		return false
+	var p: Player = player_node
+	return p.is_awaiting_respawn or p.is_dying or p.in_spectate_mode or p.is_dead()
 
 func _strip_for_menu_pause() -> void:
 	move_input = Vector2.ZERO
@@ -85,15 +99,19 @@ func _copy_from(src: InputProvider) -> void:
 	drop = src.drop
 	drop_just = src.drop_just
 
-func _send_to_network() -> void:
+func _maybe_send() -> void:
 	if not Network.is_online():
 		return
-	
-	Network.broadcast({
+	var has_edge := dash_just or shoot_just or reload_just \
+		or ability1_just or ability2_just or ult_just or drop_just
+	var due := _send_timer >= SEND_INTERVAL
+	if not has_edge and not due:
+		return
+	var payload := {
 		"type": "input",
 		"pid": player_id,
-		"m": [move_input.x, move_input.y],
-		"a": [aim_input.x, aim_input.y],
+		"m": [snappedf(move_input.x, 0.01), snappedf(move_input.y, 0.01)],
+		"a": [snappedf(aim_input.x, 0.01), snappedf(aim_input.y, 0.01)],
 		"sp": sprint,
 		"d": dash_just,
 		"sh": shoot,
@@ -103,7 +121,21 @@ func _send_to_network() -> void:
 		"a2": ability2_just,
 		"ul": ult_just,
 		"dr": drop_just
-	})
+	}
+	# Skip if nothing meaningful changed and we're not due.
+	if not has_edge and _same_continuous(payload):
+		return
+	_send_timer = 0.0
+	_last_sent = payload.duplicate()
+	Network.broadcast(payload)
+
+func _same_continuous(p: Dictionary) -> bool:
+	if _last_sent.is_empty():
+		return false
+	return p["m"] == _last_sent.get("m") \
+		and p["a"] == _last_sent.get("a") \
+		and p["sp"] == _last_sent.get("sp") \
+		and p["sh"] == _last_sent.get("sh")
 
 func receive_input(data: Dictionary) -> void:
 	input_buffer.append(data)
