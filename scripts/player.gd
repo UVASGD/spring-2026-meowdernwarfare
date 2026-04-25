@@ -47,6 +47,7 @@ var mark_indicator: CanvasItem = null
 const MarkProjectileHitFxScene = preload("res://scenes/heroes/loanshark/mark_projectile_hit_fx.tscn")
 const BurpleTargetScene = preload("res://scenes/heroes/burple/grenade_target.tscn")
 const _ULT_BANNER_PORTRAIT_SHADER = preload("res://assets/shaders/electric_wrap.gdshader")
+const _UI_FONT = preload("res://assets/ui/fonts/BATTLESANSSERIF.OTF")
 const SfxEvent = preload("res://scripts/audio/sfx_event.gd")
 const SfxBus = preload("res://scripts/audio/sfx_bus.gd")
 
@@ -74,7 +75,13 @@ var _last_ammo_text: String = ""
 var _last_ult_text: String = ""
 var _last_ult_pct_text: String = ""
 var _last_ult_full: int = -1
+var _last_a1_hint_text: String = ""
+var _last_a2_hint_text: String = ""
+var _last_a2_count_text: String = ""
 var _ui_bound_hero: Hero = null
+var _a1_hint_label: Label = null
+var _a2_hint_label: Label = null
+var _a2_count_label: Label = null
 
 @onready var reload_bar = $HealthBar/ReloadBar
 @onready var reload_bar_animation = $HealthBar/ReloadBar/AnimationPlayer
@@ -226,6 +233,7 @@ func _ready() -> void:
 	
 	# Enable camera/UI only for local human players
 	_setup_local_ui()
+	_setup_ability_icon_text_ui()
 	_setup_crop_area()
 	_setup_nametag()
 	_rush_prev_pos = global_position
@@ -323,8 +331,8 @@ func _refresh_ability2_charge_ui_visibility() -> void:
 	var a2_parent := ability2_cd_bar.get_parent()
 	if a2_parent == null:
 		return
-	if hero is HeroLoanShark:
-		a2_parent.visible = hero.ability2_cooldown > 0
+	if hero and hero.use_ability2_charge_row_ui():
+		a2_parent.visible = hero.has_hero_ability2()
 		ability2_cd_bar.visible = false
 		if loan_shark_charge_row:
 			loan_shark_charge_row.visible = true
@@ -375,6 +383,7 @@ func _setup_local_ui() -> void:
 		if hero:
 			_bind_hero_ui_signals(hero)
 			_refresh_hero_ui()
+		_update_ability_icon_text_ui()
 
 func _should_show_local_ui() -> bool:
 	if input is LocalInput:
@@ -465,6 +474,88 @@ func _refresh_hero_ui() -> void:
 	_refresh_movement_dash_ui_visibility()
 	_refresh_ability2_charge_ui_visibility()
 	_refresh_gun_ui_visibility()
+	_update_ability_icon_text_ui()
+
+func _setup_ability_icon_text_ui() -> void:
+	if cooldown_ui == null:
+		return
+	_a1_hint_label = cooldown_ui.get_node_or_null("Ability1Hint")
+	if _a1_hint_label == null:
+		_a1_hint_label = Label.new()
+		_a1_hint_label.name = "Ability1Hint"
+		_a1_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_a1_hint_label.add_theme_font_size_override("font_size", 16)
+		cooldown_ui.add_child(_a1_hint_label)
+	_a2_hint_label = cooldown_ui.get_node_or_null("Ability2Hint")
+	if _a2_hint_label == null:
+		_a2_hint_label = Label.new()
+		_a2_hint_label.name = "Ability2Hint"
+		_a2_hint_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_a2_hint_label.add_theme_font_size_override("font_size", 16)
+		cooldown_ui.add_child(_a2_hint_label)
+	_a2_count_label = cooldown_ui.get_node_or_null("Ability2Count")
+	if _a2_count_label == null:
+		_a2_count_label = Label.new()
+		_a2_count_label.name = "Ability2Count"
+		_a2_count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_a2_count_label.add_theme_font_size_override("font_size", 18)
+		cooldown_ui.add_child(_a2_count_label)
+	for label in [_a1_hint_label, _a2_hint_label, _a2_count_label]:
+		if label == null:
+			continue
+		label.add_theme_font_override("font", _UI_FONT)
+		label.add_theme_color_override("font_color", Color.WHITE)
+		label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+		label.add_theme_constant_override("outline_size", 6)
+	_update_ability_icon_text_ui()
+
+func _update_ability_icon_text_ui() -> void:
+	if cooldown_ui == null or not cooldown_ui.visible:
+		return
+	if _a1_hint_label == null or _a2_hint_label == null or _a2_count_label == null:
+		return
+	if ability_1_mask:
+		var sz1 := ability_1_mask.size * ability_1_mask.scale
+		_a1_hint_label.position = ability_1_mask.position + Vector2(0, sz1.y + 2)
+		_a1_hint_label.size = Vector2(sz1.x, 22)
+	if ability_2_mask:
+		var sz2 := ability_2_mask.size * ability_2_mask.scale
+		_a2_hint_label.position = ability_2_mask.position + Vector2(0, sz2.y + 2)
+		_a2_hint_label.size = Vector2(sz2.x, 22)
+		_a2_count_label.position = ability_2_mask.position + Vector2(0, -22)
+		_a2_count_label.size = Vector2(sz2.x, 22)
+	var a1_hint := _ability_key_hint("ability1")
+	var a2_hint := _ability_key_hint("ability2")
+	if a1_hint != _last_a1_hint_text:
+		_a1_hint_label.text = a1_hint
+		_last_a1_hint_text = a1_hint
+	if a2_hint != _last_a2_hint_text:
+		_a2_hint_label.text = a2_hint
+		_last_a2_hint_text = a2_hint
+	_a1_hint_label.visible = ability_1_mask != null and ability_1_mask.visible and not a1_hint.is_empty()
+	_a2_hint_label.visible = ability_2_mask != null and ability_2_mask.visible and not a2_hint.is_empty()
+	var count_text := ""
+	if hero and hero.get_ability2_charge_count() >= 0:
+		count_text = "x%d" % hero.get_ability2_charge_count()
+	if count_text != _last_a2_count_text:
+		_a2_count_label.text = count_text
+		_last_a2_count_text = count_text
+	_a2_count_label.visible = ability_2_mask != null and ability_2_mask.visible and not count_text.is_empty()
+
+func _ability_key_hint(action: String) -> String:
+	if player_id < 0 or player_id > 3:
+		return ""
+	if not LocalInput.KB_MAPS.has(player_id):
+		return ""
+	var kb: Dictionary = LocalInput.KB_MAPS[player_id]
+	if not kb.has(action):
+		return ""
+	var key_name := OS.get_keycode_string(int(kb[action])).to_lower()
+	if action == "ability1" and input is LocalInput:
+		var li := input as LocalInput
+		if li.use_mouse and player_id == 0:
+			return (key_name + "/rmb").to_lower()
+	return key_name
 
 func _set_ability_mask_tex(mask: TextureRect, tex: Texture2D) -> void:
 	if mask == null:
@@ -479,9 +570,9 @@ func _setup_nametag() -> void:
 	if gm and gm.player_data.has(player_id):
 		nametag.text = gm.get_player_username(player_id)
 	elif is_ai_player:
-		nametag.text = "Bot %d" % player_id
+		nametag.text = "bot %d" % player_id
 	else:
-		nametag.text = "Player %d" % player_id
+		nametag.text = "player %d" % player_id
 
 func _show_enemy_health_bar() -> bool:
 	return not _is_local_player() and not in_spectate_mode and not is_awaiting_respawn and not is_dying and not is_dead()
@@ -879,19 +970,18 @@ func _update_cooldown_ui() -> void:
 	
 	
 	if ability2_cd_bar:
-		if hero is HeroLoanShark:
-			var ls := hero as HeroLoanShark
-			ability2_cd_bar.get_parent().visible = hero.ability2_cooldown > 0
+		if hero.use_ability2_charge_row_ui():
+			ability2_cd_bar.get_parent().visible = hero.has_hero_ability2()
 			ability2_cd_bar.visible = false
 			if loan_shark_charge_row:
 				loan_shark_charge_row.visible = true
 			if ability2_charge_bar_1:
-				ability2_charge_bar_1.value = clamp(ls.get_ability2_charge_slot_recharge_progress(0), 0.0, 1.0)
+				ability2_charge_bar_1.value = clamp(hero.get_ability2_charge_row_progress(0), 0.0, 1.0)
 			if ability2_charge_bar_2:
-				ability2_charge_bar_2.value = clamp(ls.get_ability2_charge_slot_recharge_progress(1), 0.0, 1.0)
+				ability2_charge_bar_2.value = clamp(hero.get_ability2_charge_row_progress(1), 0.0, 1.0)
 		elif hero.ability2_cooldown > 0:
 			ability2_cd_bar.visible = true
-			var a2_pct = 1.0 - (hero.ability2_cd / hero.ability2_cooldown)
+			var a2_pct = hero.get_ability2_ui_progress()
 			ability2_cd_bar.value = clamp(a2_pct, 0.0, 1.0)
 			ability2_cd_bar.get_parent().visible = true
 			if loan_shark_charge_row:
@@ -902,13 +992,9 @@ func _update_cooldown_ui() -> void:
 				loan_shark_charge_row.visible = false
 	
 	if ability_2_bar and ability_2_bar.visible:
-		if hero is HeroLoanShark:
-			var ls2 := hero as HeroLoanShark
-			ability_2_bar.value = float(ls2.ability2_charges) / 2.0
-			ability_2_bar.modulate.a = 0.35 if ls2.ability2_charges <= 0 else 1.0
-		elif hero and hero.ability2_cooldown > 0:
-			var a2_pct2 = 1.0 - (hero.ability2_cd / hero.ability2_cooldown)
-			ability_2_bar.modulate.a = 0.35 if a2_pct2 < 1.0 else 1.0
+		var a2_pct2 = hero.get_ability2_ui_progress()
+		ability_2_bar.value = clamp(a2_pct2, 0.0, 1.0)
+		ability_2_bar.modulate.a = 1.0 if hero.can_ability2() else 0.35
 	
 	if reload_cd_bar and hero.uses_gun_ammo():
 		var reload_pct = 1.0 - (hero.reload_cd / hero.reload_time) if hero.reload_time > 0 else 1.0
@@ -951,12 +1037,13 @@ func _update_cooldown_ui() -> void:
 	if ult_label:
 		var ult_text: String
 		if hero.ult_mode == Hero.UltMode.COOLDOWN:
-			ult_text = "READY" if hero.ult_cd <= 0.0 else "%.1fs" % hero.ult_cd
+			ult_text = "ready" if hero.ult_cd <= 0.0 else "%.1fs" % hero.ult_cd
 		else:
 			ult_text = "%d/%d" % [hero.ult_points, hero.max_ult_points]
 		if ult_text != _last_ult_text:
 			ult_label.text = ult_text
 			_last_ult_text = ult_text
+	_update_ability_icon_text_ui()
 
 # --- TOOLTIP ---
 
@@ -1043,6 +1130,8 @@ func _on_crop_area_entered(area: Area2D) -> void:
 
 func _handle_crops(_delta: float) -> bool:
 	if input == null:
+		return false
+	if hero and hero.blocks_crop_actions():
 		return false
 	var consumed_shoot := false
 
@@ -1579,7 +1668,7 @@ func _update_death_countdown(delta: float) -> void:
 	respawn_countdown -= delta
 	if _death_timer_label:
 		var secs = ceili(max(respawn_countdown, 0.0))
-		_death_timer_label.text = "Respawning in %ds" % secs
+		_death_timer_label.text = "respawning in %ds" % secs
 
 func _show_death_timer_ui() -> void:
 	_death_ui = CanvasLayer.new()
@@ -1587,7 +1676,7 @@ func _show_death_timer_ui() -> void:
 	add_child(_death_ui)
 	
 	_death_timer_label = Label.new()
-	_death_timer_label.text = "Respawning in 10s"
+	_death_timer_label.text = "respawning in 10s"
 	_death_timer_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_death_timer_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_death_timer_label.set_anchors_preset(Control.PRESET_CENTER)
@@ -1729,14 +1818,14 @@ func _show_elimination_ui() -> void:
 	bg.add_child(center)
 	
 	var title = Label.new()
-	title.text = "ELIMINATED"
+	title.text = "eliminated"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 40)
 	title.add_theme_color_override("font_color", Color(1, 0.3, 0.3))
 	center.add_child(title)
 	
 	var spectate_btn = Button.new()
-	spectate_btn.text = "Spectate"
+	spectate_btn.text = "spectate"
 	spectate_btn.custom_minimum_size = Vector2(160, 48)
 	spectate_btn.pressed.connect(_on_spectate_pressed)
 	center.add_child(spectate_btn)

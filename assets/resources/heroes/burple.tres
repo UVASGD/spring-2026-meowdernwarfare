@@ -6,14 +6,17 @@
 [resource]
 script = ExtResource("1_script")
 id = "Burple"
-desc = "def"
+desc = "Originally an idealistic, humble farmer and aspiring catpitalist, Burple has since become a soldier determined to make it through the warfare plaguing the city. His paranoia has driven him to become an arms collector, though it is uncertain how he obtained some of his weaponry…"
 portrait = ExtResource("1_22vfk")
 portrait_outline_color = Color(0.705749, 0.260121, 1, 1)
-shoot_name = "Shoot"
-shoot_desc = "Fires a standard bullet."
-ability1_name = ""
-ability1_desc = ""
+shoot_name = " Burp-Blaster"
+shoot_desc = " Burp-Blaster is Burple’s main weapon, allowing him to shoot enemies from a fair distance. Its purple sheen matches its wielder’s eye-catching fur.
+"
+ability1_name = "Burp-Bombs"
+ability1_desc = "Burp-Bombs are Burple’s homemade grenades that can be tossed over (or through) walls and explode on contact with enemy players or the ground. He developed this technology during his days as a farmer to sabotage other businesses… but don’t tell anybody else that, OK?
+"
 ability2_name = ""
 ability2_desc = ""
-ult_name = "Ultimate"
-ult_desc = "Powerful ultimate ability. (Coming soon)"
+ult_name = "Moonfruit Strike"
+ult_desc = "Burple calls in a Moonfruit Strike from his allies in space for his ultimate, decimating the area he targets in a fiery explosion. 
+"

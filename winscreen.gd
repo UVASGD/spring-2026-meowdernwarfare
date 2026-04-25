@@ -84,8 +84,8 @@ func _process(delta: float) -> void:
 func _apply_data() -> void:
 	var d: Dictionary = GameData.consume_end_screen_data()
 	if not d.is_empty():
-		winner_name = str(d.get("winner_name", winner_name))
-		winnerheroname.text = str(d.get("hero_name", winnerheroname.text))
+		winner_name = GameData.ui_lower(d.get("winner_name", winner_name))
+		winnerheroname.text = GameData.ui_lower(d.get("hero_name", winnerheroname.text))
 		var dc = d.get("hero_color", hero_color)
 		if dc is Color:
 			hero_color = dc
@@ -102,12 +102,12 @@ func _apply_data() -> void:
 	var c := hero_color
 	if h != null:
 		hero_portrait = h.get_hero_default_profile()
-		winnerheroname.text = h.get_hero_name()
+		winnerheroname.text = GameData.ui_lower(h.get_hero_name())
 		c = h.portrait_outline_color
 		if portrait_bg == null:
 			portrait_bg = h.tv_and_win_bg
 	if not winner_name.is_empty():
-		winnerusername.text = winner_name
+		winnerusername.text = GameData.ui_lower(winner_name)
 	if hero_portrait != null:
 		portrait.texture = hero_portrait
 		portraitshadow.texture = hero_portrait
@@ -197,7 +197,7 @@ func _show_leaderboard_overlay() -> void:
 	center.add_theme_constant_override("separation", 16)
 	bg.add_child(center)
 	var title = Label.new()
-	title.text = "GAME OVER"
+	title.text = "game over"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 40)
 	title.add_theme_color_override("font_color", Color.WHITE)
@@ -208,12 +208,12 @@ func _show_leaderboard_overlay() -> void:
 	btn_row.add_theme_constant_override("separation", 24)
 	center.add_child(btn_row)
 	var lobby_btn = Button.new()
-	lobby_btn.text = "Return to Lobby"
+	lobby_btn.text = "return to lobby"
 	lobby_btn.custom_minimum_size = Vector2(180, 48)
 	lobby_btn.pressed.connect(_on_return_to_lobby)
 	btn_row.add_child(lobby_btn)
 	var quit_btn = Button.new()
-	quit_btn.text = "Quit to Menu"
+	quit_btn.text = "quit to menu"
 	quit_btn.custom_minimum_size = Vector2(180, 48)
 	quit_btn.pressed.connect(_on_quit_to_menu)
 	btn_row.add_child(quit_btn)
@@ -225,7 +225,7 @@ func _build_leaderboard() -> PanelContainer:
 	panel.add_child(vbox)
 	var header = HBoxContainer.new()
 	header.add_theme_constant_override("separation", 16)
-	for col in ["#", "Player", "Crops", "Kills", "Deaths"]:
+	for col in ["#", "player", "crops", "kills", "deaths"]:
 		var lbl = Label.new()
 		lbl.text = col
 		lbl.add_theme_font_size_override("font_size", 18)
@@ -247,7 +247,7 @@ func _build_leaderboard() -> PanelContainer:
 		rank_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		row.add_child(rank_l)
 		var name_l = Label.new()
-		name_l.text = str(p.get("name", "Player"))
+		name_l.text = GameData.ui_lower(p.get("name", "player"))
 		name_l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		name_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		var alive := bool(p.get("alive", true))

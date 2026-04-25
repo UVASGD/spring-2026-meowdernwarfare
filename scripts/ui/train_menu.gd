@@ -62,7 +62,7 @@ func _populate_hero_grid() -> void:
 		var btn = Button.new()
 		btn.custom_minimum_size = Vector2(120, 140)
 		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.text = info.id
+		btn.text = GameData.ui_lower(info.id)
 		btn.alignment = HORIZONTAL_ALIGNMENT_CENTER
 		btn.pressed.connect(_on_hero_selected.bind(info))
 
@@ -85,8 +85,8 @@ func _on_hero_selected(info: HeroInfo) -> void:
 		portrait.texture = null
 		portrait.visible = false
 
-	hero_name_label.text = info.id
-	hero_desc.text = info.desc
+	hero_name_label.text = GameData.ui_lower(info.id)
+	hero_desc.text = GameData.ui_lower(info.desc)
 
 	_update_skill_section(shoot_section, info.shoot_name, info.shoot_desc, info.shoot_video)
 	_update_skill_section(ability1_section, info.ability1_name, info.ability1_desc, info.ability1_video)
@@ -99,8 +99,8 @@ func _on_hero_selected(info: HeroInfo) -> void:
 
 func _update_skill_section(section: VBoxContainer, skill_name: String, skill_desc: String, skill_video: VideoStream) -> void:
 	section.visible = true
-	section.get_node("Title").text = skill_name
-	section.get_node("Desc").text = skill_desc
+	section.get_node("Title").text = GameData.ui_lower(skill_name)
+	section.get_node("Desc").text = GameData.ui_lower(skill_desc)
 	_set_skill_video(section, skill_video)
 
 func _set_skill_video(section: VBoxContainer, skill_video: VideoStream) -> void:

@@ -3,7 +3,8 @@
 [ext_resource type="Script" uid="uid://dueqyj6w704wk" path="res://scripts/ui/cursor.gd" id="1_gbfun"]
 [ext_resource type="Texture2D" uid="uid://cmqcjnpk2m1bi" path="res://assets/ui/general/cursor_idle-sheet.png" id="2_afrh5"]
 [ext_resource type="Texture2D" uid="uid://hlwcb02yej0f" path="res://assets/ui/general/cursor_click.png" id="3_ea65e"]
-[ext_resource type="Texture2D" uid="uid://dq04ttuxfkx3x" path="res://assets/sprites/icon.svg" id="4_grenade"]
+[ext_resource type="Texture2D" uid="uid://cbn52h8n4hvb6" path="res://assets/ui/general/crosshair_cursor.png" id="4_ea65e"]
+[ext_resource type="Texture2D" uid="uid://mldkolsa4g8q" path="res://assets/ui/general/placement.png" id="5_qjntj"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_qjntj"]
 atlas = ExtResource("2_afrh5")
@@ -27,45 +28,38 @@ animations = [{
 "speed": 2.0
 }]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_gbfun"]
-atlas = ExtResource("2_afrh5")
-region = Rect2(0, 0, 50, 50)
+[sub_resource type="AtlasTexture" id="AtlasTexture_orbwo"]
+atlas = ExtResource("4_ea65e")
+region = Rect2(0, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_afrh5"]
-atlas = ExtResource("2_afrh5")
-region = Rect2(50, 0, 50, 50)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_ea65e"]
+[sub_resource type="SpriteFrames" id="SpriteFrames_e4c1m"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_gbfun")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_afrh5")
+"texture": SubResource("AtlasTexture_orbwo")
 }],
 "loop": true,
 "name": &"default",
 "speed": 5.0
 }]
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_qjntj"]
-size = Vector2(50, 50)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_grenade"]
-atlas = ExtResource("4_grenade")
-region = Rect2(0, 0, 128, 128)
+[sub_resource type="AtlasTexture" id="AtlasTexture_mk0da"]
+atlas = ExtResource("5_qjntj")
+region = Rect2(0, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_grenade"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_grenade")
+"texture": SubResource("AtlasTexture_mk0da")
 }],
 "loop": true,
 "name": &"default",
 "speed": 1.0
 }]
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_ffo5i"]
+blend_mode = 2
 
 [node name="Node2D" type="CanvasLayer"]
 layer = 100
@@ -91,24 +85,27 @@ offset = Vector2(25, 25)
 [node name="default" type="AnimatedSprite2D" parent="BATTLE"]
 visible = false
 modulate = Color(0.14902, 1, 1, 1)
-sprite_frames = SubResource("SpriteFrames_ea65e")
+sprite_frames = SubResource("SpriteFrames_e4c1m")
 
 [node name="click" type="Sprite2D" parent="BATTLE"]
 visible = false
-texture = SubResource("PlaceholderTexture2D_qjntj")
+position = Vector2(-25, -25)
+texture = ExtResource("4_ea65e")
 offset = Vector2(25, 25)
 
 [node name="GRENADE" type="Node2D" parent="."]
+scale = Vector2(3, 3)
 
 [node name="default" type="AnimatedSprite2D" parent="GRENADE"]
 visible = false
-position = Vector2(25, 25)
 scale = Vector2(0.22, 0.22)
 sprite_frames = SubResource("SpriteFrames_grenade")
 autoplay = "default"
 
 [node name="click" type="Sprite2D" parent="GRENADE"]
 visible = false
+material = SubResource("CanvasItemMaterial_ffo5i")
+position = Vector2(-14, -14)
 scale = Vector2(0.22, 0.22)
-texture = ExtResource("4_grenade")
+texture = ExtResource("5_qjntj")
 offset = Vector2(64, 64)

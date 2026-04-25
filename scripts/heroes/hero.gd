@@ -98,9 +98,9 @@ const A1_ICONS := {
 	"AnderDingus": preload("res://assets/ui/ability_icons_centered/ander_ability_1.png"),
 	"Burple": preload("res://assets/ui/ability_icons_centered/burple_ability_1.png"),
 	"Alien": preload("res://assets/ui/ability_icons_centered/catnip_ability_1.png"),
-	"AnimeGirl": preload("res://assets/ui/ability_icons_centered/catnip_ability_1.png"),
+	"AnimeGirl": preload("res://assets/ui/ability_icons_centered/angel_ability_1.png"),
 	"ElonMusk": preload("res://assets/ui/ability_icons_centered/elon_ability_1.png"),
-	"Garebare": preload("res://assets/ui/ability_icons_centered/garebare_ability_1.png"),
+	"Garebare": preload("res://assets/ui/ability_icons_centered/garebare_ability_2.png"),
 	"Gooblin": preload("res://assets/ui/ability_icons_centered/gooblin_ability_1.png"),
 	"LoanShark": preload("res://assets/ui/ability_icons_centered/loanshark_ability_1.png"),
 	"XylerFergus": preload("res://assets/ui/ability_icons_centered/xyler_ability_1.png"),
@@ -108,7 +108,7 @@ const A1_ICONS := {
 const A2_ICONS := {
 	"AnderDingus": preload("res://assets/ui/ability_icons_centered/ander_ability_2.png"),
 	"ElonMusk": preload("res://assets/ui/ability_icons_centered/elon_ability_2.png"),
-	"Garebare": preload("res://assets/ui/ability_icons_centered/garebare_ability_2.png"),
+	"Garebare": preload("res://assets/ui/ability_icons_centered/garebare_ability_1.png"),
 	"Gooblin": preload("res://assets/ui/ability_icons_centered/gooblin_ability_2.png"),
 	"LoanShark": preload("res://assets/ui/ability_icons_centered/loanshark_ability_2.png"),
 	"XylerFergus": preload("res://assets/ui/ability_icons_centered/xyler_ability_2.png"),
@@ -281,6 +281,10 @@ func allows_movement_dash() -> bool:
 ## If false, hero has no magazine/reload (e.g. pure melee); UI and input skip ammo/reload.
 func uses_gun_ammo() -> bool:
 	return true
+
+## If true, Player skips crop drop/plant/uproot input branches.
+func blocks_crop_actions() -> bool:
+	return false
 
 func shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	if not can_shoot():
@@ -602,6 +606,20 @@ func get_hero_ability1_icon() -> Texture2D:
 
 func has_hero_ability2() -> bool:
 	return ability2_cooldown > 0.0
+
+func get_ability2_ui_progress() -> float:
+	if ability2_cooldown <= 0.0:
+		return 1.0
+	return clamp(1.0 - (ability2_cd / ability2_cooldown), 0.0, 1.0)
+
+func use_ability2_charge_row_ui() -> bool:
+	return false
+
+func get_ability2_charge_row_progress(_slot_index: int) -> float:
+	return get_ability2_ui_progress()
+
+func get_ability2_charge_count() -> int:
+	return -1
 
 func get_hero_ability2_icon() -> Texture2D:
 	if not has_hero_ability2():

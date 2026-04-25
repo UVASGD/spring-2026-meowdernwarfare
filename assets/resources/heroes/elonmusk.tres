@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1_tfks1")
 id = "Elon. Musk."
-desc = "def"
+desc = "Owner of the Ander Dingus power plant. After running a crypto pump-and-dump scheme, his angry victims stormed the power plant, destroying it and causing a terrible economic and environmental crisis."
 portrait = ExtResource("1_i6viw")
 portrait_outline_color = Color(0.411765, 0.654902, 0.796078, 1)
 shoot_name = "Flamethrower"

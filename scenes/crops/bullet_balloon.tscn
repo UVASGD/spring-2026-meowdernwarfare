@@ -1,8 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://7p1xj038vbum"]
+[gd_scene load_steps=8 format=3 uid="uid://7p1xj038vbum"]
 
 [ext_resource type="Script" uid="uid://dy2gmytfc3qpd" path="res://scripts/crops/bullet_balloon.gd" id="1"]
-[ext_resource type="Texture2D" uid="uid://dq04ttuxfkx3x" path="res://assets/sprites/icon.svg" id="2"]
 [ext_resource type="Shader" uid="uid://bwnlbf6bnmnyk" path="res://assets/shaders/electric_wrap_inner.gdshader" id="2_4bmr0"]
+[ext_resource type="Texture2D" uid="uid://ce8g6k2bqyh3j" path="res://assets/sprites/crops/bullet tree planted.png" id="3_4bmr0"]
+[ext_resource type="Texture2D" uid="uid://ckfb4xpqcdjyd" path="res://assets/sprites/crops/bullet tree.png" id="3_8inr0"]
 
 [sub_resource type="CircleShape2D" id="1"]
 radius = 28.0
@@ -47,15 +48,15 @@ shape = SubResource("1")
 
 [node name="Sprite" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_8inr0")
-scale = Vector2(0.4, 0.4)
-texture = ExtResource("2")
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("3_8inr0")
 
 [node name="plantedSprite" type="Sprite2D" parent="."]
 visible = false
 material = SubResource("ShaderMaterial_ssy6j")
 position = Vector2(0, -6)
-scale = Vector2(0.4, 0.4)
-texture = ExtResource("2")
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("3_4bmr0")
 
 [node name="light" type="PointLight2D" parent="."]
 enabled = false

@@ -1,0 +1,444 @@
+[gd_scene load_steps=15 format=3 uid="uid://c4eywty5i78pw"]
+
+[ext_resource type="Texture2D" uid="uid://cpobxot1s66ab" path="res://assets/intro/happyplant.png" id="1_y8kkj"]
+[ext_resource type="FontFile" uid="uid://dt2nbaox60w53" path="res://assets/ui/fonts/BATTLESANSSERIF.OTF" id="2_pdk00"]
+[ext_resource type="Texture2D" uid="uid://gxrb3fmyw46u" path="res://assets/sprites/elonmusk/musk_portrait_normal.png" id="3_5nywq"]
+[ext_resource type="Texture2D" uid="uid://c7l8a1vfn0mxw" path="res://assets/sprites/elonmusk/spritesheet_20260425_153311.png" id="4_4ggp7"]
+[ext_resource type="Texture2D" uid="uid://dyd4lv61mvef" path="res://assets/intro/vincentcoin.png" id="5_cojdu"]
+[ext_resource type="Texture2D" uid="uid://b8tl3pbjlluid" path="res://assets/maps/city/objs/nuclearplant.png" id="6_c5pct"]
+[ext_resource type="Texture2D" uid="uid://53up8fscesuc" path="res://assets/intro/angrymob.png" id="7_cf4vg"]
+[ext_resource type="Script" uid="uid://dx5f3v7yndurv" path="res://scripts/ui/intro.gd" id="8_intro_script"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_7kwa0"]
+line_spacing = 16.0
+font = ExtResource("2_pdk00")
+font_size = 64
+outline_size = 16
+outline_color = Color(0, 0, 0, 1)
+
+[sub_resource type="LabelSettings" id="LabelSettings_43qpa"]
+font = ExtResource("2_pdk00")
+font_size = 48
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_2ytyx"]
+
+[sub_resource type="Animation" id="Animation_ro5pg"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("slide1:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("slide2:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("slide3:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("slide3/Angrymob:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(1429, 629)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("slide3/Nuclearplant:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("slide3/Happyplant:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("slide4:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_15rfs"]
+resource_name = "intro"
+length = 23.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("slide1:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0.533333, 1.86667, 4.86667, 5.93333),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("slide2:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(5.93375, 7.03333, 11.5333, 12.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("slide3:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(12.4895, 13.4667, 17.0333, 18),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("slide3/Angrymob:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(13.497, 15.3333, 15.8667, 16.4667, 17.0667),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(1429, 629), Vector2(1429, 629), Vector2(1108, 493), Vector2(1108, 493), Vector2(1429, 629)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("slide3/Nuclearplant:visible")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.0333333, 16.1667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("slide3/Happyplant:visible")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 16.1333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("slide4:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(18.0276, 19.0667, 21.9667, 22.8667),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2cd0x"]
+_data = {
+&"RESET": SubResource("Animation_ro5pg"),
+&"intro": SubResource("Animation_15rfs")
+}
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("8_intro_script")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="slide1" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="slide1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.193392, 0.161421, 0.0996612, 1)
+
+[node name="Happyplant" type="Sprite2D" parent="slide1"]
+position = Vector2(646, 462)
+texture = ExtResource("1_y8kkj")
+
+[node name="ColorRect2" type="ColorRect" parent="slide1"]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0.128613, 0.166612, 0.378963, 1)
+
+[node name="Label" type="Label" parent="slide1/ColorRect2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 36.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "it started when elongated muskrat opened up the  plant."
+label_settings = SubResource("LabelSettings_7kwa0")
+autowrap_mode = 2
+
+[node name="MuskPortraitNormal" type="Sprite2D" parent="slide1"]
+position = Vector2(1552, 461)
+scale = Vector2(1.5, 1.5)
+texture = ExtResource("3_5nywq")
+
+[node name="slide2" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="slide2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="slide2"]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0.128613, 0.166612, 0.378963, 1)
+
+[node name="Label" type="Label" parent="slide2/ColorRect2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 30.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "he planned to mine vincentcoin with it. but it was all a lie..."
+label_settings = SubResource("LabelSettings_7kwa0")
+autowrap_mode = 2
+
+[node name="Spritesheet20260425153311" type="Sprite2D" parent="slide2"]
+position = Vector2(391, 412)
+scale = Vector2(1.922, 1.764)
+texture = ExtResource("4_4ggp7")
+
+[node name="Vincentcoin" type="Sprite2D" parent="slide2"]
+position = Vector2(1553, 570)
+scale = Vector2(0.794271, 0.776389)
+texture = ExtResource("5_cojdu")
+
+[node name="Label" type="Label" parent="slide2"]
+layout_mode = 0
+offset_left = 821.0
+offset_top = 76.0
+offset_right = 1700.0
+offset_bottom = 473.0
+text = "freak the fuck out and panic sell everything right now. its fucking over.
+
+	     		- muskrat "
+label_settings = SubResource("LabelSettings_43qpa")
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="slide3" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="slide3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.193392, 0.161421, 0.0996612, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="slide3"]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0.128613, 0.166612, 0.378963, 1)
+
+[node name="Label" type="Label" parent="slide3/ColorRect2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 36.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "the victims of his scheme rioted and destroyed the plant"
+label_settings = SubResource("LabelSettings_7kwa0")
+autowrap_mode = 2
+
+[node name="Happyplant" type="Sprite2D" parent="slide3"]
+position = Vector2(458.4, 343.8)
+scale = Vector2(0.64, 0.72)
+texture = ExtResource("1_y8kkj")
+
+[node name="Nuclearplant" type="Sprite2D" parent="slide3"]
+visible = false
+position = Vector2(456.4, 354.8)
+scale = Vector2(0.172928, 0.19962)
+texture = ExtResource("6_c5pct")
+
+[node name="Angrymob" type="Sprite2D" parent="slide3"]
+position = Vector2(1429, 629)
+scale = Vector2(0.650521, 0.750926)
+texture = ExtResource("7_cf4vg")
+
+[node name="MuskPortraitNormal" type="Sprite2D" parent="slide3"]
+position = Vector2(307, 692)
+scale = Vector2(0.58, 0.548)
+texture = ExtResource("3_5nywq")
+
+[node name="slide4" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="slide4"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("PlaceholderTexture2D_2ytyx")
+
+[node name="ColorRect2" type="ColorRect" parent="slide4"]
+custom_minimum_size = Vector2(0, 250)
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+color = Color(0.128613, 0.166612, 0.378963, 1)
+
+[node name="Label" type="Label" parent="slide4/ColorRect2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 36.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "the city became a mutant wasteland..."
+label_settings = SubResource("LabelSettings_7kwa0")
+autowrap_mode = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_2cd0x")
+}

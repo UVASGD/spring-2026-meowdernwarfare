@@ -89,6 +89,20 @@ def _image_names(folder: str):
         if os.path.splitext(f)[1].lower() in EXTS and not f.endswith(".import")
     )
 
+def _resolve_output_path(output: str | None, fallback_name: str) -> str:
+    if not output:
+        return os.path.join(OUT_DIR, fallback_name)
+    out = output.strip()
+    if not out:
+        return os.path.join(OUT_DIR, fallback_name)
+    if not os.path.splitext(out)[1]:
+        out += ".png"
+    if os.path.isabs(out):
+        return out
+    if os.path.dirname(out):
+        return os.path.join(ROOT_DIR, out)
+    return os.path.join(OUT_DIR, out)
+
 def _make_sheet(src_dir: str, out_path: str, remove_white: bool, smart_bg: bool, use_rembg: bool):
     files = _image_names(src_dir)
     if not files:
@@ -130,7 +144,7 @@ def _make_sheet(src_dir: str, out_path: str, remove_white: bool, smart_bg: bool,
     print(f"Saved {cols}x{rows} sheet ({cols*w}x{rows*h}px, {n} frames) -> {out_path}")
     return True
 
-def combine(remove_white: bool = False, smart_bg: bool = False, use_rembg: bool = False):
+def combine(remove_white: bool = False, smart_bg: bool = False, use_rembg: bool = False, output: str | None = None):
     if not os.path.isdir(IN_DIR):
         print("Input folder not found:", IN_DIR)
         return
@@ -150,6 +164,8 @@ def combine(remove_white: bool = False, smart_bg: bool = False, use_rembg: bool 
             made_any = True
 
     if made_any:
+        if output:
+            print("Note: --output is ignored when combining multiple subfolders.")
         return
 
     files = _image_names(IN_DIR)
@@ -157,13 +173,15 @@ def combine(remove_white: bool = False, smart_bg: bool = False, use_rembg: bool 
         print("No images found in", IN_DIR)
         return
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    out_path = os.path.join(OUT_DIR, f"spritesheet_{timestamp}.png")
+    out_path = _resolve_output_path(output, f"spritesheet_{timestamp}.png")
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
     _make_sheet(IN_DIR, out_path, remove_white, smart_bg, use_rembg)
 
 if __name__ == "__main__":
     try:
         ap = argparse.ArgumentParser()
         ap.add_argument("-t", action="store_true", help="simple white->transparent (all near-white)")
+        ap.add_argument("-a", action="store_true", help="legacy alias for -t")
         ap.add_argument("-T", "--smart-bg", action="store_true",
                         help="remove only edge-connected background (keeps white details)")
         ap.add_argument("-r", "--rembg", action="store_true",
@@ -178,7 +196,7 @@ if __name__ == "__main__":
                 print("rembg is not installed.")
                 print("Install with: python -m pip install rembg")
                 sys.exit(1)
-        combine(remove_white=args.t, smart_bg=args.smart_bg, use_rembg=args.rembg, output=args.output)
+        combine(remove_white=(args.t or args.a), smart_bg=args.smart_bg, use_rembg=args.rembg, output=args.output)
     except Exception:
         print("Spritesheet combine failed:")
         traceback.print_exc()

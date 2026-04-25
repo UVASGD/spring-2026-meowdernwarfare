@@ -85,12 +85,12 @@ func disconnect_from_server() -> void:
 	set_process(false)
 
 func host_room(username: String) -> void:
-	my_username = username
-	_send({"type": "host", "username": username})
+	my_username = GameData.ensure_username(username)
+	_send({"type": "host", "username": my_username})
 
 func join_room(code: String, username: String) -> void:
-	my_username = username
-	_send({"type": "join", "room": code.to_upper(), "username": username})
+	my_username = GameData.ensure_username(username)
+	_send({"type": "join", "room": code.to_upper(), "username": my_username})
 
 func leave_room() -> void:
 	_send({"type": "leave"})
@@ -153,7 +153,7 @@ func _handle_message(raw: String) -> void:
 		
 		"player_joined":
 			var pid = int(data.get("player_id", -1))
-			var uname = data.get("username", "Player")
+			var uname = GameData.ensure_username(str(data.get("username", "player")))
 			if pid >= 0 and pid not in players_in_room:
 				players_in_room.append(pid)
 			player_joined.emit(pid, uname)

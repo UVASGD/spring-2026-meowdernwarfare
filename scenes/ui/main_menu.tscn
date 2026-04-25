@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=3 uid="uid://bvwst8w4gqsjj"]
+[gd_scene load_steps=56 format=3 uid="uid://bvwst8w4gqsjj"]
 
 [ext_resource type="PackedScene" uid="uid://bw2et0odpc4ii" path="res://scenes/ui/menu_hero_card.tscn" id="1_1g8jr"]
 [ext_resource type="Script" uid="uid://b1a1ksgkshlog" path="res://scenes/ui/main_menu.gd" id="1_qilvv"]
@@ -23,6 +23,9 @@
 [ext_resource type="Texture2D" uid="uid://ba10ri207kse" path="res://assets/ui/titlescreen/new/meowderwarfare_final_03.png" id="17_pw24t"]
 [ext_resource type="PackedScene" uid="uid://dfxxrh3fefwru" path="res://scenes/ui/option_banner.tscn" id="17_y1h5l"]
 [ext_resource type="AudioStream" uid="uid://dpq8lkuf8caie" path="res://assets/sound/mainthemev2.wav" id="20_5dct7"]
+[ext_resource type="PackedScene" uid="uid://ducbymckwwd56" path="res://scenes/ui/sprite_button.tscn" id="21_topbtn"]
+[ext_resource type="Texture2D" uid="uid://dbvsume1n4mqf" path="res://assets/ui/titlescreen/creditsbutton.png" id="22_credit"]
+[ext_resource type="Texture2D" uid="uid://bfdebf1cipvq0" path="res://assets/ui/titlescreen/quitbutton.png" id="23_quit"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_e0hcc"]
 shader = ExtResource("2_jbte4")
@@ -816,6 +819,41 @@ autoplay = "intro"
 stream = ExtResource("20_5dct7")
 volume_db = -12.0
 
+[node name="TopLeftButtons" type="Node2D" parent="."]
+position = Vector2(24, 24)
+
+[node name="CreditsButton" parent="TopLeftButtons" instance=ExtResource("21_topbtn")]
+position = Vector2(212, 56)
+scale = Vector2(0.22, 0.22)
+
+[node name="off" parent="TopLeftButtons/CreditsButton" index="1"]
+texture = ExtResource("22_credit")
+
+[node name="hovered" parent="TopLeftButtons/CreditsButton" index="2"]
+texture = ExtResource("22_credit")
+
+[node name="on" parent="TopLeftButtons/CreditsButton" index="3"]
+texture = ExtResource("22_credit")
+
+[node name="disabled" parent="TopLeftButtons/CreditsButton" index="4"]
+texture = ExtResource("22_credit")
+
+[node name="QuitButton" parent="TopLeftButtons" instance=ExtResource("21_topbtn")]
+position = Vector2(53, 56)
+scale = Vector2(0.22, 0.22)
+
+[node name="off" parent="TopLeftButtons/QuitButton" index="1"]
+texture = ExtResource("23_quit")
+
+[node name="hovered" parent="TopLeftButtons/QuitButton" index="2"]
+texture = ExtResource("23_quit")
+
+[node name="on" parent="TopLeftButtons/QuitButton" index="3"]
+texture = ExtResource("23_quit")
+
+[node name="disabled" parent="TopLeftButtons/QuitButton" index="4"]
+texture = ExtResource("23_quit")
+
 [node name="Node2D" parent="." instance=ExtResource("2_e0hcc")]
 
 [node name="BurnOverlay" type="ColorRect" parent="."]
@@ -860,6 +898,10 @@ mouse_filter = 2
 
 [connection signal="mouse_entered" from="introgroup1/cardholder/burple/HoverArea" to="introgroup1/cardholder/burple" method="_on_hover_enter"]
 [connection signal="mouse_exited" from="introgroup1/cardholder/burple/HoverArea" to="introgroup1/cardholder/burple" method="_on_hover_exit"]
+[connection signal="pressed" from="TopLeftButtons/CreditsButton" to="." method="_on_credits_pressed"]
+[connection signal="pressed" from="TopLeftButtons/QuitButton" to="." method="_on_quit_pressed"]
 
 [editable path="introgroup1/cardholder/dealer"]
 [editable path="introgroup1/cardholder/garebare"]
+[editable path="TopLeftButtons/CreditsButton"]
+[editable path="TopLeftButtons/QuitButton"]

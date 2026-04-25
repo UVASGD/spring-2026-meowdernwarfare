@@ -618,7 +618,7 @@ tv_and_win_bg = ExtResource("4_pg2do")
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.2, 0.2)
 sprite_frames = SubResource("SpriteFrames_0l5ya")
-animation = &"shoot_run"
+animation = &"ult_run"
 
 [node name="LeftEye" type="Marker2D" parent="."]
 position = Vector2(-13, 23)

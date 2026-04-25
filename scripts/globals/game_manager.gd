@@ -29,6 +29,7 @@ const BurpleStrikeScene = preload("res://scenes/heroes/burple/missile_strike.tsc
 const MuskratUltScene = preload("res://scenes/heroes/elonmusk/cybertruck_ult.tscn")
 const AnderOrbitalScene = preload("res://scenes/heroes/anderdingus/orbitalstrike.tscn")
 const ChompEffectScene = preload("res://scenes/heroes/loanshark/chomp_effect.tscn")
+const AnimeGirlZoneScript = preload("res://scenes/heroes/animegirl/light_zone.gd")
 
 static var instance: GameManager = null
 
@@ -189,6 +190,9 @@ func clear_players() -> void:
 	for strike in _ander_orbitals.values():
 		if is_instance_valid(strike):
 			strike.queue_free()
+	for zone in _animegirl_zones.values():
+		if is_instance_valid(zone):
+			zone.queue_free()
 	players.clear()
 	_players_by_id.clear()
 	eliminated.clear()
@@ -201,6 +205,7 @@ func clear_players() -> void:
 	_burple_strikes.clear()
 	_muskrat_ults.clear()
 	_ander_orbitals.clear()
+	_animegirl_zones.clear()
 	_xf_mark_counts.clear()
 	_spawners.clear()
 	_world_crops.clear()
@@ -258,6 +263,7 @@ var _burple_grenades: Dictionary = {}
 var _burple_strikes: Dictionary = {}
 var _muskrat_ults: Dictionary = {}
 var _ander_orbitals: Dictionary = {}
+var _animegirl_zones: Dictionary = {}
 
 const XF_MARKS_FOR_SLASH_DEFAULT: int = 10
 const XF_SLASH_DAMAGE: float = 26.0
@@ -339,7 +345,7 @@ func start_online_game(players_info: Array, settings: Dictionary) -> void:
 	for p in sorted_players:
 		var pid = int(p.get("id", -1))
 		player_data[pid] = {
-			"username": p.get("username", "Player"),
+			"username": GameData.ensure_username(str(p.get("username", "player"))),
 			"hero": p.get("hero", "")
 		}
 		var is_local_player = (pid == local_player_id)
@@ -360,6 +366,10 @@ func _on_player_left(player_id: int) -> void:
 		var strike = _ander_orbitals.get(oid)
 		if strike and is_instance_valid(strike) and strike.owner_player and strike.owner_player.player_id == player_id:
 			strike.queue_free()
+	for zid in _animegirl_zones.keys():
+		var zone = _animegirl_zones.get(zid)
+		if zone and is_instance_valid(zone) and zone.owner_player and zone.owner_player.player_id == player_id:
+			zone.queue_free()
 	net_inputs.erase(player_id)
 	_remote_targets.erase(player_id)
 
@@ -449,6 +459,18 @@ func _on_message(from_id: int, data: Dictionary) -> void:
 	elif msg_type == "burple_strike_end":
 		_handle_burple_strike_end(data)
 
+	elif msg_type == "animegirl_zone_req":
+		_handle_animegirl_zone_req(from_id, data)
+
+	elif msg_type == "animegirl_zone_spawn":
+		_handle_animegirl_zone_spawn(data)
+
+	elif msg_type == "animegirl_zone_pulse":
+		_handle_animegirl_zone_pulse(data)
+
+	elif msg_type == "animegirl_zone_end":
+		_handle_animegirl_zone_end(data)
+
 	elif msg_type == "xf_stance_req":
 		_handle_xf_stance_req(from_id, data)
 
@@ -521,6 +543,8 @@ func _broadcast_state() -> void:
 			else:
 				state["ult"] = p.hero.ult_points
 			state["ammo"] = p.hero.ammo
+			if p.hero.has_method("get_net_stage"):
+				state["hstage"] = p.hero.get_net_stage()
 			if p.hero.has_method("is_invisible"):
 				state["invis"] = p.hero.is_invisible()
 		
@@ -637,6 +661,8 @@ func _apply_corrections(delta: float) -> void:
 		
 		if player.hero:
 			_apply_state_sync_hp(player, state)
+			if state.has("hstage") and player.hero.has_method("apply_net_stage"):
+				player.hero.apply_net_stage(int(state.get("hstage", 1)))
 			
 			if player.hero.ult_mode == Hero.UltMode.COOLDOWN:
 				if state.has("ucd"):
@@ -770,8 +796,8 @@ func disconnect_online() -> void:
 
 func get_player_username(player_id: int) -> String:
 	if player_data.has(player_id):
-		return player_data[player_id].get("username", "Player")
-	return "Player"
+		return GameData.ensure_username(str(player_data[player_id].get("username", "player")))
+	return "player"
 
 func get_player_hero(player_id: int) -> String:
 	if player_data.has(player_id):
@@ -1043,6 +1069,124 @@ func _spawn_burple_strike(data: Dictionary, authoritative: bool) -> void:
 	strike.tree_exited.connect(func():
 		if _burple_strikes.get(sid) == strike:
 			_burple_strikes.erase(sid)
+	)
+
+func cast_animegirl_zone(owner_id: int, center: Vector2, zid: String, cfg: Dictionary) -> void:
+	if zid.is_empty():
+		return
+	if mode == Mode.ONLINE_CLIENT:
+		Network.send_to_host({
+			"type": "animegirl_zone_req",
+			"pid": owner_id,
+			"zid": zid,
+			"x": center.x,
+			"y": center.y,
+			"cfg": cfg
+		})
+		return
+	var msg := _make_animegirl_zone_spawn(owner_id, center, zid, cfg)
+	if msg.is_empty():
+		return
+	_spawn_animegirl_zone(msg, true)
+	if mode == Mode.ONLINE_HOST and Network.is_online():
+		var out := msg.duplicate(true)
+		out["type"] = "animegirl_zone_spawn"
+		Network.broadcast(out)
+
+func report_animegirl_zone_pulse(zid: String) -> void:
+	if mode != Mode.ONLINE_HOST or not Network.is_online():
+		return
+	Network.broadcast({
+		"type": "animegirl_zone_pulse",
+		"zid": zid
+	})
+
+func report_animegirl_zone_end(zid: String) -> void:
+	if mode != Mode.ONLINE_HOST or not Network.is_online():
+		return
+	Network.broadcast({
+		"type": "animegirl_zone_end",
+		"zid": zid
+	})
+
+func _handle_animegirl_zone_req(from_id: int, data: Dictionary) -> void:
+	if mode != Mode.ONLINE_HOST:
+		return
+	var pid := int(data.get("pid", -1))
+	if pid != from_id:
+		return
+	cast_animegirl_zone(pid, Vector2(data.get("x", 0.0), data.get("y", 0.0)), str(data.get("zid", "")), data.get("cfg", {}))
+
+func _handle_animegirl_zone_spawn(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	_spawn_animegirl_zone(data, false)
+
+func _handle_animegirl_zone_pulse(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	var zid := str(data.get("zid", ""))
+	var zone = _animegirl_zones.get(zid)
+	if zone == null or not is_instance_valid(zone):
+		return
+	zone.play_pulse()
+
+func _handle_animegirl_zone_end(data: Dictionary) -> void:
+	if mode != Mode.ONLINE_CLIENT:
+		return
+	var zid := str(data.get("zid", ""))
+	var zone = _animegirl_zones.get(zid)
+	if zone == null or not is_instance_valid(zone):
+		return
+	zone.force_end()
+
+func _make_animegirl_zone_spawn(owner_id: int, center: Vector2, zid: String, cfg: Dictionary) -> Dictionary:
+	var player := get_player(owner_id)
+	if player == null or not is_instance_valid(player) or player.hero == null:
+		return {}
+	var target := center
+	var k := int(cfg.get("k", 1))
+	var range := player.hero.get_ability1_range() if k == 1 else player.hero.get_ult_range()
+	if range > 0.0:
+		var off := target - player.global_position
+		if off.length() > range:
+			target = player.global_position + off.normalized() * range
+	return {
+		"pid": owner_id,
+		"zid": zid,
+		"x": target.x,
+		"y": target.y,
+		"cfg": cfg.duplicate(true)
+	}
+
+func _spawn_animegirl_zone(data: Dictionary, authoritative: bool) -> void:
+	var zid := str(data.get("zid", ""))
+	if zid.is_empty():
+		return
+	var prev = _animegirl_zones.get(zid)
+	if prev != null and is_instance_valid(prev):
+		return
+	var owner_id := int(data.get("pid", -1))
+	var owner := get_player(owner_id)
+	if owner == null or not is_instance_valid(owner):
+		return
+	var zone = AnimeGirlZoneScript.new()
+	zone.owner_player = owner
+	zone.zone_id = zid
+	zone.authoritative = authoritative
+	var cfg: Dictionary = data.get("cfg", {})
+	zone.zone_radius = float(cfg.get("rad", zone.zone_radius))
+	zone.pulse_damage = float(cfg.get("dmg", zone.pulse_damage))
+	zone.pulse_interval = maxf(0.05, float(cfg.get("itv", zone.pulse_interval)))
+	zone.duration = maxf(0.1, float(cfg.get("dur", zone.duration)))
+	zone.kind = int(cfg.get("k", 1))
+	zone.global_position = Vector2(data.get("x", owner.global_position.x), data.get("y", owner.global_position.y))
+	var parent: Node = entity_parent if entity_parent else self
+	parent.add_child(zone)
+	_animegirl_zones[zid] = zone
+	zone.tree_exited.connect(func():
+		if _animegirl_zones.get(zid) == zone:
+			_animegirl_zones.erase(zid)
 	)
 
 func cast_dingus_orbital(owner_id: int, pos: Vector2, oid: String) -> void:

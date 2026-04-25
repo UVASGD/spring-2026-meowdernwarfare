@@ -10,6 +10,7 @@ const LineScene = preload("res://scenes/heroes/elonmusk/cybertruck_line.tscn")
 @export var line_life: float = 1.0
 @export var explosion_damage: float = 40.0
 @export var intro_time: float = 0.7
+@export var top_rot_offset: float = -PI / 2.0
 
 var owner_player: Player = null
 var ult_id := ""
@@ -22,6 +23,8 @@ var _ult_left := 0.0
 var _intro_left := 0.0
 var _ended := false
 var _can_control := false
+var _is_exploding := false
+var _facing := Vector2.RIGHT
 
 @onready var _zone: Line2D = $Zone
 @onready var _truck_node: Node2D = $Truck
@@ -36,14 +39,17 @@ func _ready() -> void:
 	_ult_left = duration
 	_tp_left = 0.0
 	_intro_left = intro_time
+	_set_truck_anim(&"side_move")
+	_set_owner_hidden(false)
 	_sync_visuals()
 
 func _process(delta: float) -> void:
 	if _ended:
 		return
 	_tick_intro(delta)
+	_update_drive_facing()
 	_sync_visuals()
-	if not _can_control:
+	if not _can_control or _is_exploding:
 		return
 	if authoritative:
 		_tp_left = maxf(0.0, _tp_left - delta)
@@ -69,6 +75,7 @@ func play_remote_tp(a: Vector2, b: Vector2) -> void:
 		return
 	_spawn_line(a, b, false)
 	_truck = b
+	_set_facing_to(b - a)
 	_tp_left = teleport_cd
 	SfxBus.play_world(&"hero.elonmusk.ult_move", _truck)
 
@@ -81,12 +88,17 @@ func _tick_intro(delta: float) -> void:
 	if _intro_left <= 0.0:
 		_can_control = true
 		return
+	_set_truck_anim(&"side_move")
 	_intro_left -= delta
+	var old_truck := _truck
 	var t: float = 1.0 - clamp(_intro_left / maxf(intro_time, 0.001), 0.0, 1.0)
 	_truck = _truck.lerp(center, t)
+	_set_facing_to(_truck - old_truck)
 	if _intro_left <= 0.0:
 		_truck = center
 		_can_control = true
+		_set_truck_anim(&"top_move")
+		_set_owner_hidden(true)
 
 func _try_local_control() -> void:
 	if owner_player == null or owner_player.input == null:
@@ -112,6 +124,7 @@ func _try_remote_tp_request() -> void:
 func _do_tp(next: Vector2, notify: bool) -> void:
 	var start := _truck
 	_truck = next
+	_set_facing_to(next - start)
 	_tp_left = teleport_cd
 	_spawn_line(start, next, authoritative)
 	SfxBus.play_world(&"hero.elonmusk.ult_move", _truck)
@@ -135,15 +148,20 @@ func _end_ult(notify := true) -> void:
 	if _ended:
 		return
 	_ended = true
+	_can_control = false
 	if _truck.distance_to(center) > 1.0:
 		_spawn_line(_truck, center, authoritative)
+		_set_facing_to(center - _truck)
 		_truck = center
+	_set_owner_hidden(false)
+	_is_exploding = true
+	_set_truck_anim(&"top_explode")
 	_apply_explosion()
 	if notify:
 		var gm := GameManager.instance
 		if gm and gm.mode == GameManager.Mode.ONLINE_HOST:
 			gm.report_muskrat_ult_end(ult_id)
-	await get_tree().create_timer(0.22).timeout
+	await get_tree().create_timer(maxf(_anim_length("top_explode"), 0.22)).timeout
 	queue_free()
 
 func _apply_explosion() -> void:
@@ -183,6 +201,11 @@ func _sync_visuals() -> void:
 	global_position = center
 	if _truck_node:
 		_truck_node.global_position = _truck
+		if _intro_left > 0.0 and not _is_exploding:
+			# Side-view spawn-in always comes from screen-right; keep sprite upright.
+			_truck_node.rotation = 0.0
+		else:
+			_truck_node.rotation = _facing.angle() + top_rot_offset
 	if _zone:
 		_zone.clear_points()
 		var steps := 40
@@ -193,3 +216,49 @@ func _sync_visuals() -> void:
 		_truck_body.modulate = Color(0.58, 0.62, 0.78, 0.95) if _can_control else Color(0.42, 0.42, 0.45, 0.95)
 	if _truck_glow:
 		_truck_glow.energy = 1.0 if _can_control else 0.35
+
+func _update_drive_facing() -> void:
+	if _is_exploding:
+		return
+	if _intro_left > 0.0:
+		return
+	if not _can_control:
+		return
+	if _is_owner_local() and owner_player:
+		_set_facing_to(owner_player.get_aim_position() - _truck)
+	_set_truck_anim(&"top_move")
+
+func _set_facing_to(v: Vector2) -> void:
+	if v.length_squared() < 0.0001:
+		return
+	_facing = v.normalized()
+
+func _set_truck_anim(anim: StringName) -> void:
+	if _truck_body == null or _truck_body.sprite_frames == null:
+		return
+	if not _truck_body.sprite_frames.has_animation(anim):
+		return
+	if _truck_body.animation == anim:
+		return
+	_truck_body.play(anim)
+
+func _set_owner_hidden(hide: bool) -> void:
+	if owner_player == null or owner_player.hero == null:
+		return
+	if owner_player.hero is HeroElongatedMuskrat:
+		(owner_player.hero as HeroElongatedMuskrat).set_ult_hidden(hide)
+		return
+	if owner_player.hero.sprite:
+		owner_player.hero.sprite.visible = not hide
+
+func _anim_length(anim_name: String) -> float:
+	if _truck_body == null or _truck_body.sprite_frames == null:
+		return 0.0
+	if not _truck_body.sprite_frames.has_animation(anim_name):
+		return 0.0
+	var fps := maxf(_truck_body.sprite_frames.get_animation_speed(anim_name), 0.01)
+	var frames := _truck_body.sprite_frames.get_frame_count(anim_name)
+	var total := 0.0
+	for i in range(frames):
+		total += _truck_body.sprite_frames.get_frame_duration(anim_name, i) / fps
+	return total

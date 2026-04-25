@@ -1,11 +1,15 @@
-[gd_resource type="Resource" script_class="HeroInfo" load_steps=2 format=3 uid="uid://of40nyaxkx6l"]
+[gd_resource type="Resource" script_class="HeroInfo" load_steps=3 format=3 uid="uid://of40nyaxkx6l"]
 
+[ext_resource type="Texture2D" uid="uid://dcebcr28jhgq2" path="res://assets/sprites/angel/normalportrait.png" id="1_evbrl"]
 [ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="2_3vee4"]
 
 [resource]
 script = ExtResource("2_3vee4")
-id = "Anime Girl"
-desc = "def"
+id = "Angel"
+desc = " Uwa ~~~!!! The Magical Girl has descended from above to bring love and friendship to the land of Ander Dingus! (˶˃ ᵕ ˂˶) .ᐟ.ᐟ Watch as she unlocks her true form throughout the battle <3! Oh… what’s happening? Ẅ̷̛̰̥̦͇̩͎͇́̂̃̐̉̔͛h̴̢̨͕͈́̔͑̽͂̓̎͘͠ȅ̵̢̛̗̘̙̟͙̗̳̜͍̅̂̓͌̕ŕ̴͓̞͉̾́̐͗̈́̽̆̔͠e̷̙̫̪̯͑͛̈̿'̶̱͊͊̅͑̂d̵͇͉̦́̋ ̴̬͚́s̷̨̪͇̳͎͔̽͆ͅh̸̨͍̲̪̩̱̯̄͜e̸͇̟̺͌͛ ̴̨̢͇̥͈̜̰̗͚̳̾͒̍̑̾͗̓̋g̵̡̢̡̛̻̣̟̮̤̲̋̿̀̏̑͐̕o̸̢̫̣̅͊͐́́̾̈́͝?̸͔̲̮̼̰̗̬̇̐̿̇̓̇ ̵̨̡̯͍̖̭̺̳̹́̔̅͝W̸̧͙̪̖̥̦͙̲̓͌̉̔̽̃̓͝͝h̵̛̜͍͔̪̀͌͒͑͗͑͂̑͜a̴̜̞͂͑͑̍̍́̚ṫ̴̢̢̢̖̺̜̤͙͗̃̈́̈͑̓ͅ'̵͎̭͎̥̎̏͌̈̑͂̕̕͝s̴̢̺̼̱̟̔͆̎͐̽̍̓̍ ̵̛̤̜̏̓̈́́̋̀h̵̤̬͚̝̤̉͛̿̀̆̆̐a̵̧̮̞̞͍̰̱̘̅̍̇p̷̳͇̩̪͆̽͋͐̓͝͝͝p̷̛̻̺̲̝͓̈́̏̉̎̈́̾͊̚e̸̤̞͈͍̼͆̔̀ͅͅn̴̹̲͙͇̠̲̅̎ͅî̶̧͉̳͔̖͋̔̃͑͐̀̚͠ṋ̶̳̙̠̲̅̿͂̓͠g̵̢̙̳̘̟̞͍̼̿͊?̵̱͆̾̆͋͗̋̀̀̕ ̷̡̛̛͓͈͊͊̍̔͂͘M̴̡͇̞͚͍̉̂́̋̌̏̃ͅa̷̡͓̭͉̱͈̝͉͐͗̈́̎͝͝k̸̰̘̭͉͉̺̇͊̎̀̑͐̑͜͠e̵̛͕̭͋̃̔̓́ ̶͔͓͕̓̾̈́͆̀i̶̙̟̭̽̋͋t̶͎̠̫͌̃̃ ̷̳̼̍̇̚Ṡ̸̗̻̅̀ͅt̸̡̲̙̼̓͑̉͆̐ǭ̷̛̯͔̲̙̩̇̎͐̍͑̅ͅp̷̡̨͉̞̫̱̹̠̃͜ ̴̟̯̙̭̟̅͝ͅP̸͇̻̺̝̳̦̞̏̽l̴͉̭̯̽ḛ̷̢̢͉̪̬̰̗̪́̇͑̾ͅǎ̴̳̪̮̞̟̦́͑͋̿̇̚͠͝s̶̢̳̙͉̬̫̒̓̾̈́́̅́̄̈́͠ḙ̸͇͉͛͒͘ ̴̡̓̔͐̒S̴̺̺̫̩̺̞͎͒̈́͐̕t̵̲̬̅̒ǫ̸̱̝̤͇͉̞̥̺̏̐̾p̴͔̹͔͖̘̾̍̔͒̏͆́ ̴̛͇̮̘̺̗̗̣̦͒́͛͋̉͠͝ͅṔ̸̛̻̠̒͋̔́̍͝l̵̗̮̀̄͐̎̈́̈́̊̃͋͝ȩ̵̡̦̻͉̯̯̪̗͑̓̑̔̆̾̎͌͝a̶̧͇̼̥͓͍̪̕͜ͅs̶̡̻̼̬͎͔̣̪̋̀͗̇̌͗̇̆͘͝ȩ̶̜͕̝̼̬̩́̐̀̐͜ ̶̡̢̩͉̾̈̒͗͋̔̒́P̴̰̩̩̬̋͐̀̈̈́̚͘l̷̝͒̐́̍e̶͕̰̬̮͙̗̽̈͛̀̾̓̔̚͝ą̴͓̦̰̤̬͒̈́̉̓̈́̚̕͘͝s̸̡̱̘̬͍͙͙͗ȩ̸̨̼̰͙̳̪͇̖͓̾̈́
+"
+portrait = ExtResource("1_evbrl")
+portrait_outline_color = Color(1, 1, 1, 1)
 shoot_name = "Shoot"
 shoot_desc = "Basic ranged attack."
 ability1_name = "Ability 1"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://dyjsukavayr35"]
+[gd_scene load_steps=16 format=3 uid="uid://dyjsukavayr35"]
 
 [ext_resource type="Script" uid="uid://jfrori7lcxij" path="res://scripts/ui/map_selector.gd" id="1_45j7k"]
 [ext_resource type="FontFile" uid="uid://dt2nbaox60w53" path="res://assets/ui/fonts/BATTLESANSSERIF.OTF" id="2_uqr41"]
@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://xjjvy7nk2qct" path="res://assets/ui/general/arrow.png" id="5_qm5no"]
 [ext_resource type="Texture2D" uid="uid://dtvfyhky1c3rs" path="res://assets/ui/general/arrow_on.png" id="6_sxpp3"]
 [ext_resource type="Texture2D" uid="uid://cl331l63rstcp" path="res://assets/ui/mapicons/moon.png" id="7_qm5no"]
+[ext_resource type="Texture2D" uid="uid://crclcs6tmlrvq" path="res://assets/ui/mapicons/city.png" id="8_sxpp3"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_r6wag"]
 shader = ExtResource("2_w3qjh")
@@ -199,12 +200,10 @@ clip_children = 1
 texture = SubResource("PlaceholderTexture2D_icbh0")
 
 [node name="moon" type="Sprite2D" parent="options"]
-modulate = Color(0.497474, 0.497474, 0.497474, 1)
 texture = ExtResource("7_qm5no")
 
 [node name="option2" type="Sprite2D" parent="options"]
-modulate = Color(0.201005, 0.579862, 0.634829, 1)
-texture = SubResource("PlaceholderTexture2D_tht5s")
+texture = ExtResource("8_sxpp3")
 
 [node name="Sprite2D" type="Sprite2D" parent="options"]
 modulate = Color(0.742104, 0.435636, 0.137577, 1)

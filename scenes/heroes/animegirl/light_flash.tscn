@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://h563fw1p2lym"]
+
+[sub_resource type="Gradient" id="Gradient_flash"]
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_flash"]
+gradient = SubResource("Gradient_flash")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.82, 0.18)
+
+[node name="LightFlash" type="PointLight2D"]
+energy = 0.0
+texture = SubResource("GradientTexture2D_flash")
+texture_scale = 1.2
+height = 64.0

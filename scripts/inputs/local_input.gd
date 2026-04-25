@@ -146,7 +146,9 @@ func _read_mouse() -> void:
 	shoot = shoot or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
 	ability1 = ability1 or Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
 	shoot_just = shoot_just or Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT) and not _prev_states.get("mouse_shoot", false)
+	ability1_just = ability1_just or Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT) and not _prev_states.get("mouse_ability1", false)
 	_prev_states["mouse_shoot"] = Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT)
+	_prev_states["mouse_ability1"] = Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
 
 func end_frame() -> void:
 	_store_states()

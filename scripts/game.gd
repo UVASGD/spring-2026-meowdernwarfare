@@ -466,7 +466,7 @@ func _trigger_sudden_death() -> void:
 
 func _activate_sudden_death() -> void:
 	gm.sudden_death = true
-	print("SUDDEN DEATH activated")
+	print("sudden death activated")
 	_play_sd_theme()
 	if _sudden_label:
 		_sudden_label.visible = true
@@ -557,7 +557,7 @@ func _create_timer_hud() -> void:
 	_timer_layer.add_child(_timer_label)
 	
 	_sudden_label = Label.new()
-	_sudden_label.text = "SUDDEN DEATH"
+	_sudden_label.text = "sudden death"
 	_sudden_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_sudden_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
 	_sudden_label.grow_horizontal = Control.GROW_DIRECTION_BOTH
@@ -590,17 +590,17 @@ func _update_timer_hud() -> void:
 # ---------- Winner Screen ----------
 
 func _show_winner_screen(winner: Player) -> void:
-	var winner_name := "Nobody"
-	var hero_name := "Hero"
+	var winner_name := "nobody"
+	var hero_name := "hero"
 	var hero_color := Color.WHITE
 	var hero_portrait: Texture2D = null
 	var hero_bg: Texture2D = null
 	if winner == null:
 		pass
 	else:
-		winner_name = gm.get_player_username(winner.player_id)
+		winner_name = GameData.ui_lower(gm.get_player_username(winner.player_id))
 		if winner.hero:
-			hero_name = winner.hero.get_hero_name()
+			hero_name = GameData.ui_lower(winner.hero.get_hero_name())
 			hero_color = winner.hero.portrait_outline_color
 			hero_portrait = winner.hero.get_hero_default_profile()
 			hero_bg = winner.hero.tv_and_win_bg
@@ -637,7 +637,7 @@ func _show_game_over_screen() -> void:
 	bg.add_child(center)
 	
 	var title = Label.new()
-	title.text = "GAME OVER"
+	title.text = "game over"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 40)
 	title.add_theme_color_override("font_color", Color.WHITE)
@@ -654,13 +654,13 @@ func _show_game_over_screen() -> void:
 	center.add_child(btn_row)
 	
 	var lobby_btn = Button.new()
-	lobby_btn.text = "Return to Lobby"
+	lobby_btn.text = "return to lobby"
 	lobby_btn.custom_minimum_size = Vector2(180, 48)
 	lobby_btn.pressed.connect(_on_return_to_lobby)
 	btn_row.add_child(lobby_btn)
 	
 	var quit_btn = Button.new()
-	quit_btn.text = "Quit to Menu"
+	quit_btn.text = "quit to menu"
 	quit_btn.custom_minimum_size = Vector2(180, 48)
 	quit_btn.pressed.connect(_on_quit_to_menu)
 	btn_row.add_child(quit_btn)
@@ -674,7 +674,7 @@ func _build_leaderboard() -> PanelContainer:
 	# Header row
 	var header = HBoxContainer.new()
 	header.add_theme_constant_override("separation", 16)
-	for col in ["#", "Player", "Crops", "Kills", "Deaths"]:
+	for col in ["#", "player", "crops", "kills", "deaths"]:
 		var lbl = Label.new()
 		lbl.text = col
 		lbl.add_theme_font_size_override("font_size", 18)
@@ -701,7 +701,7 @@ func _build_leaderboard() -> PanelContainer:
 		row.add_child(rank_l)
 		
 		var name_l = Label.new()
-		name_l.text = p["name"]
+		name_l.text = GameData.ui_lower(p["name"])
 		name_l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		name_l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		if not p["alive"]:
@@ -727,7 +727,7 @@ func _get_sorted_players() -> Array:
 		if not is_instance_valid(p):
 			continue
 		var s = gm.get_stats(p.player_id)
-		var pname = gm.get_player_username(p.player_id)
+		var pname = GameData.ui_lower(gm.get_player_username(p.player_id))
 		list.append({
 			"name": pname,
 			"crops": p.crop_count,

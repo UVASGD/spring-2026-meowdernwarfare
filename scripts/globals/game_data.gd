@@ -21,6 +21,7 @@ var pending_starter_crops: Array[String] = []
 var train_last_hero: String = ""
 const SECRET_USERNAME := "DINGUS"
 const SECRET_HERO := "AnderDingus"
+const MAX_USERNAME_LEN := 15
 
 # Scene transition tracking
 var is_first_load: bool = true
@@ -31,13 +32,17 @@ var _transition_duration: float = 0.5
 var _transitioning: bool = false
 var _transition_settings: TransitionSettings = null
 var _menu_theme: AudioStreamPlayer = null
+var _heroes_warming: bool = false
+var _heroes_warmed: bool = false
 const MAX_TEX_SIZE := 16384
 
 func _ready() -> void:
+	_load_intro_flag()
 	_create_transition_overlay()
 	_load_starter_crops()
 	_load_train_hero()
 	_create_menu_theme_player()
+	call_deferred("_warm_heroes_async")
 
 func _create_transition_overlay() -> void:
 	_transition_settings = load("res://assets/resources/default_transition.tres")
@@ -228,13 +233,28 @@ func resolve_hero_for_username(username: String, hero_id: String) -> String:
 	return hero_id
 
 func is_secret_username(username: String) -> bool:
-	return username.strip_edges().to_upper() == SECRET_USERNAME
+	return normalize_username(username).to_upper() == SECRET_USERNAME
 
 func get_local_username() -> String:
 	var cfg := ConfigFile.new()
 	if cfg.load("user://settings.cfg") != OK:
 		return ""
-	return str(cfg.get_value("player", "username", ""))
+	return normalize_username(str(cfg.get_value("player", "username", "")))
+
+func ui_lower(value: Variant) -> String:
+	return str(value).to_lower()
+
+func normalize_username(raw: String) -> String:
+	var name := raw.strip_edges().to_lower()
+	if name.length() > MAX_USERNAME_LEN:
+		name = name.substr(0, MAX_USERNAME_LEN)
+	return name
+
+func ensure_username(raw: String, fallback_prefix: String = "player") -> String:
+	var name := normalize_username(raw)
+	if name.is_empty():
+		name = "%s%d" % [normalize_username(fallback_prefix), randi() % 1000]
+	return normalize_username(name)
 
 const DEFAULT_STARTERS: Array[String] = ["BlastBerry"]
 
@@ -246,6 +266,8 @@ func get_active_starters() -> Array[String]:
 	return DEFAULT_STARTERS
 
 func change_scene(path: String, duration: float = -1.0) -> void:
+	if _needs_hero_warm(path):
+		await ensure_heroes_warmed()
 	if duration < 0:
 		duration = _transition_settings.duration if _transition_settings else 0.5
 	if _transitioning:
@@ -280,8 +302,42 @@ func change_scene(path: String, duration: float = -1.0) -> void:
 	_transition_overlay.visible = false
 	_transitioning = false
 
+func _needs_hero_warm(path: String) -> bool:
+	return path == "res://scenes/ui/lobby.tscn" or path == "res://scenes/game.tscn"
+
+func _warm_heroes_async() -> void:
+	await ensure_heroes_warmed()
+
+func ensure_heroes_warmed() -> void:
+	if _heroes_warmed:
+		return
+	if _heroes_warming:
+		while _heroes_warming:
+			await get_tree().process_frame
+		return
+	_heroes_warming = true
+	for hero_id in HeroRegistry.ids():
+		HeroRegistry.warm_scene(str(hero_id))
+		await get_tree().process_frame
+	_heroes_warming = false
+	_heroes_warmed = true
+
 func mark_intro_seen() -> void:
+	if not is_first_load:
+		return
 	is_first_load = false
+	var cfg := ConfigFile.new()
+	cfg.load("user://settings.cfg")
+	cfg.set_value("app", "intro_seen", true)
+	cfg.save("user://settings.cfg")
+
+func _load_intro_flag() -> void:
+	var cfg := ConfigFile.new()
+	if cfg.load("user://settings.cfg") != OK:
+		is_first_load = true
+		return
+	var seen := bool(cfg.get_value("app", "intro_seen", false))
+	is_first_load = not seen
 
 func set_transition_settings(settings: TransitionSettings) -> void:
 	_transition_settings = settings

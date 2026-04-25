@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="The Catpitalist Too"
-run/main_scene="uid://bvwst8w4gqsjj"
+run/main_scene="res://scenes/ui/intro.tscn"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://assets/sprites/icon.svg"
 

@@ -79,7 +79,7 @@ func fadeout(force: bool = false) -> void:
 	_fading = false
 
 func _set_content(player: Player, player_name: String) -> void:
-	username.text = player_name
+	username.text = GameData.ui_lower(player_name)
 	var tex = player.hero.get_hero_ult_profile()
 	if tex == null:
 		tex = player.hero.get_hero_default_profile()

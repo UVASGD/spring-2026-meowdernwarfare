@@ -54,7 +54,7 @@ theme_override_constants/separation = 16
 [node name="BackBtn" type="Button" parent="Margin/VBox/TopBar"]
 custom_minimum_size = Vector2(100, 44)
 layout_mode = 2
-text = "< Back"
+text = "< back"
 
 [node name="Spacer" type="Control" parent="Margin/VBox/TopBar"]
 layout_mode = 2
@@ -63,17 +63,17 @@ size_flags_horizontal = 3
 [node name="TutorialBtn" type="Button" parent="Margin/VBox/TopBar"]
 custom_minimum_size = Vector2(150, 44)
 layout_mode = 2
-text = "Tutorial"
+text = "tutorial"
 
 [node name="VsAIBtn" type="Button" parent="Margin/VBox/TopBar"]
 custom_minimum_size = Vector2(150, 44)
 layout_mode = 2
-text = "vs AI"
+text = "vs ai"
 
 [node name="SoloBtn" type="Button" parent="Margin/VBox/TopBar"]
 custom_minimum_size = Vector2(150, 44)
 layout_mode = 2
-text = "Solo"
+text = "solo"
 
 [node name="Sep" type="HSeparator" parent="Margin/VBox"]
 layout_mode = 2
@@ -120,14 +120,14 @@ stretch_mode = 5
 [node name="HeroName" type="Label" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Select a Hero"
+text = "select a hero"
 horizontal_alignment = 1
 
 [node name="HeroDesc" type="RichTextLabel" parent="Margin/VBox/Content/SidePanel/Scroll/PanelContent"]
 custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 bbcode_enabled = true
-text = "Click on a hero in the grid to view their abilities."
+text = "click on a hero in the grid to view their abilities."
 fit_content = true
 scroll_active = false
 
@@ -167,7 +167,7 @@ offset_bottom = 14.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
-text = "[ Video ]"
+text = "[ video ]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -221,7 +221,7 @@ offset_bottom = 14.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
-text = "[ Video ]"
+text = "[ video ]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -275,7 +275,7 @@ offset_bottom = 14.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
-text = "[ Video ]"
+text = "[ video ]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -329,7 +329,7 @@ offset_bottom = 14.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
-text = "[ Video ]"
+text = "[ video ]"
 horizontal_alignment = 1
 vertical_alignment = 1
 

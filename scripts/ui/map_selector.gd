@@ -1,6 +1,6 @@
 extends Node2D
 
-const MAPS := ["Moon", "TestMap", "City"]
+const MAPS := ["Moon", "City","TestMap" ]
 const OPTION_W := 400.0
 const SLIDE_DURATION := 0.2
 

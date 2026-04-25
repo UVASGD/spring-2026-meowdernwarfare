@@ -1,12 +1,12 @@
 [gd_resource type="Resource" script_class="HeroInfo" load_steps=3 format=3 uid="uid://cf3sd6u00clrk"]
 
-[ext_resource type="Texture2D" uid="uid://ba1yny176j1ph" path="res://assets/sprites/xylerfergus/XylerFergus500 (1).png" id="1_rfidm"]
+[ext_resource type="Texture2D" uid="uid://ba1yny176j1ph" path="res://assets/sprites/xylerfergus/XylerFergus_normal.png" id="1_rfidm"]
 [ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="1_script"]
 
 [resource]
 script = ExtResource("1_script")
 id = "Xyler and Fergus"
-desc = ""
+desc = "These moon-dwelling besties are a package deal!"
 portrait = ExtResource("1_rfidm")
 portrait_outline_color = Color(0.603922, 1, 0.203922, 1)
 shoot_name = "Shoot"

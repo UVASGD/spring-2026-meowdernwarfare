@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://dtgiuvb35xupj"]
+[gd_scene load_steps=40 format=3 uid="uid://dtgiuvb35xupj"]
 
 [ext_resource type="Script" uid="uid://cxsj0vfpiut4r" path="res://credits.gd" id="1_y0bee"]
 [ext_resource type="FontFile" uid="uid://dt2nbaox60w53" path="res://assets/ui/fonts/BATTLESANSSERIF.OTF" id="2_gleon"]
@@ -6,6 +6,29 @@
 [ext_resource type="Texture2D" uid="uid://d3josjylfxki8" path="res://assets/ui/titlescreen/catpitalist_logo_old.png" id="4_5fsmw"]
 [ext_resource type="Shader" uid="uid://bwnlbf6bnmnyk" path="res://assets/shaders/electric_wrap_inner.gdshader" id="5_r2bcm"]
 [ext_resource type="AudioStream" uid="uid://dfmt3c8a62wnx" path="res://assets/sound/music/mwf.mp3" id="6_gleon"]
+[ext_resource type="Texture2D" uid="uid://dejme1eeceo0t" path="res://assets/sprites/angel/seraphportrait.png" id="7_fg5mr"]
+[ext_resource type="Texture2D" uid="uid://c6gqosmx6oywy" path="res://assets/sprites/burple/burple_portrait_normal.png" id="8_b31lh"]
+[ext_resource type="Texture2D" uid="uid://bnraehpgygbjt" path="res://assets/sprites/BurpleBot/fnaf cat based.png" id="9_ywrl7"]
+[ext_resource type="Texture2D" uid="uid://c6uic0e3x023" path="res://assets/sprites/dealer/dealer_portrait_normal.png" id="10_rb1kr"]
+[ext_resource type="Texture2D" uid="uid://gxrb3fmyw46u" path="res://assets/sprites/elonmusk/musk_portrait_normal.png" id="11_h6gn5"]
+[ext_resource type="Texture2D" uid="uid://c7l8a1vfn0mxw" path="res://assets/sprites/elonmusk/spritesheet_20260425_153311.png" id="12_d2t0j"]
+[ext_resource type="Texture2D" uid="uid://c8xu4kfogucot" path="res://assets/sprites/garebare/garebare_portrait_normal.png" id="13_yob5b"]
+[ext_resource type="Texture2D" uid="uid://cqdn3xu5xuqqi" path="res://assets/sprites/gooblin/Gooblin__Ulting_-removebg-preview.png" id="14_668x0"]
+[ext_resource type="Texture2D" uid="uid://c8xfnyc3xgbkp" path="res://assets/sprites/loanshark/loanshark_transparent.png" id="15_kyg4e"]
+[ext_resource type="Texture2D" uid="uid://ba1yny176j1ph" path="res://assets/sprites/xylerfergus/XylerFergus_normal.png" id="16_36f21"]
+[ext_resource type="Texture2D" uid="uid://cets0dik6h3ly" path="res://assets/sprites/xylerfergus/xyler/aurafarming_xyler.png" id="17_q8ixd"]
+[ext_resource type="Texture2D" uid="uid://da8jnxkjyqftm" path="res://assets/sprites/crops/blastberry_world.png" id="18_yrgjy"]
+[ext_resource type="Texture2D" uid="uid://ckfb4xpqcdjyd" path="res://assets/sprites/crops/bullet tree.png" id="19_0psy3"]
+[ext_resource type="Texture2D" uid="uid://buxq1vigqa87y" path="res://assets/sprites/crops/cloudberry.png" id="20_i1n4n"]
+[ext_resource type="Texture2D" uid="uid://c0xvl6gia836u" path="res://assets/sprites/crops/coffee bean.png" id="21_hg7mm"]
+[ext_resource type="Texture2D" uid="uid://btx6ugidblpal" path="res://assets/sprites/crops/dragonfruit.png" id="22_mexbr"]
+[ext_resource type="Texture2D" uid="uid://bnmrsihkhyvuw" path="res://assets/sprites/crops/heartburst.png" id="23_0usxd"]
+[ext_resource type="Texture2D" uid="uid://cp57bqu0ip1da" path="res://assets/sprites/crops/hypnoflower.png" id="24_dvagc"]
+[ext_resource type="Texture2D" uid="uid://lfdylg4fis3v" path="res://assets/sprites/crops/ironroot_world-removebg-preview.png" id="25_au5i2"]
+[ext_resource type="Texture2D" uid="uid://kw7gahhht8mb" path="res://assets/sprites/crops/rushroom.png" id="26_qnv15"]
+[ext_resource type="Texture2D" uid="uid://c7eft4ow8q55u" path="res://assets/sprites/crops/sour patch kids.png" id="27_i5f6l"]
+[ext_resource type="Texture2D" uid="uid://bthv14d4yi04n" path="res://assets/sprites/crops/speed carrot.png" id="28_3t2a7"]
+[ext_resource type="Texture2D" uid="uid://ximw30q2f84i" path="res://assets/sprites/crops/starburst.png" id="29_ilcdv"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_0h4vu"]
 font = ExtResource("2_gleon")
@@ -49,58 +72,6 @@ shader_parameter/inner_noise_scale = 1.0
 shader_parameter/pulse = 1.0
 shader_parameter/inner_threshold = 0.5
 shader_parameter/alpha_cutoff = 0.01
-
-[sub_resource type="Animation" id="Animation_nbgb8"]
-resource_name = "scroll"
-length = 30.0
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("VBoxContainer:position")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 25.0333),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(0, 1043), Vector2(0, -2293)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("VBoxContainer/titilemask/TextureRect:material:shader_parameter/progress")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(24.9667, 27.7333),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [0.0, 1.0]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath("VBoxContainer/titilemask/TextureRect2:visible")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(26.2, 27.6533),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [false, true]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("VBoxContainer/titilemask/TextureRect2:material:shader_parameter/pulse")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(27.5717, 29.8667),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [0.0, 1.0]
-}
 
 [sub_resource type="Animation" id="Animation_j74tg"]
 length = 0.001
@@ -151,6 +122,142 @@ tracks/3/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [1.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Control2:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 967)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Control:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Control2:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_nbgb8"]
+resource_name = "scroll"
+length = 30.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("VBoxContainer:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 25.0333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 1043), Vector2(0, -2511.61)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("VBoxContainer/titilemask/TextureRect:material:shader_parameter/progress")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(24.9667, 27.7333),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("VBoxContainer/titilemask/TextureRect2:visible")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(26.2, 27.6533),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("VBoxContainer/titilemask/TextureRect2:material:shader_parameter/pulse")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(27.5717, 29.8667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 1.0]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Control:position")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0.0333333, 25.1),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 1043), Vector2(0, -2293)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Control2:position")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0.0666667, 25.0667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector2(0, 967), Vector2(0, -2293)]
+}
+tracks/6/type = "value"
+tracks/6/imported = false
+tracks/6/enabled = true
+tracks/6/path = NodePath("Control:modulate")
+tracks/6/interp = 1
+tracks/6/loop_wrap = true
+tracks/6/keys = {
+"times": PackedFloat32Array(23.09, 24.7667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("Control2:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(23.09, 24.7667),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_b8fa8"]
@@ -336,6 +443,7 @@ texture = ExtResource("4_5fsmw")
 libraries = {
 &"": SubResource("AnimationLibrary_b8fa8")
 }
+autoplay = "scroll"
 
 [node name="Mwf" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("6_gleon")
@@ -343,3 +451,172 @@ autoplay = true
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 autoplay = true
+
+[node name="Control" type="Control" parent="."]
+anchors_preset = 0
+offset_top = -2293.0
+offset_right = 40.0
+offset_bottom = -2253.0
+
+[node name="seraph" type="TextureRect" parent="Control"]
+layout_mode = 0
+offset_left = 1462.0
+offset_top = 1094.0
+offset_right = 1962.0
+offset_bottom = 1594.0
+texture = ExtResource("7_fg5mr")
+
+[node name="burple" type="TextureRect" parent="Control"]
+layout_mode = 0
+offset_left = 1428.0
+offset_top = 26.0
+offset_right = 1928.0
+offset_bottom = 526.0
+texture = ExtResource("8_b31lh")
+
+[node name="burplebot" type="TextureRect" parent="Control"]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 1499.0
+offset_right = 544.0
+offset_bottom = 1999.0
+texture = ExtResource("9_ywrl7")
+
+[node name="dealer" type="TextureRect" parent="Control"]
+layout_mode = 0
+offset_left = 229.0
+offset_top = 456.0
+offset_right = 729.0
+offset_bottom = 956.0
+texture = ExtResource("10_rb1kr")
+
+[node name="muskrat" type="TextureRect" parent="Control"]
+layout_mode = 0
+offset_left = -94.0
+offset_top = 2425.0
+offset_right = 406.0
+offset_bottom = 2925.0
+texture = ExtResource("11_h6gn5")
+
+[node name="chadmusk" type="TextureRect" parent="Control"]
+layout_mode = 0
+offset_left = 1346.0
+offset_top = 2552.0
+offset_right = 1846.0
+offset_bottom = 3052.0
+texture = ExtResource("12_d2t0j")
+
+[node name="garebare" type="TextureRect" parent="Control"]
+layout_mode = 0
+offset_left = 106.0
+offset_top = 1913.0
+offset_right = 606.0
+offset_bottom = 2413.0
+texture = ExtResource("13_yob5b")
+
+[node name="gooblin" type="TextureRect" parent="Control"]
+layout_mode = 0
+offset_left = 1412.0
+offset_top = 1490.0
+offset_right = 1912.0
+offset_bottom = 1990.0
+texture = ExtResource("14_668x0")
+
+[node name="loanshark" type="TextureRect" parent="Control"]
+layout_mode = 0
+offset_left = 1440.0
+offset_top = 534.0
+offset_right = 1940.0
+offset_bottom = 1034.0
+texture = ExtResource("15_kyg4e")
+
+[node name="xf" type="TextureRect" parent="Control"]
+layout_mode = 0
+offset_left = -45.0
+offset_top = 951.0
+offset_right = 455.0
+offset_bottom = 1451.0
+texture = ExtResource("16_36f21")
+
+[node name="xylersaiyan" type="TextureRect" parent="Control"]
+layout_mode = 0
+offset_left = 1465.0
+offset_top = 2022.0
+offset_right = 1965.0
+offset_bottom = 2522.0
+texture = ExtResource("17_q8ixd")
+
+[node name="TextureRect4" type="TextureRect" parent="Control"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Control2" type="Control" parent="."]
+anchors_preset = 0
+offset_top = 967.0
+offset_right = 40.0
+offset_bottom = 1007.0
+
+[node name="TextureRect" type="TextureRect" parent="Control2"]
+layout_mode = 0
+offset_left = 261.0
+offset_top = 220.0
+offset_right = 761.0
+offset_bottom = 720.0
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("18_yrgjy")
+
+[node name="BulletTree" type="Sprite2D" parent="Control2"]
+position = Vector2(160, 499)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("19_0psy3")
+
+[node name="Cloudberry" type="Sprite2D" parent="Control2"]
+position = Vector2(1452, 286)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("20_i1n4n")
+
+[node name="CoffeeBean" type="Sprite2D" parent="Control2"]
+position = Vector2(1473, 783)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("21_hg7mm")
+
+[node name="Dragonfruit" type="Sprite2D" parent="Control2"]
+position = Vector2(1338, 1574)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("22_mexbr")
+
+[node name="Heartburst" type="Sprite2D" parent="Control2"]
+position = Vector2(1421, 1157)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("23_0usxd")
+
+[node name="Hypnoflower" type="Sprite2D" parent="Control2"]
+position = Vector2(486, 1317)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("24_dvagc")
+
+[node name="IronrootWorld-removebg-preview" type="Sprite2D" parent="Control2"]
+position = Vector2(1451, 1919)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("25_au5i2")
+
+[node name="Rushroom" type="Sprite2D" parent="Control2"]
+position = Vector2(1399, 2361)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("26_qnv15")
+
+[node name="SourPatchKids" type="Sprite2D" parent="Control2"]
+position = Vector2(591, 2742)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("27_i5f6l")
+
+[node name="SpeedCarrot" type="Sprite2D" parent="Control2"]
+position = Vector2(592, 817)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("28_3t2a7")
+
+[node name="Starburst" type="Sprite2D" parent="Control2"]
+position = Vector2(599, 1747)
+scale = Vector2(0.4, 0.4)
+texture = ExtResource("29_ilcdv")

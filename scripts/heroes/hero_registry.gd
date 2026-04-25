@@ -27,6 +27,8 @@ const ALIASES := {
 	"Fergus": "XylerFergus",
 }
 
+static var _scene_cache: Dictionary = {}
+
 static func canonical(hero_id: String) -> String:
 	return ALIASES.get(hero_id, hero_id)
 
@@ -37,7 +39,21 @@ static func load_scene(hero_id: String) -> PackedScene:
 	var path := scene_path(hero_id)
 	if path.is_empty():
 		return null
-	return load(path)
+	var cached: PackedScene = _scene_cache.get(path, null)
+	if cached:
+		return cached
+	var scene: PackedScene = load(path) as PackedScene
+	if scene:
+		_scene_cache[path] = scene
+	return scene
+
+static func warm_scene(hero_id: String) -> void:
+	# Keep warmup deterministic to avoid threaded race conditions when scripts compile.
+	load_scene(hero_id)
+
+static func warm_all() -> void:
+	for id in SCENES.keys():
+		warm_scene(id)
 
 static func has(hero_id: String) -> bool:
 	return SCENES.has(canonical(hero_id))

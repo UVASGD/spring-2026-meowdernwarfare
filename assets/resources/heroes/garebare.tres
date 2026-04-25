@@ -6,11 +6,11 @@
 [resource]
 script = ExtResource("1_script")
 id = "Garebare"
-desc = "def"
+desc = "The legendary intergalactic DJ has made an appearance — Garebare! While on a visit to Ander Dingus Nuclear Plant, his UFO broke down… and soon after, warfare ensued. He’s fighting for parts so he can return home to his beloved moontables (turntables on the moon, FYI)."
 portrait = ExtResource("1_t2as0")
 portrait_outline_color = Color(1, 0, 0.32549, 1)
-shoot_name = "Soundwave"
-shoot_desc = "0.4s cooldown."
+shoot_name = "Soundwave gun"
+shoot_desc = "Soundwave gun shoots 3 soundwaves that can bounce off walls. Soundwaves increase in size but decrease in damage over time. "
 ability1_name = "Sonic Burst"
 ability1_desc = "Launch a sonic charge that stuns the first enemy hit for 2s. Stunned players cannot move, shoot, dash, or use skills. 10s cooldown."
 ability2_name = "Frequency Interference Emitter"

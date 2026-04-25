@@ -8,6 +8,8 @@ const CardAction = preload("res://scripts/ui/menu_hero_card.gd").CardAction
 @onready var dealer = $introgroup1/cardholder/dealer
 @onready var burple = $introgroup1/cardholder/burple
 @onready var garebare = $introgroup1/cardholder/garebare
+@onready var credits_btn: SpriteButton = $TopLeftButtons/CreditsButton
+@onready var quit_btn: SpriteButton = $TopLeftButtons/QuitButton
 @onready var anim_player = $introgroup1/AnimationPlayer
 @onready var burn_overlay = $BurnOverlay
 @onready var bg_bottom = $introgroup1/bgbottomlayer
@@ -222,3 +224,9 @@ func _on_quick_game_started(players: Array, settings: Dictionary) -> void:
 		Network.player_joined.disconnect(_on_quick_player_joined)
 	GameData.set_online_game(players, settings)
 	GameData.change_scene("res://scenes/game.tscn")
+
+func _on_credits_pressed() -> void:
+	GameData.change_scene("res://scenes/ui/credits.tscn")
+
+func _on_quit_pressed() -> void:
+	get_tree().quit()

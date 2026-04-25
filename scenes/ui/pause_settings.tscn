@@ -116,16 +116,16 @@ theme_override_constants/separation = 12
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5")
 theme_override_font_sizes/font_size = 30
-text = "SETTINGS"
+text = "settings"
 horizontal_alignment = 1
 
 [node name="Info" type="Label" parent="VBox"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5")
-text = "Coming soon"
+text = "coming soon"
 horizontal_alignment = 1
 
 [node name="BackBtn" type="Button" parent="VBox"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5")
-text = "BACK"
+text = "back"

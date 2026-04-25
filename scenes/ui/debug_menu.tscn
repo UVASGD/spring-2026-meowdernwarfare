@@ -18,7 +18,7 @@ theme_override_constants/separation = 6
 
 [node name="Title" type="Label" parent="Panel/VBox"]
 layout_mode = 2
-text = "Debug (TAB)"
+text = "debug (tab)"
 horizontal_alignment = 1
 
 [node name="SepA" type="HSeparator" parent="Panel/VBox"]
@@ -26,34 +26,34 @@ layout_mode = 2
 
 [node name="KillBtn" type="Button" parent="Panel/VBox"]
 layout_mode = 2
-text = "Kill Player"
+text = "kill player"
 
 [node name="ClearFarmBtn" type="Button" parent="Panel/VBox"]
 layout_mode = 2
-text = "Clear Farm"
+text = "clear farm"
 
 [node name="ChargeUltBtn" type="Button" parent="Panel/VBox"]
 layout_mode = 2
-text = "Charge Ult"
+text = "charge ult"
 
 [node name="ResetCdBtn" type="Button" parent="Panel/VBox"]
 layout_mode = 2
-text = "Reset Cooldowns"
+text = "reset cooldowns"
 
 [node name="ClearAllBtn" type="Button" parent="Panel/VBox"]
 layout_mode = 2
-text = "Clear All Farms"
+text = "clear all farms"
 
 [node name="SuddenDeathBtn" type="Button" parent="Panel/VBox"]
 layout_mode = 2
-text = "Trigger Sudden Death"
+text = "trigger sudden death"
 
 [node name="SepB" type="HSeparator" parent="Panel/VBox"]
 layout_mode = 2
 
 [node name="CropLabel" type="Label" parent="Panel/VBox"]
 layout_mode = 2
-text = "Add Crop to World"
+text = "add crop to world"
 
 [node name="CropPicker" type="OptionButton" parent="Panel/VBox"]
 layout_mode = 2
@@ -64,7 +64,7 @@ layout_mode = 2
 [node name="StageLabel" type="Label" parent="Panel/VBox/StageRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Stage:"
+text = "stage:"
 
 [node name="CropStageSpin" type="SpinBox" parent="Panel/VBox/StageRow"]
 layout_mode = 2
@@ -75,4 +75,4 @@ value = 1.0
 
 [node name="SpawnCropBtn" type="Button" parent="Panel/VBox"]
 layout_mode = 2
-text = "Spawn Crop"
+text = "spawn crop"

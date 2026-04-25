@@ -374,18 +374,6 @@ bg_color = Color(0.912289, 0.912289, 0.912289, 1)
 
 [sub_resource type="Animation" id="Animation_fulsm"]
 length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("..:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
-}
 
 [sub_resource type="Animation" id="Animation_4r5pv"]
 resource_name = "refreshed"
@@ -403,18 +391,6 @@ tracks/0/keys = {
 "update": 0,
 "values": [Vector2(2, 2), Vector2(1.6, 2.8), Vector2(1.5, 2.9), Vector2(2.2, 1.8), Vector2(2, 2)]
 }
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("..:modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.291667),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 0.470588), Color(1, 1, 1, 1)]
-}
 
 [sub_resource type="Animation" id="Animation_qfm1y"]
 resource_name = "use"
@@ -431,18 +407,6 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1, 1, 1),
 "update": 0,
 "values": [Vector2(2, 2), Vector2(1.6, 2.8), Vector2(1.5, 2.9), Vector2(2.2, 1.8), Vector2(2, 2)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("..:modulate")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0.166667, 0.416667),
-"transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0.47451)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_fulsm"]
@@ -619,7 +583,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="CooldownUI/Container/ShootCD"]
 layout_mode = 2
-text = "SHOOT"
+text = "shoot"
 horizontal_alignment = 1
 
 [node name="Bar" type="ProgressBar" parent="CooldownUI/Container/ShootCD"]
@@ -634,7 +598,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="CooldownUI/Container/Ability1CD"]
 layout_mode = 2
-text = "ABILITY 1"
+text = "ability 1"
 horizontal_alignment = 1
 
 [node name="Bar" type="ProgressBar" parent="CooldownUI/Container/Ability1CD"]
@@ -650,7 +614,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="CooldownUI/Container/Ability2CD"]
 layout_mode = 2
-text = "ABILITY 2"
+text = "ability 2"
 horizontal_alignment = 1
 
 [node name="Bar" type="ProgressBar" parent="CooldownUI/Container/Ability2CD"]
@@ -665,7 +629,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="CooldownUI/Container/UltCD"]
 layout_mode = 2
-text = "ULT"
+text = "ult"
 horizontal_alignment = 1
 
 [node name="Bar" type="ProgressBar" parent="CooldownUI/Container/UltCD"]
@@ -684,7 +648,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="CooldownUI/Container/ReloadCD"]
 layout_mode = 2
-text = "RELOAD"
+text = "reload"
 horizontal_alignment = 1
 
 [node name="Bar" type="ProgressBar" parent="CooldownUI/Container/ReloadCD"]
@@ -699,7 +663,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="CooldownUI/Container/DashCD"]
 layout_mode = 2
-text = "DASH"
+text = "dash"
 horizontal_alignment = 1
 
 [node name="Bar" type="ProgressBar" parent="CooldownUI/Container/DashCD"]
@@ -714,7 +678,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="CooldownUI/Container/Ammo"]
 layout_mode = 2
-text = "AMMO"
+text = "ammo"
 horizontal_alignment = 1
 
 [node name="Count" type="Label" parent="CooldownUI/Container/Ammo"]
@@ -792,6 +756,7 @@ texture = ExtResource("6_tuyoq")
 expand_mode = 1
 
 [node name="Ability1" type="ProgressBar" parent="CooldownUI/Ability1_mask"]
+layout_mode = 0
 offset_right = 93.0
 offset_bottom = 96.0
 pivot_offset = Vector2(18, 42)
@@ -817,6 +782,7 @@ texture = ExtResource("6_tuyoq")
 expand_mode = 1
 
 [node name="Ability2" type="ProgressBar" parent="CooldownUI/Ability2_mask"]
+layout_mode = 0
 offset_right = 93.0
 offset_bottom = 96.0
 pivot_offset = Vector2(18, 42)

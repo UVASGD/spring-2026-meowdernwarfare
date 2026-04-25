@@ -28,8 +28,6 @@ const GOOBLIN_TV_OUTLINE := Color(0.917647, 0.486275, 0.341176, 1)
 static var _portrait_cache: Dictionary = {}
 static var _color_cache: Dictionary = {}
 static var _bg_cache: Dictionary = {}
-static var _warm_i: int = 0
-static var _warm_pending: bool = false
 const MAX_BG := Vector2(420, 420)
 
 @onready var on_node: Node2D = $on
@@ -52,9 +50,6 @@ func _ready() -> void:
 	_on_screen_base_scale = on_screen.scale
 	_on_screen_default_tex = on_screen.texture
 	turn_off()
-	if not _warm_pending:
-		_warm_pending = true
-		call_deferred("_warm_one_hero")
 
 
 static func _ensure(hero_name: String) -> void:
@@ -76,12 +71,11 @@ static func _ensure(hero_name: String) -> void:
 
 
 static func _cache_from_scene(hero_name: String) -> void:
-	var path: String = HERO_SCENE_MAP.get(hero_name, "")
-	if path.is_empty():
+	if not HERO_SCENE_MAP.has(hero_name):
 		_portrait_cache[hero_name] = null
 		_color_cache[hero_name] = Color(0.5, 0.5, 0.5, 1)
 		return
-	var scene = load(path) as PackedScene
+	var scene := HeroRegistry.load_scene(hero_name)
 	if scene == null:
 		if not _portrait_cache.has(hero_name):
 			_portrait_cache[hero_name] = null
@@ -101,20 +95,10 @@ static func _cache_from_scene(hero_name: String) -> void:
 	_bg_cache[hero_name] = bg
 
 
-func _warm_one_hero() -> void:
-	var keys: Array = HERO_SCENE_MAP.keys()
-	if _warm_i >= keys.size():
-		_warm_pending = false
-		return
-	_ensure(keys[_warm_i])
-	_warm_i += 1
-	call_deferred("_warm_one_hero")
-
-
 func turn_on(username: String, is_host: bool) -> void:
 	on_node.show()
 	off_sprite.hide()
-	username_label.text = username
+	username_label.text = GameData.ensure_username(username)
 	host_ind.visible = is_host
 	ready_ind.modulate = Color(0.5, 0.5, 0.5)
 	static_overlay.visible = true

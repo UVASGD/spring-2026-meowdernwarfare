@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://02rcyma4fkmt"]
 
-[ext_resource type="Texture2D" path="res://assets/sprites/icon.svg" id="1_icon"]
+[ext_resource type="Texture2D" uid="uid://mldkolsa4g8q" path="res://assets/ui/general/placement.png" id="1_7m1ok"]
 
 [node name="GrenadeTarget" type="Sprite2D"]
 modulate = Color(1, 1, 1, 0.7)
-scale = Vector2(0.1, 0.1)
-texture = ExtResource("1_icon")
+scale = Vector2(2, 2)
+texture = ExtResource("1_7m1ok")
