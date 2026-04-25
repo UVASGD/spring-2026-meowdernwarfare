@@ -17,9 +17,15 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 			colliders.append(body)
 
 func hit():
+	var gm = GameManager.instance
+	if gm and not gm.is_host():
+		return
 	for player in colliders:
 		if is_instance_valid(player):
-			player.take_damage(dmg)
+			if player.has_method("take_acid_damage"):
+				player.take_acid_damage(dmg)
+			else:
+				player.take_damage(dmg)
 
 func _on_area_2d_body_exited(body: Node2D) -> void:
 	if body is Player and body in colliders:

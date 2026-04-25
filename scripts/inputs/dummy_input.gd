@@ -4,22 +4,20 @@ extends InputProvider
 # AI-controlled input for solo testing
 # Provides basic "enemy" behavior so you can test combat alone
 
-enum Behavior { IDLE, CHASE, FLEE, WANDER, AGGRESSIVE }
+enum Behavior { WANDER, CHASE, SHOOT, RELOAD }
 
-var behavior: Behavior = Behavior.AGGRESSIVE
+var behavior: Behavior = Behavior.WANDER
 var target: Node2D = null
 var owner_node: Node2D = null
 
 var wander_timer: float = 0.0
 var wander_dir: Vector2 = Vector2.ZERO
-var action_timer: float = 0.0
-var dash_cd: float = 0.0
+var shoot_timer: float = 0.0
+var reload_timer: float = 0.0
 
 # Tuning
-var chase_range: float = 400.0
-var attack_range: float = 150.0
-var flee_health_pct: float = 0.2
-var reaction_time: float = 0.15
+var chase_range: float = 600.0
+var shoot_range: float = 240.0
 
 func _init(node: Node2D = null) -> void:
 	owner_node = node
@@ -33,123 +31,123 @@ func update(delta: float) -> void:
 	if owner_node == null:
 		return
 	
-	# Update timers
+	shoot = false
+	reload = false
+	sprint = false
+
 	wander_timer -= delta
-	action_timer -= delta
-	dash_cd -= delta
-	
-	# Decide behavior based on situation
+	shoot_timer -= delta
+	reload_timer -= delta
+
+	_pick_target()
 	_update_behavior()
 	
-	# Execute behavior
 	match behavior:
-		Behavior.IDLE:
-			_do_idle(delta)
-		Behavior.CHASE:
-			_do_chase(delta)
-		Behavior.FLEE:
-			_do_flee(delta)
 		Behavior.WANDER:
-			_do_wander(delta)
-		Behavior.AGGRESSIVE:
-			_do_aggressive(delta)
+			_do_wander()
+		Behavior.CHASE:
+			_do_chase()
+		Behavior.SHOOT:
+			_do_shoot()
+		Behavior.RELOAD:
+			_do_reload()
+
+	if target != null and is_instance_valid(target):
+		var aim = target.global_position - owner_node.global_position
+		if aim.length() > 0.01:
+			aim_input = aim.normalized()
+			aim_position = target.global_position
+	elif move_input.length() > 0.01:
+		aim_input = move_input.normalized()
+		aim_position = owner_node.global_position + aim_input * 100.0
+
+func _pick_target() -> void:
+	if _is_valid_target(target):
+		return
+	target = null
+	var best_dist := INF
+	for p in owner_node.get_tree().get_nodes_in_group("players"):
+		if not (p is Player):
+			continue
+		var pl := p as Player
+		if not _is_valid_target(pl):
+			continue
+		var d := owner_node.global_position.distance_to(pl.global_position)
+		if d < best_dist:
+			best_dist = d
+			target = pl
+
+func _is_valid_target(n: Node2D) -> bool:
+	if n == null or not is_instance_valid(n):
+		return false
+	if n == owner_node:
+		return false
+	if n is Player:
+		var p := n as Player
+		if p.is_dead() or p.in_spectate_mode or p.is_awaiting_respawn or p.is_dying:
+			return false
+	return true
 
 func _update_behavior() -> void:
-	if target == null or not is_instance_valid(target):
+	if _should_reload():
+		behavior = Behavior.RELOAD
+		return
+	if not _is_valid_target(target):
 		behavior = Behavior.WANDER
 		return
-	
-	var dist = owner_node.global_position.distance_to(target.global_position)
-	
-	# Check if we should flee (if owner has health system)
-	if owner_node.has_method("get_health_percent"):
-		if owner_node.get_health_percent() < flee_health_pct:
-			behavior = Behavior.FLEE
-			return
-	
-	# Combat range decisions
-	if dist < attack_range:
-		behavior = Behavior.AGGRESSIVE
-	elif dist < chase_range:
+	var dist := owner_node.global_position.distance_to(target.global_position)
+	if dist <= shoot_range:
+		behavior = Behavior.SHOOT
+	elif dist <= chase_range:
 		behavior = Behavior.CHASE
 	else:
 		behavior = Behavior.WANDER
 
-func _do_idle(delta: float) -> void:
-	move_input = Vector2.ZERO
-	aim_input = wander_dir if wander_dir.length() > 0 else Vector2.RIGHT
+func _should_reload() -> bool:
+	if owner_node == null or not (owner_node is Player):
+		return false
+	var p := owner_node as Player
+	if p.hero == null or not p.hero.uses_gun_ammo():
+		return false
+	if p.hero.reload_cd > 0.0:
+		return false
+	return p.hero.ammo <= 0
 
-func _do_chase(delta: float) -> void:
-	if target == null:
+func _do_chase() -> void:
+	if not _is_valid_target(target):
+		move_input = Vector2.ZERO
 		return
-	
-	var to_target = target.global_position - owner_node.global_position
+	var to_target := target.global_position - owner_node.global_position
 	move_input = to_target.normalized()
-	aim_input = move_input
-	
-	# Sprint to catch up
-	sprint = to_target.length() > 200
 
-func _do_flee(delta: float) -> void:
-	if target == null:
+func _do_reload() -> void:
+	move_input = Vector2.ZERO
+	if reload_timer <= 0.0:
+		reload = true
+		reload_just = true
+		reload_timer = 0.4
+
+func _do_wander() -> void:
+	if wander_timer <= 0.0:
+		wander_timer = randf_range(0.8, 2.0)
+		wander_dir = Vector2(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0)).normalized()
+		if randf() < 0.35:
+			wander_dir = Vector2.ZERO
+	move_input = wander_dir * 0.5
+
+func _do_shoot() -> void:
+	if not _is_valid_target(target):
+		move_input = Vector2.ZERO
 		return
-	
-	var away = owner_node.global_position - target.global_position
-	move_input = away.normalized()
-	aim_input = -move_input  # Aim at pursuer while fleeing
-	sprint = true
-	
-	# Dash away if available
-	if dash_cd <= 0 and randf() < 0.3:
-		dash_just = true
-		dash_cd = 2.0
-
-func _do_wander(delta: float) -> void:
-	if wander_timer <= 0:
-		wander_timer = randf_range(1.0, 3.0)
-		wander_dir = Vector2(randf_range(-1, 1), randf_range(-1, 1)).normalized()
-		if randf() < 0.3:
-			wander_dir = Vector2.ZERO  # Sometimes stand still
-	
-	move_input = wander_dir * 0.5  # Walk slowly
-	aim_input = wander_dir if wander_dir.length() > 0 else aim_input
-
-func _do_aggressive(delta: float) -> void:
-	if target == null:
-		return
-	
-	var to_target = target.global_position - owner_node.global_position
-	var dist = to_target.length()
-	
-	# Aim at target
-	aim_input = to_target.normalized()
-	
-	# Strafe around target
-	var strafe = to_target.normalized().rotated(PI/2)
-	if wander_timer <= 0:
-		wander_timer = randf_range(0.5, 1.5)
-		wander_dir = strafe * (1 if randf() > 0.5 else -1)
-	
-	# Move: strafe + maintain distance
-	var desired_dist = attack_range * 0.7
-	var approach = to_target.normalized() * (1 if dist > desired_dist else -0.5)
-	move_input = (wander_dir * 0.6 + approach * 0.4).normalized()
-	
-	# Shoot with some reaction time
-	if action_timer <= 0 and dist < attack_range:
+	var to_target := target.global_position - owner_node.global_position
+	var dist := to_target.length()
+	if dist > shoot_range * 0.9:
+		move_input = to_target.normalized()
+	elif dist < shoot_range * 0.5:
+		move_input = -to_target.normalized() * 0.6
+	else:
+		move_input = Vector2.ZERO
+	if shoot_timer <= 0.0:
 		shoot = true
 		shoot_just = true
-		action_timer = randf_range(0.1, 0.4)  # Fire rate variance
-	
-	# Occasionally dash
-	if dash_cd <= 0 and randf() < 0.02:
-		dash_just = true
-		dash_cd = 1.5
-	
-	# Use abilities sometimes
-	if randf() < 0.005:
-		ability1_just = true
-	if randf() < 0.003:
-		ability2_just = true
-	if randf() < 0.002:
-		ult_just = true
+		shoot_timer = randf_range(0.12, 0.26)

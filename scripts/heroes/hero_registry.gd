@@ -7,6 +7,7 @@ extends RefCounted
 const SCENES := {
 	"Dealer": "res://scenes/heroes/dealer/dealer.tscn",
 	"Burple": "res://scenes/heroes/burple/burple.tscn",
+	"BurpleBot": "res://scenes/heroes/burple_bot.tscn",
 	"LoanShark": "res://scenes/heroes/loanshark/loanshark.tscn",
 	"Gooblin": "res://scenes/heroes/gooblin/gooblin.tscn",
 	"Garebare": "res://scenes/heroes/garebare/garebare.tscn",

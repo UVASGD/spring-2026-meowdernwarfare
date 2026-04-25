@@ -1,8 +1,9 @@
-[gd_scene load_steps=85 format=3 uid="uid://dr56yqn6pplyu"]
+[gd_scene load_steps=86 format=3 uid="uid://dr56yqn6pplyu"]
 
 [ext_resource type="Script" uid="uid://dpebk3try815y" path="res://scripts/heroes/burple.gd" id="1_rythq"]
 [ext_resource type="Texture2D" uid="uid://c6gqosmx6oywy" path="res://assets/sprites/burple/burple_portrait_normal.png" id="2_3facu"]
 [ext_resource type="Texture2D" uid="uid://dtpforsfxmum2" path="res://assets/sprites/gooblin/ability1_idle.png" id="3_fp1vn"]
+[ext_resource type="Texture2D" uid="uid://bra0cb7y8j5aj" path="res://assets/ui/titlescreen/burple_background_infinite.png" id="3_ndkau"]
 [ext_resource type="Texture2D" uid="uid://8elpuqpulmn" path="res://assets/sprites/gooblin/ability1_run.png" id="4_ndkau"]
 [ext_resource type="Texture2D" uid="uid://bqg62w5r14tq6" path="res://assets/sprites/gooblin/death.png" id="5_rk0x8"]
 [ext_resource type="Texture2D" uid="uid://bxep4n3ifscij" path="res://assets/sprites/gooblin/idle.png" id="6_tmgpn"]
@@ -611,6 +612,7 @@ reload_time = 1.8
 mag_size = 12
 portrait_outline_color = Color(0.705749, 0.260121, 1, 1)
 normal_portrait = ExtResource("2_3facu")
+tv_and_win_bg = ExtResource("3_ndkau")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.35, 0.35)

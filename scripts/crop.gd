@@ -91,6 +91,9 @@ func _apply_stat(player, value: float) -> void:
 		"shoot_cooldown":
 			if player.hero:
 				player.hero.shoot_cooldown += value
+		"shoot_cd_pct", "ability1_cd_pct", "ult_req_pct", "mag_pct", "heal_on_hit", "rush_pts_per_300", "rush_px_per_point", "hypno_dps", "hypno_radius", "acid_resist", "star_slow_pct", "star_radius":
+			if player.has_method("mod_crop_stat"):
+				player.mod_crop_stat(buff_stat, value)
 
 # Subclasses override for signal-based buffs
 func _make_buff_callable(_player) -> Callable:

@@ -115,10 +115,11 @@ animations = [{
 
 [node name="Burple" type="Node2D"]
 script = ExtResource("1_l2dwf")
+normal_portrait = ExtResource("3_dprrm")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.35, 0.35)
 sprite_frames = SubResource("SpriteFrames_6n8e3")
 animation = &"run"
 autoplay = "idle"
-frame_progress = 0.866192
+frame_progress = 0.939095

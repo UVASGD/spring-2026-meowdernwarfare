@@ -14,10 +14,30 @@ const CROP_SCENES := {
 	"SpeedCarrot": preload("res://scenes/crops/speed_carrot.tscn"),
 	"IronRoot": preload("res://scenes/crops/iron_root.tscn"),
 	"BlastBerry": preload("res://scenes/crops/blast_berry.tscn"),
+	"Dragonfruit": preload("res://scenes/crops/dragonfruit.tscn"),
+	"CoffeeBean": preload("res://scenes/crops/coffee_bean.tscn"),
+	"BulletBalloon": preload("res://scenes/crops/bullet_balloon.tscn"),
+	"Heartburst": preload("res://scenes/crops/heartburst.tscn"),
+	"RushRoom": preload("res://scenes/crops/rush_room.tscn"),
+	"Hypnoflower": preload("res://scenes/crops/hypnoflower.tscn"),
+	"Cloudberry": preload("res://scenes/crops/cloudberry.tscn"),
+	"SweetPatchChild": preload("res://scenes/crops/sweet_patch_child.tscn"),
+	"Star": preload("res://scenes/crops/star.tscn"),
 }
+const CROP_POOL := [
+	"Dragonfruit",
+	"CoffeeBean",
+	"BulletBalloon",
+	"Heartburst",
+	"RushRoom",
+	"Hypnoflower",
+	"Cloudberry",
+	"Star",
+]
+const CITY_ONLY_CROP := "SweetPatchChild"
 @export var DEFAULT_MAP: String = "Moon"
 
-const DebugMenu = preload("res://scripts/ui/debug_menu.gd")
+const DebugMenuScene = preload("res://scenes/ui/debug_menu.tscn")
 const Killzone = preload("res://scripts/killzone.gd")
 const UltBannerScene = preload("res://scenes/ui/ultbanner.tscn")
 const PauseMenuScene = preload("res://scenes/ui/pause_menu.tscn")
@@ -47,12 +67,13 @@ var _pause_menu: Control = null
 
 func _ready() -> void:
 	GameData.stop_menu_theme()
-	var dbg = DebugMenu.new()
+	var dbg = DebugMenuScene.instantiate()
 	add_child(dbg)
 	
 	var map_name = GameData.pending_settings.get("map", DEFAULT_MAP)
 	var starters = GameData.get_active_starters()
 	_load_map(map_name)
+	_configure_crop_spawners(map_name)
 	_setup_entity_layer()
 	_collect_farms()
 	gm.farm_spawns_received.connect(_on_farm_spawns_received)
@@ -191,6 +212,30 @@ func _find_ysort_container(node: Node) -> Node2D:
 
 func _collect_farms() -> void:
 	farms = get_tree().get_nodes_in_group("farms")
+
+func _configure_crop_spawners(map_name: String) -> void:
+	if map_node == null:
+		return
+	var names := CROP_POOL.duplicate()
+	if map_name == "City":
+		names.append(CITY_ONLY_CROP)
+	var list: Array[PackedScene] = []
+	for n in names:
+		var scene = CROP_SCENES.get(n)
+		if scene != null:
+			list.append(scene)
+	for s in _find_crop_spawners(map_node):
+		s.crop_scenes = list.duplicate()
+
+func _find_crop_spawners(root: Node) -> Array:
+	var out: Array = []
+	if root == null:
+		return out
+	if root.has_method("spawn_crop") and root.get("crop_scenes") != null:
+		out.append(root)
+	for c in root.get_children():
+		out.append_array(_find_crop_spawners(c))
+	return out
 
 func _collect_farms_tiles() -> void:
 	#print("[CROP] _collect_farms_tiles (post-frame): re-checking tile counts")

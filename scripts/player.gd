@@ -135,6 +135,23 @@ var _remote_held_sprite: Sprite2D = null
 var _remote_held_type: String = ""
 var _remote_held_stage: int = 1
 var farm = null
+var _crop_shoot_cd_pct: float = 0.0
+var _crop_a1_cd_pct: float = 0.0
+var _crop_ult_req_pct: float = 0.0
+var _crop_mag_pct: float = 0.0
+var _crop_heal_on_hit: float = 0.0
+var _crop_rush_px_per_point: float = 0.0
+var _crop_hypno_dps: float = 0.0
+var _crop_hypno_radius: float = 0.0
+var _crop_acid_resist: float = 0.0
+var _crop_star_slow_pct: float = 0.0
+var _crop_star_radius: float = 0.0
+var _rush_dist_acc: float = 0.0
+var _rush_prev_pos: Vector2 = Vector2.ZERO
+var _base_shoot_cd: float = 0.0
+var _base_a1_cd: float = 0.0
+var _base_ult_max: int = 1
+var _base_mag: int = 1
 
 # Meta states
 var in_spectate_mode: bool = false
@@ -211,6 +228,7 @@ func _ready() -> void:
 	_setup_local_ui()
 	_setup_crop_area()
 	_setup_nametag()
+	_rush_prev_pos = global_position
 
 func set_hero(hero_name: String) -> void:
 	var prev = hero
@@ -258,6 +276,8 @@ func set_hero(hero_name: String) -> void:
 	if _should_show_local_ui():
 		_bind_hero_ui_signals(hero)
 		_refresh_hero_ui()
+	_cache_crop_base_stats()
+	_apply_crop_hero_stats()
 	
 	_refresh_ability2_charge_ui_visibility()
 	_refresh_movement_dash_ui_visibility()
@@ -520,6 +540,8 @@ func _physics_process(delta: float) -> void:
 	if physics_owner:
 		_handle_movement(delta)
 		move_and_slide()
+		_process_rush_room(delta)
+		_process_hypnoflower(delta)
 	
 	_handle_rotation(delta)
 	_update_target_marker()
@@ -590,6 +612,8 @@ func _handle_movement(delta: float) -> void:
 
 	var hero_mult = hero.move_speed_mult if hero else 1.0
 	var speed = max_speed * hero_mult * (sprint_mult if input.sprint else 1.0)
+	var star_slow = _get_star_slow_factor()
+	speed *= max(0.05, 1.0 - star_slow)
 	
 	var move = input.move_input
 	if is_drugged:
@@ -784,7 +808,13 @@ func take_damage(amount: float, attacker: Player = null) -> bool:
 	SfxBus.play_world(SfxEvent.PLAYER_HURT, global_position)
 	if attacker and attacker.hero:
 		attacker.hero.add_ult_points(attacker.hero.ult_points_on_hit)
+		if attacker._crop_heal_on_hit > 0.0:
+			attacker.heal(attacker._crop_heal_on_hit)
 	return true
+
+func take_acid_damage(amount: float, attacker: Player = null) -> bool:
+	var mult = max(0.0, 1.0 - _crop_acid_resist)
+	return take_damage(amount * mult, attacker)
 
 func on_bullet_dodged() -> void:
 	var gm = GameManager.instance
@@ -1253,6 +1283,108 @@ func _make_placeholder_tex(crop: Crop) -> Texture2D:
 	var img = Image.create(32, 32, false, Image.FORMAT_RGBA8)
 	img.fill(crop.get_stage_color())
 	return ImageTexture.create_from_image(img)
+
+func _has_damage_authority() -> bool:
+	var gm = GameManager.instance
+	return gm == null or gm.is_host()
+
+func _cache_crop_base_stats() -> void:
+	if hero == null:
+		return
+	_base_shoot_cd = hero.shoot_cooldown
+	_base_a1_cd = hero.ability1_cooldown
+	_base_ult_max = max(1, hero.max_ult_points)
+	_base_mag = max(1, hero.mag_size)
+
+func _apply_crop_hero_stats() -> void:
+	if hero == null:
+		return
+	if _base_shoot_cd <= 0.0:
+		_cache_crop_base_stats()
+	var shoot_mult = max(0.1, 1.0 - _crop_shoot_cd_pct)
+	var a1_mult = max(0.1, 1.0 - _crop_a1_cd_pct)
+	var ult_mult = max(0.1, 1.0 - _crop_ult_req_pct)
+	var mag_mult = max(0.1, 1.0 + _crop_mag_pct)
+	hero.shoot_cooldown = max(0.02, _base_shoot_cd * shoot_mult)
+	hero.ability1_cooldown = max(0.05, _base_a1_cd * a1_mult)
+	hero.max_ult_points = max(1, int(round(_base_ult_max * ult_mult)))
+	hero.mag_size = max(1, int(round(_base_mag * mag_mult)))
+	if hero.ammo > hero.mag_size:
+		hero.ammo = hero.mag_size
+	if hero.ult_points > hero.max_ult_points:
+		hero.ult_points = hero.max_ult_points
+		hero.ult_changed.emit(hero.ult_points, hero.max_ult_points)
+
+func mod_crop_stat(stat: String, delta: float) -> void:
+	match stat:
+		"shoot_cd_pct":
+			_crop_shoot_cd_pct = max(0.0, _crop_shoot_cd_pct + delta)
+			_apply_crop_hero_stats()
+		"ability1_cd_pct":
+			_crop_a1_cd_pct = max(0.0, _crop_a1_cd_pct + delta)
+			_apply_crop_hero_stats()
+		"ult_req_pct":
+			_crop_ult_req_pct = max(0.0, _crop_ult_req_pct + delta)
+			_apply_crop_hero_stats()
+		"mag_pct":
+			_crop_mag_pct = max(0.0, _crop_mag_pct + delta)
+			_apply_crop_hero_stats()
+		"heal_on_hit":
+			_crop_heal_on_hit = max(0.0, _crop_heal_on_hit + delta)
+		"rush_pts_per_300":
+			# Backward compatibility for older crop stat key.
+			_crop_rush_px_per_point = max(0.0, _crop_rush_px_per_point + delta)
+		"rush_px_per_point":
+			_crop_rush_px_per_point = max(0.0, _crop_rush_px_per_point + delta)
+		"hypno_dps":
+			_crop_hypno_dps = max(0.0, _crop_hypno_dps + delta)
+		"hypno_radius":
+			_crop_hypno_radius = max(0.0, _crop_hypno_radius + delta)
+		"acid_resist":
+			_crop_acid_resist = clamp(_crop_acid_resist + delta, 0.0, 0.95)
+		"star_slow_pct":
+			_crop_star_slow_pct = clamp(_crop_star_slow_pct + delta, 0.0, 0.95)
+		"star_radius":
+			_crop_star_radius = max(0.0, _crop_star_radius + delta)
+
+func _process_rush_room(_delta: float) -> void:
+	if hero == null or _crop_rush_px_per_point <= 0.0 or not _has_damage_authority():
+		if _crop_rush_px_per_point <= 0.0:
+			_rush_dist_acc = 0.0
+		_rush_prev_pos = global_position
+		return
+	var moved = global_position.distance_to(_rush_prev_pos)
+	_rush_prev_pos = global_position
+	if moved <= 0.0:
+		return
+	_rush_dist_acc += moved
+	var threshold: float = maxf(1.0, _crop_rush_px_per_point)
+	var pulses = int(floor(_rush_dist_acc / threshold))
+	if pulses <= 0:
+		return
+	_rush_dist_acc -= float(pulses) * threshold
+	hero.add_ult_points(pulses)
+
+func _process_hypnoflower(delta: float) -> void:
+	if _crop_hypno_dps <= 0.0 or _crop_hypno_radius <= 0.0 or not _has_damage_authority():
+		return
+	for p in get_tree().get_nodes_in_group("players"):
+		if p == self or not (p is Player) or not is_instance_valid(p) or p.is_dead():
+			continue
+		if p.global_position.distance_to(global_position) > _crop_hypno_radius:
+			continue
+		p.take_damage(_crop_hypno_dps * delta, self)
+
+func _get_star_slow_factor() -> float:
+	var slow := 0.0
+	for p in get_tree().get_nodes_in_group("players"):
+		if p == self or not (p is Player) or not is_instance_valid(p):
+			continue
+		if p.is_dead() or p._crop_star_slow_pct <= 0.0 or p._crop_star_radius <= 0.0:
+			continue
+		if global_position.distance_to(p.global_position) <= p._crop_star_radius:
+			slow = max(slow, p._crop_star_slow_pct)
+	return slow
 
 func set_remote_held_crop(type_id: String, stg: int) -> void:
 	if type_id == _remote_held_type and stg == _remote_held_stage and _remote_held_sprite != null:

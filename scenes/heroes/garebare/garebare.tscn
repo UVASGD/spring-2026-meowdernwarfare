@@ -1,9 +1,10 @@
-[gd_scene load_steps=78 format=3 uid="uid://cuepcvxuh6hce"]
+[gd_scene load_steps=79 format=3 uid="uid://cuepcvxuh6hce"]
 
 [ext_resource type="Script" uid="uid://11gltq4dspur" path="res://scripts/heroes/garebare.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://c8xu4kfogucot" path="res://assets/sprites/garebare/garebare_portrait_normal.png" id="2_0r88g"]
 [ext_resource type="Texture2D" uid="uid://c1cmhaitdttpo" path="res://assets/sprites/garebare/GB_IDLE-Sheet.png" id="2_se2ev"]
 [ext_resource type="Texture2D" uid="uid://dtukkn6fdafnw" path="res://assets/sprites/garebare/GB_WALK-Sheet.png" id="3_0r88g"]
+[ext_resource type="Texture2D" uid="uid://dpv3ub6q2kyku" path="res://assets/ui/titlescreen/garebare_background_infinite.png" id="3_3swo4"]
 [ext_resource type="Texture2D" uid="uid://bm35da4o785b3" path="res://assets/sprites/garebare/gareb4re_DIE-Sheet.png" id="3_c7x7q"]
 [ext_resource type="Texture2D" uid="uid://bvcmm7bin3ds3" path="res://assets/sprites/garebare/GB_IDLE_SHOOT-Sheet.png" id="4_mdltq"]
 [ext_resource type="Texture2D" uid="uid://7c3qmk7qg6va" path="res://assets/sprites/garebare/GB_WALK_SHOOT-Sheet.png" id="5_mqrmh"]
@@ -529,6 +530,7 @@ portrait_outline_color = Color(1, 0, 0.32549, 1)
 normal_portrait = ExtResource("2_0r88g")
 portrait_offset = Vector2(50, -70)
 ult_banner_portrait_offset = Vector2(60, 0)
+tv_and_win_bg = ExtResource("3_3swo4")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.2, 0.2)

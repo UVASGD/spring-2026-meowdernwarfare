@@ -22,6 +22,8 @@ signal sudden_death_received
 signal farm_spawns_received(assignments: Array)
 signal ult_used_received(player_id: int)
 
+const AI_HERO := "BurpleBot"
+
 const BurpleGrenadeScene = preload("res://scenes/heroes/burple/grenade.tscn")
 const BurpleStrikeScene = preload("res://scenes/heroes/burple/missile_strike.tscn")
 const MuskratUltScene = preload("res://scenes/heroes/elonmusk/cybertruck_ult.tscn")
@@ -93,6 +95,7 @@ func spawn_ai_player(id: int, target: Node2D = null) -> Player:
 	if target:
 		ai_input.set_target(target)
 	player.input = ai_input
+	player.set_hero(AI_HERO)
 	
 	var spawn_pos = _get_fallback_position(id)
 	_add_entity(player)
@@ -1489,6 +1492,15 @@ const CROP_SCENES := {
 	"SpeedCarrot": preload("res://scenes/crops/speed_carrot.tscn"),
 	"IronRoot": preload("res://scenes/crops/iron_root.tscn"),
 	"BlastBerry": preload("res://scenes/crops/blast_berry.tscn"),
+	"Dragonfruit": preload("res://scenes/crops/dragonfruit.tscn"),
+	"CoffeeBean": preload("res://scenes/crops/coffee_bean.tscn"),
+	"BulletBalloon": preload("res://scenes/crops/bullet_balloon.tscn"),
+	"Heartburst": preload("res://scenes/crops/heartburst.tscn"),
+	"RushRoom": preload("res://scenes/crops/rush_room.tscn"),
+	"Hypnoflower": preload("res://scenes/crops/hypnoflower.tscn"),
+	"Cloudberry": preload("res://scenes/crops/cloudberry.tscn"),
+	"SweetPatchChild": preload("res://scenes/crops/sweet_patch_child.tscn"),
+	"Star": preload("res://scenes/crops/star.tscn"),
 }
 
 var _host_held_crops: Dictionary = {}
