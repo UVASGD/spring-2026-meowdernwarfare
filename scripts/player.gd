@@ -55,12 +55,15 @@ var target_health_bar_value : float;
 var target_health_bar_color : Color = Color.WHITE;;
 @onready var local_health_bar_label = $CooldownUI/HealthBar/Label
 
-@onready var ability_1_bar = $CooldownUI/Ability1
-@onready var ability_1_icon = $CooldownUI/Ability1/TextureRect
-@onready var ability_1_animation = $CooldownUI/Ability1/AnimationPlayer
+@onready var ability_1_mask: TextureRect = $CooldownUI/Ability1_mask
 
-@onready var ability_2_bar = $CooldownUI/Ability2
-@onready var ability_2_icon = $CooldownUI/Ability2/TextureRect
+@onready var ability_1_bar = $CooldownUI/Ability1_mask/Ability1
+@onready var ability_1_animation = $CooldownUI/Ability1_mask/Ability1/AnimationPlayer
+
+@onready var ability_2_mask: TextureRect = $CooldownUI/Ability2_mask
+
+@onready var ability_2_bar = $CooldownUI/Ability2_mask/Ability2
+@onready var ability_2_animation = $CooldownUI/Ability2_mask/Ability2/AnimationPlayer
 
 @onready var character_profile = $CooldownUI/Profile
 @onready var ult_percent_label = $CooldownUI/Profile/Label
@@ -370,6 +373,9 @@ func _bind_hero_ui_signals(h: Hero) -> void:
 	var cb_a1_use := Callable(self, "ability_1_use_animation")
 	if not h.used_ability_1.is_connected(cb_a1_use):
 		h.used_ability_1.connect(cb_a1_use)
+	var cb_a2_use := Callable(self, "ability_2_use_animation")
+	if not h.used_ability_2.is_connected(cb_a2_use):
+		h.used_ability_2.connect(cb_a2_use)
 	var cb_a1_ref := Callable(self, "ability_1_refresh_animation")
 	if not h.ability_1_refreshed.is_connected(cb_a1_ref):
 		h.ability_1_refreshed.connect(cb_a1_ref)
@@ -395,6 +401,9 @@ func _unbind_hero_ui_signals(h: Hero) -> void:
 	var cb_a1_use := Callable(self, "ability_1_use_animation")
 	if h.used_ability_1.is_connected(cb_a1_use):
 		h.used_ability_1.disconnect(cb_a1_use)
+	var cb_a2_use := Callable(self, "ability_2_use_animation")
+	if h.used_ability_2.is_connected(cb_a2_use):
+		h.used_ability_2.disconnect(cb_a2_use)
 	var cb_a1_ref := Callable(self, "ability_1_refresh_animation")
 	if h.ability_1_refreshed.is_connected(cb_a1_ref):
 		h.ability_1_refreshed.disconnect(cb_a1_ref)
@@ -423,8 +432,11 @@ func _refresh_hero_ui() -> void:
 	character_profile.texture = hero.get_hero_default_profile()
 	character_profile.material = null
 	character_profile.position = _profile_base_pos + hero.get_hero_portrait_offset()
-	ability_1_icon.texture = hero.get_hero_ability1_icon()
-	ability_2_icon.texture = hero.get_hero_ability2_icon()
+	_set_ability_mask_tex(ability_1_mask, hero.get_hero_ability1_icon())
+	var has_a2: bool = hero.has_hero_ability2()
+	ability_2_mask.visible = has_a2
+	ability_2_bar.visible = has_a2
+	_set_ability_mask_tex(ability_2_mask, hero.get_hero_ability2_icon() if has_a2 else null)
 	ability_1_bar.modulate = hero.get_hero_ui_color()
 	ability_2_bar.modulate = hero.get_hero_ui_color()
 	if hero.uses_gun_ammo():
@@ -433,6 +445,11 @@ func _refresh_hero_ui() -> void:
 	_refresh_movement_dash_ui_visibility()
 	_refresh_ability2_charge_ui_visibility()
 	_refresh_gun_ui_visibility()
+
+func _set_ability_mask_tex(mask: TextureRect, tex: Texture2D) -> void:
+	if mask == null:
+		return
+	mask.texture = tex
 
 func _setup_nametag() -> void:
 	nametag = health_bar.get_node_or_null("Nametag") if health_bar else null
@@ -661,7 +678,7 @@ func _handle_actions(consumed_shoot := false) -> void:
 			_play_skill_cd_blocked()
 		if input.ability1_just and not hero.can_ability1():
 			_play_skill_cd_blocked()
-		if input.ability2_just and not hero.can_ability2():
+		if input.ability2_just and hero.has_hero_ability2() and not hero.can_ability2():
 			_play_skill_cd_blocked()
 		if input.ult_just and not hero.can_ult():
 			_play_skill_cd_blocked()
@@ -673,7 +690,7 @@ func _handle_actions(consumed_shoot := false) -> void:
 		hero.shoot(aim_dir, get_aim_position())
 	if input.ability1_just:
 		hero.ability1(aim_dir, get_aim_position())
-	if input.ability2_just:
+	if input.ability2_just and hero.has_hero_ability2():
 		hero.ability2(aim_dir, get_aim_position())
 	if input.ult_just:
 		hero.ult(aim_dir, get_aim_position())
@@ -854,7 +871,7 @@ func _update_cooldown_ui() -> void:
 			if loan_shark_charge_row:
 				loan_shark_charge_row.visible = false
 	
-	if ability_2_bar:
+	if ability_2_bar and ability_2_bar.visible:
 		if hero is HeroLoanShark:
 			var ls2 := hero as HeroLoanShark
 			ability_2_bar.value = float(ls2.ability2_charges) / 2.0
@@ -1280,6 +1297,10 @@ func ability_1_use_animation() -> void:
 
 func ability_1_refresh_animation() -> void:
 	ability_1_animation.play("refreshed");
+
+func ability_2_use_animation() -> void:
+	if ability_2_animation:
+		ability_2_animation.play("use");
 
 # --- DRUG EFFECT ---
 

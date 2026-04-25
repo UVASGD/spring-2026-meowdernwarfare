@@ -12,6 +12,7 @@ var pending_players: Array = []
 var pending_settings: Dictionary = {}
 var is_online_game: bool = false
 var menu_pause_local: bool = false
+var end_screen_data: Dictionary = {}
 
 # Starter crop selection (persisted)
 var starter_crops: Array[String] = []
@@ -175,6 +176,15 @@ func clear() -> void:
 	is_online_game = false
 	menu_pause_local = false
 	game_mode = GameMode.NONE
+	end_screen_data.clear()
+
+func set_end_screen_data(data: Dictionary) -> void:
+	end_screen_data = data.duplicate(true)
+
+func consume_end_screen_data() -> Dictionary:
+	var data := end_screen_data.duplicate(true)
+	end_screen_data.clear()
+	return data
 
 func _load_starter_crops() -> void:
 	var config = ConfigFile.new()

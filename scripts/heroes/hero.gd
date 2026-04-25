@@ -12,6 +12,7 @@ signal started_reload
 signal finished_reload
 
 signal used_ability_1
+signal used_ability_2
 signal ability_1_refreshed
 signal used_ult
 
@@ -57,6 +58,7 @@ enum UltMode { CHARGE, COOLDOWN }
 @export var ult_portrait: Texture2D
 @export var portrait_offset: Vector2 = Vector2.ZERO
 @export var ult_banner_portrait_offset: Vector2 = Vector2.ZERO
+@export var tv_and_win_bg: Texture2D
 # State
 var health: float = 100.0
 var shoot_cd: float = 0.0
@@ -92,6 +94,25 @@ var hitbox: CollisionShape2D = null
 const DEFAULT_HERO_UI_COLOR = Color.WHITE;
 const ABILITY_ICON_TEMP_2 = preload("res://assets/ui/player/ability_icon_temp2.png")
 const ABILITY_ICON_TEMP_1 = preload("res://assets/ui/player/ability_icon_temp1.png")
+const A1_ICONS := {
+	"AnderDingus": preload("res://assets/ui/ability_icons_centered/ander_ability_1.png"),
+	"Burple": preload("res://assets/ui/ability_icons_centered/burple_ability_1.png"),
+	"Alien": preload("res://assets/ui/ability_icons_centered/catnip_ability_1.png"),
+	"AnimeGirl": preload("res://assets/ui/ability_icons_centered/catnip_ability_1.png"),
+	"ElonMusk": preload("res://assets/ui/ability_icons_centered/elon_ability_1.png"),
+	"Garebare": preload("res://assets/ui/ability_icons_centered/garebare_ability_1.png"),
+	"Gooblin": preload("res://assets/ui/ability_icons_centered/gooblin_ability_1.png"),
+	"LoanShark": preload("res://assets/ui/ability_icons_centered/loanshark_ability_1.png"),
+	"XylerFergus": preload("res://assets/ui/ability_icons_centered/xyler_ability_1.png"),
+}
+const A2_ICONS := {
+	"AnderDingus": preload("res://assets/ui/ability_icons_centered/ander_ability_2.png"),
+	"ElonMusk": preload("res://assets/ui/ability_icons_centered/elon_ability_2.png"),
+	"Garebare": preload("res://assets/ui/ability_icons_centered/garebare_ability_2.png"),
+	"Gooblin": preload("res://assets/ui/ability_icons_centered/gooblin_ability_2.png"),
+	"LoanShark": preload("res://assets/ui/ability_icons_centered/loanshark_ability_2.png"),
+	"XylerFergus": preload("res://assets/ui/ability_icons_centered/xyler_ability_2.png"),
+}
 const PROFILE_ANGRY_PLACEHOLDER = preload("res://assets/ui/player/profile_angry_placeholder.png")
 const PROFILE_PLACEHOLDER = preload("res://assets/ui/player/profile_placeholder.png")
 
@@ -308,6 +329,7 @@ func ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	_begin_skill("ability2")
 	_play_action_anim("ability2")
 	_capture_skill_anim()
+	used_ability_2.emit()
 	SfxBus.play_world(SfxEvent.ABILITY_2, player.global_position if player else global_position)
 	_play_hero_sfx(&"ability2")
 	_do_ability2(aim_dir, aim_pos)
@@ -573,9 +595,20 @@ func get_hero_ult_banner_portrait_offset() -> Vector2:
 	return ult_banner_portrait_offset
 
 func get_hero_ability1_icon() -> Texture2D:
+	var icon: Texture2D = A1_ICONS.get(get_hero_name(), null)
+	if icon:
+		return icon
 	return ABILITY_ICON_TEMP_1;
 
+func has_hero_ability2() -> bool:
+	return ability2_cooldown > 0.0
+
 func get_hero_ability2_icon() -> Texture2D:
+	if not has_hero_ability2():
+		return null
+	var icon: Texture2D = A2_ICONS.get(get_hero_name(), null)
+	if icon:
+		return icon
 	return ABILITY_ICON_TEMP_2;
 
 func get_hero_ui_color() -> Color:

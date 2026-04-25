@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://bfeft5kes0auv"]
+[gd_scene load_steps=30 format=3 uid="uid://bfeft5kes0auv"]
 
 [ext_resource type="Script" uid="uid://djrqyvj6ekpsk" path="res://scenes/heroes/elonmusk/cybertruck_ult.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://c45b05unhdcx5" path="res://assets/sprites/elonmusk/CT_Side_move.png" id="2_brcio"]
@@ -163,8 +163,27 @@ animations = [{
 "speed": 5.0
 }]
 
+[sub_resource type="Gradient" id="Gradient_e8ram"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_brcio"]
+gradient = SubResource("Gradient_e8ram")
+fill = 1
+fill_from = Vector2(0.545872, 0.472477)
+fill_to = Vector2(0.811927, 0.0917431)
+
+[sub_resource type="Gradient" id="Gradient_brcio"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_7r6bi"]
+gradient = SubResource("Gradient_brcio")
+fill = 1
+fill_from = Vector2(0.545872, 0.472477)
+fill_to = Vector2(0.811927, 0.0917431)
+
 [node name="CybertruckUlt" type="Node2D"]
 script = ExtResource("1")
+zone_radius = 700.0
 
 [node name="Zone" type="Line2D" parent="."]
 closed = true
@@ -174,12 +193,22 @@ default_color = Color(0.45, 0.7, 1, 0.28)
 [node name="Truck" type="Node2D" parent="."]
 
 [node name="Body" type="AnimatedSprite2D" parent="Truck"]
+light_mask = 2
+scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_h0jjf")
 animation = &"top_move"
 
 [node name="Glow" type="PointLight2D" parent="Truck"]
 color = Color(0.6, 0.85, 1, 1)
-texture_scale = 1.8
+range_item_cull_mask = 3
+texture = SubResource("GradientTexture2D_brcio")
+texture_scale = 3.0
+
+[node name="PointLight2D" type="PointLight2D" parent="Truck"]
+scale = Vector2(2, 3)
+blend_mode = 1
+texture = SubResource("GradientTexture2D_7r6bi")
+height = 137.0
 
 [node name="Boom" type="ColorRect" parent="."]
 visible = false

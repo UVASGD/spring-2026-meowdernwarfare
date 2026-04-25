@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=4 uid="uid://dp2ttwbglhrhd"]
+[gd_scene load_steps=46 format=4 uid="uid://dp2ttwbglhrhd"]
 
 [ext_resource type="Texture2D" uid="uid://bra0cb7y8j5aj" path="res://assets/ui/titlescreen/burple_background_infinite.png" id="1_4sf6x"]
 [ext_resource type="Script" uid="uid://be3pnfxr2d7wk" path="res://scripts/spacebg.gd" id="2_4msuu"]
@@ -11,11 +11,6 @@
 [ext_resource type="Texture2D" uid="uid://ni0dog6rvg0e" path="res://assets/maps/moon/objs/Radiohut.png" id="9_5l2ys"]
 [ext_resource type="Texture2D" uid="uid://bomlsfawffdla" path="res://assets/maps/moon/objs/Squid house.png" id="10_rbha6"]
 [ext_resource type="Texture2D" uid="uid://cua3oasp2hwem" path="res://assets/maps/moon/objs/evil trees.png" id="11_45p84"]
-[ext_resource type="Script" uid="uid://pdt7g4isc4pi" path="res://scripts/teleporter.gd" id="13_6jn65"]
-[ext_resource type="Texture2D" uid="uid://cv6mqks33jfhe" path="res://assets/maps/moon/objs/moon crater.png" id="14_dcwis"]
-[ext_resource type="Texture2D" uid="uid://8jsfcccmc784" path="res://assets/maps/moon/objs/moon crater_normal.png" id="15_ed5ae"]
-[ext_resource type="Texture2D" uid="uid://7sx3ccys0khy" path="res://assets/maps/moon/objs/moon crater_specular.png" id="16_4d304"]
-[ext_resource type="Texture2D" uid="uid://wjb35hpxxleh" path="res://assets/maps/moon/objs/moon crater glow.png" id="17_c0fvh"]
 [ext_resource type="Texture2D" uid="uid://1n01bhkdmox1" path="res://assets/maps/city/objs/crashtruck3.png" id="18_5l2ys"]
 [ext_resource type="Texture2D" uid="uid://c8l46s1hcmj7i" path="res://assets/maps/city/objs/crashtruck.png" id="19_rbha6"]
 [ext_resource type="Texture2D" uid="uid://75krytsq6qje" path="res://assets/maps/city/objs/treecat.png" id="20_45p84"]
@@ -23,9 +18,9 @@
 [ext_resource type="PackedScene" uid="uid://cbbhkl15cimnl" path="res://scenes/acidpuddle.tscn" id="21_lnnvg"]
 [ext_resource type="Texture2D" uid="uid://b8tl3pbjlluid" path="res://assets/maps/city/objs/nuclearplant.png" id="22_6jn65"]
 [ext_resource type="PackedScene" uid="uid://cih7402ccv0gh" path="res://scenes/sd_lights.tscn" id="22_e5wdl"]
-[ext_resource type="PackedScene" uid="uid://dg266xce3jg3q" path="res://moon_crop_spawner_real.tscn" id="23_1knbx"]
 [ext_resource type="Texture2D" uid="uid://1qwlktiojics" path="res://assets/maps/city/objs/rubble1.png" id="23_dcwis"]
 [ext_resource type="Texture2D" uid="uid://ckatwycutn13n" path="res://assets/maps/city/objs/rubble2.png" id="24_ed5ae"]
+[ext_resource type="PackedScene" uid="uid://bpigoxrqnhcu1" path="res://city_crop_spawner.tscn" id="24_rhw3e"]
 [ext_resource type="AudioStream" uid="uid://ccd465ueq1ado" path="res://assets/sound/music/Moon Map Catpitalist 2.ogg" id="24_w077c"]
 [ext_resource type="Texture2D" uid="uid://ctq1trilbmdii" path="res://assets/maps/city/objs/rubble3.png" id="25_4d304"]
 [ext_resource type="AudioStream" uid="uid://dl2weybrdbc1h" path="res://assets/sound/music/Pokémon Black & White - Critical Health Music (HQ).mp3" id="25_gedhm"]
@@ -70,16 +65,6 @@ sources/0 = SubResource("TileSetAtlasSource_gmvv7")
 sources/1 = SubResource("TileSetAtlasSource_e5wdl")
 sources/2 = SubResource("TileSetAtlasSource_1knbx")
 sources/3 = SubResource("TileSetAtlasSource_w077c")
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_6kqtc"]
-radius = 89.0225
-
-[sub_resource type="CanvasTexture" id="CanvasTexture_an7kh"]
-diffuse_texture = ExtResource("14_dcwis")
-normal_texture = ExtResource("15_ed5ae")
-specular_texture = ExtResource("16_4d304")
-specular_color = Color(6.93083e-06, 0.713355, 0.920679, 1)
-specular_shininess = 0.65
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k6jlr"]
 size = Vector2(4030, 990.001)
@@ -292,55 +277,6 @@ texture = ExtResource("11_45p84")
 
 [node name="TileMapLayer2" parent="map/objs/farms/eviltrees2" index="4"]
 tile_map_data = PackedByteArray("AADt//D/BQABAAAAAAAIAPD/BQABAAAAAAD2//D/BQABAAAAAADt/wkABQABAAAAAADt/wAABQABAAEAAADt//n/BQABAAEAAAARAPD/BQABAAAAAAAaAPf/BQABAAEAAAAaAAAABQABAAEAAAAaAAkABQABAAEAAAARAAkABQABAAAAAAAIAAkABQABAAAAAAD2/wkABQABAAAAAADt/wgABQABAAEAAAD//wkABQABAAAAAAA=")
-
-[node name="teleporters" type="Node2D" parent="map/objs"]
-visible = false
-z_index = -1
-y_sort_enabled = true
-
-[node name="crater1_2" type="Area2D" parent="map/objs/teleporters" groups=["teleporters"]]
-position = Vector2(-1484, 3)
-collision_layer = 2
-collision_mask = 3
-script = ExtResource("13_6jn65")
-id = 1
-target_id = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/teleporters/crater1_2"]
-shape = SubResource("CircleShape2D_6kqtc")
-
-[node name="craterSprite" type="Sprite2D" parent="map/objs/teleporters/crater1_2"]
-scale = Vector2(0.2, 0.204978)
-texture = SubResource("CanvasTexture_an7kh")
-
-[node name="light" type="PointLight2D" parent="map/objs/teleporters/crater1_2"]
-scale = Vector2(0.2, 0.2)
-color = Color(0.879152, 0.097766, 0.782534, 1)
-energy = 4.26
-texture = ExtResource("17_c0fvh")
-height = 192.0
-
-[node name="crater2_1" type="Area2D" parent="map/objs/teleporters" groups=["teleporters"]]
-position = Vector2(1431, -3)
-collision_layer = 2
-collision_mask = 3
-script = ExtResource("13_6jn65")
-id = 2
-target_id = 1
-
-[node name="craterSprite" type="Sprite2D" parent="map/objs/teleporters/crater2_1"]
-scale = Vector2(0.2, 0.204978)
-texture = SubResource("CanvasTexture_an7kh")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="map/objs/teleporters/crater2_1"]
-shape = SubResource("CircleShape2D_6kqtc")
-
-[node name="light" type="PointLight2D" parent="map/objs/teleporters/crater2_1"]
-scale = Vector2(0.2, 0.2)
-color = Color(0.879152, 0.097766, 0.782534, 1)
-energy = 4.26
-texture = ExtResource("17_c0fvh")
-height = 192.0
 
 [node name="brokencars" type="Node2D" parent="map/objs"]
 
@@ -955,8 +891,6 @@ height = 9.0
 
 [node name="SDLights" parent="map" instance=ExtResource("22_e5wdl")]
 
-[node name="cropSpawner" parent="map" instance=ExtResource("23_1knbx")]
-
 [node name="PointLight2D" type="PointLight2D" parent="map"]
 position = Vector2(-29.5001, -2.50018)
 scale = Vector2(11.5735, 2272.77)
@@ -974,11 +908,10 @@ volume_db = -4.0
 stream = ExtResource("25_gedhm")
 volume_db = -14.0
 
-[connection signal="body_entered" from="map/objs/teleporters/crater1_2" to="map/objs/teleporters/crater1_2" method="_on_body_entered"]
-[connection signal="body_entered" from="map/objs/teleporters/crater2_1" to="map/objs/teleporters/crater2_1" method="_on_body_entered"]
+[node name="cropSpawner" parent="." instance=ExtResource("24_rhw3e")]
+position = Vector2(2, -31)
 
 [editable path="map/objs/farms/evileye2"]
 [editable path="map/objs/farms/radioHut2"]
 [editable path="map/objs/farms/squihouse"]
 [editable path="map/objs/farms/eviltrees2"]
-[editable path="map/cropSpawner"]

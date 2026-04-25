@@ -1,9 +1,11 @@
-[gd_scene load_steps=92 format=3 uid="uid://1jqtfmfs27nq"]
+[gd_scene load_steps=94 format=3 uid="uid://1jqtfmfs27nq"]
 
 [ext_resource type="Script" uid="uid://ddn2bmuixq4dk" path="res://scripts/heroes/elonmusk.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://ctohl5cr3g804" path="res://assets/sprites/elonmusk/musk_ab1_idle.png" id="2_0c0fw"]
 [ext_resource type="Texture2D" uid="uid://ck6mp65lf8kua" path="res://assets/sprites/elonmusk/musk_idle.png" id="2_fh0aj"]
+[ext_resource type="Texture2D" uid="uid://gxrb3fmyw46u" path="res://assets/sprites/elonmusk/musk_portrait_normal.png" id="2_t707j"]
 [ext_resource type="Texture2D" uid="uid://dv7d1o70y32j" path="res://assets/sprites/elonmusk/musk_rut.png" id="3_2akvj"]
+[ext_resource type="Texture2D" uid="uid://by5qm41hpdnac" path="res://assets/sprites/elonmusk/musk_ult_portrait.png" id="3_87tr0"]
 [ext_resource type="Texture2D" uid="uid://bqmbr6xg05hbn" path="res://assets/sprites/elonmusk/musk_ab1_run.png" id="3_x307l"]
 [ext_resource type="Texture2D" uid="uid://c6wuvhwnxt0la" path="res://assets/sprites/elonmusk/musk_shoot_idle.png" id="4_yxllh"]
 [ext_resource type="Texture2D" uid="uid://dhlh4k0s3soxm" path="res://assets/sprites/elonmusk/musk_reload_idle.png" id="5_t707j"]
@@ -1157,12 +1159,18 @@ animations = [{
 script = ExtResource("1")
 flame_speed = 400.0
 flame_life = 3.0
+ult_zone_radius = 700.0
+ult_line_damage = 40.0
+ult_explosion_damage = 100.0
 max_health = 80.0
 move_speed_mult = 1.2
 shoot_cooldown = 0.08
 ability1_cooldown = 40.0
 reload_time = 1.2
 mag_size = 40
+portrait_outline_color = Color(0.410284, 0.656277, 0.797311, 1)
+normal_portrait = ExtResource("2_t707j")
+ult_portrait = ExtResource("3_87tr0")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.25, 0.25)

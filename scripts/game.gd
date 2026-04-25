@@ -545,44 +545,29 @@ func _update_timer_hud() -> void:
 # ---------- Winner Screen ----------
 
 func _show_winner_screen(winner: Player) -> void:
-	var layer = CanvasLayer.new()
-	layer.layer = 95
-	add_child(layer)
-	
-	var bg = ColorRect.new()
-	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
-	bg.color = Color(0, 0, 0, 0.75)
-	bg.mouse_filter = Control.MOUSE_FILTER_STOP
-	layer.add_child(bg)
-	
-	var vbox = VBoxContainer.new()
-	vbox.set_anchors_preset(Control.PRESET_CENTER)
-	vbox.grow_horizontal = Control.GROW_DIRECTION_BOTH
-	vbox.grow_vertical = Control.GROW_DIRECTION_BOTH
-	vbox.alignment = BoxContainer.ALIGNMENT_CENTER
-	vbox.add_theme_constant_override("separation", 20)
-	bg.add_child(vbox)
-	
-	var crown = Label.new()
-	crown.text = "GAME WINNER"
-	crown.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	crown.add_theme_font_size_override("font_size", 28)
-	crown.add_theme_color_override("font_color", Color(1, 0.85, 0.3))
-	vbox.add_child(crown)
-	
-	var name_label = Label.new()
-	var winner_name = "Nobody"
-	if winner:
+	var winner_name := "Nobody"
+	var hero_name := "Hero"
+	var hero_color := Color.WHITE
+	var hero_portrait: Texture2D = null
+	var hero_bg: Texture2D = null
+	if winner == null:
+		pass
+	else:
 		winner_name = gm.get_player_username(winner.player_id)
-	name_label.text = winner_name
-	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	name_label.add_theme_font_size_override("font_size", 48)
-	name_label.add_theme_color_override("font_color", Color.WHITE)
-	vbox.add_child(name_label)
-	
-	await get_tree().create_timer(5.0).timeout
-	layer.queue_free()
-	_show_game_over_screen()
+		if winner.hero:
+			hero_name = winner.hero.get_hero_name()
+			hero_color = winner.hero.portrait_outline_color
+			hero_portrait = winner.hero.get_hero_default_profile()
+			hero_bg = winner.hero.tv_and_win_bg
+	GameData.set_end_screen_data({
+		"winner_name": winner_name,
+		"hero_name": hero_name,
+		"hero_color": hero_color,
+		"hero_portrait": hero_portrait,
+		"portrait_bg": hero_bg,
+		"leaderboard": _get_sorted_players()
+	})
+	GameData.change_scene("res://scenes/ui/gamewinscreen.tscn")
 
 # ---------- Game Over Screen ----------
 
