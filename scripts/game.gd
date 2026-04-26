@@ -69,7 +69,7 @@ func _ready() -> void:
 	GameData.stop_menu_theme()
 	var dbg = DebugMenuScene.instantiate()
 	add_child(dbg)
-	
+
 	var map_name = GameData.pending_settings.get("map", DEFAULT_MAP)
 	var starters = GameData.get_active_starters()
 	_load_map(map_name)
@@ -79,14 +79,14 @@ func _ready() -> void:
 	gm.farm_spawns_received.connect(_on_farm_spawns_received)
 	gm.ult_used_received.connect(_on_ult_used_received)
 	_setup_ult_banner()
-	
+
 	if GameData.is_online_game:
 		_start_from_lobby()
 	elif GameData.game_mode == GameData.GameMode.SOLO:
 		start_solo_practice()
 	else:
 		start_solo_vs_ai()
-	
+
 	_assign_farms()
 	_play_map_theme()
 	await get_tree().process_frame
@@ -135,7 +135,11 @@ func _on_ult_used_received(player_id: int) -> void:
 
 func _load_map(map_name: String) -> void:
 	var path = MAP_SCENES.get(map_name, MAP_SCENES[DEFAULT_MAP])
-	var scene = load(path)
+	# Prefer the warmed copy (kept alive in GameData) so we skip a multi-second
+	# re-load of textures/tilesets when entering a match.
+	var scene: PackedScene = GameData.get_warmed_map(path)
+	if scene == null:
+		scene = load(path)
 	if scene:
 		map_node = scene.instantiate()
 		map_node.name = "map"
@@ -414,14 +418,13 @@ func _back_to_menu() -> void:
 func start_solo_vs_ai() -> void:
 	gm.disconnect_online()
 	gm.clear_players()
-	
-	var human = gm.spawn_local_player(0)
-	human.set_hero(GameData.train_hero_for_game())
-	
+
+	gm.spawn_local_player(0, GameData.train_hero_for_game())
+
 	for i in range(1, 4):
-		var ai = gm.spawn_ai_player(i, human)
+		var ai = gm.spawn_ai_player(i, gm.get_player(0))
 		ai.modulate = Color(1, 0.5, 0.5)
-	
+
 	print("SOLO VS AI - WASD move, Mouse aim, LMB shoot, E ability, R reload, Space dash")
 
 func start_local(count: int) -> void:
@@ -438,8 +441,7 @@ func start_sandbox() -> void:
 func start_solo_practice() -> void:
 	gm.disconnect_online()
 	gm.clear_players()
-	var human = gm.spawn_local_player(0)
-	human.set_hero(GameData.train_hero_for_game())
+	gm.spawn_local_player(0, GameData.train_hero_for_game())
 	var npc = gm.spawn_ai_player(1)
 	npc.is_invulnerable = true
 	npc.modulate = Color(0.7, 0.7, 1.0)

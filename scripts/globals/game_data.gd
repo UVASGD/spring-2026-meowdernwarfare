@@ -16,6 +16,13 @@ const STARTUP_RESOURCE_PATHS := [
 	"res://assets/resources/audio/sfx_bank.tres",
 	"res://assets/resources/default_transition.tres",
 ]
+# Pre-warm map scenes at startup so entering a match doesn't hitch on a big
+# synchronous load. Loading is spread one map per frame to avoid stalling.
+const STARTUP_MAP_PATHS := [
+	"res://scenes/maps/moon.tscn",
+	"res://scenes/maps/city.tscn",
+	"res://scenes/maps/maze_map.tscn",
+]
 
 # Autoload for passing data between lobby and game scenes
 
@@ -50,6 +57,11 @@ var _heroes_warming: bool = false
 var _heroes_warmed: bool = false
 var _startup_warming: bool = false
 var _startup_warmed: bool = false
+var _maps_warmed: bool = false
+# Strong refs so warmed scenes (and their texture deps) don't get GC'd
+# between warmup and use; otherwise Godot re-loads them on first match entry.
+var _warmed_maps: Dictionary = {}
+var _warmed_resources: Dictionary = {}
 const MAX_TEX_SIZE := 16384
 signal startup_step(step: String)
 
@@ -285,6 +297,8 @@ func get_active_starters() -> Array[String]:
 func change_scene(path: String, duration: float = -1.0) -> void:
 	if _needs_hero_warm(path):
 		await ensure_heroes_warmed()
+	if path == "res://scenes/game.tscn":
+		await ensure_maps_warmed()
 	if duration < 0:
 		duration = _transition_settings.duration if _transition_settings else 0.5
 	if _transitioning:
@@ -305,7 +319,6 @@ func change_scene(path: String, duration: float = -1.0) -> void:
 	tween.tween_method(_set_transition_cover_t, 0.0, 1.0, duration)
 	await tween.finished
 	
-	# Change scene
 	get_tree().change_scene_to_file(path)
 	await get_tree().process_frame
 	await get_tree().process_frame
@@ -333,14 +346,21 @@ func ensure_startup_warmed() -> void:
 			await get_tree().process_frame
 		return
 	_startup_warming = true
+
 	startup_step.emit("loading players")
 	await ensure_heroes_warmed()
+
 	startup_step.emit("loading shaders")
 	_warm_shaders()
 	await get_tree().process_frame
+
 	startup_step.emit("loading resources")
 	_warm_resources()
 	await get_tree().process_frame
+
+	startup_step.emit("loading maps")
+	await ensure_maps_warmed()
+
 	startup_step.emit("finishing up")
 	_startup_warming = false
 	_startup_warmed = true
@@ -351,7 +371,28 @@ func _warm_shaders() -> void:
 
 func _warm_resources() -> void:
 	for path in STARTUP_RESOURCE_PATHS:
-		load(path)
+		var res := load(path)
+		# Hold a strong ref so the cached resource (and its deps) survive
+		# until they're actually used; otherwise Godot drops them and we pay
+		# the load cost again on first use.
+		if res != null:
+			_warmed_resources[path] = res
+
+func ensure_maps_warmed() -> void:
+	if _maps_warmed:
+		return
+	for path in STARTUP_MAP_PATHS:
+		var scene := load(path)
+		if scene != null:
+			_warmed_maps[path] = scene
+		await get_tree().process_frame
+	_maps_warmed = true
+
+func get_warmed_map(path: String) -> PackedScene:
+	var scene = _warmed_maps.get(path, null)
+	if scene is PackedScene:
+		return scene
+	return null
 
 func ensure_heroes_warmed() -> void:
 	if _heroes_warmed:

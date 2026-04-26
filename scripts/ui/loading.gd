@@ -14,7 +14,8 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	_dots_time += delta
 	var dots := int(floor(_dots_time * 2.0)) % 4
-	status_label.text = "%s%s" % [_base_text, ".".repeat(dots)]
+	if status_label:
+		status_label.text = "%s%s" % [_base_text, ".".repeat(dots)]
 
 func _boot() -> void:
 	await GameData.ensure_startup_warmed()

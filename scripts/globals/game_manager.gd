@@ -58,25 +58,30 @@ func start_local_game(player_count: int = 4) -> void:
 		spawn_local_player(i)
 	
 
-func spawn_local_player(id: int) -> Player:
+func spawn_local_player(id: int, hero_id: String = "") -> Player:
 	if player_scene == null:
 		push_error("GameManager: player_scene not set!")
 		return null
-	
+
 	var player = player_scene.instantiate() as Player
 	player.player_id = id
-	
+
 	var local_input = LocalInput.new(id, id == 0)
 	local_input.set_player_node(player)
 	player.input = local_input
-	
+
+	# Pre-select the real hero so Player._ready() doesn't burn time spawning
+	# (and immediately freeing) a default hero that the caller would replace.
+	if hero_id != "":
+		player.pending_hero = hero_id
+
 	var spawn_pos = _get_fallback_position(id)
 	_add_entity(player)
 	player.global_position = spawn_pos
 	_register_player(player)
 	player.died.connect(func(): _on_player_died(player))
 	stats[id] = {"kills": 0, "deaths": 0}
-	
+
 	return player
 
 func _register_player(p: Player) -> void:
@@ -87,24 +92,24 @@ func spawn_ai_player(id: int, target: Node2D = null) -> Player:
 	if player_scene == null:
 		push_error("GameManager: player_scene not set!")
 		return null
-	
+
 	var player = player_scene.instantiate() as Player
 	player.player_id = id
 	player.is_ai_player = true
-	
+
 	var ai_input = DummyInput.new(player)
 	if target:
 		ai_input.set_target(target)
 	player.input = ai_input
 	player.set_hero(AI_HERO)
-	
+
 	var spawn_pos = _get_fallback_position(id)
 	_add_entity(player)
 	player.global_position = spawn_pos
 	_register_player(player)
 	player.died.connect(func(): _on_player_died(player))
 	stats[id] = {"kills": 0, "deaths": 0}
-	
+
 	return player
 
 const RESPAWN_DELAY := 10.0

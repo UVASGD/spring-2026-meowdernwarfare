@@ -1,0 +1,111 @@
+[gd_scene load_steps=16 format=3 uid="uid://b758v6iqms6gr"]
+
+[ext_resource type="Texture2D" uid="uid://dsfnbpntchova" path="res://assets/ui/train_menu/Background.png" id="1_nombc"]
+[ext_resource type="Texture2D" uid="uid://eh1an62shn6t" path="res://assets/ui/train_menu/mask.png" id="2_j4yel"]
+[ext_resource type="Texture2D" uid="uid://ceh0xijshm0w4" path="res://assets/ui/train_menu/Electricity.png" id="3_chc2k"]
+[ext_resource type="Texture2D" uid="uid://doy5w3ki2wqgw" path="res://assets/ui/train_menu/Back Button.png" id="4_e85rk"]
+[ext_resource type="Texture2D" uid="uid://m4r7adprk0sl" path="res://assets/ui/train_menu/Frame 1.png" id="5_u506r"]
+[ext_resource type="Texture2D" uid="uid://bam0hh2eeh1hy" path="res://assets/ui/train_menu/Frame 2.png" id="6_s4pun"]
+[ext_resource type="Texture2D" uid="uid://dtmmj2bmbs81j" path="res://assets/ui/train_menu/Frame 3.png" id="7_dyh8n"]
+[ext_resource type="Texture2D" uid="uid://b4sv43t4lt2tb" path="res://assets/ui/train_menu/Frame 4.png" id="8_bgmtq"]
+[ext_resource type="Texture2D" uid="uid://bgdbxtcrop16q" path="res://assets/ui/train_menu/Frame 5.png" id="9_fhx0n"]
+[ext_resource type="Texture2D" uid="uid://g5iqbfqga5xb" path="res://assets/ui/train_menu/Frame 6.png" id="10_x0fvp"]
+[ext_resource type="Texture2D" uid="uid://dlih4ani1rsvk" path="res://assets/ui/train_menu/Frame 7.png" id="11_frqda"]
+[ext_resource type="Texture2D" uid="uid://bhucvnt8s1jot" path="res://assets/ui/train_menu/Frame 8.png" id="12_m4oks"]
+[ext_resource type="Texture2D" uid="uid://bm1hso8n67sin" path="res://assets/ui/train_menu/Solo Button.png" id="13_ohhkh"]
+[ext_resource type="Texture2D" uid="uid://cpcq137eknb1u" path="res://assets/ui/train_menu/Tutorial.png" id="14_d6vqf"]
+[ext_resource type="Texture2D" uid="uid://cjjgt7ydfnndr" path="res://assets/ui/train_menu/Vs. AI Button.png" id="15_dk01d"]
+
+[node name="TrainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="bg" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource("1_nombc")
+expand_mode = 1
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="mask" type="TextureRect" parent="Control"]
+clip_children = 1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 306.0
+offset_right = 306.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_j4yel")
+
+[node name="sliding_charbg" type="ColorRect" parent="Control/mask"]
+layout_mode = 0
+offset_left = 857.0
+offset_top = -78.0
+offset_right = 1617.0
+offset_bottom = 1125.0
+
+[node name="Electricity" type="Sprite2D" parent="Control"]
+position = Vector2(1263, 543)
+texture = ExtResource("3_chc2k")
+
+[node name="BackButton" type="Sprite2D" parent="."]
+position = Vector2(112, 76)
+texture = ExtResource("4_e85rk")
+
+[node name="Frame1" type="Sprite2D" parent="."]
+position = Vector2(168, 381)
+texture = ExtResource("5_u506r")
+
+[node name="Frame2" type="Sprite2D" parent="."]
+position = Vector2(453, 384)
+texture = ExtResource("6_s4pun")
+
+[node name="Frame3" type="Sprite2D" parent="."]
+position = Vector2(737, 365)
+texture = ExtResource("7_dyh8n")
+
+[node name="Frame4" type="Sprite2D" parent="."]
+position = Vector2(1032, 356)
+texture = ExtResource("8_bgmtq")
+
+[node name="Frame5" type="Sprite2D" parent="."]
+position = Vector2(179, 794)
+texture = ExtResource("9_fhx0n")
+
+[node name="Frame6" type="Sprite2D" parent="."]
+position = Vector2(468, 791)
+texture = ExtResource("10_x0fvp")
+
+[node name="Frame7" type="Sprite2D" parent="."]
+position = Vector2(753, 791)
+texture = ExtResource("11_frqda")
+
+[node name="Frame8" type="Sprite2D" parent="."]
+position = Vector2(1037, 789)
+texture = ExtResource("12_m4oks")
+
+[node name="SoloButton" type="Sprite2D" parent="."]
+position = Vector2(1065, 71)
+texture = ExtResource("13_ohhkh")
+
+[node name="Tutorial" type="Sprite2D" parent="."]
+position = Vector2(631, 71)
+texture = ExtResource("14_d6vqf")
+
+[node name="Vs_AiButton" type="Sprite2D" parent="."]
+position = Vector2(862, 71)
+texture = ExtResource("15_dk01d")

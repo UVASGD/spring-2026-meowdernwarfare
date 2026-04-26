@@ -22,6 +22,9 @@ extends CharacterBody2D
 
 var input: InputProvider = null
 var hero: Hero = null
+# Spawners can pre-set this to override the default hero used in _ready(),
+# avoiding a wasted instantiate-then-replace cycle.
+var pending_hero: String = ""
 
 # UI
 var health_bar: Control = null
@@ -227,9 +230,11 @@ func _ready() -> void:
 			ult_bar = container.get_node_or_null("UltCD/Bar")
 			ult_label = container.get_node_or_null("UltCD/Count")
 	
-	# Default hero for testing
+	# Default hero for testing (or whatever the spawner pre-selected)
 	if hero == null:
-		set_hero(TestConfig.DEFAULT_HERO)
+		var first_hero := pending_hero if pending_hero != "" else TestConfig.DEFAULT_HERO
+		pending_hero = ""
+		set_hero(first_hero)
 	
 	# Enable camera/UI only for local human players
 	_setup_local_ui()
@@ -245,7 +250,7 @@ func set_hero(hero_name: String) -> void:
 		_unbind_hero_ui_signals(hero)
 		hero.queue_free()
 		hero = null
-	
+
 	var hero_scene := _load_hero_scene(hero_name)
 	if hero_scene == null:
 		push_warning("Unknown hero: ", hero_name, ", defaulting to Dealer")
