@@ -4,7 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://bvucgkdeduint" path="res://assets/ui/lobby/tv_off.png" id="2_fwmds"]
 [ext_resource type="Shader" uid="uid://c5ua82vkrcqck" path="res://scenes/ui/lobby/tvstatic.gdshader" id="2_g8lt1"]
 [ext_resource type="FontFile" uid="uid://dt2nbaox60w53" path="res://assets/ui/fonts/BATTLESANSSERIF.OTF" id="2_ki6fv"]
-[ext_resource type="PackedScene" uid="uid://ducbymckwwd56" path="res://scenes/ui/sprite_button.tscn" id="3_ki6fv"]
+[ext_resource type="PackedScene" uid="uid://ducbymckwwd56" path="res://assets/ui/titlescreen/sprite_button.tscn" id="3_ki6fv"]
 [ext_resource type="Shader" uid="uid://c3emtticjkhg4" path="res://scenes/ui/lobby/crt.gdshader" id="3_kkelg"]
 [ext_resource type="Texture2D" uid="uid://wijbpgs0wox4" path="res://assets/ui/lobby/tv_on.png" id="3_p3l7j"]
 [ext_resource type="Texture2D" uid="uid://dadbs8hodkik8" path="res://assets/ui/lobby/1920x1080-white-solid-color-background.jpg" id="6_g6oc2"]

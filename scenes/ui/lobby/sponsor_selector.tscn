@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://bmtspt4n8gvgd" path="res://scripts/ui/sponsor_selector.gd" id="1_6eomt"]
 [ext_resource type="FontFile" uid="uid://dt2nbaox60w53" path="res://assets/ui/fonts/BATTLESANSSERIF.OTF" id="1_w78ym"]
 [ext_resource type="Shader" uid="uid://cmo7wddinj6pm" path="res://assets/shaders/textshine.gdshader" id="2_c5xoa"]
-[ext_resource type="PackedScene" uid="uid://ducbymckwwd56" path="res://scenes/ui/sprite_button.tscn" id="2_gm7v4"]
+[ext_resource type="PackedScene" uid="uid://ducbymckwwd56" path="res://assets/ui/titlescreen/sprite_button.tscn" id="2_gm7v4"]
 [ext_resource type="Texture2D" uid="uid://cspbf15kxgjhj" path="res://assets/ui/sponsors/berryblast_sheet.png" id="4_icbh0"]
 [ext_resource type="Texture2D" uid="uid://xjjvy7nk2qct" path="res://assets/ui/general/arrow.png" id="4_q7cc7"]
 [ext_resource type="Shader" uid="uid://c3emtticjkhg4" path="res://scenes/ui/lobby/crt.gdshader" id="4_tht5s"]

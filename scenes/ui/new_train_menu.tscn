@@ -1,20 +1,44 @@
-[gd_scene load_steps=16 format=3 uid="uid://b758v6iqms6gr"]
+[gd_scene load_steps=36 format=3 uid="uid://b758v6iqms6gr"]
 
 [ext_resource type="Texture2D" uid="uid://dsfnbpntchova" path="res://assets/ui/train_menu/Background.png" id="1_nombc"]
+[ext_resource type="Script" uid="uid://c4pmpmgjtcuuc" path="res://scripts/ui/new_train_menu.gd" id="1_script"]
 [ext_resource type="Texture2D" uid="uid://eh1an62shn6t" path="res://assets/ui/train_menu/mask.png" id="2_j4yel"]
 [ext_resource type="Texture2D" uid="uid://ceh0xijshm0w4" path="res://assets/ui/train_menu/Electricity.png" id="3_chc2k"]
 [ext_resource type="Texture2D" uid="uid://doy5w3ki2wqgw" path="res://assets/ui/train_menu/Back Button.png" id="4_e85rk"]
 [ext_resource type="Texture2D" uid="uid://m4r7adprk0sl" path="res://assets/ui/train_menu/Frame 1.png" id="5_u506r"]
+[ext_resource type="Script" uid="uid://dtjagrfbjd3dx" path="res://scripts/ui/spritebutton.gd" id="6_0oy35"]
 [ext_resource type="Texture2D" uid="uid://bam0hh2eeh1hy" path="res://assets/ui/train_menu/Frame 2.png" id="6_s4pun"]
 [ext_resource type="Texture2D" uid="uid://dtmmj2bmbs81j" path="res://assets/ui/train_menu/Frame 3.png" id="7_dyh8n"]
 [ext_resource type="Texture2D" uid="uid://b4sv43t4lt2tb" path="res://assets/ui/train_menu/Frame 4.png" id="8_bgmtq"]
+[ext_resource type="Texture2D" uid="uid://bfaeehaygraax" path="res://assets/ui/titlescreen/catnip_dealer_background_infinite.png" id="8_bhupr"]
+[ext_resource type="Texture2D" uid="uid://bra0cb7y8j5aj" path="res://assets/ui/titlescreen/burple_background_infinite.png" id="8_burple_bg"]
 [ext_resource type="Texture2D" uid="uid://bgdbxtcrop16q" path="res://assets/ui/train_menu/Frame 5.png" id="9_fhx0n"]
 [ext_resource type="Texture2D" uid="uid://g5iqbfqga5xb" path="res://assets/ui/train_menu/Frame 6.png" id="10_x0fvp"]
 [ext_resource type="Texture2D" uid="uid://dlih4ani1rsvk" path="res://assets/ui/train_menu/Frame 7.png" id="11_frqda"]
+[ext_resource type="Texture2D" uid="uid://dpv3ub6q2kyku" path="res://assets/ui/titlescreen/garebare_background_infinite.png" id="12_gare_bg"]
 [ext_resource type="Texture2D" uid="uid://bhucvnt8s1jot" path="res://assets/ui/train_menu/Frame 8.png" id="12_m4oks"]
 [ext_resource type="Texture2D" uid="uid://bm1hso8n67sin" path="res://assets/ui/train_menu/Solo Button.png" id="13_ohhkh"]
 [ext_resource type="Texture2D" uid="uid://cpcq137eknb1u" path="res://assets/ui/train_menu/Tutorial.png" id="14_d6vqf"]
+[ext_resource type="Texture2D" uid="uid://dnv3yfus8oomt" path="res://assets/sprites/angel/dither_it_image (3).png" id="14_um040"]
 [ext_resource type="Texture2D" uid="uid://cjjgt7ydfnndr" path="res://assets/ui/train_menu/Vs. AI Button.png" id="15_dk01d"]
+[ext_resource type="Texture2D" uid="uid://c6uic0e3x023" path="res://assets/sprites/dealer/dealer_portrait_normal.png" id="16_dealer"]
+[ext_resource type="Texture2D" uid="uid://c6gqosmx6oywy" path="res://assets/sprites/burple/burple_portrait_normal.png" id="17_burple"]
+[ext_resource type="Texture2D" uid="uid://b806fl6i3ymrk" path="res://assets/maps/moon/moon texture.png" id="17_q2g20"]
+[ext_resource type="Texture2D" uid="uid://dcebcr28jhgq2" path="res://assets/sprites/angel/normalportrait.png" id="18_angel"]
+[ext_resource type="Texture2D" uid="uid://ba1yny176j1ph" path="res://assets/sprites/xylerfergus/XylerFergus_normal.png" id="19_xyler"]
+[ext_resource type="Texture2D" uid="uid://c8xfnyc3xgbkp" path="res://assets/sprites/loanshark/loanshark_transparent.png" id="20_loan"]
+[ext_resource type="Texture2D" uid="uid://bvg2w74qsp3hy" path="res://assets/sprites/gooblin/Gooblin__Base_-removebg-preview.png" id="21_gooblin"]
+[ext_resource type="Texture2D" uid="uid://c8xu4kfogucot" path="res://assets/sprites/garebare/garebare_portrait_normal.png" id="22_gare"]
+[ext_resource type="Texture2D" uid="uid://1i1v210nrrxs" path="res://assets/maps/moon/sky/spacebg.png" id="23_lxmf6"]
+[ext_resource type="Texture2D" uid="uid://gxrb3fmyw46u" path="res://assets/sprites/elonmusk/musk_portrait_normal.png" id="23_musk"]
+[ext_resource type="Texture2D" uid="uid://dmcqnwvy24j18" path="res://assets/sprites/loanshark/loanshark_bg_win_tv (1).png" id="24_loan_bg"]
+[ext_resource type="Texture2D" uid="uid://lb0aq2wk5x3y" path="res://assets/sprites/elonmusk/muskbg.png" id="25_musk_bg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_eepx7"]
+size = Vector2(236, 300)
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_dis"]
+size = Vector2(100, 100)
 
 [node name="TrainMenu" type="Control"]
 layout_mode = 3
@@ -23,8 +47,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_script")
 
 [node name="bg" type="TextureRect" parent="."]
+z_index = -10
 layout_mode = 0
 offset_right = 1920.0
 offset_bottom = 1080.0
@@ -36,6 +62,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = 762.0
+offset_right = 762.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -58,6 +86,253 @@ offset_top = -78.0
 offset_right = 1617.0
 offset_bottom = 1125.0
 
+[node name="InfoPanel" type="PanelContainer" parent="Control/mask/sliding_charbg"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 250.0
+offset_right = 650.0
+offset_bottom = 1088.0
+
+[node name="Scroll" type="ScrollContainer" parent="Control/mask/sliding_charbg/InfoPanel"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Content" type="VBoxContainer" parent="Control/mask/sliding_charbg/InfoPanel/Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 14
+
+[node name="HeroName" type="Label" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "select a hero"
+horizontal_alignment = 1
+
+[node name="HeroDesc" type="RichTextLabel" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content"]
+custom_minimum_size = Vector2(0, 30)
+layout_mode = 2
+bbcode_enabled = true
+text = "click a frame to view that hero."
+fit_content = true
+scroll_active = false
+
+[node name="ShootSection" type="VBoxContainer" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/ShootSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.4, 1)
+theme_override_font_sizes/font_size = 22
+
+[node name="Desc" type="RichTextLabel" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/ShootSection"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="Video" type="ColorRect" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/ShootSection"]
+custom_minimum_size = Vector2(0, 190)
+layout_mode = 2
+color = Color(0.08, 0.08, 0.13, 1)
+
+[node name="Label" type="Label" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/ShootSection/Video"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -14.0
+offset_right = 50.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
+text = "[ video ]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Fit" type="AspectRatioContainer" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/ShootSection/Video"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+ratio = 1.77778
+
+[node name="Player" type="VideoStreamPlayer" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/ShootSection/Video/Fit"]
+layout_mode = 2
+mouse_filter = 2
+expand = true
+
+[node name="Ability1Section" type="VBoxContainer" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/Ability1Section"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.85, 1, 1)
+theme_override_font_sizes/font_size = 22
+
+[node name="Desc" type="RichTextLabel" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/Ability1Section"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="Video" type="ColorRect" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/Ability1Section"]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+color = Color(0.08, 0.08, 0.13, 1)
+
+[node name="Label" type="Label" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/Ability1Section/Video"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -14.0
+offset_right = 50.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
+text = "[ video ]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Fit" type="AspectRatioContainer" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/Ability1Section/Video"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+ratio = 1.77778
+
+[node name="Player" type="VideoStreamPlayer" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/Ability1Section/Video/Fit"]
+layout_mode = 2
+mouse_filter = 2
+expand = true
+
+[node name="Ability2Section" type="VBoxContainer" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/Ability2Section"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 1, 0.5, 1)
+theme_override_font_sizes/font_size = 22
+
+[node name="Desc" type="RichTextLabel" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/Ability2Section"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="Video" type="ColorRect" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/Ability2Section"]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+color = Color(0.08, 0.08, 0.13, 1)
+
+[node name="Label" type="Label" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/Ability2Section/Video"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -14.0
+offset_right = 50.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
+text = "[ video ]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Fit" type="AspectRatioContainer" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/Ability2Section/Video"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+ratio = 1.77778
+
+[node name="Player" type="VideoStreamPlayer" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/Ability2Section/Video/Fit"]
+layout_mode = 2
+mouse_filter = 2
+expand = true
+
+[node name="UltSection" type="VBoxContainer" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/UltSection"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.5, 0.5, 1)
+theme_override_font_sizes/font_size = 22
+
+[node name="Desc" type="RichTextLabel" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/UltSection"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+
+[node name="Video" type="ColorRect" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/UltSection"]
+custom_minimum_size = Vector2(0, 160)
+layout_mode = 2
+color = Color(0.08, 0.08, 0.13, 1)
+
+[node name="Label" type="Label" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/UltSection/Video"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -14.0
+offset_right = 50.0
+offset_bottom = 14.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.5, 0.5, 0.6, 1)
+text = "[ video ]"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Fit" type="AspectRatioContainer" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/UltSection/Video"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+ratio = 1.77778
+
+[node name="Player" type="VideoStreamPlayer" parent="Control/mask/sliding_charbg/InfoPanel/Scroll/Content/UltSection/Video/Fit"]
+layout_mode = 2
+mouse_filter = 2
+expand = true
+
 [node name="Electricity" type="Sprite2D" parent="Control"]
 position = Vector2(1263, 543)
 texture = ExtResource("3_chc2k")
@@ -66,37 +341,318 @@ texture = ExtResource("3_chc2k")
 position = Vector2(112, 76)
 texture = ExtResource("4_e85rk")
 
-[node name="Frame1" type="Sprite2D" parent="."]
-position = Vector2(168, 381)
+[node name="Frame1" type="Node2D" parent="."]
+position = Vector2(168, 375)
+script = ExtResource("6_0oy35")
+toggleable = true
+
+[node name="Area2D" type="Area2D" parent="Frame1"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Frame1/Area2D"]
+position = Vector2(4, 3)
+shape = SubResource("RectangleShape2D_eepx7")
+
+[node name="off" type="Sprite2D" parent="Frame1"]
 texture = ExtResource("5_u506r")
 
-[node name="Frame2" type="Sprite2D" parent="."]
+[node name="hovered" type="Sprite2D" parent="Frame1"]
+modulate = Color(0.7, 0.7, 0.7, 1)
+texture = ExtResource("5_u506r")
+
+[node name="on" type="Sprite2D" parent="Frame1"]
+modulate = Color(0.3, 0.9, 0.3, 1)
+texture = ExtResource("5_u506r")
+
+[node name="disabled" type="Sprite2D" parent="Frame1"]
+visible = false
+modulate = Color(0.4, 0.4, 0.4, 0.5)
+texture = SubResource("PlaceholderTexture2D_dis")
+
+[node name="Frame1Bg" type="Sprite2D" parent="Frame1"]
+modulate = Color(0.542343, 0.0411495, 0.523819, 1)
+z_index = -2
+position = Vector2(4, 5.99997)
+scale = Vector2(0.126042, 0.22)
+texture = ExtResource("8_bhupr")
+
+[node name="Frame1Portrait" type="Sprite2D" parent="Frame1"]
+z_index = -1
+position = Vector2(22, 5.99999)
+scale = Vector2(0.436, 0.484)
+texture = ExtResource("16_dealer")
+
+[node name="Frame2" type="Node2D" parent="."]
 position = Vector2(453, 384)
+script = ExtResource("6_0oy35")
+toggleable = true
+
+[node name="Area2D" type="Area2D" parent="Frame2"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Frame2/Area2D"]
+position = Vector2(4, 3)
+shape = SubResource("RectangleShape2D_eepx7")
+
+[node name="off" type="Sprite2D" parent="Frame2"]
 texture = ExtResource("6_s4pun")
 
-[node name="Frame3" type="Sprite2D" parent="."]
+[node name="hovered" type="Sprite2D" parent="Frame2"]
+modulate = Color(0.7, 0.7, 0.7, 1)
+texture = ExtResource("6_s4pun")
+
+[node name="on" type="Sprite2D" parent="Frame2"]
+modulate = Color(0.3, 0.9, 0.3, 1)
+texture = ExtResource("6_s4pun")
+
+[node name="disabled" type="Sprite2D" parent="Frame2"]
+visible = false
+modulate = Color(0.4, 0.4, 0.4, 0.5)
+texture = SubResource("PlaceholderTexture2D_dis")
+
+[node name="Frame2Bg" type="Sprite2D" parent="Frame2"]
+z_index = -2
+position = Vector2(4, 6)
+scale = Vector2(0.126042, 0.22)
+texture = ExtResource("8_burple_bg")
+
+[node name="Frame2Portrait" type="Sprite2D" parent="Frame2"]
+z_index = -1
+position = Vector2(4.99999, -2.90871e-05)
+scale = Vector2(0.532, 0.504)
+texture = ExtResource("17_burple")
+
+[node name="Frame3" type="Node2D" parent="."]
 position = Vector2(737, 365)
+script = ExtResource("6_0oy35")
+toggleable = true
+
+[node name="Area2D" type="Area2D" parent="Frame3"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Frame3/Area2D"]
+position = Vector2(4, 3)
+shape = SubResource("RectangleShape2D_eepx7")
+
+[node name="off" type="Sprite2D" parent="Frame3"]
 texture = ExtResource("7_dyh8n")
 
-[node name="Frame4" type="Sprite2D" parent="."]
+[node name="hovered" type="Sprite2D" parent="Frame3"]
+modulate = Color(0.7, 0.7, 0.7, 1)
+texture = ExtResource("7_dyh8n")
+
+[node name="on" type="Sprite2D" parent="Frame3"]
+modulate = Color(0.3, 0.9, 0.3, 1)
+texture = ExtResource("7_dyh8n")
+
+[node name="disabled" type="Sprite2D" parent="Frame3"]
+visible = false
+modulate = Color(0.4, 0.4, 0.4, 0.5)
+texture = SubResource("PlaceholderTexture2D_dis")
+
+[node name="Frame3Bg" type="Sprite2D" parent="Frame3"]
+z_index = -2
+position = Vector2(4.5, 12.5)
+scale = Vector2(0.349131, 0.675)
+texture = ExtResource("14_um040")
+
+[node name="Frame3Portrait" type="Sprite2D" parent="Frame3"]
+z_index = -1
+position = Vector2(-2.49999, 12.5)
+scale = Vector2(0.462, 0.462)
+texture = ExtResource("18_angel")
+
+[node name="Frame4" type="Node2D" parent="."]
 position = Vector2(1032, 356)
+script = ExtResource("6_0oy35")
+toggleable = true
+
+[node name="Area2D" type="Area2D" parent="Frame4"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Frame4/Area2D"]
+position = Vector2(4, 3)
+shape = SubResource("RectangleShape2D_eepx7")
+
+[node name="off" type="Sprite2D" parent="Frame4"]
 texture = ExtResource("8_bgmtq")
 
-[node name="Frame5" type="Sprite2D" parent="."]
+[node name="hovered" type="Sprite2D" parent="Frame4"]
+modulate = Color(0.7, 0.7, 0.7, 1)
+texture = ExtResource("8_bgmtq")
+
+[node name="on" type="Sprite2D" parent="Frame4"]
+modulate = Color(0.3, 0.9, 0.3, 1)
+texture = ExtResource("8_bgmtq")
+
+[node name="disabled" type="Sprite2D" parent="Frame4"]
+visible = false
+modulate = Color(0.4, 0.4, 0.4, 0.5)
+texture = SubResource("PlaceholderTexture2D_dis")
+
+[node name="Frame4Bg" type="Sprite2D" parent="Frame4"]
+z_index = -2
+position = Vector2(2.49998, 0.500011)
+scale = Vector2(0.1125, 0.204246)
+texture = ExtResource("17_q2g20")
+
+[node name="Frame4Portrait" type="Sprite2D" parent="Frame4"]
+z_index = -1
+position = Vector2(-11, 7.49999)
+scale = Vector2(0.468, 0.446)
+texture = ExtResource("19_xyler")
+
+[node name="Frame5" type="Node2D" parent="."]
 position = Vector2(179, 794)
+script = ExtResource("6_0oy35")
+toggleable = true
+
+[node name="Area2D" type="Area2D" parent="Frame5"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Frame5/Area2D"]
+position = Vector2(4, 3)
+shape = SubResource("RectangleShape2D_eepx7")
+
+[node name="off" type="Sprite2D" parent="Frame5"]
 texture = ExtResource("9_fhx0n")
 
-[node name="Frame6" type="Sprite2D" parent="."]
+[node name="hovered" type="Sprite2D" parent="Frame5"]
+modulate = Color(0.7, 0.7, 0.7, 1)
+texture = ExtResource("9_fhx0n")
+
+[node name="on" type="Sprite2D" parent="Frame5"]
+modulate = Color(0.3, 0.9, 0.3, 1)
+texture = ExtResource("9_fhx0n")
+
+[node name="disabled" type="Sprite2D" parent="Frame5"]
+visible = false
+modulate = Color(0.4, 0.4, 0.4, 0.5)
+texture = SubResource("PlaceholderTexture2D_dis")
+
+[node name="Frame5Bg" type="Sprite2D" parent="Frame5"]
+z_index = -2
+position = Vector2(4, 6)
+scale = Vector2(0.126042, 0.22)
+texture = ExtResource("24_loan_bg")
+
+[node name="Frame5Portrait" type="Sprite2D" parent="Frame5"]
+z_index = -1
+position = Vector2(5.00001, 20)
+scale = Vector2(0.412, 0.424)
+texture = ExtResource("20_loan")
+
+[node name="Frame6" type="Node2D" parent="."]
 position = Vector2(468, 791)
+script = ExtResource("6_0oy35")
+toggleable = true
+
+[node name="Area2D" type="Area2D" parent="Frame6"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Frame6/Area2D"]
+position = Vector2(4, 3)
+shape = SubResource("RectangleShape2D_eepx7")
+
+[node name="off" type="Sprite2D" parent="Frame6"]
 texture = ExtResource("10_x0fvp")
 
-[node name="Frame7" type="Sprite2D" parent="."]
+[node name="hovered" type="Sprite2D" parent="Frame6"]
+modulate = Color(0.7, 0.7, 0.7, 1)
+texture = ExtResource("10_x0fvp")
+
+[node name="on" type="Sprite2D" parent="Frame6"]
+modulate = Color(0.3, 0.9, 0.3, 1)
+texture = ExtResource("10_x0fvp")
+
+[node name="disabled" type="Sprite2D" parent="Frame6"]
+visible = false
+modulate = Color(0.4, 0.4, 0.4, 0.5)
+texture = SubResource("PlaceholderTexture2D_dis")
+
+[node name="Frame6Bg" type="Sprite2D" parent="Frame6"]
+z_index = -2
+position = Vector2(4, 7.99998)
+scale = Vector2(0.340625, 0.744445)
+texture = ExtResource("23_lxmf6")
+
+[node name="Frame6Portrait" type="Sprite2D" parent="Frame6"]
+z_index = -1
+position = Vector2(7.99999, 17)
+scale = Vector2(0.44, 0.412)
+texture = ExtResource("21_gooblin")
+
+[node name="Frame7" type="Node2D" parent="."]
 position = Vector2(753, 791)
+script = ExtResource("6_0oy35")
+toggleable = true
+
+[node name="Area2D" type="Area2D" parent="Frame7"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Frame7/Area2D"]
+position = Vector2(4, 3)
+shape = SubResource("RectangleShape2D_eepx7")
+
+[node name="off" type="Sprite2D" parent="Frame7"]
 texture = ExtResource("11_frqda")
 
-[node name="Frame8" type="Sprite2D" parent="."]
+[node name="hovered" type="Sprite2D" parent="Frame7"]
+modulate = Color(0.7, 0.7, 0.7, 1)
+texture = ExtResource("11_frqda")
+
+[node name="on" type="Sprite2D" parent="Frame7"]
+modulate = Color(0.3, 0.9, 0.3, 1)
+texture = ExtResource("11_frqda")
+
+[node name="disabled" type="Sprite2D" parent="Frame7"]
+visible = false
+modulate = Color(0.4, 0.4, 0.4, 0.5)
+texture = SubResource("PlaceholderTexture2D_dis")
+
+[node name="Frame7Bg" type="Sprite2D" parent="Frame7"]
+z_index = -2
+position = Vector2(4, 6)
+scale = Vector2(0.126042, 0.22)
+texture = ExtResource("12_gare_bg")
+
+[node name="Frame7Portrait" type="Sprite2D" parent="Frame7"]
+z_index = -1
+position = Vector2(1.49998, 16.5)
+scale = Vector2(0.422, 0.41)
+texture = ExtResource("22_gare")
+
+[node name="Frame8" type="Node2D" parent="."]
 position = Vector2(1037, 789)
+script = ExtResource("6_0oy35")
+toggleable = true
+
+[node name="Area2D" type="Area2D" parent="Frame8"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Frame8/Area2D"]
+position = Vector2(4, 3)
+shape = SubResource("RectangleShape2D_eepx7")
+
+[node name="off" type="Sprite2D" parent="Frame8"]
 texture = ExtResource("12_m4oks")
+
+[node name="hovered" type="Sprite2D" parent="Frame8"]
+modulate = Color(0.7, 0.7, 0.7, 1)
+texture = ExtResource("12_m4oks")
+
+[node name="on" type="Sprite2D" parent="Frame8"]
+modulate = Color(0.3, 0.9, 0.3, 1)
+texture = ExtResource("12_m4oks")
+
+[node name="disabled" type="Sprite2D" parent="Frame8"]
+visible = false
+modulate = Color(0.4, 0.4, 0.4, 0.5)
+texture = SubResource("PlaceholderTexture2D_dis")
+
+[node name="Frame8Bg" type="Sprite2D" parent="Frame8"]
+z_index = -2
+position = Vector2(4, 6)
+scale = Vector2(0.126042, 0.22)
+texture = ExtResource("25_musk_bg")
+
+[node name="Frame8Portrait" type="Sprite2D" parent="Frame8"]
+z_index = -1
+position = Vector2(-6.00001, 19.5)
+scale = Vector2(0.444, 0.422)
+texture = ExtResource("23_musk")
 
 [node name="SoloButton" type="Sprite2D" parent="."]
 position = Vector2(1065, 71)
@@ -109,3 +665,165 @@ texture = ExtResource("14_d6vqf")
 [node name="Vs_AiButton" type="Sprite2D" parent="."]
 position = Vector2(862, 71)
 texture = ExtResource("15_dk01d")
+
+[node name="HitButtons" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="BackButton" type="Button" parent="HitButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 18.0
+offset_top = 28.0
+offset_right = 208.0
+offset_bottom = 122.0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="TutorialButton" type="Button" parent="HitButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 520.0
+offset_top = 30.0
+offset_right = 740.0
+offset_bottom = 118.0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="VsAiButton" type="Button" parent="HitButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 760.0
+offset_top = 30.0
+offset_right = 962.0
+offset_bottom = 118.0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="SoloButton" type="Button" parent="HitButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 966.0
+offset_top = 30.0
+offset_right = 1165.0
+offset_bottom = 118.0
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Frame1Button" type="Button" parent="HitButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 35.0
+offset_top = 205.0
+offset_right = 303.0
+offset_bottom = 557.0
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Frame2Button" type="Button" parent="HitButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 319.0
+offset_top = 208.0
+offset_right = 587.0
+offset_bottom = 560.0
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Frame3Button" type="Button" parent="HitButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 603.0
+offset_top = 189.0
+offset_right = 871.0
+offset_bottom = 541.0
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Frame4Button" type="Button" parent="HitButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 898.0
+offset_top = 180.0
+offset_right = 1166.0
+offset_bottom = 532.0
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Frame5Button" type="Button" parent="HitButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 45.0
+offset_top = 618.0
+offset_right = 313.0
+offset_bottom = 970.0
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Frame6Button" type="Button" parent="HitButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 334.0
+offset_top = 615.0
+offset_right = 602.0
+offset_bottom = 967.0
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Frame7Button" type="Button" parent="HitButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 619.0
+offset_top = 615.0
+offset_right = 887.0
+offset_bottom = 967.0
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+flat = true
+
+[node name="Frame8Button" type="Button" parent="HitButtons"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 903.0
+offset_top = 613.0
+offset_right = 1171.0
+offset_bottom = 965.0
+mouse_filter = 2
+mouse_default_cursor_shape = 2
+flat = true
+
+[connection signal="input_event" from="Frame1/Area2D" to="Frame1" method="_on_area_2d_input_event"]
+[connection signal="mouse_entered" from="Frame1/Area2D" to="Frame1" method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Frame1/Area2D" to="Frame1" method="_on_area_2d_mouse_exited"]
+[connection signal="input_event" from="Frame2/Area2D" to="Frame2" method="_on_area_2d_input_event"]
+[connection signal="mouse_entered" from="Frame2/Area2D" to="Frame2" method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Frame2/Area2D" to="Frame2" method="_on_area_2d_mouse_exited"]
+[connection signal="input_event" from="Frame3/Area2D" to="Frame3" method="_on_area_2d_input_event"]
+[connection signal="mouse_entered" from="Frame3/Area2D" to="Frame3" method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Frame3/Area2D" to="Frame3" method="_on_area_2d_mouse_exited"]
+[connection signal="input_event" from="Frame4/Area2D" to="Frame4" method="_on_area_2d_input_event"]
+[connection signal="mouse_entered" from="Frame4/Area2D" to="Frame4" method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Frame4/Area2D" to="Frame4" method="_on_area_2d_mouse_exited"]
+[connection signal="input_event" from="Frame5/Area2D" to="Frame5" method="_on_area_2d_input_event"]
+[connection signal="mouse_entered" from="Frame5/Area2D" to="Frame5" method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Frame5/Area2D" to="Frame5" method="_on_area_2d_mouse_exited"]
+[connection signal="input_event" from="Frame6/Area2D" to="Frame6" method="_on_area_2d_input_event"]
+[connection signal="mouse_entered" from="Frame6/Area2D" to="Frame6" method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Frame6/Area2D" to="Frame6" method="_on_area_2d_mouse_exited"]
+[connection signal="input_event" from="Frame7/Area2D" to="Frame7" method="_on_area_2d_input_event"]
+[connection signal="mouse_entered" from="Frame7/Area2D" to="Frame7" method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Frame7/Area2D" to="Frame7" method="_on_area_2d_mouse_exited"]
+[connection signal="input_event" from="Frame8/Area2D" to="Frame8" method="_on_area_2d_input_event"]
+[connection signal="mouse_entered" from="Frame8/Area2D" to="Frame8" method="_on_area_2d_mouse_entered"]
+[connection signal="mouse_exited" from="Frame8/Area2D" to="Frame8" method="_on_area_2d_mouse_exited"]

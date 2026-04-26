@@ -23,7 +23,7 @@
 [ext_resource type="Texture2D" uid="uid://ba10ri207kse" path="res://assets/ui/titlescreen/new/meowderwarfare_final_03.png" id="17_pw24t"]
 [ext_resource type="PackedScene" uid="uid://dfxxrh3fefwru" path="res://scenes/ui/option_banner.tscn" id="17_y1h5l"]
 [ext_resource type="AudioStream" uid="uid://dpq8lkuf8caie" path="res://assets/sound/mainthemev2.wav" id="20_5dct7"]
-[ext_resource type="PackedScene" uid="uid://ducbymckwwd56" path="res://scenes/ui/sprite_button.tscn" id="21_topbtn"]
+[ext_resource type="PackedScene" uid="uid://ducbymckwwd56" path="res://assets/ui/titlescreen/sprite_button.tscn" id="21_topbtn"]
 [ext_resource type="Texture2D" uid="uid://dbvsume1n4mqf" path="res://assets/ui/titlescreen/creditsbutton.png" id="22_credit"]
 [ext_resource type="Texture2D" uid="uid://bfdebf1cipvq0" path="res://assets/ui/titlescreen/quitbutton.png" id="23_quit"]
 
@@ -784,7 +784,7 @@ polygon = PackedVector2Array(-17.0159, 19.9025, 21.0888, 24.1857, 20.5657, -8.22
 
 [node name="garebare" parent="introgroup1/cardholder" instance=ExtResource("1_1g8jr")]
 position = Vector2(548.571, -20)
-next_scene_path = "res://scenes/ui/train_menu.tscn"
+next_scene_path = "res://scenes/ui/new_train_menu.tscn"
 card_action = 3
 
 [node name="bg" parent="introgroup1/cardholder/garebare" index="0"]
