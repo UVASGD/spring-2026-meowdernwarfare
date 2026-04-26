@@ -1,10 +1,11 @@
-[gd_scene load_steps=40 format=3 uid="uid://dtgiuvb35xupj"]
+[gd_scene load_steps=41 format=3 uid="uid://dtgiuvb35xupj"]
 
 [ext_resource type="Script" uid="uid://cxsj0vfpiut4r" path="res://credits.gd" id="1_y0bee"]
 [ext_resource type="FontFile" uid="uid://dt2nbaox60w53" path="res://assets/ui/fonts/BATTLESANSSERIF.OTF" id="2_gleon"]
 [ext_resource type="Shader" uid="uid://cpng23u3yom2" path="res://assets/shaders/burn_reveal.gdshader" id="3_um21f"]
 [ext_resource type="Texture2D" uid="uid://d3josjylfxki8" path="res://assets/ui/titlescreen/catpitalist_logo_old.png" id="4_5fsmw"]
 [ext_resource type="Shader" uid="uid://bwnlbf6bnmnyk" path="res://assets/shaders/electric_wrap_inner.gdshader" id="5_r2bcm"]
+[ext_resource type="Texture2D" uid="uid://bwyfytgtjgj2h" path="res://assets/ui/labubu.png" id="6_b31lh"]
 [ext_resource type="AudioStream" uid="uid://dfmt3c8a62wnx" path="res://assets/sound/music/mwf.mp3" id="6_gleon"]
 [ext_resource type="Texture2D" uid="uid://dejme1eeceo0t" path="res://assets/sprites/angel/seraphportrait.png" id="7_fg5mr"]
 [ext_resource type="Texture2D" uid="uid://c6gqosmx6oywy" path="res://assets/sprites/burple/burple_portrait_normal.png" id="8_b31lh"]
@@ -90,7 +91,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("VBoxContainer/titilemask/TextureRect:material:shader_parameter/progress")
+tracks/1/path = NodePath("VBoxContainer/HBoxContainer/titilemask/TextureRect:material:shader_parameter/progress")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -102,7 +103,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("VBoxContainer/titilemask/TextureRect2:visible")
+tracks/2/path = NodePath("VBoxContainer/HBoxContainer/titilemask/TextureRect2:visible")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -114,7 +115,7 @@ tracks/2/keys = {
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("VBoxContainer/titilemask/TextureRect2:material:shader_parameter/pulse")
+tracks/3/path = NodePath("VBoxContainer/HBoxContainer/titilemask/TextureRect2:material:shader_parameter/pulse")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
@@ -159,6 +160,18 @@ tracks/6/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
 }
+tracks/7/type = "value"
+tracks/7/imported = false
+tracks/7/enabled = true
+tracks/7/path = NodePath("VBoxContainer/HBoxContainer/TextureRect:modulate")
+tracks/7/interp = 1
+tracks/7/loop_wrap = true
+tracks/7/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
 
 [sub_resource type="Animation" id="Animation_nbgb8"]
 resource_name = "scroll"
@@ -178,7 +191,7 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("VBoxContainer/titilemask/TextureRect:material:shader_parameter/progress")
+tracks/1/path = NodePath("VBoxContainer/HBoxContainer/titilemask/TextureRect:material:shader_parameter/progress")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
@@ -190,7 +203,7 @@ tracks/1/keys = {
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("VBoxContainer/titilemask/TextureRect2:visible")
+tracks/2/path = NodePath("VBoxContainer/HBoxContainer/titilemask/TextureRect2:visible")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
@@ -202,7 +215,7 @@ tracks/2/keys = {
 tracks/3/type = "value"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("VBoxContainer/titilemask/TextureRect2:material:shader_parameter/pulse")
+tracks/3/path = NodePath("VBoxContainer/HBoxContainer/titilemask/TextureRect2:material:shader_parameter/pulse")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
@@ -259,6 +272,18 @@ tracks/7/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
 }
+tracks/8/type = "value"
+tracks/8/imported = false
+tracks/8/enabled = true
+tracks/8/path = NodePath("VBoxContainer/HBoxContainer/TextureRect:modulate")
+tracks/8/interp = 1
+tracks/8/loop_wrap = true
+tracks/8/keys = {
+"times": PackedFloat32Array(24.8667, 30),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_b8fa8"]
 _data = {
@@ -294,7 +319,7 @@ anchor_bottom = 1.0
 offset_left = -960.0
 offset_top = 1043.0
 offset_right = 960.0
-offset_bottom = 2945.0
+offset_bottom = 3085.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -418,26 +443,42 @@ vertical_alignment = 1
 custom_minimum_size = Vector2(0, 400)
 layout_mode = 2
 
-[node name="titilemask" type="ColorRect" parent="VBoxContainer"]
-material = SubResource("ShaderMaterial_egc5o")
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="VBoxContainer/titilemask"]
+[node name="titilemask" type="ColorRect" parent="VBoxContainer/HBoxContainer"]
+material = SubResource("ShaderMaterial_egc5o")
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+color = Color(0, 0, 0, 1)
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/HBoxContainer/titilemask"]
 material = SubResource("ShaderMaterial_pl4t0")
 layout_mode = 2
+offset_left = -454.0
 offset_top = 4.0
-offset_right = 1920.0
+offset_right = 1466.0
 offset_bottom = 364.0
 texture = ExtResource("4_5fsmw")
 
-[node name="TextureRect2" type="TextureRect" parent="VBoxContainer/titilemask"]
+[node name="TextureRect2" type="TextureRect" parent="VBoxContainer/HBoxContainer/titilemask"]
 visible = false
 material = SubResource("ShaderMaterial_ala0q")
 layout_mode = 2
+offset_left = -454.0
 offset_top = 4.0
-offset_right = 1920.0
+offset_right = 1466.0
 offset_bottom = 364.0
 texture = ExtResource("4_5fsmw")
+
+[node name="TextureRect" type="TextureRect" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(500, 500)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.4
+texture = ExtResource("6_b31lh")
+expand_mode = 1
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

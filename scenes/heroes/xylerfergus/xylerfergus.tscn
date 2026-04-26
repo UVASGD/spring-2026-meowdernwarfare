@@ -809,6 +809,11 @@ animations = [{
 "name": &"reload_idle",
 "speed": 6.0
 }, {
+"frames": [],
+"loop": true,
+"name": &"run",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_sl8ou")
@@ -903,7 +908,7 @@ autoplay = "idle"
 [node name="SpriteFergus" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.28, 0.28)
 sprite_frames = SubResource("SpriteFrames_diul2")
-animation = &"shoot_idle"
+animation = &"run"
 autoplay = "idle"
 
 [node name="Aura" type="AnimatedSprite2D" parent="."]

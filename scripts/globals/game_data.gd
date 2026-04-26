@@ -187,8 +187,14 @@ func _create_menu_theme_player() -> void:
 func ensure_menu_theme() -> void:
 	if _menu_theme == null:
 		_create_menu_theme_player()
+	if _menu_theme:
+		_menu_theme.stream_paused = false
 	if _menu_theme and not _menu_theme.playing:
 		_menu_theme.play()
+
+func pause_menu_theme() -> void:
+	if _menu_theme and _menu_theme.playing:
+		_menu_theme.stream_paused = true
 
 func stop_menu_theme() -> void:
 	if _menu_theme and _menu_theme.playing:
