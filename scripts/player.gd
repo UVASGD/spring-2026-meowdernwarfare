@@ -48,6 +48,7 @@ var nametag: Label = null
 var mark_indicator: CanvasItem = null
 
 const MarkProjectileHitFxScene = preload("res://scenes/heroes/loanshark/mark_projectile_hit_fx.tscn")
+const XylerSlashFxScene = preload("res://scenes/heroes/xylerfergus/xyler_slash_fx.tscn")
 const BurpleTargetScene = preload("res://scenes/heroes/burple/grenade_target.tscn")
 const _ULT_BANNER_PORTRAIT_SHADER = preload("res://assets/shaders/electric_wrap.gdshader")
 const _UI_FONT = preload("res://assets/ui/fonts/BATTLESANSSERIF.OTF")
@@ -1187,7 +1188,12 @@ func _set_target_mode(mode: String) -> void:
 		return
 	if _target_mode == mode:
 		return
+	var prev := _target_mode
 	_target_mode = mode
+	if hero and prev != TARGET_NONE and hero.has_method("target_mode_cancelled"):
+		hero.target_mode_cancelled(prev)
+	if hero and _target_mode != TARGET_NONE and hero.has_method("target_mode_started"):
+		hero.target_mode_started(_target_mode)
 	if _target_mode != TARGET_NONE:
 		_ensure_target_marker()
 		Cursor.switch_mode("GRENADE")
@@ -1593,6 +1599,12 @@ func spawn_mark_projectile_hit_fx() -> void:
 	var fx: Node2D = MarkProjectileHitFxScene.instantiate()
 	add_child(fx)
 	fx.global_position = global_position + Vector2(0, -72)
+
+## World-space Xyler attack animation when Fergus's mark threshold procs.
+func spawn_xyler_slash_fx() -> void:
+	var fx: Node2D = XylerSlashFxScene.instantiate()
+	get_tree().current_scene.add_child(fx)
+	fx.global_position = global_position
 
 
 # --- BLIND EFFECT ---

@@ -21,6 +21,19 @@ OUT_DIR = os.path.join(ROOT_DIR, "spritesheetcombiner_out")
 
 EXTS = {".png", ".jpg", ".jpeg", ".bmp", ".webp", ".tif", ".tiff"}
 
+def _safe_name(s: str) -> str:
+    out = []
+    last_was_sep = False
+    for ch in s.strip().lower():
+        if ch.isalnum():
+            out.append(ch)
+            last_was_sep = False
+        else:
+            if not last_was_sep:
+                out.append("_")
+                last_was_sep = True
+    return "".join(out).strip("_")
+
 def _white_to_alpha(img: Image.Image, cutoff: int = 245) -> Image.Image:
     px = img.getdata()
     out = []
@@ -89,6 +102,30 @@ def _image_names(folder: str):
         if os.path.splitext(f)[1].lower() in EXTS and not f.endswith(".import")
     )
 
+def _image_dirs(root: str):
+    out = []
+    for dirpath, _, _ in os.walk(root):
+        if _image_names(dirpath):
+            out.append(dirpath)
+    return sorted(out)
+
+def _sheet_name(src_dir: str, used: set[str]) -> str:
+    rel = os.path.relpath(src_dir, IN_DIR)
+    parts = [] if rel == "." else rel.split(os.sep)
+    if len(parts) > 1:
+        parts = parts[1:]
+    name = "_".join(_safe_name(p) for p in parts if _safe_name(p))
+    if not name:
+        name = datetime.now().strftime("spritesheet_%Y%m%d_%H%M%S")
+
+    base = name
+    i = 2
+    while f"{name}.png" in used:
+        name = f"{base}_{i}"
+        i += 1
+    used.add(f"{name}.png")
+    return f"{name}.png"
+
 def _resolve_output_path(output: str | None, fallback_name: str) -> str:
     if not output:
         return os.path.join(OUT_DIR, fallback_name)
@@ -150,28 +187,26 @@ def combine(remove_white: bool = False, smart_bg: bool = False, use_rembg: bool 
         return
 
     os.makedirs(OUT_DIR, exist_ok=True)
-    made_any = False
+    dirs = _image_dirs(IN_DIR)
 
-    subdirs = sorted(
-        d for d in os.listdir(IN_DIR)
-        if os.path.isdir(os.path.join(IN_DIR, d))
-    )
-
-    for d in subdirs:
-        src_dir = os.path.join(IN_DIR, d)
-        out_path = os.path.join(OUT_DIR, f"{d}.png")
-        if _make_sheet(src_dir, out_path, remove_white, smart_bg, use_rembg):
-            made_any = True
-
-    if made_any:
-        if output:
-            print("Note: --output is ignored when combining multiple subfolders.")
+    if len(dirs) > 1 or (dirs and dirs[0] != IN_DIR):
+        used_names = set()
+        made_any = False
+        for src_dir in dirs:
+            out_path = os.path.join(OUT_DIR, _sheet_name(src_dir, used_names))
+            if _make_sheet(src_dir, out_path, remove_white, smart_bg, use_rembg):
+                made_any = True
+        if output and made_any:
+            print("Note: --output is ignored when combining multiple folders.")
+        if not made_any:
+            print("No images found in", IN_DIR)
         return
 
     files = _image_names(IN_DIR)
     if not files:
         print("No images found in", IN_DIR)
         return
+
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     out_path = _resolve_output_path(output, f"spritesheet_{timestamp}.png")
     os.makedirs(os.path.dirname(out_path), exist_ok=True)

@@ -136,12 +136,12 @@ func _safe_transition_sheet(tex: Variant, frame: Vector2) -> Dictionary:
 	var th: int = src_tex.get_height()
 	if tw > 0 and th > 0 and tw <= MAX_TEX_SIZE and th <= MAX_TEX_SIZE:
 		return {"tex": src_tex, "frame": frame}
-	var src: String = src_tex.resource_path
-	if src.is_empty():
+	var img: Image = src_tex.get_image()
+	if img == null:
 		return {"tex": null, "frame": frame}
-	var img := Image.new()
-	if img.load(src) != OK:
-		return {"tex": null, "frame": frame}
+	if img.is_compressed():
+		if img.decompress() != OK:
+			return {"tex": null, "frame": frame}
 	tw = img.get_width()
 	th = img.get_height()
 	if tw <= 0 or th <= 0:

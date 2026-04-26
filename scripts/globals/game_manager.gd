@@ -1578,7 +1578,7 @@ func _xf_do_xyler_slash(attacker_id: int, victim_id: int) -> void:
 	if attacker == null or victim == null or not is_instance_valid(attacker) or not is_instance_valid(victim):
 		return
 	victim.take_damage(XF_SLASH_DAMAGE, attacker)
-	victim.spawn_mark_projectile_hit_fx()
+	victim.spawn_xyler_slash_fx()
 	if Network.is_online() and mode == Mode.ONLINE_HOST:
 		Network.broadcast({"type": "xf_slash", "a": attacker_id, "v": victim_id})
 
@@ -1614,7 +1614,7 @@ func _handle_xf_slash(data: Dictionary) -> void:
 	var vid := int(data.get("v", -1))
 	var victim := get_player(vid)
 	if victim and is_instance_valid(victim):
-		victim.spawn_mark_projectile_hit_fx()
+		victim.spawn_xyler_slash_fx()
 
 # --- TELEPORTER SYNC ---
 

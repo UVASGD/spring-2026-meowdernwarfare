@@ -784,7 +784,7 @@ polygon = PackedVector2Array(-17.0159, 19.9025, 21.0888, 24.1857, 20.5657, -8.22
 
 [node name="garebare" parent="introgroup1/cardholder" instance=ExtResource("1_1g8jr")]
 position = Vector2(548.571, -20)
-next_scene_path = "res://scenes/ui/new_train_menu.tscn"
+next_scene_path = "res://scenes/ui/train_menu.tscn"
 card_action = 3
 
 [node name="bg" parent="introgroup1/cardholder/garebare" index="0"]

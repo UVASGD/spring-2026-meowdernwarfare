@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dtjagrfbjd3dx" path="res://scripts/ui/spritebutton.gd" id="1_eepx7"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_eepx7"]
-size = Vector2(100, 100)
+size = Vector2(236, 300)
 
 [sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_off"]
 size = Vector2(100, 100)

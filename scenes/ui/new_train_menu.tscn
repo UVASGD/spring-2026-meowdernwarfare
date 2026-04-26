@@ -62,8 +62,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 762.0
-offset_right = 762.0
+offset_left = 3.0
+offset_right = 3.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -88,10 +88,10 @@ offset_bottom = 1125.0
 
 [node name="InfoPanel" type="PanelContainer" parent="Control/mask/sliding_charbg"]
 layout_mode = 0
-offset_left = 16.0
-offset_top = 250.0
-offset_right = 650.0
-offset_bottom = 1088.0
+offset_left = 214.0
+offset_top = 132.0
+offset_right = 735.0
+offset_bottom = 1106.0
 
 [node name="Scroll" type="ScrollContainer" parent="Control/mask/sliding_charbg/InfoPanel"]
 layout_mode = 2
@@ -665,143 +665,6 @@ texture = ExtResource("14_d6vqf")
 [node name="Vs_AiButton" type="Sprite2D" parent="."]
 position = Vector2(862, 71)
 texture = ExtResource("15_dk01d")
-
-[node name="HitButtons" type="Control" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="BackButton" type="Button" parent="HitButtons"]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 18.0
-offset_top = 28.0
-offset_right = 208.0
-offset_bottom = 122.0
-mouse_default_cursor_shape = 2
-flat = true
-
-[node name="TutorialButton" type="Button" parent="HitButtons"]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 520.0
-offset_top = 30.0
-offset_right = 740.0
-offset_bottom = 118.0
-mouse_default_cursor_shape = 2
-flat = true
-
-[node name="VsAiButton" type="Button" parent="HitButtons"]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 760.0
-offset_top = 30.0
-offset_right = 962.0
-offset_bottom = 118.0
-mouse_default_cursor_shape = 2
-flat = true
-
-[node name="SoloButton" type="Button" parent="HitButtons"]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 966.0
-offset_top = 30.0
-offset_right = 1165.0
-offset_bottom = 118.0
-mouse_default_cursor_shape = 2
-flat = true
-
-[node name="Frame1Button" type="Button" parent="HitButtons"]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 35.0
-offset_top = 205.0
-offset_right = 303.0
-offset_bottom = 557.0
-mouse_filter = 2
-mouse_default_cursor_shape = 2
-flat = true
-
-[node name="Frame2Button" type="Button" parent="HitButtons"]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 319.0
-offset_top = 208.0
-offset_right = 587.0
-offset_bottom = 560.0
-mouse_filter = 2
-mouse_default_cursor_shape = 2
-flat = true
-
-[node name="Frame3Button" type="Button" parent="HitButtons"]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 603.0
-offset_top = 189.0
-offset_right = 871.0
-offset_bottom = 541.0
-mouse_filter = 2
-mouse_default_cursor_shape = 2
-flat = true
-
-[node name="Frame4Button" type="Button" parent="HitButtons"]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 898.0
-offset_top = 180.0
-offset_right = 1166.0
-offset_bottom = 532.0
-mouse_filter = 2
-mouse_default_cursor_shape = 2
-flat = true
-
-[node name="Frame5Button" type="Button" parent="HitButtons"]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 45.0
-offset_top = 618.0
-offset_right = 313.0
-offset_bottom = 970.0
-mouse_filter = 2
-mouse_default_cursor_shape = 2
-flat = true
-
-[node name="Frame6Button" type="Button" parent="HitButtons"]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 334.0
-offset_top = 615.0
-offset_right = 602.0
-offset_bottom = 967.0
-mouse_filter = 2
-mouse_default_cursor_shape = 2
-flat = true
-
-[node name="Frame7Button" type="Button" parent="HitButtons"]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 619.0
-offset_top = 615.0
-offset_right = 887.0
-offset_bottom = 967.0
-mouse_filter = 2
-mouse_default_cursor_shape = 2
-flat = true
-
-[node name="Frame8Button" type="Button" parent="HitButtons"]
-modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 903.0
-offset_top = 613.0
-offset_right = 1171.0
-offset_bottom = 965.0
-mouse_filter = 2
-mouse_default_cursor_shape = 2
-flat = true
 
 [connection signal="input_event" from="Frame1/Area2D" to="Frame1" method="_on_area_2d_input_event"]
 [connection signal="mouse_entered" from="Frame1/Area2D" to="Frame1" method="_on_area_2d_mouse_entered"]

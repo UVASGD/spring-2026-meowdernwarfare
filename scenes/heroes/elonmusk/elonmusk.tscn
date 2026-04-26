@@ -636,10 +636,8 @@ tv_and_win_bg = ExtResource("4_87tr0")
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.25, 0.25)
 sprite_frames = SubResource("SpriteFrames_o11ng")
-animation = &"shoot_start_run"
+animation = &"shoot_run"
 autoplay = "idle"
-frame = 3
-frame_progress = 0.665062
 
 [node name="MagnetRing" type="Line2D" parent="."]
 visible = false

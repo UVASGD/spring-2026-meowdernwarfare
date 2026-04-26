@@ -3,6 +3,15 @@ extends Hero
 
 const FergusBulletScene = preload("res://scenes/heroes/xylerfergus/fergus_bullet.tscn")
 
+const XYLER_NORMAL_PORTRAIT = preload("res://assets/sprites/xylerfergus/xyler/Xyler_Selected_Normal.png")
+const XYLER_ULT_PORTRAIT = preload("res://assets/sprites/xylerfergus/xyler/Xyler_Selected_Ult.png")
+const FERGUS_NORMAL_PORTRAIT = preload("res://assets/sprites/xylerfergus/fergus/Fergus_Selected_Normal.png")
+const FERGUS_ULT_PORTRAIT = preload("res://assets/sprites/xylerfergus/fergus/Fergus_Selected_ult.png")
+
+const XYLER_A1_ICON = preload("res://assets/ui/ability_icons_centered/xyler_ability_1.png")
+const XYLER_A2_ICON = preload("res://assets/ui/ability_icons_centered/xyler_ability_2.png")
+const FERGUS_A2_ICON = preload("res://assets/ui/ability_icons_centered/fergus_ability_2.png")
+
 enum Stance { XYLER, FERGUS }
 
 @export_group("Xyler")
@@ -28,6 +37,7 @@ enum Stance { XYLER, FERGUS }
 
 @onready var _sprite_xyler: AnimatedSprite2D = $SpriteXyler
 @onready var _sprite_fergus: AnimatedSprite2D = $SpriteFergus
+@onready var _aura: AnimatedSprite2D = $Aura
 @onready var hurtbox: HeroHurtbox = $hurtbox
 
 var stance: Stance = Stance.XYLER
@@ -43,10 +53,18 @@ func get_hero_name() -> String:
 func _ready() -> void:
 	_base_xyler_move = xyler_move_mult
 	_base_fergus_move = fergus_move_mult
-	_setup_placeholder_frames(_sprite_xyler, Color(0.65, 0.82, 1.0, 1.0))
-	_setup_placeholder_frames(_sprite_fergus, Color(1.0, 0.78, 0.55, 1.0))
 	super._ready()
+	if _aura:
+		_aura.visible = false
 	_apply_stance(true)
+	var gm := GameManager.instance
+	if gm and not gm.ult_used_received.is_connected(_on_ult_used_received):
+		gm.ult_used_received.connect(_on_ult_used_received)
+
+func _exit_tree() -> void:
+	var gm := GameManager.instance
+	if gm and gm.ult_used_received.is_connected(_on_ult_used_received):
+		gm.ult_used_received.disconnect(_on_ult_used_received)
 
 func _process(delta: float) -> void:
 	super._process(delta)
@@ -56,19 +74,14 @@ func _process(delta: float) -> void:
 			_refresh_xyler_move()
 	if _fergus_ult_t > 0.0:
 		_fergus_ult_t = maxf(0.0, _fergus_ult_t - delta)
+	_update_aura_visibility()
 
-func _setup_placeholder_frames(node: AnimatedSprite2D, tint: Color) -> void:
-	var tex: Texture2D = load("res://assets/sprites/icon.svg") as Texture2D
-	if tex == null:
+func _update_aura_visibility() -> void:
+	if _aura == null:
 		return
-	var sf := SpriteFrames.new()
-	for anim_name in ["idle", "run", "shoot", "melee", "ability1", "ult", "reload", "death"]:
-		if not sf.has_animation(anim_name):
-			sf.add_animation(anim_name)
-			sf.set_animation_loop(anim_name, anim_name == "idle" or anim_name == "run")
-		sf.add_frame(anim_name, tex, 1.0)
-	node.sprite_frames = sf
-	node.modulate = tint
+	var show := _xyler_ult_t > 0.0 or _fergus_ult_t > 0.0
+	if _aura.visible != show:
+		_aura.visible = show
 
 func uses_gun_ammo() -> bool:
 	return stance == Stance.FERGUS
@@ -97,8 +110,7 @@ func shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 		if not can_shoot():
 			return
 		_begin_skill("shoot")
-		current_anim = "melee"
-		sprite.play("melee")
+		_play_action_anim("shoot")
 		_capture_skill_anim()
 		SfxBus.play_world(&"player.melee_swipe", player.global_position if player else global_position)
 		_do_shoot(aim_dir, aim_pos)
@@ -145,6 +157,9 @@ func _refresh_xyler_move() -> void:
 	hurtbox.damage = int(round(float(xyler_melee_damage) * _xyler_ult_damage_mult()))
 
 func _do_ability1(_aim_dir: Vector2, _aim_pos: Vector2) -> void:
+	await _await_swap_anim()
+	if not is_inside_tree() or is_dead or player == null:
+		return
 	stance = Stance.FERGUS if stance == Stance.XYLER else Stance.XYLER
 	_apply_stance(false)
 	var gm := GameManager.instance
@@ -155,8 +170,22 @@ func apply_remote_stance(st: int) -> void:
 	var new_stance: Stance = Stance.XYLER if st == 0 else Stance.FERGUS
 	if new_stance == stance:
 		return
+	await _await_swap_anim()
+	if not is_inside_tree() or is_dead:
+		return
+	if new_stance == stance:
+		return
 	stance = new_stance
 	_apply_stance(true)
+
+func _await_swap_anim() -> void:
+	if sprite == null or sprite.sprite_frames == null:
+		return
+	if String(sprite.animation) != "ability1_idle":
+		return
+	if not sprite.is_playing():
+		return
+	await sprite.animation_finished
 
 func _apply_stance(from_remote: bool) -> void:
 	if _sprite_xyler:
@@ -182,6 +211,15 @@ func _apply_stance(from_remote: bool) -> void:
 	_refresh_xyler_move()
 	if not from_remote and stance == Stance.FERGUS:
 		reload_cd = 0.0
+	_refresh_player_ui()
+
+func _refresh_player_ui() -> void:
+	if player == null:
+		return
+	if player.has_method("_refresh_hero_ui"):
+		player._refresh_hero_ui()
+	if "_last_ult_full" in player:
+		player._last_ult_full = -1
 
 func _do_ult(_aim_dir: Vector2, _aim_pos: Vector2) -> void:
 	if stance == Stance.XYLER:
@@ -190,3 +228,38 @@ func _do_ult(_aim_dir: Vector2, _aim_pos: Vector2) -> void:
 		hurtbox.damage = int(round(float(xyler_melee_damage) * _xyler_ult_damage_mult()))
 	else:
 		_fergus_ult_t = fergus_ult_duration
+	_update_aura_visibility()
+
+func _on_ult_used_received(pid: int) -> void:
+	if player == null or player.player_id != pid:
+		return
+	if stance == Stance.XYLER:
+		if _xyler_ult_t <= 0.0:
+			_xyler_ult_t = xyler_ult_duration
+			_refresh_xyler_move()
+	else:
+		if _fergus_ult_t <= 0.0:
+			_fergus_ult_t = fergus_ult_duration
+	_update_aura_visibility()
+
+func get_hero_default_profile() -> Texture2D:
+	if stance == Stance.FERGUS:
+		return FERGUS_NORMAL_PORTRAIT
+	return XYLER_NORMAL_PORTRAIT
+
+func get_hero_ult_profile() -> Texture2D:
+	if stance == Stance.FERGUS:
+		return FERGUS_ULT_PORTRAIT
+	return XYLER_ULT_PORTRAIT
+
+func get_hero_ability1_icon() -> Texture2D:
+	if stance == Stance.FERGUS:
+		return FERGUS_A2_ICON
+	return XYLER_A1_ICON
+
+func get_hero_ability2_icon() -> Texture2D:
+	if not has_hero_ability2():
+		return null
+	if stance == Stance.FERGUS:
+		return FERGUS_A2_ICON
+	return XYLER_A2_ICON
