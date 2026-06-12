@@ -1,7 +1,7 @@
 extends TextureRect
 
 @onready var stars: Node2D = $stars
-
+@export var space:bool = true
 @export var fade_time := 2.0
 @export var hold_time := 3.0
 @export var min_delay := 0.5
@@ -12,6 +12,8 @@ var layers: Array[TextureRect] = []
 var active: Array[TextureRect] = []
 
 func _ready() -> void:
+	if not space:
+		return
 	for child in stars.get_children():
 		if child is TextureRect:
 			child.visible = true

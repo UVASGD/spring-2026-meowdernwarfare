@@ -33,7 +33,7 @@ func _ready() -> void:
 	_purple_base = bg_purple.position
 	_blue_base = bg_blue.position
 
-	code_label.text = "room code:\n" + Network.room_code
+	code_label.text = "room code:\n" + Network.room_code.to_lower()
 
 	# Network signals
 	Network.lobby_state_updated.connect(_on_lobby_state)
@@ -70,17 +70,11 @@ func _process(delta: float) -> void:
 	_update_bg_parallax(delta)
 
 func _update_bg_parallax(delta: float) -> void:
-	var vp := get_viewport().get_visible_rect().size
-	if vp.x <= 0.0 or vp.y <= 0.0:
+	var norm := MenuParallax.mouse_norm(get_viewport())
+	if norm == Vector2.INF:
 		return
-	var m := get_viewport().get_mouse_position()
-	var nx := (m.x / vp.x) * 2.0 - 1.0
-	var ny := (m.y / vp.y) * 2.0 - 1.0
-	var tp := Vector2(nx * parallax_purple.x, -ny * parallax_purple.y)
-	var tb := Vector2(nx * parallax_blue.x, -ny * parallax_blue.y)
-	var k := 1.0 - exp(-delta * parallax_smooth)
-	_purple_off = _purple_off.lerp(tp, k)
-	_blue_off = _blue_off.lerp(tb, k)
+	_purple_off = MenuParallax.step(_purple_off, norm, parallax_purple, delta, parallax_smooth)
+	_blue_off = MenuParallax.step(_blue_off, norm, parallax_blue, delta, parallax_smooth)
 	bg_purple.position = _purple_base + _purple_off
 	bg_blue.position = _blue_base + _blue_off
 
@@ -138,7 +132,7 @@ func _on_lobby_state(state: Dictionary) -> void:
 		if pdata:
 			var pid = int(pdata["id"])
 			tv.pid = pid
-			tv.turn_on(pdata.get("username", "Player"), pdata.get("is_host", false))
+			tv.turn_on(GameData.ensure_username(str(pdata.get("username", "player"))), pdata.get("is_host", false))
 			tv.show_hero(pdata.get("hero", ""))
 			tv.set_ready(ready_states.get(pid, false))
 			tv.show_kick(Network.is_host and pid != Network.my_player_id)
@@ -160,11 +154,13 @@ func _player_at_tv(idx: int, players: Array):
 # ---------- HERO SELECTION ----------
 
 func _on_hero_selected(hero_name: String) -> void:
+	HeroRegistry.warm_scene(hero_name)
 	Network.set_hero(hero_name)
 	_update_local_tv(hero_name, false)
 	_update_start_btn()
 
 func _on_hero_hovered(hero_name: String) -> void:
+	HeroRegistry.warm_scene(hero_name)
 	_update_local_tv(hero_name, true)
 
 func _update_local_tv(hero_name: String, preview: bool) -> void:

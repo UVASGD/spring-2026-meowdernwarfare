@@ -32,10 +32,10 @@ func _ready() -> void:
 	if _is_host:
 		code_label_node.visible = false
 		code_input.visible = false
-		action_btn.text = "HOST"
-		title.text = "Host a lobby"
+		action_btn.text = "host"
+		title.text = "host a lobby"
 	else:
-		action_btn.text = "JOIN"
+		action_btn.text = "join"
 
 	action_btn.pressed.connect(_on_action)
 	back_btn.pressed.connect(_on_back)
@@ -55,17 +55,11 @@ func _process(delta: float) -> void:
 func _update_bg_3d_mouse(delta: float) -> void:
 	if _bg_bottom_mat == null or _bg_top_mat == null:
 		return
-	var vp := get_viewport().get_visible_rect().size
-	if vp.x <= 0.0 or vp.y <= 0.0:
+	var norm := MenuParallax.mouse_norm(get_viewport())
+	if norm == Vector2.INF:
 		return
-	var m := get_viewport().get_mouse_position()
-	var nx := (m.x / vp.x) * 2.0 - 1.0
-	var ny := (m.y / vp.y) * 2.0 - 1.0
-	var tb := Vector2(nx * bg_rot_bottom.x, -ny * bg_rot_bottom.y)
-	var tt := Vector2(nx * bg_rot_top.x, -ny * bg_rot_top.y)
-	var k := 1.0 - exp(-delta * bg_rot_smooth)
-	_bg_rot_b = _bg_rot_b.lerp(tb, k)
-	_bg_rot_t = _bg_rot_t.lerp(tt, k)
+	_bg_rot_b = MenuParallax.step(_bg_rot_b, norm, bg_rot_bottom, delta, bg_rot_smooth)
+	_bg_rot_t = MenuParallax.step(_bg_rot_t, norm, bg_rot_top, delta, bg_rot_smooth)
 	_bg_bottom_mat.set_shader_parameter("y_rot", _bg_rot_b.x)
 	_bg_bottom_mat.set_shader_parameter("x_rot", _bg_rot_b.y)
 	_bg_top_mat.set_shader_parameter("y_rot", _bg_rot_t.x)
@@ -74,23 +68,24 @@ func _update_bg_3d_mouse(delta: float) -> void:
 func _load_username() -> void:
 	var config = ConfigFile.new()
 	if config.load(SAVE_PATH) == OK:
-		username_input.text = config.get_value("player", "username", "")
+		username_input.text = GameData.normalize_username(str(config.get_value("player", "username", "")))
 
 func _save_username() -> void:
 	var config = ConfigFile.new()
-	config.set_value("player", "username", username_input.text.strip_edges())
+	config.set_value("player", "username", GameData.ensure_username(username_input.text))
 	config.save(SAVE_PATH)
 
 func _on_username_changed(new_text: String) -> void:
-	if new_text.length() > 15:
-		username_input.text = new_text.substr(0, 15)
-		username_input.caret_column = 15
+	var fixed := GameData.normalize_username(new_text)
+	if fixed != new_text:
+		username_input.text = fixed
+		username_input.caret_column = fixed.length()
+	elif fixed.length() > GameData.MAX_USERNAME_LEN:
+		username_input.text = fixed.substr(0, GameData.MAX_USERNAME_LEN)
+		username_input.caret_column = GameData.MAX_USERNAME_LEN
 
 func _get_username() -> String:
-	var n = username_input.text.strip_edges()
-	if n.is_empty():
-		n = "Player" + str(randi() % 1000)
-	return n
+	return GameData.ensure_username(username_input.text)
 
 func _on_action() -> void:
 	if _is_host:
@@ -100,7 +95,7 @@ func _on_action() -> void:
 
 func _host() -> void:
 	_save_username()
-	status_label.text = "Connecting..."
+	status_label.text = "connecting..."
 	_set_buttons(false)
 	if Network.is_online():
 		Network.host_room(_get_username())
@@ -111,10 +106,10 @@ func _host() -> void:
 func _join() -> void:
 	var code = code_input.text.strip_edges().to_upper()
 	if code.length() != 6:
-		status_label.text = "Enter a 6-character room code"
+		status_label.text = "enter a 6-character room code"
 		return
 	_save_username()
-	status_label.text = "Connecting..."
+	status_label.text = "connecting..."
 	_set_buttons(false)
 	if Network.is_online():
 		Network.join_room(code, _get_username())
@@ -123,7 +118,7 @@ func _join() -> void:
 		Network.connect_to_server(SERVER_URL)
 
 func _on_connected() -> void:
-	status_label.text = "Connected"
+	status_label.text = "connected"
 
 func _on_hosted(_room_code: String, _pid: int) -> void:
 	GameData.change_scene("res://scenes/ui/lobby.tscn")
@@ -132,11 +127,11 @@ func _on_joined(_pid: int, _am_host: bool) -> void:
 	GameData.change_scene("res://scenes/ui/lobby.tscn")
 
 func _on_error(msg: String) -> void:
-	status_label.text = "Error: " + msg
+	status_label.text = "error: " + GameData.ui_lower(msg)
 	_set_buttons(true)
 
 func _on_disconnected() -> void:
-	status_label.text = "Disconnected"
+	status_label.text = "disconnected"
 	_set_buttons(true)
 
 func _set_buttons(enabled: bool) -> void:

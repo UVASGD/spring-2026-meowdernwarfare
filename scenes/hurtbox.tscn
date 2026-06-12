@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://utq6e3xscx0r" path="res://scenes/hurtbox.gd" id="1_ksusc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ppkhk"]
+resource_local_to_scene = true
 size = Vector2(134.706, 88.8235)
 
 [node name="hurtbox" type="Node2D"]

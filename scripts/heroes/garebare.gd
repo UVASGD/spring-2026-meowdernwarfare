@@ -28,6 +28,38 @@ func _process(delta: float) -> void:
 func get_hero_name() -> String:
 	return "Garebare"
 
+func has_hero_ability2() -> bool:
+	return true
+
+func use_ability2_charge_row_ui() -> bool:
+	return true
+
+func get_ability2_ui_progress() -> float:
+	var total := 0.0
+	for i in range(fies.size()):
+		total += get_ability2_charge_row_progress(i)
+	return clamp(total / float(fies.size()), 0.0, 1.0)
+
+func get_ability2_charge_row_progress(slot_index: int) -> float:
+	if slot_index < 0 or slot_index >= fies.size():
+		return 1.0
+	if fies[slot_index] != null and is_instance_valid(fies[slot_index]):
+		return 0.0
+	var cd := fie_cds[slot_index]
+	if cd <= 0.0:
+		return 1.0
+	if fie_respawn_cd <= 0.0:
+		return 1.0
+	return clamp(1.0 - (cd / fie_respawn_cd), 0.0, 1.0)
+
+func get_ability2_charge_count() -> int:
+	var c := 0
+	for i in range(fies.size()):
+		if fies[i] == null or not is_instance_valid(fies[i]):
+			if fie_cds[i] <= 0.0:
+				c += 1
+	return c
+
 # --- SHOOT: shotgun soundwave spread ---
 
 @warning_ignore("unused_parameter")
@@ -102,7 +134,7 @@ func _do_ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	fie.global_position = place_pos
 	get_tree().current_scene.add_child(fie)
 	fies[slot] = fie
-	fie.destroyed.connect(_on_fie_destroyed.bind(slot))
+	fie.destroyed.connect(_on_fie_destroyed.bind(slot, fie))
 
 	# Broadcast FIE placement for network sync
 	if GameManager.instance:
@@ -121,7 +153,7 @@ func _place_fie_remote(slot: int, pos: Vector2) -> void:
 	fie.global_position = pos
 	get_tree().current_scene.add_child(fie)
 	fies[slot] = fie
-	fie.destroyed.connect(_on_fie_destroyed.bind(slot))
+	fie.destroyed.connect(_on_fie_destroyed.bind(slot, fie))
 	_fie_remote_op = false
 
 func _get_free_fie_slot() -> int:
@@ -130,9 +162,11 @@ func _get_free_fie_slot() -> int:
 			return i
 	return -1
 
-func _on_fie_destroyed(slot: int) -> void:
+func _on_fie_destroyed(slot: int, fie: Node2D) -> void:
 	fies[slot] = null
 	fie_cds[slot] = fie_respawn_cd
+	if fie and is_instance_valid(fie):
+		SfxBus.play_world(&"hero.garebare.fie_destroy", fie.global_position)
 	# Only the owning peer reports destruction; every peer simulates the damage
 	# locally and would otherwise spam redundant fie_destroyed broadcasts.
 	if not _fie_remote_op and GameManager.instance and player and player.is_locally_controlled():

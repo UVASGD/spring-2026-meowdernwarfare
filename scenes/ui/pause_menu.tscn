@@ -127,23 +127,23 @@ theme_override_constants/separation = 14
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5")
 theme_override_font_sizes/font_size = 34
-text = "PAUSED"
+text = "paused"
 horizontal_alignment = 1
 
 [node name="ContinueBtn" type="Button" parent="MainVBox"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5")
-text = "CONTINUE"
+text = "continue"
 
 [node name="SettingsBtn" type="Button" parent="MainVBox"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5")
-text = "SETTINGS"
+text = "settings"
 
 [node name="BackBtn" type="Button" parent="MainVBox"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("5")
-text = "BACK TO MENU"
+text = "back to menu"
 
 [node name="PauseSettings" parent="." instance=ExtResource("7")]
 visible = false

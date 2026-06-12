@@ -3,7 +3,8 @@ extends CanvasLayer
 var enabled = false
 const MODE_MENU := "MENU"
 const MODE_BATTLE := "BATTLE"
-const MODES: Array[String] = [MODE_MENU, MODE_BATTLE]
+const MODE_GRENADE := "GRENADE"
+const MODES: Array[String] = [MODE_MENU, MODE_BATTLE, MODE_GRENADE]
 
 var mode: String = MODE_MENU
 

@@ -1,0 +1,51 @@
+[gd_scene load_steps=3 format=3 uid="uid://0bjv571w4ifj"]
+
+[ext_resource type="Script" uid="uid://dghd2wd7v1u1e" path="res://scripts/ui/loading.gd" id="1_loading_script"]
+[ext_resource type="Texture2D" uid="uid://cj8x5dql1i28g" path="res://assets/ui/sgd_logo.png" id="2_sgd_logo"]
+
+[node name="Loading" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_loading_script")
+
+[node name="Bg" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Stack" type="VBoxContainer" parent="Center"]
+layout_mode = 2
+theme_override_constants/separation = 32
+alignment = 1
+
+[node name="Logo" type="TextureRect" parent="Center/Stack"]
+texture_filter = 1
+custom_minimum_size = Vector2(500, 500)
+layout_mode = 2
+size_flags_horizontal = 4
+texture = ExtResource("2_sgd_logo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Status" type="Label" parent="Center/Stack"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 48
+text = "loading"
+horizontal_alignment = 1

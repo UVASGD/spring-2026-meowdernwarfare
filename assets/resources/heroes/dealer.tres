@@ -6,14 +6,14 @@
 [resource]
 script = ExtResource("1_script")
 id = "Dealer"
-desc = "def"
+desc = "A shady, infamous kingpin you’re most likely to find in a dark alleyway selling his cherished “nip”. Even before Meowdern Warfare broke out, he has been widely known for his conniving and morally ambiguous ways, though his true motivations remain shrouded in mystery…"
 portrait = ExtResource("1_arhhi")
 portrait_outline_color = Color(0.542343, 0.0411495, 0.523819, 1)
-shoot_name = "Catnip Shot"
-shoot_desc = "Fire a bullet in the aim direction. Cooldown: 0.3s, Magazine: 15"
-ability1_name = "Invisibility"
-ability1_desc = "Turn invisible for 3 seconds. Cooldown: 5s"
+shoot_name = "Le Chat Noir"
+shoot_desc = "Le Chat Noir is the title the Dealer has bestowed upon his prized gun. It doesn’t do anything too special except make the Dealer look cooler than he already is, somehow."
+ability1_name = "Shadow Crawler"
+ability1_desc = "Shadow Crawler allows the Dealer to slip into darkness and become temporarily invisible to other players. This not only benefits him in combat but also in his business practices, allowing him to come and go as he pleases in total secrecy."
 ability2_name = ""
 ability2_desc = ""
-ult_name = "Drug Trip"
-ult_desc = "drug effect on all enemies for 10s, inverting their movement and aim."
+ult_name = "The Good Stuff "
+ult_desc = "The Dealer busts out The Good Stuff to hotbox the arena and puts other players in a catnip-induced daze, inverting their controls and warping their vision as a result. "

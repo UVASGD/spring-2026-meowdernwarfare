@@ -7,7 +7,7 @@
 [resource]
 script = ExtResource("1_script")
 id = "Gooblin"
-desc = "def"
+desc = "Gooblin is the biggest partier that Ander Dingus land has ever known! What is he fighting for? More booze and catnip for the post-battle party, obviously! No matter what, do NOT get between him and a cold one."
 portrait = ExtResource("1_aef7n")
 portrait_outline_color = Color(0.917647, 0.486275, 0.341176, 1)
 shoot_name = "Anime Tears"

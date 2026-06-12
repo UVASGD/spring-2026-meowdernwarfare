@@ -23,7 +23,7 @@ class Client:
     room: str | None = None
     player_id: int = -1
     is_host: bool = False
-    username: str = "Player"
+    username: str = "player"
     hero: str = ""
 
 @dataclass 
@@ -63,6 +63,10 @@ class Room:
 
 rooms: dict[str, Room] = {}
 clients: dict[websockets.ServerConnection, Client] = {}
+
+def _norm_username(raw: str) -> str:
+    name = str(raw).strip().lower()[:15]
+    return name or "player"
 
 # --- Desync telemetry ---
 POS_DESYNC_THRESHOLD = 500.0  # pixels
@@ -144,9 +148,9 @@ async def process(client: Client, msg: dict):
     if t == "pos_report":
         handle_pos_report(client, msg)
     elif t == "host":
-        await host_room(client, msg.get("username", "Host"))
+        await host_room(client, msg.get("username", "player"))
     elif t == "join":
-        await join_room(client, msg.get("room", "").upper(), msg.get("username", "Player"))
+        await join_room(client, msg.get("room", "").upper(), msg.get("username", "player"))
     elif t == "leave":
         await leave_room(client)
     elif t == "set_hero":
@@ -177,7 +181,7 @@ async def host_room(client: Client, username: str):
     
     rooms[code] = Room(name=code)
     room = rooms[code]
-    client.username = username[:15]
+    client.username = _norm_username(username)
     player_id = room.add(client)
     
     await client.ws.send(json.dumps({
@@ -186,7 +190,7 @@ async def host_room(client: Client, username: str):
         "player_id": player_id
     }))
     await broadcast_lobby_state(room)
-    print(f"Room '{code}' created by {username}")
+    print(f"Room '{code}' created by {client.username}")
 
 async def join_room(client: Client, room_code: str, username: str):
     if client.room:
@@ -208,7 +212,7 @@ async def join_room(client: Client, room_code: str, username: str):
         await client.ws.send(json.dumps({"type": "error", "msg": "Game already in progress"}))
         return
     
-    client.username = username[:15]
+    client.username = _norm_username(username)
     player_id = room.add(client)
     
     await client.ws.send(json.dumps({
@@ -220,13 +224,13 @@ async def join_room(client: Client, room_code: str, username: str):
     }))
     
     # Notify others
-    msg = json.dumps({"type": "player_joined", "player_id": player_id, "username": username})
+    msg = json.dumps({"type": "player_joined", "player_id": player_id, "username": client.username})
     for c in room.clients:
         if c != client:
             await c.ws.send(msg)
     
     await broadcast_lobby_state(room)
-    print(f"{username} joined room '{room_code}'")
+    print(f"{client.username} joined room '{room_code}'")
 
 async def leave_room(client: Client):
     if not client.room:

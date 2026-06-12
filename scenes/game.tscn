@@ -6,6 +6,7 @@
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1_feb5d")
+DEFAULT_MAP = "City"
 
 [node name="GameManager" type="Node" parent="."]
 script = ExtResource("2_fc0e3")

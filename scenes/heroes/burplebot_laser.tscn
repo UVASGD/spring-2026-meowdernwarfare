@@ -1,0 +1,48 @@
+[gd_scene load_steps=7 format=3 uid="uid://xqqiwhmkgycq"]
+
+[ext_resource type="Script" uid="uid://c34ngn7knuwkm" path="res://scenes/heroes/dealer/bullet.gd" id="1_48oea"]
+
+[sub_resource type="Gradient" id="Gradient_5cggs"]
+offsets = PackedFloat32Array(0.337662, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_f44qs"]
+gradient = SubResource("Gradient_5cggs")
+fill = 1
+fill_from = Vector2(0.509174, 0.495413)
+fill_to = Vector2(0.16055, 0.752294)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2tpwu"]
+radius = 5.0
+
+[sub_resource type="Gradient" id="Gradient_2tpwu"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_2tpwu"]
+gradient = SubResource("Gradient_2tpwu")
+fill = 1
+fill_from = Vector2(0.523148, 0.518519)
+fill_to = Vector2(0.862385, 0.151376)
+
+[node name="Bullet" type="Area2D"]
+collision_layer = 4
+collision_mask = 3
+script = ExtResource("1_48oea")
+speed = 900.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(1, 0, 0, 1)
+scale = Vector2(0.2, 0.2)
+texture = SubResource("GradientTexture2D_f44qs")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource("CircleShape2D_2tpwu")
+
+[node name="PointLight2D2" type="PointLight2D" parent="."]
+scale = Vector2(0.235, 0.235)
+color = Color(1, 0, 0, 1)
+energy = 0.75
+texture = SubResource("GradientTexture2D_2tpwu")
+texture_scale = 3.43
+height = 49.0

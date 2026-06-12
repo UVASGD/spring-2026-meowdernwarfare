@@ -1,0 +1,58 @@
+[gd_scene load_steps=8 format=3 uid="uid://rmxata4ac7s"]
+
+[ext_resource type="Texture2D" uid="uid://b8tl3pbjlluid" path="res://assets/maps/city/objs/nuclearplant.png" id="1_03y1d"]
+[ext_resource type="Script" uid="uid://de3y4fhctxl05" path="res://node_2d.gd" id="2_s6u6u"]
+[ext_resource type="Texture2D" uid="uid://d168scifr77a2" path="res://assets/maps/city/objs/slimeblob.png" id="3_c326u"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_q1nks"]
+size = Vector2(3863.77, 877.514)
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_p34q5"]
+radius = 88.0
+height = 496.089
+
+[sub_resource type="Gradient" id="Gradient_e8ram"]
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_6w53w"]
+gradient = SubResource("Gradient_e8ram")
+fill = 1
+fill_from = Vector2(0.545872, 0.472477)
+fill_to = Vector2(0.811927, 0.0917431)
+
+[node name="Nuclearplant" type="Sprite2D"]
+scale = Vector2(0.1747, 0.205125)
+texture = ExtResource("1_03y1d")
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(-38.6377, 176.721)
+shape = SubResource("RectangleShape2D_q1nks")
+
+[node name="Node2D" type="Node2D" parent="."]
+position = Vector2(5.7241, 1023.77)
+scale = Vector2(6, 6)
+script = ExtResource("2_s6u6u")
+
+[node name="Area2D" type="Area2D" parent="Node2D"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Node2D/Area2D"]
+rotation = -1.5708
+shape = SubResource("CapsuleShape2D_p34q5")
+
+[node name="Slimeblob" type="Sprite2D" parent="Node2D"]
+visible = false
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("3_c326u")
+
+[node name="PointLight2D" type="PointLight2D" parent="Node2D"]
+position = Vector2(-2, -13)
+scale = Vector2(7.54688, 6.03125)
+color = Color(0, 1, 0.101961, 1)
+texture = SubResource("GradientTexture2D_6w53w")
+height = 137.0
+
+[connection signal="body_entered" from="Node2D/Area2D" to="Node2D" method="_on_area_2d_body_entered"]
+[connection signal="body_exited" from="Node2D/Area2D" to="Node2D" method="_on_area_2d_body_exited"]

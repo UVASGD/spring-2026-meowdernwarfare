@@ -1,8 +1,9 @@
-[gd_scene load_steps=41 format=3 uid="uid://bm518183utayv"]
+[gd_scene load_steps=43 format=3 uid="uid://bm518183utayv"]
 
 [ext_resource type="Script" uid="uid://kb44jk3w67cb" path="res://scripts/heroes/loanshark.gd" id="1_raqiv"]
 [ext_resource type="Texture2D" uid="uid://qsyqys7j2edl" path="res://assets/sprites/loanshark/walk frames/loan_walk_1.png" id="2_2uins"]
 [ext_resource type="Texture2D" uid="uid://c8xfnyc3xgbkp" path="res://assets/sprites/loanshark/loanshark_transparent.png" id="2_b4b3o"]
+[ext_resource type="Texture2D" uid="uid://dmcqnwvy24j18" path="res://assets/sprites/loanshark/loanshark_bg_win_tv (1).png" id="3_6s4jh"]
 [ext_resource type="Texture2D" uid="uid://dii78tjrxsast" path="res://assets/sprites/loanshark/melee animation/melee_1.png" id="3_b4b3o"]
 [ext_resource type="Texture2D" uid="uid://fsqxbqo1k2t3" path="res://assets/sprites/loanshark/melee animation/melee_2.png" id="4_6s4jh"]
 [ext_resource type="Texture2D" uid="uid://bv4xspvg3fuit" path="res://assets/sprites/loanshark/melee animation/melee_3.png" id="5_q2224"]
@@ -210,6 +211,10 @@ _data = {
 &"hurtbox": SubResource("Animation_sgv4u")
 }
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_q2224"]
+resource_local_to_scene = true
+size = Vector2(134.706, 88.8235)
+
 [node name="LoanShark" type="Node2D"]
 scale = Vector2(0.85, 0.85)
 script = ExtResource("1_raqiv")
@@ -223,6 +228,7 @@ ability2_anim_duration = 1.0
 ult_anim_duration = 1.0
 portrait_outline_color = Color(0, 0.431373, 1, 1)
 normal_portrait = ExtResource("2_b4b3o")
+tv_and_win_bg = ExtResource("3_6s4jh")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="."]
 scale = Vector2(0.3, 0.3)
@@ -243,5 +249,6 @@ monitoring = false
 
 [node name="CollisionShape2D" parent="hurtbox/Area2D" index="0"]
 position = Vector2(0, 51.7647)
+shape = SubResource("RectangleShape2D_q2224")
 
 [editable path="hurtbox"]

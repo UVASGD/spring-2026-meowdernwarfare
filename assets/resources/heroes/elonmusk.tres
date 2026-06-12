@@ -1,16 +1,19 @@
-[gd_resource type="Resource" script_class="HeroInfo" load_steps=2 format=3 uid="uid://bssvfmihxql8u"]
+[gd_resource type="Resource" script_class="HeroInfo" load_steps=3 format=3 uid="uid://bssvfmihxql8u"]
 
+[ext_resource type="Texture2D" uid="uid://gxrb3fmyw46u" path="res://assets/sprites/elonmusk/musk_portrait_normal.png" id="1_i6viw"]
 [ext_resource type="Script" uid="uid://b5xiulcpyybs" path="res://scripts/resources/hero_info.gd" id="1_tfks1"]
 
 [resource]
 script = ExtResource("1_tfks1")
 id = "Elon. Musk."
-desc = "def"
-shoot_name = "Shoot"
-shoot_desc = "Basic ranged attack."
-ability1_name = "Ability 1"
-ability1_desc = "Special ability. (Coming soon)"
+desc = "Owner of the Ander Dingus power plant. After running a crypto pump-and-dump scheme, his angry victims stormed the power plant, destroying it and causing a terrible economic and environmental crisis."
+portrait = ExtResource("1_i6viw")
+portrait_outline_color = Color(0.411765, 0.654902, 0.796078, 1)
+shoot_name = "Flamethrower"
+shoot_desc = "def"
+ability1_name = "Crop Magnet"
+ability1_desc = "def"
 ability2_name = ""
 ability2_desc = ""
-ult_name = "Ultimate"
-ult_desc = "Powerful ultimate ability. (Coming soon)"
+ult_name = "Cybertruck"
+ult_desc = "def"

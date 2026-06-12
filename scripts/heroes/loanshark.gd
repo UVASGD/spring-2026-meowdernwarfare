@@ -63,6 +63,21 @@ func _update_ability2_charge_timers(delta: float) -> void:
 func can_ability2() -> bool:
 	return ability2_charges > 0 and not _is_fie_suppressed() and not _is_action_blocked()
 
+func get_ability2_ui_progress() -> float:
+	var total := 0.0
+	for i in range(ABILITY2_CHARGE_MAX):
+		total += get_ability2_charge_slot_recharge_progress(i)
+	return clamp(total / float(ABILITY2_CHARGE_MAX), 0.0, 1.0)
+
+func use_ability2_charge_row_ui() -> bool:
+	return true
+
+func get_ability2_charge_row_progress(slot_index: int) -> float:
+	return get_ability2_charge_slot_recharge_progress(slot_index)
+
+func get_ability2_charge_count() -> int:
+	return ability2_charges
+
 func ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	if not can_ability2() or is_dead:
 		return
@@ -99,6 +114,9 @@ func shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:
 	current_anim = "melee"
 	loanshark_animation.play("melee")
 	_capture_skill_anim()
+	SfxBus.play_world(SfxEvent.WEAPON_SHOOT, player.global_position if player else global_position)
+	SfxBus.play_world(&"player.melee_swipe", player.global_position if player else global_position)
+	SfxBus.play_world(SfxEvent.LOANSHARK_MELEE, player.global_position if player else global_position)
 	_do_shoot(aim_dir, aim_pos)
 
 func _do_shoot(aim_dir: Vector2, aim_pos: Vector2) -> void:

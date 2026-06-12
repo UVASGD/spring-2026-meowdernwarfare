@@ -6,7 +6,7 @@
 [resource]
 script = ExtResource("1_script")
 id = "LoanShark"
-desc = "def"
+desc = "Though he has since gone to therapy to overcome his intense loneliness and insecurity, the war has made Loan Shark revert to his old ways — he fights ruthlessly, a skill he developed in his days as a crime boss. If you aren’t careful on the battlefield, he may repossess your assets…"
 portrait = ExtResource("1_7ton1")
 portrait_outline_color = Color(0, 0.431373, 1, 1)
 shoot_name = "Shoot"

@@ -10,8 +10,12 @@ signal back_to_menu_pressed
 @onready var settings_back_btn: Button = $PauseSettings/VBox/BackBtn
 
 func _ready() -> void:
-	continue_btn.pressed.connect(func(): continue_pressed.emit())
-	back_btn.pressed.connect(func(): back_to_menu_pressed.emit())
+	continue_btn.pressed.connect(func():
+		continue_pressed.emit()
+	)
+	back_btn.pressed.connect(func():
+		back_to_menu_pressed.emit()
+	)
 	settings_btn.pressed.connect(_open_settings)
 	settings_back_btn.pressed.connect(_close_settings)
 	_close_settings()
