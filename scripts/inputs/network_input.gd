@@ -34,11 +34,18 @@ func update(delta: float) -> void:
 		_copy_from(local_source)
 		if GameData.menu_pause_local:
 			_strip_for_menu_pause()
-		_send_to_network()
-		local_source.end_frame()
 	else:
 		# Apply buffered input from network
 		_apply_buffered_input()
+
+## Send happens at end of frame so consumed actions (e.g. a shoot click spent on
+## planting a crop) are stripped before peers see them. Otherwise peers simulate
+## a phantom shot that never happened on the owning client.
+func end_frame() -> void:
+	if not is_local:
+		return
+	_send_to_network()
+	local_source.end_frame()
 
 func _strip_for_menu_pause() -> void:
 	move_input = Vector2.ZERO
@@ -94,6 +101,7 @@ func _send_to_network() -> void:
 		"pid": player_id,
 		"m": [move_input.x, move_input.y],
 		"a": [aim_input.x, aim_input.y],
+		"ap": [aim_position.x, aim_position.y],
 		"sp": sprint,
 		"d": dash_just,
 		"sh": shoot,
@@ -137,6 +145,11 @@ func _apply_buffered_input() -> void:
 	
 	move_input = Vector2(m[0], m[1])
 	aim_input = Vector2(a[0], a[1])
+	var ap = data.get("ap", null)
+	if ap is Array and ap.size() == 2:
+		aim_position = Vector2(ap[0], ap[1])
+	elif player_node:
+		aim_position = player_node.global_position + aim_input * 100.0
 	sprint = data.get("sp", false)
 	shoot = data.get("sh", false)
 	dash_just = merged_dash

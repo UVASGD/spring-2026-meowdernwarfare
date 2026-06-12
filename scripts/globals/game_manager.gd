@@ -369,7 +369,6 @@ func _broadcast_state() -> void:
 		state["stun"] = p.is_stunned
 		state["spec"] = p.in_spectate_mode
 		state["dead"] = p.is_dead()
-		state["await_resp"] = p.is_awaiting_respawn
 		if p.held_crop:
 			state["hc"] = p.held_crop.get_type_id()
 			state["hs"] = p.held_crop.stage
@@ -416,8 +415,15 @@ func _receive_client_state(from_id: int, data: Dictionary) -> void:
 	}
 	player.is_dashing = data.get("dash", false)
 	
-	if player.hero and data.has("hp"):
-		player.hero.health = data["hp"]
+	# Clients are authoritative over their own hero resources; mirror them so the
+	# host's state_sync broadcasts accurate values to the other peers.
+	if player.hero:
+		if data.has("hp"):
+			player.hero.health = data["hp"]
+		if data.has("ult"):
+			player.hero.ult_points = int(data["ult"])
+		if data.has("ammo"):
+			player.hero.ammo = int(data["ammo"])
 	
 	var hc = data.get("hc", "")
 	if hc != "":
@@ -460,9 +466,11 @@ func _apply_corrections(delta: float) -> void:
 					else:
 						player.hero.health = hp
 					player.hero.health_changed.emit(player.hero.health, player.hero.max_health)
-			
-			player.hero.ult_points = int(state.get("ult", player.hero.ult_points))
-			player.hero.ammo = int(state.get("ammo", player.hero.ammo))
+				# Each client is authoritative over its own hero resources (like hp
+				# above); only mirror the host's values for remote players, else the
+				# local ult/ammo would keep snapping back to the host's stale view.
+				player.hero.ult_points = int(state.get("ult", player.hero.ult_points))
+				player.hero.ammo = int(state.get("ammo", player.hero.ammo))
 			
 			if player.hero.has_method("is_invisible"):
 				var should_be_invis = state.get("invis", false)

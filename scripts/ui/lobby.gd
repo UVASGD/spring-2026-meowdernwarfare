@@ -18,8 +18,10 @@ extends Control
 @onready var code_label: Label = $RoomCodeLabel/Label
 
 var selected_crop := ""
+var crop_choices: Dictionary = {} # pid -> crop name
 var ready_states: Dictionary = {}
 var tv_map: Dictionary = {} # pid -> tv index
+var _host_pid: int = -1
 
 var _purple_base: Vector2
 var _blue_base: Vector2
@@ -40,6 +42,7 @@ func _ready() -> void:
 	Network.became_host.connect(_on_became_host)
 	Network.disconnected.connect(_on_disconnected)
 	Network.message_received.connect(_on_message)
+	Network.player_joined.connect(_on_player_joined)
 
 	# CharSelectRemote
 	remote.hero_selected.connect(_on_hero_selected)
@@ -101,6 +104,24 @@ func _on_lobby_state(state: Dictionary) -> void:
 		tv_map[int(host_p["id"])] = 0
 	for i in range(mini(others.size(), 3)):
 		tv_map[int(others[i]["id"])] = i + 1
+
+	# On host migration, guests re-announce their ready state so the new
+	# host (whose ready_states start empty) doesn't block start forever.
+	var new_host_pid: int = int(host_p["id"]) if host_p else -1
+	if _host_pid != -1 and new_host_pid != _host_pid and not Network.is_host and remote.is_ready:
+		ready_states[Network.my_player_id] = true
+		Network.broadcast({"action": "ready", "ready": true})
+	_host_pid = new_host_pid
+
+	# Restore own hero selection from server state (e.g. returning from a game),
+	# otherwise the host's start button stays disabled until they re-pick.
+	if remote.current_hero.is_empty():
+		for p in players:
+			if int(p["id"]) == Network.my_player_id:
+				var h := str(p.get("hero", ""))
+				if not h.is_empty():
+					remote.set_hero(h)
+				break
 
 	# Purge stale ready states
 	var active_pids: Array = []
@@ -165,12 +186,20 @@ func _on_ready_toggled(is_ready: bool) -> void:
 		sponsor.set_interactive(not is_ready)
 
 func _on_message(from_id: int, data: Dictionary) -> void:
-	if data.get("action") == "ready":
-		ready_states[from_id] = data.get("ready", false)
-		var idx = tv_map.get(from_id, -1)
-		if idx >= 0:
-			all_tvs[idx].set_ready(ready_states[from_id])
-		_update_start_btn()
+	match data.get("action"):
+		"ready":
+			ready_states[from_id] = data.get("ready", false)
+			var idx = tv_map.get(from_id, -1)
+			if idx >= 0:
+				all_tvs[idx].set_ready(ready_states[from_id])
+			_update_start_btn()
+		"crop":
+			crop_choices[from_id] = str(data.get("crop", ""))
+
+func _on_player_joined(_pid: int, _username: String) -> void:
+	# Late joiners missed earlier crop broadcasts; re-announce ours.
+	if not selected_crop.is_empty():
+		Network.broadcast({"action": "crop", "crop": selected_crop})
 
 func _update_start_btn() -> void:
 	if not Network.is_host:
@@ -193,6 +222,10 @@ func _all_guests_ready() -> bool:
 
 func _on_crop_selected(crop_name: String) -> void:
 	selected_crop = crop_name
+	crop_choices[Network.my_player_id] = crop_name
+	# Crop choice must be shared, else each peer plants its own local pick
+	# on every farm and the starting crops desync between machines.
+	Network.broadcast({"action": "crop", "crop": crop_name})
 
 # ---------- MAP ----------
 
@@ -209,6 +242,7 @@ func _on_kick(player_id: int) -> void:
 func _on_leave() -> void:
 	Network.leave_room()
 	Network.disconnect_from_server()
+	GameData.clear()
 	GameData.change_scene("res://scenes/ui/main_menu.tscn")
 
 # ---------- HOST CONTROLS ----------
@@ -237,6 +271,8 @@ func _on_game_started(players: Array, settings: Dictionary) -> void:
 		GameData.pending_starter_crops = [selected_crop]
 		GameData.starter_crops = [selected_crop]
 		GameData.save_starter_crops()
+		crop_choices[Network.my_player_id] = selected_crop
+	GameData.pending_crop_choices = crop_choices.duplicate()
 	GameData.change_scene("res://scenes/game.tscn")
 
 func _on_disconnected() -> void:

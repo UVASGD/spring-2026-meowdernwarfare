@@ -10,7 +10,6 @@ signal leave_requested
 @onready var leave_btn = $controlbuttons/Leave
 
 var current_hero: String = ""
-var hovered_hero: String = ""
 var is_ready := false
 
 func _on_char_pressed(str_name: String) -> void:
@@ -25,13 +24,17 @@ func _on_char_pressed(str_name: String) -> void:
 		_sync_char_btns(str_name)
 		hero_selected.emit(str_name)
 
+func set_hero(hero_name: String) -> void:
+	current_hero = hero_name
+	_sync_char_btns(hero_name)
+
 func _on_char_hovered(str_name: String) -> void:
-	hovered_hero = str_name
 	if current_hero.is_empty():
 		hero_hovered.emit(str_name)
 
 func _on_char_unhovered() -> void:
-	hovered_hero = ""
+	if current_hero.is_empty():
+		hero_hovered.emit("")
 
 func _on_ready_up_pressed() -> void:
 	if ready_btn.is_on and current_hero.is_empty():
@@ -43,14 +46,6 @@ func _on_ready_up_pressed() -> void:
 
 func _on_leave_pressed() -> void:
 	leave_requested.emit()
-
-func reset() -> void:
-	current_hero = ""
-	hovered_hero = ""
-	is_ready = false
-	ready_btn.set_off()
-	_sync_char_btns("")
-	_set_chars_interactive(true)
 
 func _set_chars_interactive(enabled: bool) -> void:
 	for btn in char_buttons.get_children():

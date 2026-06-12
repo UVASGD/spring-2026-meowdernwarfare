@@ -73,7 +73,6 @@ var missing_anim_warn := {}
 # Set by Player
 var player: Node2D = null
 var sprite: AnimatedSprite2D = null
-var hitbox: CollisionShape2D = null
 
 # Default UI
 const DEFAULT_HERO_UI_COLOR = Color.WHITE;

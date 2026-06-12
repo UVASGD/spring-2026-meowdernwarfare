@@ -1,7 +1,6 @@
 extends Node2D
 
-@onready var _owner: Player
-@onready var id: int
+var _owner: Player
 @export var max_crops: int = 9
 var crops: Array[Crop] = []
 

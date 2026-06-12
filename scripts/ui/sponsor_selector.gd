@@ -17,7 +17,6 @@ func _ready() -> void:
 	if not saved.is_empty() and saved[0] in CROPS:
 		idx = CROPS.find(saved[0])
 	selected_crop = CROPS[idx]
-	print("sponsorSelector ready, selected crop=",selected_crop)
 	_layout()
 	crop_selected.emit(selected_crop)
 
@@ -39,7 +38,6 @@ func _move(dir: int) -> void:
 	var old_idx = idx
 	idx = wrapi(idx + dir, 0, CROPS.size())
 	selected_crop = CROPS[idx]
-	print("new selected crop =",selected_crop)
 	var outgoing = option_sprites[old_idx]
 	var incoming = option_sprites[idx]
 

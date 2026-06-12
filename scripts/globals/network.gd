@@ -171,7 +171,9 @@ func _handle_message(raw: String) -> void:
 			kicked.emit()
 			room_code = ""
 			my_player_id = -1
+			is_host = false
 			players_in_room.clear()
+			lobby_state.clear()
 		
 		"lobby_state":
 			lobby_state = data

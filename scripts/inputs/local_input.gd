@@ -46,6 +46,10 @@ func update(delta: float) -> void:
 	_read_keyboard()
 	_read_gamepad()
 	_read_mouse()
+	# Non-mouse players aim where they face; without this, aim_position stays at
+	# the world origin and cursor-based actions (planting) target (0,0).
+	if (not use_mouse or player_id != 0) and player_node:
+		aim_position = player_node.global_position + aim_input * 100.0
 
 func _read_keyboard() -> void:
 	if player_id < 0 or player_id > 3:

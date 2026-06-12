@@ -11,10 +11,6 @@ const GAREBARE_EXPLOSION = preload("res://scenes/heroes/garebare/garebare_explos
 @export var stun_duration: float = 2.0
 @export var fie_suppress_radius: float = 150.0
 @export var fie_respawn_cd: float = 10.0
-@export var ult_damage: float = 60.0
-@export var ult_radius: float = 200.0
-@export var fie_detonate_damage: float = 40.0
-
 # FIE tracking: up to 2 slots
 var fies: Array = [null, null]
 var fie_cds: Array[float] = [0.0, 0.0]
@@ -78,6 +74,11 @@ func can_ability2() -> bool:
 
 @warning_ignore("unused_parameter")
 func _do_ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:
+	# Only the controlling peer places the FIE; everyone else gets it via the
+	# fie_placed broadcast. Otherwise remote input simulation AND the broadcast
+	# would each place one, leaking a duplicate FIE in fies[slot].
+	if player and not player.is_locally_controlled():
+		return
 	var slot = _get_free_fie_slot()
 	if slot < 0:
 		return
@@ -132,7 +133,9 @@ func _get_free_fie_slot() -> int:
 func _on_fie_destroyed(slot: int) -> void:
 	fies[slot] = null
 	fie_cds[slot] = fie_respawn_cd
-	if not _fie_remote_op and GameManager.instance:
+	# Only the owning peer reports destruction; every peer simulates the damage
+	# locally and would otherwise spam redundant fie_destroyed broadcasts.
+	if not _fie_remote_op and GameManager.instance and player and player.is_locally_controlled():
 		GameManager.instance.send_fie_destroyed(player.player_id, slot)
 
 func _create_fie() -> StaticBody2D:
@@ -146,10 +149,9 @@ func _create_fie() -> StaticBody2D:
 
 @warning_ignore("unused_parameter")
 func _do_ult(aim_dir: Vector2, aim_pos: Vector2) -> void:
-	var exp = GAREBARE_EXPLOSION.instantiate()
-	exp._set_owner(self.player)
-	add_child(exp)
-
+	var explosion = GAREBARE_EXPLOSION.instantiate()
+	explosion._set_owner(self.player)
+	add_child(explosion)
 
 	# Detonate all existing FIEs (damage in their areas, then destroy)
 	for i in range(fies.size()):

@@ -55,13 +55,14 @@ func _start_invis() -> void:
 	invis_timer = invis_duration
 	if sprite and invis_material:
 		sprite.material = invis_material
-	player.health_bar.visible = false
+	player.hud.refresh_world_health_bar()
 
 func _end_invis() -> void:
 	invis_timer = 0.0
 	if sprite:
 		sprite.material = normal_material
-	player.health_bar.visible = true
+	# Recompute instead of forcing visible: the dealer may be dead/spectating.
+	player.hud.refresh_world_health_bar()
 
 @warning_ignore("unused_parameter")
 func _do_ability2(aim_dir: Vector2, aim_pos: Vector2) -> void:

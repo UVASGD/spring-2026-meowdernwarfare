@@ -34,10 +34,6 @@ func _apply() -> void:
 		if m:
 			m.set_shader_parameter("progress", progress)
 
-func tween_progress(to: float, dur: float = 0.5) -> void:
-	var tw = create_tween()
-	tw.tween_method(_set_progress, progress, clamp(to, 0.0, 1.0), dur)
-
 func _set_progress(v: float) -> void:
 	progress = v
 	_apply()

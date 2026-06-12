@@ -16,6 +16,7 @@ var menu_pause_local: bool = false
 # Starter crop selection (persisted)
 var starter_crops: Array[String] = []
 var pending_starter_crops: Array[String] = []
+var pending_crop_choices: Dictionary = {} # pid -> crop name (online games)
 
 var train_last_hero: String = ""
 const TRAIN_HERO_ALIAS := {
@@ -178,6 +179,7 @@ func clear() -> void:
 	pending_players.clear()
 	pending_settings.clear()
 	pending_starter_crops.clear()
+	pending_crop_choices.clear()
 	is_online_game = false
 	menu_pause_local = false
 	game_mode = GameMode.NONE

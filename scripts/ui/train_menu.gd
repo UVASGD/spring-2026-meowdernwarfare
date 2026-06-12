@@ -33,8 +33,6 @@ const _DEFAULT_HEROES: Array[HeroInfo] = [
 @onready var ability2_section: VBoxContainer = $Margin/VBox/Content/SidePanel/Scroll/PanelContent/Ability2Section
 @onready var ult_section: VBoxContainer = $Margin/VBox/Content/SidePanel/Scroll/PanelContent/UltSection
 
-var selected_hero: String = ""
-
 func _ready() -> void:
 	if heroes.is_empty():
 		heroes = _DEFAULT_HEROES.duplicate()
@@ -75,7 +73,6 @@ func _populate_hero_grid() -> void:
 		hero_grid.add_child(btn)
 
 func _on_hero_selected(info: HeroInfo) -> void:
-	selected_hero = info.id
 	GameData.set_train_last_hero(_game_id(info))
 
 	if info.portrait:

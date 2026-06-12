@@ -15,11 +15,6 @@ const ABILITY2_CHARGE_MAX := 2
 @export var mark_projectile_explosion_radius: float = 140.0
 @export var ability2_charge_cooldown: float = 6.0
 
-var meleeDamage = 20 #maybe for a melee character, we'd have a higher base damage 
-var paymentPlanCooldown = 7
-var paymentPlanAbilityCount = 2
-var reapoCooldown = 8
-
 ## Contract projectile charges (max 2, independent recharge per slot).
 var ability2_charges: int = ABILITY2_CHARGE_MAX
 var _ability2_slot_cds: Array[float] = [0.0, 0.0]
@@ -119,7 +114,9 @@ func _do_ability1(aim_dir: Vector2, _aim_pos: Vector2) -> void:
 	var dash_power = 1400.0 # This is the variable impacting how strong the dash feels
 	var duration = 0.4 #This is the variable that manages how long the ability duration is (longer than a traditional dash)
 	
-	if is_multiplayer_authority() and player:
+	# Dash state is set on every peer so dodge i-frames stay consistent;
+	# velocity only matters on the controlling peer (remote movement is interpolated).
+	if player:
 		player.is_dashing = true
 		player.dash_dir = aim_dir.normalized()
 		player.dash_timer = duration
@@ -141,12 +138,12 @@ func _do_ability1(aim_dir: Vector2, _aim_pos: Vector2) -> void:
 	# --- The "Smooth" Part ---
 	hurtbox.end_swing()
 	
-	if is_multiplayer_authority() and player:
+	if player:
 		# Don't set velocity to zero! 
 		# Let Player.gd's friction take over naturally now that is_dashing is false
 		player.is_dashing = false
-	if is_multiplayer_authority() and player.camera:
-	# Small directional shake in the direction of the dash
+	if player and player.camera and player.camera.enabled:
+		# Small directional shake in the direction of the dash
 		var shake_tween = get_tree().create_tween()
 		player.camera.offset = aim_dir.normalized() * 10
 		shake_tween.tween_property(player.camera, "offset", Vector2.ZERO, 0.2)

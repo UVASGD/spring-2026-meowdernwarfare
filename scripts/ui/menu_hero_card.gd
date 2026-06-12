@@ -8,13 +8,7 @@ enum CardAction { NONE, HOST, JOIN, PRACTICE }
 @export var next_scene_path: String
 @export var card_action: CardAction = CardAction.NONE
 
-var hovered = false
-
-func _ready() -> void:
-	pass
-
 func _on_hover_enter() -> void:
-	hovered = true
 	card_hovered.emit(card_action)
 	if $char2.texture:
 		$char2.show()
@@ -22,7 +16,6 @@ func _on_hover_enter() -> void:
 	$AnimationPlayer.play("hover")
 
 func _on_hover_exit() -> void:
-	hovered = false
 	card_unhovered.emit()
 	if $char2.texture:
 		$char.show()

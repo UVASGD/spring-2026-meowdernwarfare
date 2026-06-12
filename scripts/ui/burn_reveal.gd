@@ -61,10 +61,3 @@ func start_reveal() -> void:
 func _set_progress(value: float) -> void:
 	if material:
 		material.set_shader_parameter("progress", value)
-
-func reset() -> void:
-	_started = false
-	if _tween:
-		_tween.kill()
-	if material:
-		material.set_shader_parameter("progress", 1.0)

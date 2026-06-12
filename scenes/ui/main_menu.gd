@@ -29,7 +29,6 @@ var _text_rot_b: Vector2 = Vector2.ZERO
 var _text_rot_t: Vector2 = Vector2.ZERO
 var _bg_rot_b: Vector2 = Vector2.ZERO
 var _bg_rot_t: Vector2 = Vector2.ZERO
-var _current_hovered: CardAction = CardAction.NONE
 var _unhover_timer: SceneTreeTimer = null
 
 func _ready() -> void:
@@ -122,7 +121,6 @@ func _on_card_hovered(action: CardAction) -> void:
 	
 	# Cancel any pending unhover reset
 	_unhover_timer = null
-	_current_hovered = action
 	
 	match action:
 		CardAction.JOIN:
@@ -137,14 +135,13 @@ func _on_card_unhovered() -> void:
 		return
 	
 	# Delay the reset to allow switching directly between cards
-	_unhover_timer = get_tree().create_timer(unhover_delay)
-	_unhover_timer.timeout.connect(_on_unhover_timeout)
-
-func _on_unhover_timeout() -> void:
-	# Only reset if no card is currently hovered
-	if _unhover_timer != null:
-		_unhover_timer = null
-		option_banner.set_option(0)
+	var t := get_tree().create_timer(unhover_delay)
+	_unhover_timer = t
+	t.timeout.connect(func():
+		# Only this timer (not a stale one) may reset the banner
+		if _unhover_timer == t:
+			_unhover_timer = null
+			option_banner.set_option(0))
 
 func _on_intro_finish():
 	$introgroup1/AnimationPlayer.play("idle2")

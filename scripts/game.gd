@@ -6,7 +6,6 @@ extends Node2D
 # ESC: Pause menu
 
 const MAP_SCENES := {
-	"testArena": "res://scenes/maps/maze_map.tscn",
 	"Moon": "res://scenes/maps/moon.tscn",
 }
 const CROP_SCENES := {
@@ -49,6 +48,7 @@ func _ready() -> void:
 	
 	var map_name = GameData.pending_settings.get("map", DEFAULT_MAP)
 	var starters = GameData.get_active_starters()
+	var crop_choices = GameData.pending_crop_choices.duplicate()
 	_load_map(map_name)
 	_setup_entity_layer()
 	_collect_farms()
@@ -65,10 +65,10 @@ func _ready() -> void:
 	
 	_assign_farms()
 	_play_map_theme()
+	# Wait for plantable tiles to register before planting starters
 	await get_tree().process_frame
 	await get_tree().process_frame
-	_collect_farms_tiles()
-	_plant_starter_crops(starters)
+	_plant_starter_crops(starters, crop_choices)
 	
 	gm.player_eliminated.connect(_on_player_eliminated)
 	gm.game_over_received.connect(_on_game_over_received)
@@ -187,21 +187,6 @@ func _find_ysort_container(node: Node) -> Node2D:
 func _collect_farms() -> void:
 	farms = get_tree().get_nodes_in_group("farms")
 
-func _collect_farms_tiles() -> void:
-	#print("[CROP] _collect_farms_tiles (post-frame): re-checking tile counts")
-	#for i in farms.size():
-	#	var f = farms[i]
-	#	var tilemap = f.get_node_or_null("TileMapLayer")
-	#	if tilemap:
-	#		var tile_count = 0
-	#		for child in tilemap.get_children():
-	#			if child.has_method("plant"):
-	#				tile_count += 1
-	#		print("[CROP]   farm[", i, "] '", f.name, "': ", tilemap.get_child_count(), " children, ", tile_count, " plantable tiles")
-	#	else:
-	#		print("[CROP]   farm[", i, "] '", f.name, "': no TileMapLayer")
-	pass
-
 func _assign_farms() -> void:
 	if farms.is_empty() or gm.players.is_empty():
 		return
@@ -260,7 +245,7 @@ func _apply_farm_spawns(assignments: Array) -> void:
 			item.get("y", player.global_position.y)
 		)
 
-func _plant_starter_crops(starters: Array[String] = []) -> void:
+func _plant_starter_crops(starters: Array[String] = [], choices: Dictionary = {}) -> void:
 	if starters.is_empty():
 		starters = GameData.get_active_starters()
 	if starters.is_empty():
@@ -269,9 +254,15 @@ func _plant_starter_crops(starters: Array[String] = []) -> void:
 	for player in gm.players:
 		if player.farm == null:
 			continue
+		# Online: every peer plants each farm with its owner's broadcast
+		# crop choice so the starting crops match on all machines.
+		var plist: Array = starters
+		if not choices.is_empty():
+			var c := str(choices.get(player.player_id, ""))
+			plist = [c] if CROP_SCENES.has(c) else GameData.DEFAULT_STARTERS
 		var tiles = _get_empty_tiles(player.farm)
-		for j in range(mini(starters.size(), tiles.size())):
-			var scene = CROP_SCENES.get(starters[j])
+		for j in range(mini(plist.size(), tiles.size())):
+			var scene = CROP_SCENES.get(plist[j])
 			if scene == null:
 				continue
 			var crop = scene.instantiate() as Crop
@@ -403,7 +394,9 @@ func _process(delta: float) -> void:
 	game_timer += delta
 	_update_timer_hud()
 	
-	if not gm.sudden_death and game_timer >= GAME_DURATION:
+	# Host-authoritative: clients activate via the sudden_death broadcast instead
+	# of their own clock, which can drift from the host's.
+	if not gm.sudden_death and game_timer >= GAME_DURATION and gm.is_host():
 		_trigger_sudden_death()
 
 func _trigger_sudden_death() -> void:
@@ -432,6 +425,11 @@ func _spawn_killzone() -> void:
 func _on_player_eliminated(elim_player: Player) -> void:
 	print("[GAME] _on_player_eliminated: pid=", elim_player.player_id, " game_over=", gm.game_over)
 	if gm.game_over:
+		return
+	# Only the host (or local game) decides the winner; clients would otherwise
+	# compute their own (possibly different, randomly tie-broken) winner instead
+	# of waiting for the host's game_over broadcast.
+	if not gm.is_host():
 		return
 	var alive = gm.get_alive_players()
 	alive.erase(elim_player)

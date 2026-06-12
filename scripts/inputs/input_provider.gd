@@ -32,6 +32,10 @@ func update(delta: float) -> void:
 	# Override in subclasses
 	pass
 
+## Called by Player at the end of each physics frame, after actions were consumed.
+func end_frame() -> void:
+	pass
+
 func clear_just_pressed() -> void:
 	dash_just = false
 	shoot_just = false

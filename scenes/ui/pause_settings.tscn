@@ -1,6 +1,5 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=9 format=3]
 
-[ext_resource type="Script" path="res://scripts/ui/pause_settings.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://wijbpgs0wox4" path="res://assets/ui/lobby/tv_on.png" id="2"]
 [ext_resource type="Shader" uid="uid://c3emtticjkhg4" path="res://scenes/ui/lobby/crt.gdshader" id="3"]
 [ext_resource type="Texture2D" uid="uid://bioxmyo1gynkx" path="res://assets/ui/lobby/tv_frame.png" id="4"]
@@ -32,7 +31,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
-script = ExtResource("1")
 
 [node name="screen" type="TextureRect" parent="."]
 modulate = Color(0.792157, 0.227451, 0.780392, 1)

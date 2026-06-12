@@ -38,6 +38,9 @@ func update(delta: float) -> void:
 	action_timer -= delta
 	dash_cd -= delta
 	
+	# Keep aim_position sane (defaults to world origin otherwise)
+	aim_position = owner_node.global_position + aim_input * 100.0
+	
 	# Decide behavior based on situation
 	_update_behavior()
 	

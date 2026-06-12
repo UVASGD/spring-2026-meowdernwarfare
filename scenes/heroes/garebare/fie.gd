@@ -37,39 +37,44 @@ func _is_local_owner() -> bool:
 		return GameManager.instance.get_local_player() == owner_player
 	return owner_player.player_id == 0
 
+## Players currently suppressed by this FIE (instance_id -> Player). Tracked so the
+## suppress count is released exactly once per player no matter how the FIE dies.
+var _suppressed: Dictionary = {}
+
 func take_damage(amount: float, _attacker: Player = null) -> void:
 	hp -= amount
 	if hp <= 0:
 		_destroy()
 
 func _destroy() -> void:
-	for body in suppress_zone.get_overlapping_bodies():
-		if body is Player and body != owner_player:
-			body.fie_suppress_count = max(0, body.fie_suppress_count - 1)
+	_release_all_suppression()
 	destroyed.emit()
 	queue_free()
 
-func detonate(damage: float) -> void:
-	for body in suppress_zone.get_overlapping_bodies():
-		if body is Player and body != owner_player:
-			body.take_damage(damage, owner_player)
-	_destroy()
-
 func _on_zone_entered(body: Node) -> void:
-	if body is Player and body != owner_player:
+	if body is Player and body != owner_player and not _suppressed.has(body.get_instance_id()):
+		_suppressed[body.get_instance_id()] = body
 		body.fie_suppress_count += 1
 
 func _on_zone_exited(body: Node) -> void:
-	if body is Player and body != owner_player:
+	if body is Player and _suppressed.erase(body.get_instance_id()):
 		body.fie_suppress_count = max(0, body.fie_suppress_count - 1)
 
+func _release_all_suppression() -> void:
+	for p in _suppressed.values():
+		if is_instance_valid(p):
+			p.fie_suppress_count = max(0, p.fie_suppress_count - 1)
+	_suppressed.clear()
+
 func ult_explode():
-	var exp = GAREBARE_EXPLOSION.instantiate()
-	exp._set_owner(owner_player)
-	add_child(exp)
+	_release_all_suppression()
+	suppress_zone.monitoring = false
+	var explosion = GAREBARE_EXPLOSION.instantiate()
+	explosion._set_owner(owner_player)
+	add_child(explosion)
 	await get_tree().create_timer(0.5).timeout
 	aoe.hide()
 	sprite.hide()
 	$PointLight2D.hide()
-	await exp.finished
+	await explosion.finished
 	queue_free()
